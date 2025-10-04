@@ -1,0 +1,50 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "EDA for Machine Learning"
+  author: "Tony Thrall"
+  date: last-modified
+  date-format: HH:mm ddd D-MMM-YYYY
+  site-url: https://github.com/tthrall/eda4ml/
+  repo-url: https://github.com/tthrall/eda4ml/
+  repo-branch: main
+  repo-actions: [edit, issue]
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - part: basics.qmd
+      chapters: 
+        - eda.qmd
+        - conditioning.qmd
+        - em-algorithm.qmd
+        - clustering.qmd
+        - simulation.qmd
+        - study-design.qmd
+    - part: text.qmd
+      chapters:
+        - text-analysis.qmd
+        - dirichlet-dstn.qmd
+        - latent-dirichlet-alloc.qmd
+    - part: time-series.qmd
+      chapters:
+        - ts-intro.qmd
+        - ts-forecast.qmd
+        - ts-fourier.qmd
+    - summary-1.qmd
+    - summary-2.qmd
+    - references.qmd
+
+bibliography: eda4ml.bib
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  pdf:
+    documentclass: scrreprt
+
+editor: source
+

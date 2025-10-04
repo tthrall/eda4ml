@@ -1,0 +1,884 @@
+---
+title: "Clustering: EDA in Higher Dimensions"
+subtitle: "Part 1, session 2a of Data Mining Intro"
+author: 
+  - name: "Send comments to: Tony T (adthral)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "s2a"
+  file_prefix: "s2a_clustering"
+abstract: 
+  "Introduce statistical clustering methods."
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(dbscan)
+library(GGally)
+library(here)
+library(ISLR2)
+library(latex2exp)
+# library(mlr3measures)
+# library(pracma)
+library(tidyverse)
+library(tinytex)
+library(UsingR)
+
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "rmse_per_grp.R"))
+source(here("code", "xtabs_to_jaccard.R"))
+```
+
+------------------------------------------------------------------------
+
+## Initial Remarks
+
+In the context of machine learning, "unsupervised learning" encompasses algorithms designed to seek patterns in data, with minimal required guidance from the user, and without the benefit of a response variable (or a set of observation "labels") to be approximated by functions of predictor variables. Most but not all of these algorithms are designed for high-dimensional data, that is, data with many variables (columns).
+
+This approach is in the spirit of exploratory data analysis (EDA), which is practically forced upon us when we come across a new data set (and can remain essential throughout the life-cycle of a project). On the one hand, EDA has no sharp measures of success that we are driven to optimize, so one might say that we're strolling through the data, taking in the scenery. On the other hand, we are looking for unanticipated patterns in the data, and therefore it is useful to record just what patterns we do anticipate, conjecture, or wonder about.
+
+In our previous sessions we have reviewed some ways of looking at one or two variables at a time. When we are presented with a new data set having many variables, it is useful to simplify the data in some way to help us form a first impression.
+
+One way is to look for a few functions of the many variables that somehow carry much of the original information. The prime method for doing so is principal component analysis (PCA), where the functions are linear and capture much of the variation in the data. We'll come back to PCA in subsequent sessions.
+
+In this session we'll discuss another way to simplify the data, namely, to group observations having similar profiles (patterns in the values of the variables). Such clustering methods are currently of great interest in both science and industry, giving rise to a number of new clustering methods.
+
+## US Colleges
+
+```{r}
+#| label: college
+
+college <- ISLR2::College |> 
+  as_tibble(rownames = "college_name")
+```
+
+```{r}
+#| label: college-vars-tbl
+
+college_vars_tbl <- tibble::tibble(
+  var_name = names(college),
+) |> 
+  mutate(
+    dscr = case_when(
+      var_name == "college_name" ~ 
+        "Name of the college or university", 
+      var_name == "Private" ~ 
+        "No or Yes indicating private or public", 
+      var_name == "Apps" ~ 
+        "Number of applications received", 
+      var_name == "Accept" ~ 
+        "Number of applications accepted", 
+      var_name == "Enroll" ~ 
+        "Number of new students enrolled", 
+      var_name == "Top10perc" ~ 
+        "Pct. new students from top 10% of H.S. class", 
+      var_name == "Top25perc" ~ 
+        "Pct. new students from top 25% of H.S. class", 
+      var_name == "F.Undergrad" ~ 
+        "Number of fulltime undergraduates", 
+      var_name == "P.Undergrad" ~ 
+        "Number of parttime undergraduates", 
+      var_name == "Outstate" ~ 
+        "Out-of-state tuition", 
+      var_name == "Room.Board" ~ 
+        "Room and board costs", 
+      var_name == "Books" ~ 
+        "Estimated book costs", 
+      var_name == "Personal" ~ 
+        "Estimated personal spending", 
+      var_name == "PhD" ~ 
+        "Pct. of faculty with PhD's", 
+      var_name == "Terminal" ~ 
+        "Pct. of faculty with terminal degree", 
+      var_name == "S.F.Ratio" ~ 
+        "Student/faculty ratio", 
+      var_name == "perc.alumni" ~ 
+        "Pct. alumni who donate", 
+      var_name == "Expend" ~ 
+        "Instructional expenditure per student", 
+      var_name == "Grad.Rate" ~ 
+        "Graduation rate"
+    )
+  )
+```
+
+To illustrate ideas we'll use data about US universities and colleges from 1995, described in the book, *An Introduction to Statistical Learning with applications in R* ([ISLR](https://www.statlearning.com)). The data are recorded within the `R` package `ISLR2` as `ISLR2::College`. From the `R` command `help("College")` we see that the data consist of 777 observations (data rows), and obtain the following description of the variables (data columns).
+
+```{r}
+#| label: tbl-college-vars-tbl
+#| tbl-cap: "Variables in the ISLR2::College data set"
+
+college_vars_tbl |> knitr::kable(
+  caption = "US college variables (1995 issue of USNWR)", 
+  col.names = c("variable", "description")
+)
+```
+
+## Class Exercise
+
+Team up with a classmate and make your own copy of the `ISLR2::College` data. Record your questions and conjectures about the data. Which of these could be addressed by the set of data variables? Take 15 minutes to prepare to report out to the class.
+
+## Grouping Variables
+
+Clustering algorithms construct groups of observations based solely on statistical information obtained from a given data set, with no reliance on the meaning or importance of the data variables.
+
+A complementary way to form groups is to use so-called "grouping variables" that we select or construct from the data. Often, the grouping variables are evident from the questions we're trying to answer, e.g., to compare spending patterns among different socio-economic groups.
+
+When we want to construct groups (clusters) of observations as a means of exploring the data, we should consider what would make one grouping (clustering) more or less effective than another for this purpose. We'll return to this point.
+
+### Example: college data grouping variables
+
+To help us consider the goals and criteria of clustering (grouping), let's return to the US college data and choose a few variables with which to group the data.
+
+Consider the distinction between more expensive versus less expensive schools as indicated by variable `Expend` (instructional expenditure per student). We might ask, "Are the more expensive schools able to attract more of the top students?" So let's also use the variable `Top10perc` (percent of new students coming from the top 10% of their high school class). We'll simply split each variable at its median value, creating two binary variables, which we'll use as our grouping variables.
+
+Before proceeding, let's examine the distribution of these variables via density estimates and a scatter plot.
+
+```{r}
+#| label: college-factors
+
+# split selected variables at their median value
+college_factors <- college |> 
+  mutate(
+    top_10_fct = Top10perc  < median(Top10perc),
+    expend_fct = Expend     < median(Expend)
+  ) |> 
+  # for binary factors above, re-code (T, F) to ("lwr", "upr")
+  mutate(across(
+    .cols = c(top_10_fct, expend_fct), 
+    .fns  = ~ if_else(.x, "lwr", "upr")
+  )) |> 
+  # label each group with a bitcode
+  mutate(
+    top_10_lbl = if_else(top_10_fct == "lwr", 0L, 1L), 
+    expend_lbl = if_else(expend_fct == "lwr", 0L, 1L), 
+    grp_lbl    = paste0("g_", top_10_lbl, expend_lbl)
+  ) |> 
+  # remove redundant labeling vars
+  dplyr::select(- top_10_lbl, - expend_lbl)
+
+# record the median values
+top_10_mid  <- median(college_factors$ Top10perc)
+expend_mid  <- median(college_factors$ Expend)
+```
+
+```{r}
+#| label: fig-grp-var-matrix
+#| fig-cap: "Distribution of variables `Top10perc` and `Expend`"
+
+# Form a matrix of figures, showing each 
+# distinct pair of variables in a scatter diagram.
+g_grp_var_matrix <- college_factors |> 
+  GGally::ggpairs(
+    columns = c("Top10perc", "Expend")
+  ) + 
+  ggplot2::labs("Variables `Top10perc` and `Expend`")
+g_grp_var_matrix
+```
+
+We see that `Top10perc` and `Expend` are positively correlated, and have relatively few departures from a monotonic relationship. Also note that `Expend` is measured (in US dollars) on a very different scale from `Top10perc`.
+
+Now let's look at the two variables more closely, one at a time.
+
+```{r}
+#| label: fig-top-10
+#| fig-cap: "Pct of new students per college from top 10% in their HS"
+
+g_top_10 <- college_factors |> 
+  ggplot(mapping = aes(x = Top10perc)) + 
+  geom_histogram() + 
+  geom_vline(
+    xintercept = top_10_mid, linewidth = 2, colour = "red"
+  ) + 
+  labs(
+    title = "% of new students from top 10% in their HS", 
+    subtitle = "(vertical line at median)"
+  )
+g_top_10
+```
+
+```{r}
+#| label: fig-expend
+#| fig-cap: "Instructional expenditure per student"
+
+g_Expend <- college_factors |> 
+  ggplot2::ggplot(mapping = aes(x = Expend)) + 
+  ggplot2::geom_histogram() + 
+  ggplot2::geom_vline(
+    xintercept = expend_mid, linewidth = 2, colour = "red"
+  ) + 
+  ggplot2::labs(
+    title = "Instructional expenditure per student", 
+    subtitle = "(vertical line at median)"
+  )
+g_Expend
+```
+
+The figures above show decent variation on either side of the median value. Therefore cutting each variable at its median value seems reasonable, as long as we bear in mind that each distribution has a right tail (a quite long tail for `Expend`).
+
+For each of the variables shown we create a binary variable having two levels, "lwr" and "upr", meaning an observation is either below the median value, or else is no less than the median value. We then form 4 groups, each a combination of levels of the 2 binary variables, which we label $g_{00}, g_{01}, g_{10}, g_{11}$ to denote the binary factors based on `Top10perc`, and `Expend` (in that order), with {"lwr", "upr"} coded as {0, 1}.
+
+To check this grouping of the data let's first select the variables from which we defined the 4 groups and examine the scatter diagram, now using the color and shape of each data point to distinguish the different groups.
+
+```{r}
+#| label: fig-top-10-expend
+#| fig-cap: "(Top10perc, Expend): binary grouping"
+
+g_top_10_Expend <- college_factors |> 
+  ggplot2::ggplot(mapping = aes(
+    x = Top10perc, y = Expend, 
+    colour = grp_lbl, shape = grp_lbl
+  )) + 
+  ggplot2::scale_shape_manual(values = 0:3) +
+  ggplot2::geom_point() + 
+  ggplot2::labs(
+    title = "(Top10perc, Expend)", 
+    subtitle = "grouped by binary versions of the two variables"
+  )
+g_top_10_Expend
+```
+
+The figure above confirms that we have constructed the binary grouping variables as we intended.
+
+The table below shows the mean per group of the underlying grouping variables.
+
+Note: we've calculated the mean per group of *all* the numeric variables. We'll return to those calculations in the next section.
+
+```{r}
+#| label: means-per-grp
+
+means_per_grp <- college_factors |> 
+  # remove original non-numeric variables
+  dplyr::select(- college_name, - Private) |> 
+  # reduce grouping variables to just grp_lbl
+  dplyr::select(- top_10_fct, - expend_fct) |> 
+  # vector of mean values per group
+  dplyr::summarise(dplyr::across(
+    .cols = tidyselect::everything(), 
+    .fns  = ~ mean(.x, na.rm = TRUE)
+  ), 
+  # grouping variable
+  .by = "grp_lbl", 
+  # group size: number of original data rows per group
+  count = n()
+  ) |> 
+  dplyr::arrange(grp_lbl)
+```
+
+```{r}
+#| label: tbl-means-per-grp
+#| tbl-cap: "(`Top10perc`, `Expend`): mean values per group"
+
+means_per_grp |> 
+  dplyr::select(
+    grp_lbl, count, Top10perc, Expend
+  ) |> 
+  knitr::kable(
+    caption = "Mean values per group of underlying grouping variables", 
+    col.names = c("group", "# obs", "Top10perc", "Expend"), 
+    digits = 1
+  )
+  
+```
+
+### Measures of clustering effectiveness
+
+In the context of clustering algorithms, groups are not given but are rather to be calculated from the data. But under what criteria? Broadly speaking we want the points (each an observation of several numeric variables) to be close together within each cluster (group), and we want the clusters to be well separated from one another.
+
+So how well do the groups constructed above perform against these criteria? We want points within each cluster (group) to be close to one another, but how should we measure distance between points? Euclidean distance springs to mind, but there is a catch: the numeric variables are recorded on differing scales.
+
+### Standardizing variables
+
+The following table lists the mean, standard deviation, and coefficient of variation $(cv = \frac{sd}{mean})$ per variable. The variables having the largest mean value are listed first.
+
+```{r}
+#| label: college-moments
+
+# calculate unconditional mean and sd of each numeric variable
+
+college_means <- college_factors |> 
+  # remove original non-numeric variables
+  dplyr::select(- college_name, - Private) |> 
+  # remove grouping variables
+  dplyr::select(- top_10_fct, - expend_fct, - grp_lbl) |> 
+  # vector of mean values per group
+  dplyr::summarise(dplyr::across(
+    .cols = tidyselect::everything(), 
+    .fns  = ~ mean(.x, na.rm = TRUE)
+  )) |> 
+  # pivot row vector to column vector
+  tidyr::pivot_longer(
+    cols = tidyselect::everything(), 
+    names_to = "var", 
+    values_to = "mean"
+  )
+
+college_std_devs <- college_factors |> 
+  # remove original non-numeric variables
+  dplyr::select(- college_name, - Private) |> 
+  # remove grouping variables
+  dplyr::select(- top_10_fct, - expend_fct, - grp_lbl) |> 
+  # vector of mean values per group
+  dplyr::summarise(dplyr::across(
+    .cols = everything(), 
+    .fns  = ~ sd(.x, na.rm = TRUE)
+  )) |> 
+  # pivot row vector to column vector
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "var", 
+    values_to = "sd"
+  )
+
+college_moments <- college_means |> 
+  dplyr::left_join(
+    y  = college_std_devs, 
+    by = "var"
+  ) |> 
+  dplyr::mutate(cv = sd / mean) |> 
+  dplyr::arrange(desc(mean))
+```
+
+```{r}
+#| label: tbl-college-moments
+#| tbl-cap: "College variables: mean, sd, and cv = sd/mean"
+
+college_moments |> knitr::kable(
+  caption = "Mean, SD, and CV = SD/Mean", 
+  col.names = c("variable", "mean", "sd", "cv"), 
+  digits = 1
+)
+```
+
+The financial variables are measured in thousands of dollars, whereas the percentages merely range from 0 to 100. The percentages thus contribute little to the overall Euclidean distance from a point (vector of observed numeric values) to a mean vector. Consequently the percentages will have little influence on calculations of clustering effectiveness based on Euclidean distances.
+
+This issue can be addressed in a few different ways. For now we standardize each numeric variable: subtract the overall mean of the variable (across all observations) and then divide by the corresponding standard deviation of the variable. This will make the respective scales of the variables more compatible.
+
+### Within-group distances in standard units
+
+Having standardized the college numeric variables we now calculate Euclidean distances. That is, within each group we calculate the distance of each point to the group mean vector. This vector of point-minus-mean is referred to as "error" (more precisely, "mean deviation") in statistical parlance. We calculate the squared Euclidean length of this vector, and sum these squared distances across all points in the group. The result is called the (within-group) sum of squared errors (SSE). Here are the calculated SSE values (and related statistics) per group.
+
+```{r}
+#| label: college-z-scores
+
+# convert numeric data into standard units (z-scores)
+college_z_scores <- college_factors |> 
+  # remove original non-numeric variables
+  dplyr::select(- college_name, - Private) |> 
+  # grouping variables: use only grp_lbl
+  dplyr::select(- top_10_fct, - expend_fct) |> 
+  # standardize numeric variables
+  dplyr::mutate(across(
+    .cols = - grp_lbl, 
+    .fns  = ~ (.x - mean(.x))/sd(.x)
+  ))
+
+# count numeric variables (exclude grp_lbl)
+n_z_score_vars <- ncol(college_z_scores) - 1L
+```
+
+```{r}
+#| label: coll-z-stats-per-grp
+
+# compute z-score means and std-devs per group
+
+# number of observations per group as a data frame
+coll_counts_per_grp <- college_z_scores |> 
+  dplyr::summarise(
+    .by = grp_lbl, 
+    count = n()
+  ) |> 
+  dplyr::arrange(grp_lbl) |> 
+  tibble::column_to_rownames("grp_lbl")
+
+coll_z_means_per_grp <- college_z_scores |> 
+  dplyr::summarise(
+    .by = grp_lbl, 
+    dplyr::across(
+      .cols = tidyselect::everything(), 
+      .fns  = ~ mean(.x, na.rm = TRUE)
+    )
+  ) |> 
+  dplyr::arrange(grp_lbl)
+
+coll_z_sds_per_grp <- college_z_scores |> 
+  dplyr::summarise(
+    .by = grp_lbl, 
+    dplyr::across(
+      .cols = tidyselect::everything(), 
+      .fns  = ~ sd(.x, na.rm = TRUE)
+    )
+  ) |> 
+  dplyr::arrange(grp_lbl)
+
+# transpose coll_z_sds_per_grp
+grp_z_sds_per_var <- coll_z_sds_per_grp |> 
+  tibble::column_to_rownames("grp_lbl") |> 
+  t() |> 
+  tibble::as_tibble(rownames = "var")
+
+grp_z_ss <- grp_z_sds_per_var |> 
+  # (RMSE per var) to (MSE per var)
+  dplyr::mutate( dplyr::across(
+    .cols = - var, 
+    .fns  = ~ .x^2
+  )) |> 
+  # (MSE per var) to (SSE per var)
+  dplyr::mutate(
+    g_00 = g_00 * (-1 + coll_counts_per_grp[["g_00", "count"]]), 
+    g_01 = g_01 * (-1 + coll_counts_per_grp[["g_01", "count"]]), 
+    g_10 = g_10 * (-1 + coll_counts_per_grp[["g_10", "count"]]), 
+    g_11 = g_11 * (-1 + coll_counts_per_grp[["g_11", "count"]])
+  ) |> 
+  # sum (SSE per var) across vars
+  dplyr::summarise(dplyr::across(
+    .cols = - var, 
+    .fns  = ~ sum(.x, na.rm = TRUE)
+  )) |> 
+  # transpose to facilitate summing across groups
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "group", 
+    values_to = "SSE"
+  ) |> 
+  # calculate (count, df, MSE, RMSE) per group
+  dplyr::mutate(
+    count = coll_counts_per_grp [, "count"], 
+    df    = count - n_z_score_vars, 
+    MSE   = SSE / df, 
+    RMSE  = sqrt(MSE)
+  ) |> 
+  dplyr::select(
+    group, count, df, RMSE, MSE, SSE
+  )
+
+# within sum of squares (across groups)
+grp_z_ss_all <- sum(grp_z_ss$SSE, na.rm = TRUE)
+```
+
+```{r}
+#| label: tbl-grp-z-ss
+#| tbl-cap: "Point-center distances per group"
+
+grp_z_ss |> knitr::kable(
+  caption = "Point-center distances per group", 
+  digits = 1
+)
+```
+
+The columns of the table are as follows.
+
+-   group: the label of each group
+-   count: the number of observations (data rows)
+-   df: count minus the number of numeric values (`r n_z_score_vars`)
+-   RMSE: $\surd{\text{MSE}}$
+-   MSE: SSE / df
+-   SSE: sum of squared point-center distances
+
+The RMSE (root mean squared error) is a measure of the typical length of the point-center distances within each group
+
+The sum of SSE across groups (the "total within-group SSE") turns out to be `r as.integer(round(grp_z_ss_all))`. This value serves as a reference point for other groupings (clusterings) of observations.
+
+## K-means Clustering
+
+We'll start our discussion of clustering using a function in the R `stats` package, namely `stats::kmeans()`. The function requires us to specify either the desired number $K$ of clusters (groups) of observations to be formed, or else to provide an initial set of $K$ cluster centers. If we merely provide the desired number $K$ of clusters, `kmeans()` randomly selects $K$ data rows (observations) as the initial set of cluster centers.
+
+Given a set of cluster centers the algorithm iteratively searches for a better set, meaning a set having a smaller "within-cluster sum of squares". In broad terms, this is done in two steps.
+
+1.  Assign: the algorithm assigns each data point to the nearest center (in Euclidean distance) thereby partitioning the data points into $K$ clusters.
+2.  Update: For each cluster of data points, the algorihtm calculates a new cluster center, namely, the mean vector of the data points within the cluster. This yields a new set of cluster centers.
+
+Convergence criteria: For each cluster the algorithm adds up the (point, center) squared distances. Those $K$ sums of squares per cluster are summed acrosss clusters to form the "total within-cluster sum of squares (WCSS)" (previously referred to as the "total within-group SSE"). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the "between-cluster sum of squares (BCSS)".[^1] The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.
+
+[^1]: The sum of squared (point, grand-mean) distances does not depend on any grouping (clustering) of the observations, and is called the "total sum of squares". The between-cluster sum of squares (BCSS) equals the total sum of squares minus the within-cluster sum of squares. BCSS is also equal to a weighted sum of (cluster-center, grand-mean) squared distances.
+
+### Results for specified inital cluster centers
+
+We now provide the `kmeans()` function with cluster centers in the form of the group means calculated above.[^2]
+
+[^2]: `kmeans()` expects the cluster centers to be expressed as a matrix, in which each *row* represents a single cluster center and each column represents a "coordinate" of the cluster centers corresponding to one of the numeric variables (columns) of the data matrix.
+
+The resulting clusters are shown in the scatter diagrams below, where for purposes of comparison we have projected the clusters onto the grouping variables we previously adopted.
+
+```{r}
+#| label: m-kmeans-ctrs
+
+# to ensure reproducibility, set random seed
+set.seed(42) # nod to Hitchhiker's Guide to the Galaxy
+
+# use college_z_means_per_grp as initial cluster centers
+m_kmeans_ctrs <- college_z_scores |>
+  # remove grp_lbl
+  dplyr::select(- grp_lbl) |>
+  stats::kmeans(
+    centers = coll_z_means_per_grp |>
+      # remove grp_lbl
+      dplyr::select(- grp_lbl)
+  )
+
+# record total within-cluster sum of squares
+km_wcss <- m_kmeans_ctrs$ tot.withinss
+```
+
+```{r}
+#| label: college-km-ctrs
+
+# # assign observations to km clusters
+college_km_ctrs <- college_z_scores |>
+  dplyr::mutate(cluster = m_kmeans_ctrs$ cluster)
+```
+
+```{r}
+#| label: fig-top-10-expend-kmc
+#| fig-cap: "(`Top10perc`, `Expend`): clusters identified by kmeans()"
+
+g_top_10_Expend_kmc <- college_km_ctrs |>
+  mutate(cluster = as_factor(cluster)) |>
+  ggplot(mapping = aes(
+    x = Top10perc, y = Expend,
+    colour = cluster, shape = cluster
+  )) +
+  scale_shape_manual(values = 0:3) +
+  geom_point() +
+  labs(
+    title = "(Top10perc, Expend)",
+    subtitle = "clusters identified by kmeans()"
+  )
+g_top_10_Expend_kmc
+```
+
+### Jaccard similarity
+
+The figure above shows that the `kmeans()` clusters are distinct from but similar to the groups formed above whose mean values served as initial cluster centers. Here are the number of observations belonging to each combination of $g_{x,y}$ group and `kmeans()` cluster.
+
+```{r}
+#| label: tbl-xtabs-cluster-grp
+#| tbl-cap: "Overlap: binary groups v kmeans clusters"
+
+xtabs_cluster_grp <- xtabs(
+  data    = college_km_ctrs, 
+  formula = ~ cluster + grp_lbl
+)
+xtabs_cluster_grp
+```
+
+The table above provides in more detail the similarities and differences between the inital (`grp_lbl`) and final (`cluster`) clusters from `kmeans()`. The table can be represented and summarized by [Jaccard's measure](https://en.wikipedia.org/wiki/Jaccard_index) of the similarity of two finite sets, $(A, B)$, namely:
+
+$$
+\begin{align}
+  J(A, B) &= \frac{\left| A \cap B \right|}{\left| A \cup B \right|}
+\end{align}
+$$ {#eq-Jaccard-similarity-measure}
+
+Letting $(A, B)$ denote the respective (row, column) of each cell in the above table, we obtain the following table of Jaccard similarity measures of each (`cluster`, `grp_lbl`) combination.
+
+```{r}
+#| label: jaccard-cluster-grp-lst
+
+jaccard_cluster_grp_lst <- xtabs_cluster_grp |> 
+  xtabs_to_jaccard()
+```
+
+```{r}
+#| label: jaccard-cluster-grp-wide
+
+jaccard_cluster_grp_wide <- 
+  jaccard_cluster_grp_lst [["xt_sim_long"]] |> 
+  dplyr::select(cluster, grp_lbl, jaccard) |> 
+  tidyr::pivot_wider(
+    names_from = "grp_lbl", 
+    values_from = "jaccard"
+  )
+```
+
+```{r}
+#| label: tbl-jaccard-cluster-grp-wide
+#| tbl-cap: "Jaccard similarity: binary groups v kmeans clusters"
+
+jaccard_cluster_grp_wide |> 
+  knitr::kable(
+    caption = "Jaccard similarity measures", 
+    digits = 2
+  )
+```
+
+```{r}
+#| label: jaccard-cluster-grp-avg
+
+jaccard_cluster_grp_avg <- jaccard_cluster_grp_lst [[2]]
+```
+
+The weighted average (weighted by cell count) of these similarity values is `r round(jaccard_cluster_grp_avg, 2)`.
+
+### Distribution of point-center distances
+
+The two figures below show the range of point-center distances for the original grouping and for the `kmeans()` clustering. In the latter case, points are closer to the mean of the cluster, as can be seen by comparing the scale of the two figures. The total within-cluster sum of squares is `r as.integer(round(km_wcss))` for `kmeans()` compared to `r as.integer(round(grp_z_ss_all))` for the original grouping.
+
+```{r}
+#| label: group-norms-lst
+
+group_norms_lst <- college_km_ctrs |> 
+  dplyr::select(- cluster) |> 
+  pt_ctr_dist(grp_name = "grp_lbl")
+```
+
+```{r}
+#| label: cluster-norms-lst
+
+cluster_norms_lst <- college_km_ctrs |> 
+  dplyr::select(- grp_lbl) |> 
+  pt_ctr_dist(grp_name = "cluster")
+```
+
+```{r}
+#| label: fig-grp-norms
+#| fig-cap: "Initial binary grouping: point-center distances"
+
+group_norms_lst$ grp_norms |> 
+  ggplot(mapping = aes(y = norm)) + 
+  geom_boxplot() + 
+  facet_grid(cols = vars(grp_lbl)) + 
+  labs(
+    title = "Initial groups: point-center distances"
+  )
+```
+
+```{r}
+#| label: fig-cluster-norms
+#| fig-cap: "K-means clusters: point-center distances"
+
+cluster_norms_lst$ grp_norms |> 
+  ggplot(mapping = aes(y = norm)) + 
+  geom_boxplot() + 
+  facet_grid(cols = vars(cluster)) + 
+  labs(
+    title = "K-means clusters: point-center distances", 
+    subtitle = "(initial centers from initial grouping)"
+  )
+```
+
+### Results for random initial cluster centers
+
+Let's run `kmeans()` again, this time specifying only the desired number $K$ of clusters. The function will then select $K$ rows of the data at random as the initial set of cluster centers. In any case, no matter how the initial cluster centers may be selected, that selection influences the subsequent iterative formation of clusters.
+
+To make the algorithm more robust we specify parameter `nstart`, the number times to run `kmeans()`, each using a distinct random selection of data rows as initial cluster centers. For each run the algorithm computes WCSS (the total within-cluster sum of squares). Once `nstart` runs have been completed, the run having the smallest value of WCSS is reported to the user. A rule of thumb is to set `nstart` to a value between 20 and 50.
+
+We now run `kmeans()` again, setting $K = 4$ and `nstart = 25`. For purposes of comparison with previous results, here is a projection of the resulting 4 clusters onto a (Top10perc, Expend) scatter diagram.
+
+```{r}
+#| label: m-kmeans-nstart
+
+# to ensure reproducibility, set random seed
+set.seed(42)
+
+m_kmeans_nstart <- college_z_scores |>
+  # remove grp_lbl
+  dplyr::select(- grp_lbl) |>
+  stats::kmeans(
+    centers = 4, 
+    nstart = 25
+  )
+```
+
+```{r}
+#| label: fig-top-10-expend-nstart
+#| fig-cap: "Clusters identified from repeated random cluster centers"
+
+g_top_10_Expend_nstart <- college_z_scores |>
+  mutate(
+    cluster = m_kmeans_nstart$ cluster |> as_factor()
+  ) |>
+  ggplot(mapping = aes(
+    x = Top10perc, y = Expend,
+    colour = cluster, shape = cluster
+  )) +
+  scale_shape_manual(values = 0:3) +
+  geom_point() +
+  labs(
+    title = "(Top10perc, Expend)",
+    subtitle = "identified by kmeans cluster (nstart = 25)"
+  )
+g_top_10_Expend_nstart
+```
+
+Interestingly, we again see strong separation of clusters associated with the values of `Top10perc` and `Expend`.
+
+The table below shows the number of observations in each combination of the original grouping and the new `kmeans()` clusters.
+
+```{r}
+#| label: xtabs-nstart-grp
+
+xtabs_nstart_grp <- xtabs(
+  data    = college_z_scores |> 
+  dplyr::mutate(
+    cluster = m_kmeans_nstart$ cluster |> as_factor()
+  ), 
+  formula = ~ cluster + grp_lbl
+)
+xtabs_nstart_grp
+```
+
+As with the previous `kmeans()` clusters, we again see two of the clusters well aligned with groups $g_{00}$ and $g_{11}$, respectively.
+
+The similarity of the current clusters with the previous clusters prompts us to examine the number of observations in each pair (old, new) clusters, distinguishing the two as (cl_group, cl_nstart).
+
+```{r}
+#| label: tbl-xtabs-cl-group-nstart
+#| tbl-cap: "kmeans() clusters formed with and without `nstart`"
+
+xtabs_cl_group_nstart  <- xtabs(
+  data    = college_z_scores |> 
+  dplyr::mutate(
+    cl_group  = m_kmeans_ctrs$ cluster |> as_factor(), 
+    cl_nstart = m_kmeans_nstart$ cluster |> as_factor()
+  ), 
+  formula = ~ cl_group + cl_nstart
+)
+xtabs_cl_group_nstart
+```
+
+We see that the new clusters are essentially a relabeling of the previous clusters. The figure below of new point-center distances is essentially the same as the previous figure with the first two clusters swapped. In fact the total within-cluster sum of squares is unchanged from the previous clustering.
+
+```{r}
+#| label: nstart-norms-lst
+
+nstart_norms_lst <- college_z_scores |> 
+  dplyr::select(- grp_lbl) |> 
+  dplyr::mutate(
+    cluster = m_kmeans_nstart$ cluster |> as_factor()
+  ) |> 
+  pt_ctr_dist(grp_name = "cluster")
+```
+
+```{r}
+#| label: fig-nstart-norms
+#| fig-cap: "Revised point-center distances (nstart = 25)"
+
+g_nstart_norms <- nstart_norms_lst$ grp_norms |> 
+  ggplot(mapping = aes(y = norm)) + 
+  geom_boxplot() + 
+  facet_grid(cols = vars(cluster)) + 
+  labs(
+    title    = "K-means clusters: point-center distances", 
+    subtitle = "(nstart = 25)"
+  )
+g_nstart_norms
+```
+
+### Which value of $K$?
+
+So far in our application of `kmeans()` to the college data we have set $K = 4$. How would the results change with different choices for the value of $K$? Breaking the observations into smaller but more numerous clusters should in general reduce the total within-cluster sum of squares (WCSS), but we can also expect to reach a point of diminishing returns.
+
+For the college data, the figure below shows how WCSS decreases as $K$ increases.
+
+```{r}
+#| label: mk-tbl
+
+# run kmeans on college data for successive values of k
+
+# to ensure reproducibility, set random seed
+set.seed(42)
+
+k_max <- 12L
+nstart_per_k <- 20L
+mk_tbl <- tibble::tibble()
+
+coll_z <- college_z_scores |> 
+  # use only z-scores of original numeric variables
+  dplyr::select(- grp_lbl)
+
+for (k in 2:k_max) {
+  m_tmp <- coll_z |> 
+    kmeans(centers = k, nstart = nstart_per_k)
+  mk_tbl <- mk_tbl |> 
+    dplyr::bind_rows(
+      tibble::tibble(
+        k    = k, 
+        wcss = m_tmp$ tot.withinss)
+    )
+}
+```
+
+```{r}
+#| label: fig-mk-tbl
+#| fig-cap: "Within-cluster sum of squares versus number of clusters"
+
+g_mk_tbl <- mk_tbl |> 
+  ggplot2::ggplot(mapping = aes(
+    x = k, y = wcss
+  )) + 
+  ggplot2::scale_x_continuous(
+    name = "K", 
+    breaks = seq(2, 12, 2)) + 
+  ggplot2::geom_line() + 
+  ggplot2::labs(
+    title = "WCSS versus K for college z-scores", 
+    subtitle = "(nstart = 20)")
+g_mk_tbl
+```
+
+In general, smaller values of $K$ are more interpretable. Based on the figure above we might set $K$ to be 4 or 5. This is a judgement call that depends on the circumstances and goals of one's project.
+
+## Other clustering algorithms
+
+Clustering methods are an active area of research. The K-means algorithm, first introduced in the 1930's, has the longest history. More recent methods can be categorized along the following lines.
+
+-   Soft versus Hard: "Hard" clustering assigns each data point to a single cluster. "Soft" clustering assigns to each point a finite probability distribution of cluster membership.
+
+-   Agglomerative versus Divisive methods define the initial partition of the data into clusters in opposite ways. Agglomerative clustering initially defines each data point to be a cluster, and then merges clusters. Divisive clustering initially defines the entire data set to be a single cluster, and then breaks up this and subsequent clusters into smaller clusters.
+
+-   Hierarchical or not: Instead of a partition, hierarchical methods create a hierarchy of parent (superset) and child (subset) clusters.
+
+-   Centroid-based versus Density-based: K-means and other centroid-based methods identify a cluster of points with the mean, median, or other central measure of the points in the cluster. Density-based methods find areas having a high density of points.
+
+Some methods of note are [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) (Density Based Spatial Clustering of Applications with Noise) and [HDBSCAN](https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html) (a hierarchical version of DBSCAN).
+
+## Team Exercises
+
+1.  Iris data: Submit R command `help("iris")` to learn about the measurements of iris flowers available in R as `datasets::iris`. Summarise these measurements in a graph or table, for example by applying the `GGally::ggpairs()` function.
+
+2.  Iris K-means: Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable `Species`? Count the number of observations corresponding to each combination of cluster and `Species`, for example by using R function `stats::xtabs()`.
+
+## Resources
+
+[An Introduction to Statistical Learning](https://www.statlearning.com/) by James, Witten, Hastie, & Tibshirani
+
+[K-means clustering with tidy data principles – tidymodels](https://www.tidymodels.org/learn/statistics/k-means/)
+
+[k-means • tidyclust](https://tidyclust.tidymodels.org/articles/k_means.html)
+
+[Cluster analysis - Wikipedia](https://en.wikipedia.org/wiki/Cluster_analysis)
+
+[HDBSCAN with the dbscan package](https://cran.r-project.org/web/packages/dbscan/vignettes/hdbscan.html)

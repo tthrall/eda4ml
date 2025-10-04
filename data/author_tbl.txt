@@ -1,0 +1,49 @@
+author
+Anderson, T.W. and Olkin, Ingram
+Blei, David M.
+Blei, David M. and Lafferty, John D.
+Blei, David M. and Ng, Andrew Y. and Jordan, Michael I.
+Brillinger, David R.
+Dempster, A.P. and Laird, N.M. and Rubin, D.B.
+Holt, Charles C.
+Hyndman, Rob J. and Koehler, Anne B. and Snyder, Ralph D. and Grose, Simone
+Ljung, G.M. and Box, G.E.P.
+Venables, W.N. and Ripley, B.D.
+Newton, Isaac
+Peng, Roger D.
+Phan, Xuan-Hieu and Nguyen, Le and Horiguchi, Susumu
+Porteus, Ian and Newman, David and Ihler, Alexander and Asuncion, Arthur and Smyth, Padhraic and Welling, Max
+Stoffer, David
+R Core Team
+Savchev, Delyan and Nason, Guy
+Benaglia, Tatiana and Chauveau, Didier and Hunter, David R. and Young, Derek S.
+Wild, Fridolin
+Benoit, Kenneth and Watanabe, Kohei and Wang, Haiyan and Nulty, Paul and Obeng, Adam and Müller, Stefan and Matsuo, Akitaka
+R Core Team
+Feinerer, Ingo
+Grün, Bettina and Hornik, Kurt
+Reed, Colorado
+Tibshirani, Ryan
+Schuster, Arthur
+Shumway, R.H. and Azari, A.S. and Pawitan, Y.
+Steyvers, Mark and Griffiths, Tom
+Thomson, David J.
+Tokdar, Surya T. and Kass, Robert E.
+Vandemeulebrouck, J. and Roux, P. and Cros, E.
+Winters, Peter R.
+Zhang, Xin and Sisson, Scott A.
+Box, G.E.P. and Jenkins, G.M.
+Brillinger, David R.
+Forbes, C. and Evans, M. and Hastings, N. and Peacock, B.
+Hamming, R.W.
+Hyndman, R.J. and Athanasopoulos, G.
+Johnson, N.L. and Kotz, S.
+Peng, Roger D.
+Shumway, Robert H. and Stoffer, David S.
+Silge, Julia and Robinson, David
+Whittle, P.
+Antoniak, Maria
+Kellogg, Shaun and McClure, Jeanne
+Li, Ying
+McClure, Jeanne
+Noonan, Catherine D.

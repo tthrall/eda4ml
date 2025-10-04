@@ -1,0 +1,720 @@
+---
+title: "Text Analysis"
+subtitle: "Part 1, session 2b of Data Mining Intro"
+author: 
+  - name: "Send comments to: Tony T (adthral)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "s2b"
+  file_prefix: "s2b_text_analysis"
+abstract: 
+  "Introduce basic ideas and methods of text analysis."
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(GGally)
+library(gutenbergr)
+library(here)
+library(ISLR2)
+library(janeaustenr)
+library(latex2exp)
+library(quanteda)
+library(tidytext)
+library(tidyverse)
+library(tinytex)
+library(tm)
+library(tokenizers)
+# library(topicmodels)
+library(tufte)
+
+# package topic models available?
+topicmodels_loaded <- require(topicmodels)
+
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "rmse_per_grp.R"))
+source(here("code", "xtabs_to_jaccard.R"))
+```
+
+------------------------------------------------------------------------
+
+## Introduction
+
+This session highlights some basic ideas and methods that underpin a rapidly advancing field. We follow the online book by Silge and Robinson cited below and use their R package `tidytext`. The authors emphasize the "tidy" formatting of data (i.e., as key-value pairs) along with a set of R packages sharing this approach, collectively called the R `tidyverse`.
+
+## Text Example
+
+Toward the end of Shakespeare's play "Macbeth", the protagonist proclaims:
+
+```{r}
+#| label: sound-fury
+
+sound_fury <- c("Life's but a walking shadow, a poor player ",
+          "That struts and frets his hour upon the stage, ",
+          "And then is heard no more: it is a tale ", 
+          "Told by an idiot, full of sound and fury, ", 
+          "Signifying nothing.")
+
+sound_fury
+```
+
+(Source: "Macbeth", Act V, Scene V, lines 24-28.)
+
+For purposes of technical analysis we break these flowing lines into a table of words. We begin as follows.
+
+```{r}
+#| label: lst-sf-line-tbl
+#| lst-cap: ""
+#| echo: true
+
+sf_line_tbl <- tibble::tibble(
+  l_idx = 24:28, 
+  line  = sound_fury
+)
+sf_line_tbl
+```
+
+The table above merely identifies the original line number of each line. The next step is to break each line into a sequence of "tokens", where a *token* is a meaningful unit of text (such as a word) to be used as the unit of analysis. ("Tokenization" is the process of splitting text into tokens.) Applying `tidytext::unnest_tokens()` to the data table above, we obtain the following table, with just one token (word) per row.
+
+```{r}
+#| label: lst-sf-token-tbl
+#| lst-cap: ""
+#| echo: true
+
+sf_token_tbl <- sf_line_tbl |> 
+  tidytext::unnest_tokens(
+    input  = "line", 
+    output = "word"
+  )
+sf_token_tbl
+```
+
+The next step is to remove so-called stop-words, that is, articles ("a", "the", ...), connectors ("and", "or", ...) and other words that provide structure to a sentence but otherwise carry little information. The `tidytext` package contains a data frame, `stop_words`, of such words, which enables us to remove them from the above table of tokens.
+
+```{r}
+#| label: lst-sf-tokens-xsw
+#| lst-cap: ""
+#| echo: true
+
+sf_tokens_xsw <- sf_token_tbl |> 
+  anti_join(
+    y  = tidytext::stop_words, 
+    by = "word"
+  )
+sf_tokens_xsw
+```
+
+## Larger Text Examples
+
+We'll use larger bodies of text via the following R packages.
+
+### Jane Austen's novels
+
+-   Package `janeaustenr`: Jane Austen (1775-1817) completed 6 novels, which the function `austen_books()` returns as a data frame with 2 columns: the `text` of the novels divided into strings (each approximating a line of printed text), and `book`, which gives the titles of the novels (in order of publication) as a factor.
+
+Here are the number of strings per book.
+
+```{r}
+#| label: ja-strings-per-book
+
+ja_strings_per_book <- janeaustenr::austen_books() |> 
+  dplyr::summarise(
+    .by = book, 
+    n_strings = n()
+  )
+ja_strings_per_book
+```
+
+Here are the ten words used most frequently across these novels (excluding stop-words).
+
+```{r}
+#| label: ja-plus-chapters
+
+# new columns per book: line number, chapter
+ja_plus_chapters <- janeaustenr::austen_books() |> 
+  dplyr::mutate(
+    .by        = book, 
+    linenumber = dplyr::row_number(),
+    chapter    = cumsum(
+      stringr::str_detect(
+        text, 
+        regex(
+          "^chapter [\\divxlc]",
+          ignore_case = TRUE)
+      ))
+  )
+```
+
+```{r}
+#| label: ja-words-raw
+
+# break each line of text into several rows of words
+ja_words_raw <- ja_plus_chapters |> 
+  tidytext::unnest_tokens(
+    input  = text, 
+    output = word
+  )
+```
+
+```{r}
+#| label: ja-words-xsw
+
+# remove stop-words
+ja_words_xsw <- ja_words_raw |> 
+  dplyr::anti_join(
+    y  = tidytext::stop_words, 
+    by = "word")
+```
+
+```{r}
+#| label: ja-word-ct
+
+# count the number of occurrences of each word
+# list largest counts first
+ja_word_ct <- ja_words_xsw |> 
+  dplyr::count(word, sort = TRUE)
+```
+
+```{r}
+#| label: tbl-ja-word-ct
+#| tbl-cap: "Jane Austen: frequent (non-stop) words"
+
+ja_word_ct |> 
+  dplyr::slice_head(n = 10) |> 
+  knitr::kable(
+  caption = "Jane Austen: 10 most common (non-stop) words", 
+  col.names = c("word", "count")
+)
+```
+
+### The Gutenberg Project
+
+-   Package `gutenbergr`: Enables the user to download and process public domain works in the [Project Gutenberg](https://www.gutenberg.org/) collection.
+
+The collection boasts over 75000 free electronic books. The data frame `gutenberg_subjects` uses the Library of Congress Classifications (`lcc`) and Library of Congress Subject Headings (`lcsh`) to categorize topics included in the collection. The package offers this and other such metadata to facilitate searching for desired works.
+
+As a contrast with Jane Austen, here are some well-known science fiction novels of H.G. Wells (1866-1946).
+
+```{r}
+#| label: hgwells-books
+
+hgwells_books <- tibble::tribble(
+  ~id, ~title,
+    35L, "The Time Machine",
+    36L, "The War of the Worlds",
+  5230L, "The Invisible Man",
+   159L, "The Island of Doctor Moreau"
+)
+hgwells_books
+```
+
+Among these novels, here are the most frequently used words (again excluding stop-words).
+
+```{r}
+#| label: hgwells-lines
+
+hgwells_lines <- NULL
+
+# load file as tibble by one of these methods
+uncl_download <- FALSE
+load_rda      <- FALSE
+read_tsv      <- TRUE
+
+if (uncl_download) {
+  hgwells_lines <- gutenberg_download(
+    gutenberg_id = hgwells_books$ id)
+} else {
+  if (load_rda) {
+    load(here::here("data", "rda", "hgwells.rda"))
+    hgwells_lines <- hgwells
+    rm(hgwells)
+  } else {
+    if (read_tsv) {
+      hgwells_lines <- readr::read_tsv(here::here(
+        "data", "retain", "hgwells_lines.txt"
+      ))
+    }
+  }
+}
+
+# save as text file only as needed
+save_file <- FALSE
+if (
+  save_file && 
+  (! is.null(hgwells_lines))
+) {
+  hgwells_lines |> readr::write_tsv(here::here(
+      "data", "retain", "hgwells_lines.txt"
+    ))
+}
+```
+
+```{r}
+#| label: hgwells-words
+
+# break each line into rows, one word per row
+hgwells_words <- hgwells_lines |> 
+  tidytext::unnest_tokens(
+    input  = text, 
+    output = word
+  ) |> 
+  # remove stop-words
+  anti_join(
+    y  = tidytext::stop_words, 
+    by = "word")
+```
+
+```{r}
+#| label: save-hgwells-books
+
+# save as text only as needed
+save_file <- FALSE
+if (save_file) {
+  hgwells_words |> write_tsv(
+    here("data", "retain", "hgwells_words.txt")
+  )
+}
+```
+
+```{r}
+#| label: hgwells-word-ct
+
+hgwells_word_ct <- hgwells_words |> 
+  dplyr::count(word, sort = TRUE)
+```
+
+```{r}
+#| label: tbl-hgwells-word-ct
+#| tbl-cap: "H.G. Wells: frequent (non-stop) words"
+
+hgwells_word_ct |> 
+  dplyr::slice_head(n = 10) |> 
+  knitr::kable(
+  caption = "H.G. Wells: 10 most common (non-stop) words", 
+  col.names = c("word", "count")
+)
+```
+
+## Class Exercise
+
+Team up with a classmate and devise a way to compare word frequencies in the novels of Jane Austen and H.G. Wells, respectively. Share with the class your comparison of just the top 10 words used by each author. Propose a method for comparing all the words used by each author. Take 20 minutes to prepare to report to the class.
+
+## TF-IDF: Term Frequency - Inverse Doc Frequency
+
+Can the number of times each word appears in a document be used to indicate what the document is about? On the one hand, the number of occurrences of a given word in a given document might indicate the importance of the word within the document. On the other hand, words that commonly occur in most documents are unlikely to distinguish the key ideas in a given document.
+
+We've already introduced one way to separate the wheat from the chaff: remove stop-words. Another approach, called *tf-idf*, is to multiply a term's relative frequency (tf) in a selected document by its *inverse document frequency* (idf) with respect to a collection or *corpus* of documents. That is, the relative frequency of a term $t_0$ in a given document $d_0$ is the number of occurrences $\mathcal{n}(t_0, d_0)$ of the given term divided by the number of occurrences of all terms.
+
+$$
+\begin{align}
+  tf(t_0, d_0) &= \frac{\mathcal{n}(t_0, d_0)}{\sum_{t \in d_0}\mathcal{n}(t, d_0)}
+\end{align}
+$$ {#eq-term-frequency}
+
+As for inverse document frequency (idf), there are several alternative definitions. Here's the definition we'll use.
+
+$$
+\begin{align}
+  idf(t, \mathcal{D}) &= \log_e \left( \frac{| \mathcal{D} |}{| \mathcal{D}_t |} \right) \\ 
+  \\ 
+  & t = \text{term} \\ 
+  & \mathcal{D} = \text{corpus of documents } \\
+  & \mathcal{D}_t = \{ d \in \mathcal{D} : t \in d  \}
+\end{align}
+$$ {#eq-inverse-doc-frequency}
+
+Example: let $\mathcal{D}$ denote the set of Jane Austen's 6 novels, and let each novel take its turn as the document $d_0$ of interest. For each book, the most distinctive word (that maximizes tf-idf) is as follows.
+
+```{r}
+#| label: ja-book-wd-ct
+
+# count (book, word) occurrences
+# including stop-words
+ja_book_wd_ct <- ja_words_raw |> 
+  # n = number of (book, word) occurrences
+  dplyr::count(book, word)
+```
+
+```{r}
+#| label: ja-tf-idf
+
+# calculate (tf, idf, tf-idf)
+ja_tf_idf <- ja_book_wd_ct |> 
+  tidytext::bind_tf_idf(word, book, n) |> 
+  arrange(book, desc(tf_idf))
+```
+
+```{r}
+#| label: ja-max-wd-per-book
+
+# use max tf-idf to find the most distinctive word per book
+ja_max_wd_per_book <- ja_tf_idf |> 
+  group_by(book) |> 
+  filter(tf_idf == max(tf_idf, na.rm = TRUE))
+```
+
+```{r}
+#| label: tbl-ja-max-wd-per-book
+#| tbl-cap: "Jane Austen: max tf-idf word per book"
+
+ja_max_wd_per_book |> 
+  knitr::kable(
+    caption = "Max tf-idf word per book", 
+    digits = 3
+  )
+```
+
+## Document-Term Matrix (DTM)
+
+So far, we've been analyzing text arranged in the tidy text format: a table in which each row pertains to a unique (document, token) pair. The `tidytext::unnest_tokens()` function counts the number of occurrences of each such pair. Tables in this format can be explored and visualized using the suite of tidy tools, including packages `dplyr`, `tidyr`, and `ggplot2`.
+
+Aside from the `tidytext` package, most R tools for natural language processing aren't compatible with this format. The [CRAN Task View for Natural Language Processing](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html) lists packages that take other structures of input and provide non-tidy outputs. These packages are very useful in text mining applications, and many existing text datasets are structured according to these non-tidy formats.
+
+One of the most common structures that text mining packages work with is the [document-term matrix](https://en.wikipedia.org/wiki/Document-term_matrix) (or DTM). This is a matrix where:
+
+-   each row represents one document (such as a book or article),
+-   each column represents one term, and
+-   each value (typically) contains the number of appearances of that term in that document.
+
+Since most (document, term) pairings have zero occurrences, DTMs are usually implemented as sparse matrices. These objects can be treated as matrices (enabling one to access particular rows and columns), but are stored in a more efficient format.
+
+DTM objects cannot be used directly with tidy tools, and tidy data frames cannot be used as input for most text mining packages. Therefore, the `tidytext` package provides two functions that convert between the two formats.
+
+-   `tidy()` turns a document-term matrix into a tidy data frame. This function comes from the `broom` package, which provides similar tidying functions for many statistical models and objects.
+-   `cast()` turns a tidy one-term-per-row data frame into a matrix. Package `tidytext` provides three variations of this function, each converting to a different type of matrix:
+    -   `cast_sparse()` (converting to a sparse matrix from the `Matrix` package);
+    -   `cast_dtm()` (converting to a `DocumentTermMatrix` object from package `tm`); and
+    -   `cast_dfm()` (converting to a `dfm` object from quanteda).
+
+A widely used implementation of DTMs in R is the `DocumentTermMatrix` class in the `tm` package. Many available text mining datasets are provided in this format.
+
+### Example: Associated Press articles
+
+As an example, here's a description of Associated Press newspaper articles included as a DTM in the `topicmodels` package.
+
+```{r}
+#| label: lst-Associated-Press
+#| lst-cap: ""
+#| echo: true
+
+if (topicmodels_loaded) {
+  data("AssociatedPress", package = "topicmodels")
+}
+
+# AssociatedPress
+# <<DocumentTermMatrix (documents: 2246, terms: 10473)>>
+# Non-/sparse entries: 302031/23220327
+# Sparsity           : 99%
+# Maximal term length: 18
+# Weighting          : term frequency (tf)
+```
+
+This Associated Press DTM consists of 2246 documents (rows) and 10473 terms (columns), with 99% of the potential (document, term) pairings having zero instances (and thus excluded from the sparse matrix).
+
+### Example: inaugural addresses of US presidents
+
+The inaugural addresses of US presidents, provided by package `quanteda`, is an interesting example of a document-features matrix (DFM), a variant of a DTM. Here are the identifying variables for the first 6 presidential addresses.
+
+```{r R.options=list(quanteda_print_dfm_max_ndoc = 0, quanteda_print_dfm_max_nfeat = 0)}
+#| label: lst-inaug-dfm
+#| lst-cap: ""
+#| echo: true
+
+utils::data("data_corpus_inaugural", package = "quanteda")
+utils::head(docvars(data_corpus_inaugural), 6)
+```
+
+Here is a list of tokens from the addresses given in 1861, 1933, and 1961.
+
+```{r}
+#| label: lst-some-presidential-tokens
+#| lst-cap: ""
+#| echo: true
+
+some_presidential_tokens <- data_corpus_inaugural |> 
+  corpus_subset(Year %in% c(1861L, 1933L, 1961L)) |> 
+  tokens()
+some_presidential_tokens
+```
+
+Here is a rendering of this list of tokens as a document-feature matrix (DFM).
+
+```{r}
+#| label: lst-presidential-dfm
+#| lst-cap: ""
+#| echo: true
+
+presidential_dfm <- some_presidential_tokens |> 
+  quanteda::dfm()
+presidential_dfm
+```
+
+We now reconfigure the DFM as a tidy data frame (tibble).
+
+```{r}
+#| label: lst-presidential-tbl
+#| lst-cap: ""
+#| echo: true
+
+presidential_tbl <- presidential_dfm |> 
+  tidytext::tidy()
+presidential_tbl
+```
+
+```{r}
+#| label: save-presidential-tbl
+
+# save as text file just once
+save_file <- FALSE
+if (save_file) {
+  presidential_tbl |> write_tsv(
+    here("data", "retain", "presidential_tbl.txt")
+  )
+}
+```
+
+We can now use `tidytext::bind_tf_idf()` to determine the words that most distinguish the three presidential addresses.
+
+## Topic Models
+
+Text analysis methods can be applied to a variety of document types, including books, speeches, blog posts, news articles, and so on. Sometimes we can divide a collection of documents into natural groups to be analyzed separately. We can also use topic modeling to construct such groups. Topic modeling is the unsupervised categorization of documents, similar to clustering of numeric data.
+
+### Latent Dirichlet allocation (LDA)
+
+Latent Dirichlet allocation (LDA) is a popular method for fitting topic models, and is guided by two principles.
+
+-   **Every document is a mixture of topics.** For example, in a two-topic model we could say "Document 1 is 90% topic A and 10% topic B, while Document 2 is 30% topic A and 70% topic B."
+-   **Every topic is a mixture of words.** For example, consider a two-topic model of American news, with one topic for "politics" and one for "entertainment." The most common words in the politics topic might be "President", "Congress", and "government", while the entertainment topic may be made up of words such as "movies", "television", and "actor". Importantly, words can be shared between topics; a word like "budget" might appear in both equally.
+
+This approach allows the constructed groups to overlap, similar to the soft clustering of numeric data.
+
+### Example: Associated Press articles
+
+To illustrate, we'll apply function `LDA()` to the data set (DTM) `AssociatedPress`, both provided by the `topicmodels` package. The DTM is a collection of 2246 news articles from an American news agency, mostly published around 1988. For purposes of illustration we'll specify a two-topic model, as follows.[^1]
+
+[^1]: Function `LDA()` in package `topicmodels` returns a topic model of class "LDA_VEM". LDA denotes latent Dirichlet allocation. VEM denotes the Variational Expectation Maximization (EM) algorithm.
+
+```{r}
+#| label: lst-ap-lda
+#| lst-cap: ""
+#| echo: true
+
+if (topicmodels_loaded) {
+  ap_lda <- AssociatedPress |> 
+    LDA(
+      k = 2, 
+      # set a seed so that the output of the model is predictable
+      control = list(seed = 1234)
+    )
+  ap_lda
+}
+```
+
+We now construct (topic, term) probabilities (called $\beta$ in the LDA literature).
+
+```{r}
+#| label: ap-topics
+
+# TODO: overcome error generated by tidy(ap_lda)
+# in the meantime, patch as follows
+
+if (topicmodels_loaded) {
+  beta_mat           <- ap_lda@beta
+  colnames(beta_mat) <- ap_lda@terms
+  rownames(beta_mat) <- paste0("topic_", 1:2)
+  
+  beta_tbl           <- beta_mat |> 
+    as_tibble(rownames = "topic") |> 
+    dplyr::mutate(topic = 1:2)
+  
+  beta_long          <- beta_tbl |> 
+    tidyr::pivot_longer(
+      cols      = - topic, 
+      names_to  = "term", 
+      values_to = "ln_prob"
+    ) |> 
+    dplyr::arrange(term)
+  
+  ap_topics <- beta_long |> 
+    dplyr::mutate(
+      beta = exp(ln_prob)
+    ) |> 
+    dplyr::select(- ln_prob)
+  
+} else {
+  # read in previously saved file
+  ap_topics <- read_tsv(here(
+    "data", "retain", "ap_topics.txt"
+  ))
+}
+
+ap_topics |> print(digits = 2)
+```
+
+```{r}
+#| label: save-ap-topics
+
+# save as text file just once
+save_file <- FALSE
+if (save_file) {
+  ap_topics |> write_tsv(
+    here("data", "retain", "ap_topics.txt")
+  )
+}
+```
+
+Here are the most probable terms for each of the two constructed topics, along with their probabilities (beta), shown as a bar chart.
+
+```{r}
+#| label: ap-top-terms
+
+ap_top_terms <- ap_topics |> 
+  slice_max(beta, n = 10, by = "topic")
+```
+
+```{r}
+#| label: ap-top-terms-wide
+
+# afterthought: display bar chart, not this table
+ap_top_terms_1 <- ap_top_terms |> 
+  dplyr::filter(topic == 1L)
+
+ap_top_terms_2 <- ap_top_terms |> 
+  dplyr::filter(topic == 2L)
+
+ap_top_terms_wide <- tibble::tibble(
+  rank    = 1:nrow(ap_top_terms_1), 
+  topic_1 = ap_top_terms_1$term, 
+  topic_2 = ap_top_terms_2$term
+)
+```
+
+```{r}
+#| label: fig-ap-top-terms
+#| fig-cap: "AP articles: most probable terms by topic"
+
+g_ap_top_terms <- ap_top_terms |> 
+  mutate(term = reorder_within(
+    x = term, 
+    by = beta, 
+    within = topic)) |> 
+  ggplot(mapping = aes(
+    x = beta, y = term, fill = factor(topic)
+  )) + 
+  geom_col(show.legend = FALSE) + 
+  facet_wrap(~ as_factor(topic), scales = "free") + 
+  scale_y_reordered() + 
+  labs(title = "AP articles: most probable terms by topic")
+g_ap_top_terms
+```
+
+Topics 1 and 2 seem to pertain to business and politics, respectively, although "new" and "people" are prominent terms for both topics.
+
+Another way to compare topics 1 and 2 is to examine the terms shared by the two topics and then find the terms having the biggest disparity in (topic, term) probability (beta). Here's a bar chart showing the more prominent differences, expressed as
+
+$$
+\begin{align}
+  \log_2 \left( \frac{\beta_2}{\beta_1} \right)
+\end{align}
+$$ {#eq-log-ratio-topic-term}
+
+restricting the set of terms to those assigned to both topics $(\min(\beta_1, \beta_2) > 0)$ with at least one of them exceeding a probability threshhold, say $(\max(\beta_1, \beta_2) > 0.001)$.
+
+```{r}
+#| label: beta-ratio-wide
+
+beta_ratio_wide <- ap_topics |> 
+  mutate(topic = paste0("beta_", topic)) |> 
+  pivot_wider(names_from = topic, values_from = beta) |> 
+  filter(
+    pmin(beta_1, beta_2) > 0, 
+    pmax(beta_1, beta_2) > 0.001
+  ) |> 
+  mutate(log_ratio = log2(beta_2 / beta_1))
+```
+
+```{r}
+#| label: fig-beta-ratio-wide
+#| fig-cap: "Log2 ratio of beta in topic 2 / topic 1"
+
+g_beta_ratio_wide <- beta_ratio_wide |> 
+  group_by(direction = log_ratio > 0) |> 
+  slice_max(abs(log_ratio), n = 10) |> 
+  ungroup() |> 
+  mutate(term = reorder(term, log_ratio)) |> 
+  ggplot(aes(log_ratio, term)) +
+  geom_col() +
+  labs(x = "Log2 ratio of beta in topic 2 / topic 1", y = NULL)
+g_beta_ratio_wide
+```
+
+This figure further supports the earlier conjecture that topics 1 and 2 pertain to business and politics, respectively.
+
+## Additional Aspects of Text Analysis
+
+We've only touched on a few basic ideas and methods underpinning text analysis. Additional topics (on both the analysis and generation of text) include the following (which vary in complexity).
+
+-   n-grams: phrases of $n$ consecutive words
+-   word networks (as graphs)
+-   sentiment analysis
+-   clustering, categorization, and prediction
+-   word embedding (as real-valued vectors)
+-   specialized tokenizers, stemming
+-   non-English human languages (including machine translation)
+-   large language models (LLMs)
+
+## Team Exercises
+
+1.  As a follow-up to the class exercise, propose a way to compare the vocabularies of Austen and Wells. What words are shared most? Least? Should stop-words be excluded? Express your proposal as pseudo-code.
+
+2.  We presented a table showing the word whose tf-idf is maximum for each of Jane Austen's novels. Extend this comparison to show the words having the topmost tf-idf values. How would you present this comparison as a table? As a figure?
+
+3.  Following the example of a document-feature matrix (DFM), extract the inaugural addresses of 1861, 1933, and 1961 from `quanteda::data_corpus_inaugural`. For each token in each address, calculate its tf-idf to determine the tokens that most distinguish the three addresses.
+
+4.  In the preceding exercise, the meta-data give us the name of the speaker and the year of the address. How would you use that knowledge to evaluate a topic-modeling algorithm applied to the inaugural addresses? Time permitting, conduct such an evaluation of a topic-modeling method based on the `topicmodels` R package.
+
+## Resources
+
+[Text Mining with R: A Tidy Approach](https://www.tidytextmining.com/) by Silge and Robinson
+
+[tf–idf - Wikipedia](https://en.wikipedia.org/wiki/Tf%E2%80%93idf)
+
+[CRAN Task View for Natural Language Processing](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html)
+
+[Introduction to the tm Package: Text Mining in R](https://cran.r-project.org/web/packages/tm/vignettes/tm.pdf)
+
+[Quantitative Analysis of Textual Data • quanteda](https://quanteda.io/)
+
+[Latent Dirichlet Allocation](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) by David Blei, Andrew Ng, and Michael Jordan. JMLR (2003)

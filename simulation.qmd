@@ -1,0 +1,715 @@
+---
+title: "Statistical Simulation"
+subtitle: "Part 1, session 3b of Data Mining Intro"
+author: 
+  - name: "Send comments to: Tony T (adthral)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "s3b"
+  file_prefix: "s3b_stat_sim"
+abstract: 
+  "Introduce basic ideas and methods of statistical simulation studies.  <br><br>"
+bibliography: s3b_references.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(astsa)
+library(GGally)
+# library(gutenbergr)
+library(here)
+library(ISLR2)
+# library(janeaustenr)
+library(latex2exp)
+# library(quanteda)
+# library(tidytext)
+library(tidyverse)
+library(tinytex)
+# library(tm)
+# library(tokenizers)
+# library(topicmodels)
+library(tufte)
+
+```
+
+```{r}
+#| label: local-source
+
+# source(here("code", "rmse_per_grp.R"))
+# source(here("code", "xtabs_to_jaccard.R"))
+source(here("code", "gen_circuit.R"))
+```
+
+------------------------------------------------------------------------
+
+## Introduction {#sec-introduction}
+
+Statistical simulation generates random data from specified distributions in order to model the behavior of complex systems and analyze potential outcomes of various scenarios. Simulations augment analytic solutions, enabling researchers to explore different possibilities and assess alternative methods.  Here are some of the uses of statistical simulation.
+
+  - Comparing statistical methods
+  - Assessing the robustness of data analyses
+  - Understanding system behavior
+  - Supplementing real-world data
+
+## Generating Random Numbers from a Given Distribution {#sec-rng}
+
+As mentioned in an earlier session, the R `stats` package provides random number generators for commonly used probability distributions. For each random number generator the package also provides the probability density function (for continuous distributions) or the probability mass function (for discrete distributions), along with cumulative versions (incomplete integrals or sums), and the inverse of the cumulative versions, the quantile functions. The naming convention is illustrated by the uniform distribution over a finite interval (unit interval by default).[^art-Rrng]
+
+[^art-Rrng]: See @Rrng.
+
+-   `dunif()` density at a given point $x$
+-   `punif()` cumulative probability, that $X \le x$
+-   `qunif()` quantile, return $x$ having prescribed cumulative probability $p$
+-   `runif()` generate indpendent instances $(X_1, \ldots, X_n)$ of a uniform random variable
+
+```{r}
+#| label: rng-tbl
+
+rng_tbl <- tibble::tribble(
+    ~fn, ~value, ~distribution,
+    "rbeta", "dbl", "Beta",
+    "rcauchy", "dbl", "Cauchy",
+    "rchisq", "dbl", "(non-central) Chi-Squared",
+    "rexp", "dbl", "Exponential",
+    "rf", "dbl", "F",
+    "rgamma", "dbl", "Gamma",
+    "rlnorm", "dbl", "Log Normal",
+    "rlogis", "dbl", "Logistic",
+    "rnorm", "dbl", "Normal",
+    "rt", "dbl", "Student t",
+    "runif", "dbl", "Uniform",
+    "rweibull", "dbl", "Weibull",
+    "rbinom", "int", "Binomial",
+    "rgeom", "int", "Geometric",
+    "rhyper", "int", "Hypergeometric",
+    "rnbinom", "int", "Negative Binomial",
+    "rpois", "int", "Poisson",
+  )
+```
+
+```{r}
+#| label: dpqr-tbl
+
+# separate function prefix (type) from remaining name
+dpqr_tbl <- rng_tbl |> 
+  dplyr::mutate(
+    prefix = "[d, p, q, r]", 
+    suffix = stringr::str_remove(fn, "r")
+  ) |> 
+  dplyr::select(
+    prefix, suffix, value, distribution
+  )
+```
+
+### Continuous Distributions
+
+The `stats` package includes the following continuous distributions.
+
+```{r}
+#| label: tbl-dpqr-tbl
+#| tbl-cap: "Continuous Distributions from `stats`"
+
+dpqr_tbl |> 
+  dplyr::filter(value == "dbl") |> 
+  dplyr::select(- value) |> 
+  knitr::kable(
+    caption = "Continuous Distributions from `stats`"
+  )
+```
+
+These distributions have interesting histories and relationships.[^book-rng-history] For example a beta variable $X$ having shape parameters $(\alpha, \beta)$ can be expressed as the ratio $U/(U + V)$, where $(U, V)$ are independent gamma variables having a common scale parameter, and respective shape parameters $(\alpha, \beta)$. See the resources listed below if interested.
+
+[^book-rng-history]:  See @forbes2010statistical and @johnson1985distributions.
+
+### Discrete Distributions
+
+The `stats` package also includes the following discrete distributions.
+
+```{r}
+#| label: tbl-dpqr-int
+#| tbl-cap: "Discrete Distributions from `stats`"
+
+dpqr_tbl |> 
+  dplyr::filter(value == "int") |> 
+  dplyr::select(- value) |> 
+  knitr::kable(
+    caption = "Discrete Distributions from `stats`"
+  )
+```
+
+Again, these distributions have interesting histories and relationships. For example the Poisson distribution can described as the limiting case of binomial distributions, $\text{Binom}(n, p_n)$ such that the respective expected values, $n \times p_n$, converge to $\lambda > 0$ as $n \rightarrow \infty$. Equivalently we can write $p_n \approx \lambda/n$, so that $p_n$, the probability of success on a single Bernoulli trial, becomes vanishingly small as the number $n$ of Bernoulli trials increases. For this reason the Poisson distribution has been called "the law of rare events".
+
+## Example Application {#sec-mean-v-median-example}
+
+Statistical simulation has been used to evaluate proposed statistical methods. Here's an admittedly tame example (where the answer has already been determined mathematically).
+
+Let $\hat{\mathcal{m}}$ and $\hat{\mu}$ denote the median and mean, respectively, of a random sample from a continuous distribution. For a symmetric distribution (with a defined population mean value), the population median and mean coincide. But the sample mean is highly sensitive to a few outlying values in the sample, and is thus less robust than the sample median for long-tailed distributions.
+
+Consequently, in financial applications and other applications where long-tailed distributions occur, the median is the preferred descriptor of the central value of the sample and of the population.
+
+In some cases the robustness of the sample median comes at a cost. If the population distribution is normal with mean $\mu$ and variance $\sigma^2$ then the sample mean has smaller variance than the sample median (although they estimate the same population value).
+
+$$
+\begin{align}
+  \text{Var} \left\{ \hat{\mu} \right\} &= \frac{\sigma^2}{n} \\ 
+  \\ 
+  \text{Var} \left\{ \hat{\mathcal{m}} \right\} &= \frac{\pi}{2} \frac{\sigma^2}{n + 1} \\ 
+  \\ 
+  \frac{ \text{Var} \left\{ \hat{\mathcal{m}} \right\} }{ \text{Var} \left\{ \hat{\mu} \right\} } &\approx \frac{\pi}{2} \\ 
+  &\approx 1.57
+\end{align}
+$$ {#eq-variance-mean-v-median}
+
+This ratio of variances in the normal case can be verified by simulation.
+
+In this example, simulation would merely illustrate a property already determined mathematically. But in other situations, statistical simulation may be the best practical way to understand the properties of a proposed statistical procedure, or more generally, a system that entails random events.
+
+## Class Exercise {#sec-class-exr}
+
+With a teammate, generate a sample of $n$ pseudo-random numbers following the normal distribution, for example using `stats::rnorm()`. Calculate $\hat{\mathcal{m}}$ and $\hat{\mu}$, the sample `median()` and `mean()`. Now repeat that process a total of $R$ times, recording the values of the sample mean and median in each run. This gives a sample of size $R$ of the pair $(\hat{\mathcal{m}}, \hat{\mu})$. What is the sample variance of these two estimators? Take 20 minutes to prepare to report your progress to the class.
+
+## Monte Carlo Simulation {#sec-mc-sim}
+
+Monte Carlo simulation encompasses a broad set of algorithms that use random sampling to obtain numerical values. Mathematician [Stanislav Ulam](https://en.wikipedia.org/wiki/Stanis%C5%82aw_Ulam) led the development of this approach (and coined the name) as part of the Manhattan Project during World War 2. The approach is used when other types of numerical calculation are not feasible.
+
+### Example 1: estimate $\pi$ {#sec-est-pi}
+
+Here is a simple illustration. Recall that a circle of radius $r$ has an area equal to $\pi \; r^2$. Setting $r = 1$ we see that the unit circle has an area equal to $\pi$. Centered at the origin of the plane, the area is divided equally among the four quadrants of the plane. Thus the area within the first quadrant equals $\pi/4$. We can use random sampling to estimate $\pi$ as follows.
+
+1.  Generate pairs of independent standard uniform random variables $\{ (X_j, Y_j) \}_{j = 1}^n$. They constitute uniformly random points in the unit square.
+2.  Define $B_j$ to be the Bernoulli indicator function, equal to 1 if $X_j^2 + Y_j^2 < 1$ and equal to zero otherwise. Note that $B_j$ has expected value $\pi/4$.
+3.  Calculate the sample average $A(B_{\bullet})$ as an estimate of $\pi/4$.
+4.  Multiply the sample average by 4 as an estimate of $\pi$.
+
+The precision of the estimate improves as the number $n$ of randomly generated points increases.
+
+### Example 2: estimate area of an arbitrary region {#sec-est-area}
+
+The figure below shows a simple closed curve within the unit square centered at the origin.
+
+```{r}
+#| label: c-tbl
+
+c_tbl <- gen_circuit_tbl()
+```
+
+```{r}
+#| label: fig-c-tbl
+#| fig-cap: "Monte Carlo estimation of area"
+
+g_c_tbl <- c_tbl |> 
+  ggplot2::ggplot(mapping = aes(x = c, y = s)) + 
+  ggplot2::geom_path() + 
+  ggplot2::labs("Monte Carlo estimation of area")
+g_c_tbl
+```
+
+The closed curve defines an interior region $\mathcal{R}$ bounded by the square $\mathcal{S} = [-0.5, 0.5] \times [-0.5, 0.5]$. We assume that for any point $(x, y) \in \mathcal{S}$ we can determine whether the point is inside or outside $\mathcal{R}$. The Monte Carlo estimate of the area of this region is the proportion of points randomly selected from $\mathcal{S}$ that fall within $\mathcal{R}$ multiplied by the area of $\mathcal{S}$ (which is 1 in this case).
+
+In the current example, the closed curve shown above is a deformation of the unit circle in which the Euclidean norm at each point, $t$, along the circle has been multiplied by a prescribed positive continuous function, $f(t)$. Consequently a point $(x, y)$ is in the interior of the closed curve if $x^2 + y^2 < f^2(t)$, where $t \in [0,1)$ equals $\arctan(y, x) \bmod{2 \pi}$.
+
+This is a common application of Mote Carlo simulation: estimating the volume of given region $\mathcal{R}$ in Euclidean space, under the assumption that, for any given point, we can determine whether the point is inside or outside the region.
+
+### Importance Sampling [^art-importance-sampling]
+
+[^art-importance-sampling]:  See @Tokdar_Kass_2010.
+
+The above description of Monte Carlo simulation is also called rejection sampling, and can be generalized as follows.  Let $\mathcal{R}$ denote a region of $\mathbb{R}^d$ having a finite volume $| \mathcal{R} |$.  We want to estimate the average value, $\mu(f, \mathcal{R})$ of any given integrable function $f: \mathcal{R} \rightarrow \mathbb{R}$.
+
+$$
+\begin{align}
+  \mu(f, \mathcal{R}) &= \frac{1}{| \mathcal{R} |} \int_\mathcal{R} f(x) \; dx
+\end{align}
+$$ {#eq-mu-f-region}
+
+This corresponds to the expected value of $f(X)$ when the random vector $X$ has a uniform probability distribution over $\mathcal{R}$.  More generally, suppose we also have some probability density function $p(\cdot)$ restricted to $\mathcal{R}$, and we want to calculate the expected value of $f(X)$ when $X$ has probability density $p(\cdot)$.
+
+$$
+\begin{align}
+  \mu(f, p) &= \int_\mathcal{R} f(x) \times p(x) \; dx
+\end{align}
+$$ {#eq-mu-f-p}
+
+Now. it may not be convenient or feasible to generate a random sample of vectors $\{ X_1, \ldots, X_n \}$ from the probability distribution having given density function $p(\cdot)$.  But we may be able to generate a random sample of vectors $\{ Y_1, \ldots, Y_n \}$ from a density function $q(\cdot)$ defined on a region $\mathcal{S}$ containing $\mathcal{R}$.  Then $\mu(f, p)$ can be expressed as the following weighted expectation of $f(Y)$. 
+
+$$
+\begin{align}
+  \mu(f, p) &= \int_\mathcal{R} w(y) \times f(y) \times q(y) \; dy  \\ \\ 
+  & \text{where } \\ \\ 
+  w(y) &= \frac{p(y)}{q(y)}
+\end{align}
+$$ {#eq-mu-w-f-q}
+
+The estimated value takes the form of the following weighted sum.
+
+$$
+\begin{align}
+  \hat{\mu}(f, p) &= \frac{\sum_{j = 1}^n w(Y_j) \; f(Y_j)}
+  {\sum_{k = 1}^n w(Y_k)}
+\end{align}
+$$ {#eq-avg-w-f-q}
+
+This approach is called _importance sampling_, and has many variations.
+
+Example: Suppose $Z$ has a standard normal distribution with density function $\phi(\cdot)$ and cumulative probability function $\Phi(\cdot)$, and we want to determine the following conditional expectation.
+
+$$
+\begin{align}
+  \mu(f, p) &= E \left \{ f(Z) \; | \; Z \ge 6  \right \} \\ 
+  &= \int_\mathcal{R} f(z) \times p(z) \; dz \\ \\ 
+  & \text{where } \\ \\ 
+  \mathcal{R} &= \{ z \; : \; z \ge 6 \} \\ 
+  p(z) &= 
+  \begin{cases}
+    0 & \text{if } z < 6 \\ 
+    \frac{\phi(z)}{1 - \Phi(6)} & \text{if } z \ge 6
+  \end{cases}
+\end{align}
+$$ {#eq-mu-f-z-conditional}
+
+A naive approach to estimating $\mu(f, p)$ would be to generate standard normal variables $\{ Z_1, \ldots, Z_n \}$, rejecting those values less than 6, and then averaging $f(Z_\nu)$ across the remaining values.  The problem is that we would expect only one in a billion values to pass this threshhold, making that algorithm highly inefficient.
+
+Alternatively, we could define $Y_\nu = 12 | Z_\nu |$, and apply the weighted averaging of @eq-avg-w-f-q.[^is-xmpl-12-z]
+
+[^is-xmpl-12-z]: If $Y_\nu = 12 | Z_\nu |$, then the probability that $Y_\nu \ge 6$ is about `r round(2 * pnorm(-0.5), 2)`.
+
+$$
+\begin{align}
+  w(y) &= \frac{p(y)}{q(y)} \\ \\ 
+  & \text{where } \\ \\ 
+  p(y) &= 
+  \begin{cases}
+    0 & \text{if } z < 6 \\ 
+    \frac{\phi(y)}{1 - \Phi(6)} & \text{if } z \ge 6
+  \end{cases} \\ 
+  q(y) &= \frac{2}{12} \; \phi \left ( \frac{y}{12} \right )
+\end{align}
+$$ {#eq-mu-f-z-conditional}
+
+This weighting function $w(\cdot)$ rapidly decreases on the interval $y \in [6, \infty)$ and otherwise assigns zero weight.
+
+```{r}
+#| label: cum-condl-z
+
+# P( Z <= z given Z >= z_0 ) 
+cum_condl_z <- function(
+    z_0   = 6,  # <dbl> threshold for conditioning
+    delta = 1,  # <dbl> increment beyond threshold
+    by    = 0.1 # <dbl> step-size from 0 to delta
+) {
+  z_tbl <- tibble::tibble(
+    z  = seq(z_0, z_0 + delta, by = by), 
+    lr = pnorm(- z, log.p = TRUE) - pnorm(- z_0, log.p = TRUE), 
+    ratio = exp(lr), 
+    p_cum = 1 - ratio
+  )
+  return(z_tbl)
+}
+# (cum_condl_tbl <- cum_condl_z())
+# # A tibble: 11 × 4
+#        z     lr   ratio p_cum
+#    <dbl>  <dbl>   <dbl> <dbl>
+#  1   6    0     1       0    
+#  2   6.1 -0.621 0.538   0.462
+#  3   6.2 -1.25  0.286   0.714
+#  4   6.3 -1.89  0.151   0.849
+#  5   6.4 -2.54  0.0787  0.921
+#  6   6.5 -3.20  0.0407  0.959
+#  7   6.6 -3.87  0.0208  0.979
+#  8   6.7 -4.55  0.0106  0.989
+#  9   6.8 -5.24  0.00530 0.995
+# 10   6.9 -5.94  0.00264 0.997
+# 11   7   -6.65  0.00130 0.999
+```
+
+```{r}
+#| label: wt-is
+
+# wt(z) = p(z) / q(z)
+# p(z)  = (d / dz) P( Z <= z given Z >= z_0 )
+# q(z)  = (d / dz) P( m * abs(Z) <= z )
+wt_is <- function(
+    m     = 12, # <dbl> multiple of abs(Z)
+    z_0   = 6,  # <dbl> threshold for conditioning
+    delta = 1,  # <dbl> increment beyond threshold
+    by    = 0.1 # <dbl> step-size from 0 to delta
+) {
+  w_tbl <- tibble::tibble(
+    z    = seq(z_0, z_0 + delta, by = by), 
+    p_ln = dnorm(- z, log = TRUE) - pnorm(- z_0, log.p = TRUE), 
+    q_ln = log(2/m) + dnorm(- z/m, log = TRUE), 
+    d_ln = p_ln - q_ln, 
+    wt   = exp(d_ln)
+  )
+  return(w_tbl)
+}
+# (wt_is_tbl <- wt_is())
+# # A tibble: 11 × 5
+#        z    p_ln  q_ln   d_ln      wt
+#    <dbl>   <dbl> <dbl>  <dbl>   <dbl>
+#  1   6    1.82   -2.84  4.65  105.   
+#  2   6.1  1.21   -2.84  4.05   57.6  
+#  3   6.2  0.598  -2.84  3.44   31.2  
+#  4   6.3 -0.0272 -2.85  2.82   16.8  
+#  5   6.4 -0.662  -2.85  2.19    8.94 
+#  6   6.5 -1.31   -2.86  1.55    4.71 
+#  7   6.6 -1.96   -2.86  0.900   2.46 
+#  8   6.7 -2.63   -2.87  0.239   1.27 
+#  9   6.8 -3.30   -2.87 -0.431   0.650
+# 10   6.9 -3.99   -2.88 -1.11    0.329
+# 11   7   -4.68   -2.88 -1.80    0.165
+```
+
+## Markov Chain Monte Carlo (MCMC) [^book-mcmc-peng] {#sec-mcmc}
+
+[^book-mcmc-peng]: See @rdpeng2022advstatcomp [chap. 7]
+
+### Overview
+
+Markov Chain Monte Carlo (MCMC) simulation encompasses many variations.  The basic problem to be addressed is the same as that of importance sampling:
+
+  - We would like to generate a random sample from a distribution having given density, $p(x), x \in \mathbb{R}^d$.
+
+  - We cannot directly generate the desired random sample, although we can evaluate $p(x)$ for any given $x \in \mathbb{R}^d$.
+
+The approach toward a solution can be framed as follows.
+
+  - Construct a Markov chain $X: \mathbb{Z} \rightarrow \mathbb{R}^d$ (a discrete-time random process) having a stationary distribution (to which $X(\cdot)$ converges) given by density $p(\cdot)$.
+
+  - Generate a sufficient number $n$ of samples from $X(\cdot)$ so that $\{ X(n), X(n+1), \ldots \}$ approximates a sample from the desired stationary distribution.
+
+### Markov chains
+
+Recall the definition of a Markov chain, $X(\cdot)$.  The conditional distribution of $X(t)$ given past values, $X(t-1), X(t-2), \ldots$, is just the conditional distribution of $X(t)$ given its preceding value, $X(t-1)$.
+
+To illustrate, suppose that the values of $X(\cdot)$ are restricted to a finite set, say $\{ 1, 2, 3 \}$.  Then we define the transition probability $p_{a, b}$ as the following conditional probability.
+
+$$
+\begin{align}
+  p_{a, b} &= P(X(t) = b \; | \; X(t-1) = a)
+\end{align}
+$$ {#eq-discrete-transition-prob}
+
+These transition probabilities are the elements of the following transition probability matrix $T$.
+
+$$
+\begin{align}
+  T &= 
+  \left (
+  \begin{matrix}
+    p_{1, 1} & p_{1,2} & p_{1,3} \\ 
+    p_{2, 1} & p_{2,2} & p_{2,3} \\ 
+    p_{3, 1} & p_{3,2} & p_{3,3}
+  \end{matrix}
+  \right )
+\end{align}
+$$ {#eq-transition-matrix-example}
+
+If we denote the (marginal) probability distribution of $X(n)$ as $\pi_n$ 
+
+$$
+\begin{align}
+  \pi_n &= \left ( P(X(n) = 1), P(X(n) = 2), P(X(n) = 3) \right )
+\end{align}
+$$ {#eq-marginal-prob-example}
+
+then we have 
+
+$$
+\begin{align}
+  \pi_{n+1} &= \pi_n  \; T
+\end{align}
+$$ {#eq-marginal-prob-transition}
+
+Consequently we have 
+
+$$
+\begin{align}
+  \pi_n &= \pi_0  \; T^n
+\end{align}
+$$ {#eq-marginal-prob-power}
+
+Under regularity conditions[^transition-regularity] there is a unique stationary distribution, say $\pi_\infty$, such that $\pi_n \rightarrow \pi_\infty$.  Convergence is accompanied by diminishing values of $\lVert \pi_{n+1} - \pi_n \rVert$.
+
+[^transition-regularity]: A unique, stationary distribution exists if the chain is aperiodic, and if all states communicate and are positive recurrent.  For further details see the [Wikipedia article](https://en.wikipedia.org/wiki/Discrete-time_Markov_chain#Stationary_distributions).
+
+### Time Reversal
+
+Recall that $p(x)$ is the prescribed stationary distribution of a Markov chain $X(\cdot)$ that we must construct.  To do so, we will use the fact that if $X(\cdot)$ is time-reversible, then the marginal distribution of $X(\nu)$ is stationary.  This can be seen as follows.
+
+$X(\cdot)$ is time-reversible if the following holds.  For any given $n > 0$ define $Y(\nu) = X(n - \nu)$ for $0 \le \nu \le n$.  Then the joint probability distribution of the sequence $( X(0), \ldots, X(n) )$ is equal to that of the sequence $( Y(0), \ldots, Y(n) ) = ( X(n), \ldots, X(0) )$.
+
+It follows that the ordered pair of random variables $(X(0), X(n))$ has the same distribution as that of $(X(n), X(0))$, so that $X(0)$ has the same distribution as $X(n)$, and this holds for all $n > 0$.  Thus if $X(\cdot)$ is time-reversible its marginal distribution must be stationary.
+
+Now assume for the moment that the values of $X(t)$ form a discrete set, so that: 
+
+$$
+\begin{align}
+  P\left ( X(0) = a, X(1) = b \right ) &= \pi_\infty(a) \times p_{a, b} \\ 
+  P\left ( X(1) = a, X(0) = b \right ) &= \pi_\infty(b) \times p_{b, a}
+\end{align}
+$$ {#eq-balance-eqns-prep}
+
+If $X(\cdot)$ is time-reversible, it follows that: 
+
+$$
+\begin{align}
+  \pi_\infty(a) \times p_{a, b} &= \pi_\infty(b) \times p_{b, a}
+\end{align}
+$$ {#eq-balance-eqns}
+
+Equations of this form are called _local balance equations_.  If they hold then marginal distribution $\pi_\infty$ along with transition probabilities $p_{a, b}$ define a stationary Markov chain.
+
+### Metropolis-Hastings Algorithm[^art-MH-algo]
+
+[^art-MH-algo]: See @MH_algo_Wikipedia_2025.
+
+Suppose now that $q(Y \; | \; X )$ is a transition density from which we can generate a random sequence $X(0), X(1), \ldots$, and let $p(x)$ denote the prescribed stationary distribution of $X(\cdot)$. Also suppose that the current state of the generated sequence is $X(t) = x$.
+
+#### Outline
+
+The Metropolis-Hastings procedure is an iterative algorithm for generating the next value of the sequence as follows.
+
+  1. Generate a candidate value $y \sim q(Y \; | \; x )$.
+  1. Calculate _acceptance ratio_ $\alpha(y \; | \; x)$ shown below.
+  1. Generate $u \sim unif(0, 1)$.  Set the next value to $y$ if $u \le \alpha(y \; | \; x)$.  Otherwise set the next value to the current value, $x$.
+
+$$
+\begin{align}
+  \alpha(y \; | \; x) &= \max \left \{1, \frac{ p(y) \; q(x \; | \; y) }{ p(x) \; q(y \; | \; x ) } \right \}
+\end{align}
+$$ {#eq-accept-ratio}
+
+#### Metropolis Algorithm
+
+The original algorithm, known as the Metropolis algorithm, is a simpler procedure that generates a random walk.  Let $g(\cdot)$ denote a probability density function that is symmetric with respect to $x = 0$.  Given the current state $X(t) = x$, generate the candidate value $y$ as: 
+
+$$
+\begin{align}
+  y &= x + \epsilon \\ \\ 
+  &\text{where } \\ \\ 
+  \epsilon &\sim g(\cdot)
+\end{align}
+$$ {#eq-Metro-next-y}
+
+Then the density $q(y \; | \; x)$ of the transition from $x$ to $y = x + \epsilon$ is: 
+
+$$
+\begin{align}
+  q(y \; | \; x) &= g(y - x)
+\end{align}
+$$ {#eq-Metro-transition-dens}
+
+Since $g(\cdot)$ is symmetric about zero, $q(y \; | \; x )$ is symmetric in its two arguments.
+
+$$
+\begin{align}
+  q(x \; | \; y) &= g(x - y) \\ 
+  &= g(y - x) \\ 
+  &= q(y \; | \; x)
+\end{align}
+$$ {#eq-Metro-transition-symm}
+
+Consequently the acceptance ratio simplifies as follows.
+
+$$
+\begin{align}
+  \alpha(y \; | \; x) &= \max \left \{1, \frac{ p(y) \; q(x \; | \; y) }{ p(x) \; q(y \; | \; x ) } \right \} \\ 
+  &= \max \left \{1, \frac{ p(y) }{ p(x) } \right \}
+\end{align}
+$$ {#eq-Metro-accept-ratio}
+
+#### Example
+
+For some fixed $\delta > 0$ let $g(\cdot)$ be the uniform density on the interval $(-\delta, \delta)$.  Let the specified stationary distribution be given by the standard normal density function $\phi(\cdot)$.  Then the Metropolis algorithm outlined above will generate a random walk in discrete time having jump-magnitudes governed by $\delta$.
+
+The steps to generate the next value $y$ given the current value $x$ are a simplification of the steps previously outlined.
+
+  1. Generatecandidate value $y = x + \epsilon$, where $\epsilon \sim uniform(-\delta, \delta)$.
+  1. Calculate _acceptance ratio_ $\alpha(y \; | \; x)$ shown below.
+  1. Generate $u \sim unif(0, 1)$.  Set the next value to $y$ if $u \le \alpha(y \; | \; x)$.  Otherwise set the next value to the current value, $x$.
+
+$$
+\begin{align}
+  \alpha(y \; | \; x) &= \max \left \{1, \frac{ \phi(y) }{ \phi(x) } \right \}
+\end{align}
+$$ {#eq-Metro-accept-ratio-normal}
+
+Here are three simulations, each starting at $X(0) = 0$, but with $\delta \in \{ \frac{1}{8}, \frac{1}{2}, 2 \}$, respectively.  Recall that $| X(t+1) - X(t) | \le \delta$. Thus the trajectories are decreasingly smooth.
+
+```{r}
+#| label: alpha-nrm-ln
+
+# acceptance log-ratio for standard normal density
+alpha_nrm_ln <- function(
+    y, # <dbl> candidate for next value
+    x  # <dbl> current value
+) {
+  min(dnorm(y, log = TRUE) - dnorm(x, log = TRUE), 0)
+}
+```
+
+```{r}
+#| label: Met-algo-nrm
+
+# generate a standard normal random walk
+gen_nrw <- function(
+  delta = 0.25,  # <dbl> max jump-size  
+  n_pts = 1024L, # <int> sequence length  
+  x_0   = 0        # <dbl> starting value
+) {
+  x <- vector(mode = "numeric", length = n_pts)
+  x [[1]] <- x_0
+  eps  <- runif(n_pts, -delta, delta)
+  u_ln <- runif(n_pts) |> log()
+  for (k in 2:n_pts) {
+    y <- x [[k - 1L]] + eps [[k]]
+    if ( u_ln [[k]] <= alpha_nrm_ln( y, x[[k - 1L]] )) {
+      x [[k]] <- y
+    } else {
+      x [[k]] <- x [[k - 1L]]
+    }
+  }
+  return(x)
+}
+```
+
+```{r}
+#| label: normal-rw
+
+set.seed(97)
+
+# try several values of delta
+d_vec <- c(1, 4, 16)/8
+
+nrm_rw_wide <- tibble::tibble(
+  x_1   = gen_nrw(delta = d_vec [[1]]), 
+  x_2   = gen_nrw(delta = d_vec [[2]]), 
+  x_3   = gen_nrw(delta = d_vec [[3]]), 
+  t_idx = 1:length(x_1)
+) |> 
+  dplyr::select(t_idx, x_1:x_3)
+
+nrm_rw_long <- nrm_rw_wide |> 
+  tidyr::pivot_longer(
+    cols = x_1:x_3, 
+    names_to = "d_idx", 
+    names_prefix = "x_", 
+    values_to = "z"
+  )
+
+```
+
+```{r}
+#| label: fig-nrw-trajectory
+#| fig-cap: "X(t) with small to large jumps"
+
+g_nrm_rw <- nrm_rw_long |> 
+  dplyr::group_by(d_idx) |> 
+  dplyr::rename(time = t_idx) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = time, y = z, fill = d_idx, color = d_idx
+  )) + 
+  ggplot2::geom_line(show.legend = FALSE) + 
+  ggplot2::facet_grid(
+    rows = vars(d_idx)
+  ) + 
+  ggplot2::labs(
+    title = "Normal random walks"
+  )
+g_nrm_rw
+```
+
+Next we see histograms of the generated values.  For the first and smoothest series more time would have been needed to traverse a greater portion of the normal distribution values.
+
+```{r}
+#| label: fig-nrw-hist
+#| fig-cap: "Histograms of X(t) with small to large jumps"
+
+g_hist_nrm_rw <- nrm_rw_long |> 
+  dplyr::group_by(d_idx) |> 
+  dplyr::rename(time = t_idx) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = z, fill = d_idx, color = d_idx
+  )) + 
+  ggplot2::geom_histogram(show.legend = FALSE) + 
+  ggplot2::facet_grid(rows = vars(d_idx)) + 
+  ggplot2::labs(
+    title = "Histograms of normal random walks"
+  )
+g_hist_nrm_rw
+```
+
+Comparing the sets of summary statistics below, we see that the first random walk was confined to a narrower range of values.  The final column is the effective sample size estimated by `R` function `astsa::ESS()`.
+
+```{r}
+#| label: tbl-nrw-smy
+#| tbl-cap: "Summary statistics: normal random walks"
+
+nrm_rw_smy <- nrm_rw_long |> 
+  dplyr::group_by(d_idx) |> 
+  dplyr::rename(time = t_idx) |> 
+  dplyr::summarise(
+    min = min(z), 
+    q_1 = stats::quantile(z, probs = 0.25), 
+    avg = mean(z), 
+    q_3 = stats::quantile(z, probs = 0.75), 
+    max = max(z), 
+    sd  = sd(z), 
+    n   = n(), 
+    ess = astsa::ESS(z)
+  )
+nrm_rw_smy |> print(digits = 2)
+```
+
+## Team Exercises {#sec-team-exr}
+
+1.  As in the class exercise, generate $R$ samples, each a sample of size $n$, but this time use the Cauchy distribution (`rcauchy()`) rather than normal distribution (`rnorm()`). Calculate the sample variance and construct a histogram of the $R$ sample means:
+
+$$
+\left\{ \hat{\mu}_r \right\}_{r = 1}^R
+$$ {#eq-sim-sample-mean}
+
+2.  Suppose $(U_1, \ldots, U_n)$ are independent and identically distributed random variables following the standard uniform distribution on the interval $(0, 1)$. Now set $X_j = - \log_e(U_j)$ for $j = 1, \ldots, n$. What is the distribution of $(X_1, \ldots, X_n)$?
+
+3.  In the Monte Carlo illustration of @sec-est-pi, what is the standard error of estimate of $\pi$?
+
+## Resources
+
+[Statistical Distributions](https://www.google.co.uk/books/edition/Statistical_Distributions/OA4AJZsnOpMC?hl=en) by Forbes, Evans, Hastings, and Peacock
+
+[Distributions in Statistics](https://www.google.co.uk/books/edition/_/NSzEtAEACAAJ?hl=en&sa=X&ved=2ahUKEwiMpLHk3uiKAxUF9bsIHcSpBaIQre8FegQIGhAC) by Johnson and Kotz
+
+[Advanced Statistical Computing](https://bookdown.org/rdpeng/advstatcomp/) by Roger Peng
+
+[R: Random Number Generation](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.html)
+
+[Monte Carlo method - Wikipedia](https://en.wikipedia.org/wiki/Monte_Carlo_method)

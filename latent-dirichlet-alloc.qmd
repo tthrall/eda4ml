@@ -1,0 +1,907 @@
+---
+title: "Latent Dirichlet Allocation"
+subtitle: "Selected topics from Part 1 of Data Mining Intro"
+author: 
+  - name: "Send comments to: Tony T (tthrall)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "xtra_latent_dir_alloc"
+  file_prefix: "xtra_latent_dir_alloc"
+abstract: 
+  "Introduce latent Dirichlet allocation (LDA) using Gibbs sampling.  <br><br>"
+bibliography: xtra_latent_dir_alloc.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+# library(GGally)
+# library(gutenbergr)
+library(eeptools)
+library(here)
+# library(ISLR2)
+# library(janeaustenr)
+# library(latex2exp)
+# library(lda)
+# library(quanteda)
+library(tidytext)
+library(tidyverse)
+library(tinytex)
+library(tm)
+library(tokenizers)
+# library(topicmodels)
+# library(tufte)
+
+# package topic models available?
+topicmodels_loaded <- require(topicmodels)
+
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "text_helpers.R"))
+```
+
+------------------------------------------------------------------------
+
+## Introduction
+
+### Text Analysis
+
+Part 1, Session 2b, of the course presents an overview of text analysis based on @Silge_Robinson_2017.  The authors describe topic models, and in particular the method of Latent Dirichlet Allocation (LDA). Several course participants requested a more detailed description. This note is a response to that request.
+
+### Topic Models[^art-Steyvers-Griffiths-2007]
+
+[^art-Steyvers-Griffiths-2007]:  See @Steyvers_Griffiths_2007.
+
+A topic model treats documents as mixtures of topics, where a topic is a probability distribution over the elements of a vocabulary.  According to the model, each document is generated in the following steps: 
+
+  1. Generate a document-specific probability distribution over a fixed set of topics; and then 
+  1. For each word-position in that document: 
+   i) Select a topic at random; and 
+   i) Generate a vocabulary term from the selected topic.
+
+Standard statistical techniques can be used to invert this process, inferring the set of topics that were responsible for generating a collection of documents.
+
+### LDA Method
+
+Latent Dirichlet Allocation (LDA) was proposed by @BNJ2003LDA as a method of topic modeling. @Silge_Robinson_2017 use the `R` function `topicmodels::LDA()` with default parameter setting `method = VEM`, which denotes the Variational Expectation Maximization (EM) algorithm.  In this note we use an alternative implementation of LDA described below.
+
+## Book Review Example
+
+As an experiment we construct a small set of documents from two distinct sources.  We then run the documents through the LDA algorithm (without identifying the source of each document) specifying that $K = 2$ topics are to be constructed to see whether and how well the constructed topics match the original sources.
+
+### Data
+
+"Animal Farm" by George Orwell was published in 1945[^art-wiki-Animal-Farm], and nearly forty years later (1984) "The Butter Battle Book" by Dr. Seuss was published[^art-wiki-Butter-Battle-Book].  The books are quite different of course, but they both allude to the Soviet Union in its earlier and later years, respectively.
+
+[^art-wiki-Animal-Farm]: See @wiki_Animal_Farm.
+
+[^art-wiki-Butter-Battle-Book]: See @wiki_Butter_Battle_Book.
+
+As a toy example of a corpus of documents, we have extracted Wikipedia's description of the plots of the two books, counting each paragraph as a separate document.
+
+```{r}
+#| label: af-pst-lst
+
+# Animal Farm: story plot from Wikipedia
+# list of tibbles: paragraphs, sentences, tokens
+af_pst_lst <- para2token(
+  file = here::here(
+    "data", "retain", "Animal_Farm_summary.txt")
+)
+
+af_token_tbl <- af_pst_lst$ token_tbl |> 
+  dplyr::mutate(src = "AF") |> 
+  dplyr::select(src, everything())
+
+af_para_tbl <- af_pst_lst$ para_tbl |> 
+  dplyr::mutate(src = "AF") |> 
+  dplyr::select(src, everything())
+```
+
+```{r}
+#| label: bbb-pst-lst
+
+# The Butter Battle Book: story plot from Wikipedia
+# list of tibbles: paragraphs, sentences, tokens
+bbb_pst_lst <- para2token(
+  file = here::here(
+    "data", "retain", "Butter_Battle_summary.txt")
+)
+
+bbb_token_tbl <- bbb_pst_lst$ token_tbl |> 
+  dplyr::mutate(src = "BBB") |> 
+  dplyr::select(src, everything())
+
+bbb_para_tbl <- bbb_pst_lst$ para_tbl |> 
+  dplyr::mutate(src = "BBB") |> 
+  dplyr::select(src, everything())
+```
+
+```{r}
+#| label: af-bbb-token-tbl
+
+af_bbb_token_tbl <- dplyr::bind_rows(
+  af_token_tbl, 
+  bbb_token_tbl
+)
+
+# af_bbb_token_tbl
+# # A tibble: 725 × 5
+#    src     pdx   sdx   wdx word      
+#    <chr> <int> <int> <int> <chr>     
+#  1 AF        1     1     2 animal    
+#  2 AF        1     1     3 populace  
+#  3 AF        1     1     6 poorly    
+#  4 AF        1     1     7 run       
+#  5 AF        1     1     8 manor     
+#  6 AF        1     1     9 farm      
+#  7 AF        1     1    10 near      
+#  8 AF        1     1    11 willingdon
+#  9 AF        1     1    13 england   
+# 10 AF        1     1    15 ripened   
+# # ℹ 715 more rows
+```
+
+```{r}
+#| label: af-bbb-word-ct-lst
+#| eval: true
+
+# count the number of non-stop-words per source
+af_bbb_src_smy <- af_bbb_token_tbl |> 
+  dplyr::group_by(src) |> 
+  summarise(n_words = n())
+# af_bbb_src_smy
+# # A tibble: 2 × 2
+#   src   n_words
+#   <chr>   <int>
+# 1 AF        553
+# 2 BBB       172
+
+# count the number of words in the reconstructed para_tbl
+af_bbb_para_smy <- af_bbb_token_tbl |> 
+  dplyr::group_by(src, pdx) |> 
+  summarise(n_words = n())
+
+# af_bbb_para_smy
+# # A tibble: 9 × 3
+# # Groups:   src [2]
+#   src     pdx n_words
+#   <chr> <int>   <int>
+# 1 AF        1     158
+# 2 AF        2     153
+# 3 AF        3      83
+# 4 AF        4     103
+# 5 AF        5      56
+# 6 BBB       1      39
+# 7 BBB       2      41
+# 8 BBB       3      65
+# 9 BBB       4      27
+
+af_bbb_word_ct_lst <- list(
+  af_bbb_src_smy  = af_bbb_src_smy, 
+  af_bbb_para_smy = af_bbb_para_smy
+)
+```
+
+```{r}
+#| label: af-bbb-vocab-lst
+#| eval: true
+
+# unique non-stop-words per source
+af_vocab  <- af_token_tbl$  word |> unique()
+bbb_vocab <- bbb_token_tbl$ word |> unique()
+
+# union (AF, BBB)
+af_bbb_vocab <- af_bbb_token_tbl$ word |> unique()
+
+# intersection (AF, BBB)
+ab_shared_vocab <- base::intersect(af_vocab, bbb_vocab)
+
+# list results
+af_bbb_vocab_lst <- list(
+  af_vocab        = af_vocab, 
+  bbb_vocab       = bbb_vocab, 
+  af_bbb_vocab    = af_bbb_vocab, 
+  ab_shared_vocab = ab_shared_vocab
+)
+```
+
+```{r}
+#| label: af-bbb-vocab-ct
+#| eval: true
+
+# count the number of unique non-stop-words per source and overall
+af_bbb_vocab_ct <- tibble::tibble(
+  lbl = c("A", "B", "A_or_B", "A_and_B"), 
+  ct = c(
+    af_vocab |> length(), 
+    bbb_vocab |> length(), 
+    af_bbb_vocab |> length(), 
+    ab_shared_vocab |> length()
+  ))
+
+# af_bbb_vocab_ct
+# # A tibble: 4 × 2
+#   lbl        ct
+#   <chr>   <int>
+# 1 A         369
+# 2 B         130
+# 3 A_or_B    486
+# 4 A_and_B    13
+```
+
+```{r}
+#| label: af-bbb-vocab-wt
+#| eval: true
+
+# record the number of occurrences of each unique non-stop-word
+af_bbb_vocab_wt <- af_bbb_token_tbl |> 
+  dplyr::group_by(src, pdx, word) |> 
+  dplyr::summarise(
+    wt  = n(), 
+    wdx = min(wdx)
+  ) |> 
+  dplyr::select(src, pdx, word, wdx, wt) |> 
+  dplyr::arrange(src, wdx)
+
+# Note: the tally beloe includes the term 'mr'
+# which is subsequently removed by tm:DocumentTermMatrix()
+
+# af_bbb_vocab_wt
+# # A tibble: 598 × 5
+# # Groups:   src, pdx [9]
+#    src     pdx word         wdx    wt
+#    <chr> <int> <chr>      <int> <int>
+#  1 AF        1 animal         2     3
+#  2 AF        1 populace       3     1
+#  3 AF        1 poorly         6     1
+#  4 AF        1 run            7     1
+#  5 AF        1 manor          8     1
+#  6 AF        1 farm           9     6
+#  7 AF        1 near          10     1
+#  8 AF        1 willingdon    11     1
+#  9 AF        1 england       13     2
+# 10 AF        1 ripened       15     1
+# # ℹ 588 more rows
+
+# here are the weights given to the term 'mr'
+
+# af_bbb_vocab_wt |> 
+#   dplyr::filter(word == "mr")
+# # A tibble: 5 × 5
+# # Groups:   src, pdx [5]
+#   src     pdx word    wdx    wt
+#   <chr> <int> <chr> <int> <int>
+# 1 AF        1 mr       29     3
+# 2 AF        2 mr      395     2
+# 3 AF        3 mr      537     1
+# 4 AF        4 mr      772     1
+# 5 AF        5 mr      921     1
+```
+
+```{r}
+#| label: af-bbb-dtm-term
+#| eval: false
+
+# compare af_bbb_vocab to Terms from DTM
+# base::setdiff(
+#   af_bbb_vocab, 
+#   af_bbb_dtm_lst$ dimnames$ Terms
+# )
+# [1] "mr"
+```
+
+```{r}
+#| label: af-bbb-para-tbl
+
+af_bbb_para_tbl <- dplyr::bind_rows(
+  af_para_tbl, 
+  bbb_para_tbl
+)
+```
+
+Here are the successive paragraphs (stripped of punctuation and stop-words) summarizing the two books.
+
+```{r}
+#| label: tbl-af-bbb-para-tbl
+#| tbl-cap: "Paragraphs summarizing 'Animal Farm' (AF), then 'The Butter Battle Book' (BBB)"
+#| echo: true
+
+af_bbb_para_tbl |> print(width = 72)
+```
+
+From these paragraphs (each treated as a document) we create the following `DocumentTermMatrix` object, which is a list that includes: 
+
+  - a sparse matrix giving the document-index, the term-index, and the frequency (number of occurrences) of the indexed term; and 
+  - a vector of the terms themselves
+
+```{r}
+#| label: af-bbb-dtm-lst
+#| echo: true
+
+af_bbb_dtm_lst <- 
+  tm::DocumentTermMatrix(x = af_bbb_para_tbl$ para)
+
+# date()
+# [1] "Fri Aug  1 10:55:32 2025"
+
+# af_bbb_dtm_lst  |> object.size(): 44 KB
+# 44464 bytes
+
+af_bbb_dtm_lst
+```
+
+Here is a table showing the frequency of each term within each document (paragraph).
+
+```{r}
+#| label: tbl-af-bbb-tf-tbl
+#| tbl-cap: "Term-frequency: number of occurrences of each term within each document"
+#| echo: true
+
+af_bbb_tf_tbl <- af_bbb_dtm_lst |> tidytext::tidy()
+af_bbb_tf_tbl
+```
+
+### LDA function
+
+We now employ function `topicmodels::LDA()`[^art-Grün_Hornik_2011] to perform latent Dirichlet allocation.  The function determines the probable topic of each word within each document by one of two methods: (1) "VEM" (Variational Expectation Maximization); or else (2) "Gibbs" (Gibbs Sampling).  The function output, depending on the choice of method, is a list conforming to the format of either `LDA_VEM` or else `LDA_Gibbs`.
+
+[^art-Grün_Hornik_2011]:  See @Grün_Hornik_2011.
+
+Here we choose the Gibbs Sampling method because it requires less memory.  The `DocumentTermMatrix` (DTM) representing the corpus of documents (paragraphs) is the primary input to `topicmodels::LDA()`.  (Note that the DTM does not identify the source of each document.)  We specify that `LDA()` should construct $K = 2$ topics from this input corpus.
+
+```{r}
+#| label: lst-af-bbb-gs
+#| lst-cap: ""
+#| echo: true
+#| eval: true
+
+# Latent Dirichlet Allocation via Gibbs Sampling
+
+extract_from_list <- FALSE
+if (extract_from_list && topicmodels_loaded) {
+  af_bbb_gs <- af_bbb_dtm_lst |> 
+    topicmodels::LDA(
+      # number of topics
+      k = 2, 
+      method = "Gibbs", 
+      # set seed to ensure results can be reproduced
+      control = list(seed = 1234)
+    )
+  
+  ## 
+  # extract tibbles from LDA() output
+  ## 
+  af_bbb_gs_tbl_lst <- af_bbb_gs |> list_lda_tbls()
+  
+  # z: topic assignment of successive words across corpus
+  af_bbb_gs_z <- af_bbb_gs_tbl_lst$ z_tbl
+  
+  # conc: initial Dirichlet concentration parameters
+  af_bbb_gs_conc <- af_bbb_gs_tbl_lst$ conc_tbl
+  
+  # terms: unique words across the corpus
+  af_bbb_gs_terms <- af_bbb_gs_tbl_lst$ terms_tbl
+  
+  # beta: topic-specific ln(probability) across unique terms
+  af_bbb_gs_beta <- af_bbb_gs_tbl_lst$ beta_wide
+  
+  # beta_terms: append terms, then pivot longer
+  af_bbb_gs_beta_terms <- af_bbb_gs_tbl_lst$ beta_terms
+  
+  # gamma: prob(topic | doc), a D-by-K matrix
+  af_bbb_gs_gamma <- af_bbb_gs_tbl_lst$ gamma_tbl
+  
+  # dw_assign: topic assignment per (doc, term)
+  af_bbb_gs_dw_assign <- af_bbb_gs_tbl_lst$ dw_assign_tbl
+  
+  ## 
+  # save output components as TSV files: only as needed
+  ## 
+  save_file <- FALSE
+  if (save_file) {
+    
+    # z: topic assignment of successive words across corpus
+    af_bbb_gs_z |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_z.txt"
+    ))
+    
+    # conc: initial Dirichlet concentration parameters
+    af_bbb_gs_conc |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_conc.txt"
+    ))
+    
+    # terms: unique words across the corpus
+    af_bbb_gs_terms |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_terms.txt"
+    ))
+    
+    # beta: topic-specific ln(probability) across unique terms
+    af_bbb_gs_beta |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_beta.txt"
+    ))
+    
+    # beta_terms: append terms, then pivot longer
+    af_bbb_gs_beta_terms |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_beta_terms.txt"
+    ))
+    
+    # gamma: prob(topic | doc), a D-by-K matrix
+    af_bbb_gs_gamma |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_gamma.txt"
+    ))
+    
+    # dw_assign: topic assignment per (doc, term)
+    af_bbb_gs_dw_assign |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_gs_dw_assign.txt"
+    ))
+    
+  }
+} else {
+  # read previously saved LDA-Gibbs components
+  
+  # z: topic assignment of successive words across corpus
+  af_bbb_gs_z <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_z.txt"
+  ))
+  
+  # conc: initial Dirichlet concentration parameters
+  af_bbb_gs_conc <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_conc.txt"
+  ))
+  
+  # terms: unique words across the corpus
+  af_bbb_gs_terms <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_terms.txt"
+  ))
+  
+  # beta: topic-specific ln(probability) across unique terms
+  af_bbb_gs_beta <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_beta.txt"
+  ))
+  
+  # beta_terms: append terms, then pivot longer
+  af_bbb_gs_beta_terms <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_beta_terms.txt"
+  ))
+  
+  # gamma: prob(topic | doc), a D-by-K matrix
+  af_bbb_gs_gamma <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_gamma.txt"
+  ))
+  
+  # dw_assign: topic assignment per (doc, term)
+  af_bbb_gs_dw_assign <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_gs_dw_assign.txt"
+  ))
+}
+```
+
+```{r}
+#| label: LDA-Gibbs-structure
+#| eval: false
+
+# record the structure of LDA output object "af_bbb_gs"
+
+# date()
+# [1] "Fri Aug  1 09:46:27 2025"
+
+# af_bbb_gs |> object.size(): 62 KB
+# 62072 bytes
+
+# af_bbb_gs |> str()
+# Formal class 'LDA_Gibbs' [package "topicmodels"] with 16 slots
+#   ..@ seedwords      : NULL
+#   ..@ z              : int [1:717] 1 2 2 2 2 2 2 2 2 2 ...
+#   ..@ alpha          : num 25
+#   ..@ call           : language topicmodels::LDA(x = af_bbb_dtm_lst, k = 2, method = "Gibbs", control = list(seed = 1234))
+#   ..@ Dim            : int [1:2] 9 485
+#   ..@ control        :Formal class 'LDA_Gibbscontrol' [package "topicmodels"] with 14 slots
+#   .. .. ..@ delta        : num 0.1
+#   .. .. ..@ iter         : int 2000
+#   .. .. ..@ thin         : int 2000
+#   .. .. ..@ burnin       : int 0
+#   .. .. ..@ initialize   : chr "random"
+#   .. .. ..@ alpha        : num 25
+#   .. .. ..@ seed         : int 1234
+#   .. .. ..@ verbose      : int 0
+#   .. .. ..@ prefix       : chr "C:\\Users\\tthra\\AppData\\Local\\Temp\\Rtmpii0FrX\\file3809f25778"
+#   .. .. ..@ save         : int 0
+#   .. .. ..@ nstart       : int 1
+#   .. .. ..@ best         : logi TRUE
+#   .. .. ..@ keep         : int 0
+#   .. .. ..@ estimate.beta: logi TRUE
+#   ..@ k              : int 2
+#   ..@ terms          : chr [1:485] "adopt" "adult" "alcoholic" "animal" ...
+#   ..@ documents      : chr [1:9] "1" "2" "3" "4" ...
+#   ..@ beta           : num [1:2, 1:485] -5.91 -8.32 -8.31 -5.92 -8.31 ...
+#   ..@ gamma          : num [1:9, 1:2] 0.449 0.423 0.53 0.447 0.562 ...
+#   ..@ wordassignments:List of 5
+#   .. ..$ i   : int [1:593] 1 1 1 1 1 1 1 1 1 1 ...
+#   .. ..$ j   : int [1:593] 1 2 3 4 5 6 7 8 9 10 ...
+#   .. ..$ v   : num [1:593] 1 2 2 2 2 2 1 2 2 1 ...
+#   .. ..$ nrow: int 9
+#   .. ..$ ncol: int 485
+#   .. ..- attr(*, "class")= chr "simple_triplet_matrix"
+#   ..@ loglikelihood  : num -4730
+#   ..@ iter           : int 2000
+#   ..@ logLiks        : num(0) 
+#   ..@ n              : int 717
+
+```
+
+```{r}
+#| label: LDA-VEM-structure
+#| eval: false
+
+# record the structure of LDA output object "af_bbb_vem"
+
+# date()
+# [1] "Sat Aug  2 08:20:28 2025"
+
+# af_bbb_vem |> object.size(): 60 KB
+# 60400 bytes
+
+# af_bbb_vem |> str()
+# Formal class 'LDA_VEM' [package "topicmodels"] with 14 slots
+#   ..@ alpha          : num 0.0306
+#   ..@ call           : language topicmodels::LDA(x = af_bbb_dtm_lst, k = 2, method = "VEM", control = list(seed = 1234))
+#   ..@ Dim            : int [1:2] 9 485
+#   ..@ control        :Formal class 'LDA_VEMcontrol' [package "topicmodels"] with 13 slots
+#   .. .. ..@ estimate.alpha: logi TRUE
+#   .. .. ..@ alpha         : num 25
+#   .. .. ..@ seed          : int 1234
+#   .. .. ..@ verbose       : int 0
+#   .. .. ..@ prefix        : chr "C:\\Users\\tthra\\AppData\\Local\\Temp\\RtmpUlDLWt\\file2d44587097c"
+#   .. .. ..@ save          : int 0
+#   .. .. ..@ nstart        : int 1
+#   .. .. ..@ best          : logi TRUE
+#   .. .. ..@ keep          : int 0
+#   .. .. ..@ estimate.beta : logi TRUE
+#   .. .. ..@ var           :Formal class 'OPTcontrol' [package "topicmodels"] with 2 slots
+#   .. .. .. .. ..@ iter.max: int 500
+#   .. .. .. .. ..@ tol     : num 1e-06
+#   .. .. ..@ em            :Formal class 'OPTcontrol' [package "topicmodels"] with 2 slots
+#   .. .. .. .. ..@ iter.max: int 1000
+#   .. .. .. .. ..@ tol     : num 1e-04
+#   .. .. ..@ initialize    : chr "random"
+#   ..@ k              : int 2
+#   ..@ terms          : chr [1:485] "adopt" "adult" "alcoholic" "animal" ...
+#   ..@ documents      : chr [1:9] "1" "2" "3" "4" ...
+#   ..@ beta           : num [1:2, 1:485] -5.96 -152 -5.96 -153.88 -5.96 ...
+#   ..@ gamma          : num [1:9, 1:2] 0.999802 0.999797 0.999627 0.0003 0.000556 ...
+#   ..@ wordassignments:List of 5
+#   .. ..$ i   : int [1:593] 1 1 1 1 1 1 1 1 1 1 ...
+#   .. ..$ j   : int [1:593] 1 2 3 4 5 6 7 8 9 10 ...
+#   .. ..$ v   : num [1:593] 1 1 1 1 1 1 1 1 1 1 ...
+#   .. ..$ nrow: int 9
+#   .. ..$ ncol: int 485
+#   .. ..- attr(*, "class")= chr "simple_triplet_matrix"
+#   ..@ loglikelihood  : num [1:9] -831 -797 -453 -555 -300 ...
+#   ..@ iter           : int 13
+#   ..@ logLiks        : num(0) 
+#   ..@ n              : int 717
+
+```
+
+From the `LDA_Gibbs` output we extract the following "beta" matrix consisting of two fitted probability vectors: the respective probability distributions of topic 1 and 2 across the unique terms of the corpus.
+
+```{r}
+#| label: af-bbb-word-tally
+#| eval: true
+
+# Note: the term 'mr' occurs 8 times in af_token_tbl
+# with counts of c(3, 2, 1, 1, 1) in the respective paragraphs
+# but is removed by function tm::DocumentTermMatrix()
+
+# inclusion of 'mr' affects the following tallies
+af_bbb_word_tally <- tibble::tibble(
+  obj  = c(
+    "af_bbb_token_tbl", 
+    "af_bbb_gs_z", 
+    "af_bbb_vocab_wt", 
+    "af_bbb_tf_tbl", 
+    "af_bbb_vocab_lst", 
+    "af_bbb_gs_terms"
+  ), 
+  elt  = c("word", "z", "wt", "count", "af_bbb_vocab", "term"), 
+  len  = c(
+    af_bbb_token_tbl$ word         |> length(), 
+    af_bbb_gs_z$ z                 |> length(), 
+    af_bbb_vocab_wt$ wt            |> length(), 
+    af_bbb_tf_tbl$ count           |> length(), 
+    af_bbb_vocab_lst$ af_bbb_vocab |> length(),
+    af_bbb_gs_terms$ term          |> length()
+  ))
+
+# # af_bbb_word_tally
+# # A tibble: 6 × 3
+#   obj              elt            len
+#   <chr>            <chr>        <int>
+# 1 af_bbb_token_tbl word           725
+# 2 af_bbb_gs_z      z              717
+# 3 af_bbb_vocab_wt  wt             598
+# 4 af_bbb_tf_tbl    count          593
+# 5 af_bbb_vocab_lst af_bbb_vocab   486
+# 6 af_bbb_gs_terms  term           485
+```
+
+```{r}
+#| label: af-bbb-topics
+#| eval: true
+#| echo: true
+
+# af_bbb_topics: beta matrix in long format with column "term"
+
+# Note: tidytext::tidy(<LDA_Gibbs>) generates error 
+# when <LDA_Gibbs> is large and memory is constrained.
+# In the meantime, patch as follows
+
+extract_from_list <- FALSE
+if (extract_from_list) {
+  # beta: K (topics) by N (terms) of log-probabilities
+  beta_mat           <- af_bbb_gs@beta
+  colnames(beta_mat) <- af_bbb_gs@terms
+  rownames(beta_mat) <- paste0("topic_", 1:2)
+  
+  beta_tbl           <- beta_mat |> 
+    tibble::as_tibble(rownames = "topic") |> 
+    dplyr::mutate(topic = 1:2)
+  
+  beta_long          <- beta_tbl |> 
+    tidyr::pivot_longer(
+      cols      = - topic, 
+      names_to  = "term", 
+      values_to = "ln_prob"
+    ) |> 
+    dplyr::arrange(term)
+  
+  # af_bbb_topics: N by K tibble of probabilities
+  af_bbb_topics <- beta_long |> 
+    dplyr::mutate(
+      beta = exp(ln_prob)
+    ) |> 
+    dplyr::select(- ln_prob)
+  
+  # save af_bbb_topics as TSV file only as needed
+  save_file <- FALSE
+  if (save_file) {
+    af_bbb_topics |> readr::write_tsv(here::here(
+      "data", "retain", "af_bbb_topics.txt"
+    ))
+  }
+  
+} else {
+  # read in previously saved file
+  af_bbb_topics <- readr::read_tsv(here::here(
+    "data", "retain", "af_bbb_topics.txt"
+  ))
+}
+
+# af_bbb_topics |> object.size(): 49 KB
+# 48992 bytes
+
+af_bbb_topics |> print(n = 4, digits = 2)
+```
+
+
+### Output interpretation
+
+Here are the most probable terms for each of the two constructed topics, along with their probabilities (beta), shown as a bar chart.
+
+```{r}
+#| label: af-bbb-top-terms
+#| eval: true
+
+# set with_ties = F to limit returned tibble to <= n rows
+af_bbb_top_terms <- af_bbb_topics |> 
+  dplyr::slice_max(beta, n = 10, by = "topic", with_ties = FALSE)
+```
+
+```{r}
+#| label: fig-af-bbb-top-terms
+#| fig-cap: "AF-BBB paragraphs: most probable terms by topic"
+#| echo: true
+
+g_af_bbb_top_terms <- af_bbb_top_terms |> 
+  dplyr::mutate(term = tidytext::reorder_within(
+    x = term, 
+    by = beta, 
+    within = topic)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = beta, y = term, fill = factor(topic)
+  )) + 
+  ggplot2::geom_col(show.legend = FALSE) + 
+  ggplot2::facet_wrap(~ as_factor(topic), scales = "free") + 
+  tidytext::scale_y_reordered() + 
+  ggplot2::labs(title = "AF-BBB paragraphs: most probable terms by topic")
+g_af_bbb_top_terms
+```
+
+Topic 1's top ten terms include "yooks" and "zooks", which do not appear in the top ten terms of topic 2.  So topic 1 seems to match "The Butter Battle Book".  Similarly, topic 2's top ten terms include "napoleon", "snowball", and "jones", which match "Animal Farm".  Note however that "farm" appears under topic 1 and "battle" appears under topic 2.
+
+Another way to compare topics 1 and 2 is to examine the terms shared by the two topics and then find the terms having the biggest disparity in (topic, term) probability (beta). Here's a bar chart showing the more prominent differences, expressed as
+
+$$
+\begin{align}
+  \log_2 \left( \frac{\beta_2}{\beta_1} \right)
+\end{align}
+$$ {#eq-log2-ratio-topic-term}
+
+restricting the set of terms to those assigned to both topics $(\min(\beta_1, \beta_2) > 0)$ with at least one of them exceeding a probability threshhold, say $(\max(\beta_1, \beta_2) > 0.001)$.
+
+```{r}
+#| label: af-bbb-b-ratio-wide
+
+af_bbb_b_ratio_wide <- af_bbb_topics |> 
+  dplyr::mutate(topic = paste0("beta_", topic)) |> 
+  tidyr::pivot_wider(names_from = topic, values_from = beta) |> 
+  dplyr::filter(
+    pmin(beta_1, beta_2) > 0, 
+    pmax(beta_1, beta_2) > 0.001
+  ) |> 
+  dplyr::mutate(log_ratio = log2(beta_2 / beta_1))
+```
+
+```{r}
+#| label: fig-af-bbb-b-ratio-wide
+#| fig-cap: "Log2 ratio of beta in topic 2 / topic 1"
+#| echo: true
+
+g_af_bbb_b_ratio_wide <- af_bbb_b_ratio_wide |> 
+  dplyr::group_by(direction = log_ratio > 0) |> 
+  dplyr::slice_max(abs(log_ratio), n = 10) |> 
+  dplyr::ungroup() |> 
+  dplyr::mutate(term = reorder(term, log_ratio)) |> 
+  ggplot2::ggplot(aes(log_ratio, term)) +
+  ggplot2::geom_col() +
+  ggplot2::labs(x = "Log2 ratio of beta in topic 2 / topic 1", y = NULL)
+g_af_bbb_b_ratio_wide
+```
+
+This figure further supports the earlier conjecture that topic 1 best matches "The Butter Battle Book" and topic 2 best matches "Animal Farm".  But the match is not perfect, since "farm" is a key term distinguishing topic 1 from topic 2.
+
+## Mathematical Framework
+
+### Notation
+
+The data set to be analyzed is a _corpus_ (set) $\mathcal{D}$ of documents.  Each _document_ $d \in \mathcal{D}$ is a vector (sequence) of words, that may include multiple instances of the same term.[^set-cardinality]
+
+[^set-cardinality]: $| S |$ denotes the number of elements in a finite set $S$ (or more generally the cardinality of set $S$).  We extend this notation to a sequence.  If $d = (w_1, \ldots, w_n)$ is a finite sequence of words, we treat $d$ as a vector of length $n = |d|$.
+
+$$
+\begin{align}
+  d &= (w_1, \ldots, w_{|d|})
+\end{align}
+$$ {#eq-doc-equals-word-seq}
+
+The _vocabulary_ $V$ of the corpus is the set of _distinct_ terms that occur in one or more of the documents.
+
+$$
+\begin{align}
+  V &= \cup_{d \in \mathcal{D}} \;  \{ v \in d \} \\ 
+  &= \left \{ v_\nu \right \}_{\nu = 1}^N
+\end{align}
+$$ {#eq-vocab-defn}
+
+where the elements of $V$ may be indexed, typically in alphabetical order.  These elements $v_\nu$ are referred to as _terms_.  We will use _word_ to mean an occurrence of a term within the corpus.  With this distinction, the total number of words (term occurrences) in the corpus exceeds or equals the number of distinct terms.[^token-NLP] [^term-v-word]
+
+[^token-NLP]: In natural language processing (NLP), text is broken into _tokens_, a broad term that must be defined for each analysis.  In the present context the original text is stripped of punctuation and of commonly occurring words ("stop-words") so that the remaining words are the tokens analyzed.
+
+[^term-v-word]: For clarity we use _term_ to mean a distinct element of a vocabulary, and we use _word_ to mean an occurrence of a term in the corpus.  There does not seem to be an established jargon for this distinction.
+
+$$
+\begin{align}
+  \left | \mathcal{D} \right | &= \sum_{d \in \mathcal{D}} \; |d| \\ 
+  &\ge | V |
+\end{align}
+$$ {#eq-len-corpus-v-vocab}
+
+A _topic_ $\theta$ is a probability distribution over vocabulary $V$.  Since $V$ consists of a finite number $N = \left | V \right |$ of distinct terms, $\theta$ can be represented as probability vector of length $N$.
+
+The number $K$ of topics (categories) is prescribed for each analysis.  Given $K$ and $\mathcal{D}$, LDA produces a _topic model_ defined by a set of constructed topics, $\{ \theta_1, \ldots, \theta_K \}$.  These topic-specific probability vectors are stored in matrix $\beta$.
+
+$$
+\begin{align}
+  \beta [k, \nu] &= \theta_k[\nu] \\ 
+  &= \text{probability assigned by topic } \theta_k \text{ to term } v_\nu \in V
+\end{align}
+$$ {#eq-matrix-beta}
+
+### Generative Model
+
+LDA treats each document as a mixture of topics, and each topic as a mixture of terms.  This is a _bag-of-words_ model in which each document $d$ in a corpus of documents $\mathcal{D}$ is randomly generated as follows.[^generate-v-sample]
+
+[^generate-v-sample]: Other authors use the verb "sample" rather than "generate" to mean random generation from a specified probability distribution.
+
+  - Generate $K$ topics, $\{ \theta_1, \ldots, \theta_K \}$, from given Dirichlet distribution $Dir(\delta_\bullet)$, where topic $\theta_k$ is a probability vector over vocabulary $V = \{ v_\nu \}_{\nu = 1}^N$.
+
+  - For each document $d$ generate probability vector $\varphi_d$ from given Dirichlet distribution $Dir(\alpha_\bullet)$, where $\varphi_d$ is a probability distribution over topics $\{ \theta_1, \ldots, \theta_K \}$.
+
+  - For each word-position[^doc-length] $j$ in document $d$: use probability vector $\varphi_d$ to select at random a single topic $\theta_k$; then use $\theta_k$ to generate a term $v_\nu$, where $z[d, j] = \nu$ denotes the index of the selected term.
+
+[^doc-length]:  We assume that document $d$ is a sequence of $n_d = |d|$ words, where $n_d$ is either a given positive integer, or else is generated independently of other random variables.
+
+These Dirichlet distributions are typically assumed to be symmetric.  That is, if we define 
+
+$$
+\begin{align}
+  \bar{\alpha} &= \frac{\alpha_+}{K} = \frac{1}{K} \sum_{k = 1}^K
+\alpha_k \\ 
+  \bar{\delta} &= \frac{\delta_+}{N} = \frac{1}{N} \sum_{\nu = 1}^N
+\delta_\nu
+\end{align}
+$$ {#eq-avg-Dirichlet-param}
+
+then current practice is to set all elements of vectors $\alpha_\bullet$ and $\delta_\bullet$ equal to their respective average values.
+
+$$
+\begin{align}
+  \alpha_k &= \bar{\alpha} \quad \text{for } k \in \{1, \ldots, K \} \\ 
+  \delta_\nu &= \bar{\delta} \quad \text{for } \nu \in \{1, \ldots, N \}
+\end{align}
+$$ {#eq-symm-Dirichlet}
+
+The values $\bar{\alpha}$ and $\bar{\delta}$ are called _concentration_ parameters.
+
+For a symmetric Dirichlet distribution as above, if $\bar{\alpha} < 1$ then for each document $d$, $Dir(\alpha_\bullet)$ tends to generate a sparse probability vector $\varphi_d$ that gives most of its weight to just a few of the K topics (with the selection of topics varying across documents).  On the other hand, if $\bar{\alpha} > 1$ then $Dir(\alpha_\bullet)$ tends to generate a more uniform probability vector $\varphi_d$ spread more evenly across all topics.
+
+As for the distribution of terms within a topic, in most applications the number $N$ of distinct terms in the corpus $\mathcal{D}$ may be a few thousand or even a few tens of thousands.  Then each topic is a mixture across a distinct subset of a large number of terms, typically with $\bar{\delta} < 1$.
+
+See @Antoniak_2023 for practical suggestions on these and other settings and workflows.
+
+### LDA-Gibbs Algorithm
+
+The LDA identification of topics is a particular form of Markov chain Monte Carlo (MCMC) method.  The data can be summarized as the set of unique terms across the corpus of documents, along with counts of those unique terms per document.  The objective is to determine the topic of each term within each document.
+
+Assignment of topics to terms is intially made at random in a manner similar to the generative model outlined above.  We thereby have initial values for: 
+
+$$
+\begin{align}
+  n_{d, k} &= \text{number of assignments of topic } k \text{ to document } d \\ 
+  n_{\nu, k} &= \text{number of assignments of topic } k \text{ to term } v_\nu \\ 
+  n_k &= \text{number of assignments of topic } k \text{ across corpus } \mathcal{D} 
+\end{align}
+$$ {#eq-log-ratio-topic-term}
+
+The Gibbs sampling procedure treats in turn each word position in the corpus, and estimates the probability of assigning the term in that position to each topic, conditioned on the current topic assignments of all other terms.  From this conditional distribution, a topic is generated and stored as the new topic assignment for the given term in the given position.
+
+Through many iterations the counts $n_{d, k}, n_{\nu, k}, n_k$ are updated, thereby updating the constructed topics $\{ \theta_k \}$ and document-specific topic distributions $\{ \varphi_d \}$.
+
+A great computational savings is achieved by the choice of a Dirichlet prior for the probability vectors $\{ \theta_k \}$ and  $\{ \varphi_d \}$, and thus for the multinomial distributions of the counts $n_{d, k}, n_{\nu, k}, n_k$.  This is because the Dirichlet distribution is conjugate to the multinomial distribution.  For further details on this updating algorithm see @Steyvers_Griffiths_2007.
+
+## Concluding Remarks
+
+Topic modeling is an active area of research that contributes to the statistical analysis of large document collections.  The LDA model of document-generation specifies prior Dirichlet distributions for topics, and for the mixture of topics within each document, respectively.  This enables efficient Bayesian analysis of the latent structure of a corpus of documents.
+
+## References

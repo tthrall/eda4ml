@@ -1,0 +1,272 @@
+---
+title: "Exploratory Data Analysis"
+subtitle: "Part 1, session 1a of Data Mining Intro"
+author: 
+  - name: "Send comments to: Tony T (tthral)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "s1a"
+  file_prefix: "s1a_eda"
+abstract: 
+  "Review concepts and techniques of exploratory data analysis."
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(here)
+library(latex2exp)
+library(tidyverse)
+library(tinytex)
+library(UsingR)
+
+```
+
+```{r}
+#| label: local-source
+
+# source(here("code", "xxx.R"))
+```
+
+------------------------------------------------------------------------
+
+## Heights of Fathers and Sons
+
+In 1885 Sir Francis Galton examined the heights of parents and their children to determine the strength of evidence to support height as a hereditary trait. Galton's subsequent protege, Karl Pearson (who went on in 1911 to form the world's first statistics department at University College London) followed up with an analysis of the heights of fathers and sons.
+
+```{r}
+#| label: father-son-ht
+
+father_son_ht <- UsingR::father.son |> 
+  as_tibble() |> 
+  rename(father = fheight, son = sheight)
+```
+
+```{r}
+#| label: fig-father-son-ht
+#| fig-cap: "Heights in inches of (father, son) pairs"
+
+g_father_son_ht <- father_son_ht |> 
+  ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
+  ggplot2::geom_point() + 
+  ggplot2::labs(title = "Heights of (father, son) pairs")
+
+g_father_son_ht
+```
+
+In the scatter diagram above, each point represents the respective heights of a father-son pair. The density of points in the middle range of heights obscures individual points.
+
+Here is another view of the same data obtained by grouping father heights into successive intervals (each one labeled by its mid-point) and then constructing a box-plot of sons' heights within each interval.
+
+```{r}
+#| label: f-mpt
+
+# f_ivl: successive 2-inch intervals of father heights
+# f_mpt: mid-point of each interval
+father_son_ht <- father_son_ht |> 
+  mutate(
+    f_ivl = cut(father, seq(58, 76, 2)), 
+    f_mpt = (2 * ceiling(father/2)) - 1
+  )
+```
+
+```{r}
+#| label: fig-f-mpt
+#| fig-cap: "Range of son's height for given height of father"
+
+g_f_mpt <- father_son_ht |> 
+  dplyr::filter(! is.na(f_mpt)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = f_mpt |> as_factor(), 
+    y = son
+  )) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::labs(title = "Son heights per father's height") + 
+  ggplot2::xlab("father's height rounded to nearest odd inch") + 
+  ggplot2::ylab("son's height in inches")
+g_f_mpt
+```
+
+```{r}
+#| label: tbl-son-per-f-mpt
+#| tbl-cap: "Heights of sons grouped by father's height"
+
+son_per_f_mpt <- father_son_ht |>    
+  dplyr::group_by(f_ivl, f_mpt) |>    
+  dplyr::summarise(     
+    s_count = n(),      
+    s_min   = min(son, na.rm = TRUE),      
+    s_max   = max(son, na.rm = TRUE),      
+    s_avg   = mean(son, na.rm = TRUE)
+  ) 
+son_per_f_mpt |> print(digits = 1)
+```
+
+Galton noted that in general sons were taller than fathers, with extremely tall or short fathers corresponding to not quite so extremely tall or short sons, respectively. This observation led Galton to coin the term "regression toward mediocrity", or (more politely) "regression toward the mean".
+
+## Class Exercise: Diamond Data
+
+Team up with a classmate and load the diamond data provided by R package ggplot2. How many rows of data are there? How many columns? What questions occur to you about the data? How might you address those questions? Take 15 minutes to prepare to report out to the class.
+
+```{r}
+#| label: diamonds
+
+# make your own copy of the diamond data
+diamonds <- ggplot2::diamonds
+```
+
+## Class Exercise: General Social Survey Data
+
+The [General Social Survey](https://gss.norc.org/) is a long-running US survey conducted by the independent research organization NORC at the University of Chicago. The survey consists of thousands of questions designed to monitor changes in social characteristics and attitudes in the US. In R package forcats, Hadley Wickham formed the data set gss_cat consisting of just a few columns to illustrate the challenges one encounters when working with categorical (non-numeric) variables ("factors").
+
+Team up with a classmate and load the gss_cat data-set provided by R package forcats. How many rows of data are there? How many columns? What questions occur to you about the data? How might you address those questions? Take 15 minutes to prepare to report out to the class.
+
+```{r}
+#| label: gss-cat
+
+# make your own copy of the survey data 
+gss_cat <- forcats::gss_cat
+```
+
+## Discussion: what should EDA mean?
+
+Exploratory Data Analysis (EDA) is an approach to data analysis advocated by [John Tukey](https://en.wikipedia.org/wiki/John_Tukey), a leading American statistician of the 20th century. The approach contrasts with what Tukey called "confirmatory analysis", that is, a focus on probability models of data-generation along with the estimation or testing of model parameters. The difference is one of emphasis: EDA includes models suggested by data, but with an emphasis on understanding current and potential data sets.
+
+The exploration is led by one's questions about the data. Relevant questions may or may not be obvious (or given). Variables may or may not be readily categorized as "response variables" versus "predictor variables". The ability to develop and recognize relevant questions is an important skill largely gained through experience.
+
+Important EDA outcomes include
+
+-   the discovery of unanticipated data patterns, and
+
+-   proposals to examine tentative answers suggested by the current data, perhaps using a new data set designed for this purpose.
+
+EDA methods are used within the context of confirmatory analysis to examine the data for errors not encompassed by the models under study (e.g., errors in data transcription or transmission), or to search for other departures from model assumptions.
+
+EDA methods can be broadly understood as the methods of descriptive statistics: data summaries (graphical or tabular) intended to enhance our understanding of the data. EDA differs from descriptive statistics in a reliance on the questions of the data analyst and a readiness to examine various transformations of the data.
+
+As an example, here are some ways we might address the question of how, if at all, the heights of fathers and sons differ in the data presented above.
+
+```{r}
+#| label: height-per-fs
+
+# render "father" and "son" as levels of factor "fs"
+height_per_fs <- father_son_ht |> 
+  # continue to identify father-son pairs
+  dplyr::mutate(idx = 1:nrow(father_son_ht)) |>
+  dplyr::select(idx, father, son) |> 
+  tidyr::pivot_longer(
+    cols = c(father, son), 
+    names_to = "fs", 
+    values_to = "height"
+  )
+```
+
+```{r}
+#| label: fig-ht-per-fs
+#| fig-cap: "Overall, the sons are taller"
+
+g_ht_per_fs <- height_per_fs |> 
+  ggplot2::ggplot(mapping = aes(x = fs |> as_factor(), y = height)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::labs(title = "Sons are generally taller than fathers") + 
+  ggplot2::xlab("") + 
+  ggplot2::ylab("height in inches")
+g_ht_per_fs
+```
+
+```{r}
+#| label: tbl-ht-per-fs
+#| tbl-cap: "Height distribution: fathers and sons"
+
+fs_smy <- height_per_fs |> dplyr::select(fs, height) |>
+  group_by(fs) |> 
+  summarise(
+    min = min(height), 
+    mid = median(height), 
+    avg = mean(height), 
+    max = max(height)
+  )
+fs_smy |> print(digits = 1)
+```
+
+The box-plot and table above show that, on average, sons are about an inch taller than fathers. Here's a histogram of the difference in heights (son minus father) across father-son pairs.
+
+```{r}
+#| label: s-minus-f
+
+father_son_ht <- father_son_ht |> 
+  mutate(s_minus_f = son - father)
+```
+
+```{r}
+#| label: fig-s-minus-f
+#| fig-cap: "Histogram of son's height minus father's height"
+
+g_s_minus_f <- father_son_ht |> 
+  ggplot2::ggplot(mapping = aes(x = s_minus_f)) + 
+  ggplot2::geom_histogram() + 
+  ggplot2::labs(title = "Difference of son's height minus father's height") + 
+  ggplot2::xlab("height difference in inches: son's minus father's")
+g_s_minus_f
+```
+
+```{r}
+#| label: tbl-s-minus-f
+#| tbl-cap: "Summary stats: son's height minus father's height"
+
+father_son_ht$s_minus_f |> 
+  summary() |> 
+  print(digits = 1)
+```
+
+The summary of individual differences in height (son minus father) strengthens the previous aggregate summaries: the distribution of son's height minus father's height is fairly symmetric around a difference of about one inch.
+
+## Team Exercises
+
+1.  Response versus predictor variables: for each of the data sets presented above, propose one or more variables as response variables. How, if at all, might someone else argue for a different choice? What should we mean by "response" and "predictor" variables? Describe a situation in which this distinction would not be suitable.
+
+2.  Regression to the mean: the discussion of father-son heights uses the phrase "extremely tall or short fathers corresponding to not quite so extremely tall or short sons, respectively". How would you formulate the meaning of that phrase? Do the data demonstrate this phenomenon?
+
+3.  Diamond data: propose a question for the diamond data, and then try to address that question. What (if anything) did you learn from this task?
+
+4.  Survey data: propose a question for the gss_cat data, and then try to address that question. What (if anything) did you learn from this task?
+
+## Resources
+
+[simpleR](https://github.com/buruzaemon/simpleR) Using R for Introductory Statistics.\
+By [John Verzani](https://www.math.csi.cuny.edu/~verzani/) Department of Mathematics at CSI
+
+[R for Data Science (2e)](https://r4ds.hadley.nz/), by [Hadley Wickham](https://hadley.nz/)
+
+RPubs - [Diamonds Dataset](https://rpubs.com/Davo2812/1102821)
+
+NORC's General Social Survey ([GSS](https://gss.norc.org/us/en/gss/about-the-gss.html))
+
+[EDA](https://en.wikipedia.org/wiki/Exploratory_data_analysis): Exploratory data analysis - Wikipedia
