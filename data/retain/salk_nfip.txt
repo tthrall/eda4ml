@@ -1,0 +1,4 @@
+grade	assignment	size	rate
+2	treatment	225000	25
+1, 3	control	725000	54
+2	no_consent	125000	44

@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (adthral)">
+
+<title>2&nbsp; Conditional Distributions – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./clustering.html" rel="next">
+<link href="./eda.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./eda.html">Statistics</a></li><li class="breadcrumb-item"><a href="./conditioning.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Graph Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#heights-of-fathers-and-sons" id="toc-heights-of-fathers-and-sons" class="nav-link active" data-scroll-target="#heights-of-fathers-and-sons"><span class="header-section-number">2.1</span> Heights of Fathers and Sons</a></li>
+  <li><a href="#z-scores-transforming-data-values-to-standard-units" id="toc-z-scores-transforming-data-values-to-standard-units" class="nav-link" data-scroll-target="#z-scores-transforming-data-values-to-standard-units"><span class="header-section-number">2.2</span> Z-Scores: transforming data values to standard units</a>
+  <ul class="collapse">
+  <li><a href="#sd-line" id="toc-sd-line" class="nav-link" data-scroll-target="#sd-line"><span class="header-section-number">2.2.1</span> SD line</a></li>
+  <li><a href="#regression-line" id="toc-regression-line" class="nav-link" data-scroll-target="#regression-line"><span class="header-section-number">2.2.2</span> Regression line</a></li>
+  <li><a href="#the-normal-distribution" id="toc-the-normal-distribution" class="nav-link" data-scroll-target="#the-normal-distribution"><span class="header-section-number">2.2.3</span> The Normal distribution</a></li>
+  </ul></li>
+  <li><a href="#class-exercise-diamond-data" id="toc-class-exercise-diamond-data" class="nav-link" data-scroll-target="#class-exercise-diamond-data"><span class="header-section-number">2.3</span> Class Exercise: Diamond Data</a></li>
+  <li><a href="#simulating-random-variables" id="toc-simulating-random-variables" class="nav-link" data-scroll-target="#simulating-random-variables"><span class="header-section-number">2.4</span> Simulating Random Variables</a></li>
+  <li><a href="#cautionary-remarks" id="toc-cautionary-remarks" class="nav-link" data-scroll-target="#cautionary-remarks"><span class="header-section-number">2.5</span> Cautionary Remarks</a>
+  <ul class="collapse">
+  <li><a href="#robust-statistics" id="toc-robust-statistics" class="nav-link" data-scroll-target="#robust-statistics"><span class="header-section-number">2.5.1</span> Robust statistics</a></li>
+  <li><a href="#anscombe-quartet" id="toc-anscombe-quartet" class="nav-link" data-scroll-target="#anscombe-quartet"><span class="header-section-number">2.5.2</span> Anscombe Quartet</a></li>
+  </ul></li>
+  <li><a href="#statistical-independence" id="toc-statistical-independence" class="nav-link" data-scroll-target="#statistical-independence"><span class="header-section-number">2.6</span> Statistical Independence</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">2.6.1</span> Definition</a></li>
+  <li><a href="#the-case-when-x-and-y-are-categorical-variables" id="toc-the-case-when-x-and-y-are-categorical-variables" class="nav-link" data-scroll-target="#the-case-when-x-and-y-are-categorical-variables"><span class="header-section-number">2.6.2</span> The case when X and Y are categorical variables</a></li>
+  <li><a href="#simpsons-paradox" id="toc-simpsons-paradox" class="nav-link" data-scroll-target="#simpsons-paradox"><span class="header-section-number">2.6.3</span> Simpson’s Paradox</a></li>
+  </ul></li>
+  <li><a href="#entropy" id="toc-entropy" class="nav-link" data-scroll-target="#entropy"><span class="header-section-number">2.7</span> Entropy</a>
+  <ul class="collapse">
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background"><span class="header-section-number">2.7.1</span> Background</a></li>
+  <li><a href="#yes-no-questions" id="toc-yes-no-questions" class="nav-link" data-scroll-target="#yes-no-questions"><span class="header-section-number">2.7.2</span> Yes-No Questions</a></li>
+  <li><a href="#definition-1" id="toc-definition-1" class="nav-link" data-scroll-target="#definition-1"><span class="header-section-number">2.7.3</span> Definition</a></li>
+  <li><a href="#h_x-y-for-independent-x-y" id="toc-h_x-y-for-independent-x-y" class="nav-link" data-scroll-target="#h_x-y-for-independent-x-y"><span class="header-section-number">2.7.4</span> <span class="math inline">\(H_{X, Y}\)</span> for independent <span class="math inline">\((X, Y)\)</span></a></li>
+  <li><a href="#mutual-information" id="toc-mutual-information" class="nav-link" data-scroll-target="#mutual-information"><span class="header-section-number">2.7.5</span> Mutual Information</a></li>
+  <li><a href="#kl-divergence" id="toc-kl-divergence" class="nav-link" data-scroll-target="#kl-divergence"><span class="header-section-number">2.7.6</span> KL Divergence</a></li>
+  </ul></li>
+  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">2.8</span> Team Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">2.9</span> Resources</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/conditioning.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./eda.html">Statistics</a></li><li class="breadcrumb-item"><a href="./conditioning.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-conditioning" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></h1>
+<p class="subtitle lead">Part 1, session 1b of Data Mining Intro</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (adthral) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">20:43 Tue 14-Oct-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    Review the concepts of conditional distribution, conditional expectation, simple linear regression, statistical independence, entropy, and KL divergence.
+  </div>
+</div>
+
+
+</header>
+
+
+<hr>
+<section id="heights-of-fathers-and-sons" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="heights-of-fathers-and-sons"><span class="header-section-number">2.1</span> Heights of Fathers and Sons</h2>
+<p>The box-plot below can be regarded as the (sample) <em>conditional distribution</em> of sons’ heights grouped by the height (rounded to the nearest odd inch) of each son’s father.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-f-mpt" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="conditioning_files/figure-html/fig-f-mpt-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: Range of son heights for given height of father
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="tbl-s-stats-per-f-mpt" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-s-stats-per-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.1: Son stats per father’s height
+</figcaption>
+<div aria-describedby="tbl-s-stats-per-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 7
+  f_ivl   f_mpt s_count s_min s_mid s_max s_avg
+  &lt;fct&gt;   &lt;dbl&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 (58,60]    59       4  63.9  64.9  65.2  64.7
+2 (60,62]    61      16  60.8  65.6  69.1  65.5
+3 (62,64]    63      77  58.5  66.5  74.3  66.3
+4 (64,66]    65     208  59.8  67.4  74.7  67.5
+5 (66,68]    67     276  59.8  68.2  75.7  68.2
+6 (68,70]    69     275  62.2  69.2  78.4  69.5
+7 (70,72]    71     152  61.2  70.1  78.2  70.2
+8 (72,74]    73      63  66.7  71.3  77.2  71.4
+9 (74,76]    75       7  69.0  71.4  74.3  71.6</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>The last column in the table above is the sample average of the son’s height given the father’s height, which we take as an estimate of the population average of the son’s height given the father’s height, that is, the <em>conditional expectation</em> of son’s height given father’s height.</p>
+<p>The figure below represents these sample conditional averages per father’s height as diamonds, whose area is roughly proportional to the number of sons in each group. The figure includes a reference line showing the father’s (midpoint) height plus 1 inch, corresponding to our previous calculation of an average son-minus father difference.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-s-avg-per-f-mpt" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-s-avg-per-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="conditioning_files/figure-html/fig-s-avg-per-f-mpt-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s-avg-per-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Average of son heights per father’s height
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The above graph of average son-height per father’s height forms an approximate straight line, although the slope of the line is less than 1 (which is the slope of the reference line).</p>
+</section>
+<section id="z-scores-transforming-data-values-to-standard-units" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="z-scores-transforming-data-values-to-standard-units"><span class="header-section-number">2.2</span> Z-Scores: transforming data values to standard units</h2>
+<p>Imagine choosing a father-son pair at random from the entire population and measuring their respective heights. This would be an example of a pair of random variables <span class="math inline">\((X, Y)\)</span>. If we happened to know the average and standard deviation of (father, son) heights, respectively, from the entire population, we could convert the given heights to so-called standard units, or z-scores, as follows.</p>
+<p><span id="eq-z-score"><span class="math display">\[
+\begin{align}
+  Z_x(X) = \frac{X - \mu_x}{\sigma_x} \\
+  Z_y(Y) = \frac{Y - \mu_y}{\sigma_y} \\
+\end{align}
+\qquad(2.1)\]</span></span></p>
+<p>Here <span class="math inline">\(\mu\)</span> signifies the average (arithmetic mean) height across the entire population, and <span class="math inline">\(\sigma\)</span> denotes the population standard deviation. Thus <span class="math inline">\(Z_x(X)\)</span> gives the number of standard deviations above or below the population average (expected value).</p>
+<p>Of course we seldom have precise values for these population parameters. In practice we then use sample estimates of the parameters, say <span class="math inline">\(\hat{\mu}\)</span> for the sample average and <span class="math inline">\(\hat{\sigma}\)</span> for the sample standard deviation.</p>
+<p><span id="eq-sample-moments-2"><span class="math display">\[
+\begin{align}
+  \hat{\mu}_x &amp;= \frac{1}{n} \sum_{k = 1}^{n} x_k \\
+  \hat{\sigma}_{x}^2 &amp;= \frac{1}{n-1} \sum_{k = 1}^{n} (x_k - \hat{\mu}_x)^2 \\
+\end{align}
+\qquad(2.2)\]</span></span></p>
+<p>So the term “z-score” or “standard unit” is usually understood with respect to the sample distribution.</p>
+<p><span id="eq-sample-z-score"><span class="math display">\[
+\begin{align}
+  \hat{Z}_x(x_k) = \frac{x_k - \hat{\mu}_x}{\hat{\sigma}_x} \\
+  \hat{Z}_y(y_k) = \frac{y_k - \hat{\mu}_y}{\hat{\sigma}_y} \\
+\end{align}
+\qquad(2.3)\]</span></span></p>
+<section id="sd-line" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="sd-line"><span class="header-section-number">2.2.1</span> SD line</h3>
+<p>The line given by the equation <span class="math inline">\(\hat{Z}_y(y) = \hat{Z}_x(x)\)</span> is called the “SD line”. Here’s an equivalent equation of this line.</p>
+<p><span id="eq-sd-line"><span class="math display">\[
+\begin{align}
+  \text{SD line: } \\
+  y &amp; = \mathcal{l}_{SD}(x) \\
+  &amp;= \hat{\mu}_y + \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\
+\end{align}
+\qquad(2.4)\]</span></span></p>
+<p>Of all lines <span class="math inline">\(y = \mathcal{l}(x)\)</span> we might draw through the <span class="math inline">\((x_k,y_k)\)</span> data points, the SD line <span class="math inline">\(y = \mathcal{l}_{SD}(x)\)</span> minimizes the sum of squared distances from each <span class="math inline">\((x_k,y_k)\)</span> data point to its orthogonal projection to the line.</p>
+</section>
+<section id="regression-line" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="regression-line"><span class="header-section-number">2.2.2</span> Regression line</h3>
+<p>Consider the father’s height as the predictor variable <span class="math inline">\((x)\)</span> and the son’s height as the response variable <span class="math inline">\((y)\)</span>. We now seek a line that minimizes a different metric, namely the distance between the son’s height and its linear prediction based on the father’s height. In statistical parlance we are regressing the son’s height on the father’s height. (Because we have just <em>one</em> predictor variable this is called <em>simple</em> linear regression.) The minimizing line is called the regression line, and has the following equation.</p>
+<p><span id="eq-regression-line"><span class="math display">\[
+\begin{align}   
+  \text{Regression line: } \\   
+y &amp; = \mathcal{l}_{R}(x) \\   
+&amp;= \hat{\mu}_y + \hat{r}  \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\ \end{align}
+\qquad(2.5)\]</span></span></p>
+<p>An equivalent equation is <span class="math inline">\(\hat{Z}_y(y) = \hat{r} \hat{Z}_x(x)\)</span>, where <span class="math inline">\(\hat{r}\)</span> denotes the sample correlation coefficient.</p>
+<p><span id="eq-sample-cor"><span class="math display">\[
+  \hat{r} = \frac{1}{n-1} \sum_{k = 1}^{n} \hat{Z}_x(x_k) \hat{Z}_y(y_k)
+\qquad(2.6)\]</span></span></p>
+<p>Note that <span class="math inline">\(\hat{r}\)</span> is restricted to the closed interval <span class="math inline">\([-1, 1]\)</span>.</p>
+<p>The figure below shows the SD line and the Regression line for the father-son data.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-fs-lines" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-lines-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="conditioning_files/figure-html/fig-fs-lines-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-lines-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.3: Father-son heights: regression line and SD line
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The two lines intersect at the “point of averages”, that is, at <span class="math inline">\((\hat{\mu}_x, \hat{\mu}_y)\)</span>, which need not coincide with any data point.</p>
+<p>The following figure and table summarize the regression “residuals”, that is the son’s height <span class="math inline">\((y)\)</span> minus the height <span class="math inline">\((\hat{y})\)</span> predicted by the linear model.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = son ~ father, data = father_son_ht)
+
+Coefficients:
+(Intercept)       father  
+    33.8866       0.5141  </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-fs-residuals" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-residuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="conditioning_files/figure-html/fig-fs-residuals-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-residuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.4: Variation of son heights from regression line
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="tbl-fs-residuals" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-residuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.2: Stats: son’s height minus predicted height
+</figcaption>
+<div aria-describedby="tbl-fs-residuals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ -8.877  -1.514  -0.008   0.000   1.629   8.969 </code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>There are many ways to examine how well a model represents the data. Here’s a scatter diagram of the value predicted (fitted) by the model versus the son’s actual height.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-resid-son" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-resid-son-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="conditioning_files/figure-html/fig-resid-son-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-resid-son-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.5: Model-fitted value versus son’s height
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>We see that the sons who are extremely short or extremely tall are not represented well by the model, which is heavily influenced by mid-range father-son heights containing most of the data. The father’s height alone is a helpful but imperfect predictor of the son’s height.</p>
+</section>
+<section id="the-normal-distribution" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="the-normal-distribution"><span class="header-section-number">2.2.3</span> The Normal distribution</h3>
+<p>The father-son data set is well approximated by a bivariate normal distribution. The parameter estimates are as follows.</p>
+<div id="tbl-fs-moments" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-moments-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.3: Father-son heights: average, sd, and correlation
+</figcaption>
+<div aria-describedby="tbl-fs-moments-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code>f_avg s_avg  f_sd  s_sd     r 
+ 67.7  68.7   2.7   2.8   0.5 </code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>Sons are on average about an inch taller than fathers. Fathers and sons share similar standard deviations (2.7 versus 2.8). The sample correlation coefficient is about 0.5.</p>
+<p>Among the mathematical properties of normal distributions is the fact that if the pair of random variables <span class="math inline">\((X, Y)\)</span> has a bivariate normal distribution, then the conditional expectation <span class="math inline">\(E(Y | X)\)</span> is indeed the linear regression function <span class="math inline">\(\mathcal{l}_R(X)\)</span> whose equation is that of the population regression line, <span class="math inline">\(Z_y(Y) = r \; Z_x(X)\)</span>. The conditional distribution <span class="math inline">\(\mathcal{D}(Y | X)\)</span> of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> is normal with a mean of <span class="math inline">\(\mathcal{l}_R(X)\)</span> and a standard deviation of <span class="math inline">\(\sqrt{1 - r^2} \; \sigma_y\)</span>. Conditioning on <span class="math inline">\(X\)</span> thus shrinks the standard deviation of <span class="math inline">\(Y\)</span> by a factor of <span class="math inline">\(\sqrt{1 - r^2}\)</span>. For the father-son data, with <span class="math inline">\(r\)</span> approximately equal to 0.5, this shrinkage factor is approximately 0.87, amounting to a 13% reduction in the standard deviation of <span class="math inline">\(Y\)</span>.</p>
+</section>
+</section>
+<section id="class-exercise-diamond-data" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="class-exercise-diamond-data"><span class="header-section-number">2.3</span> Class Exercise: Diamond Data</h2>
+<p>Team up with a classmate and load the diamond data provided by R package ggplot2. Of the 10 variables (data columns) choose one of them as the response variable <span class="math inline">\((y)\)</span>, and another as a predictor variable <span class="math inline">\((x)\)</span>. Construct a scatter diagram of <span class="math inline">\((x, y)\)</span> data points. Calculate the equation of the regression line. Is the predictor variable useful, or irrelevant? The R package stats includes potentially helpful functions including a linear regression function, <code>stats::lm()</code>, and a local polynomial regression function <code>stats::loess()</code>. Take 20 minutes to prepare to report out to the class.</p>
+</section>
+<section id="simulating-random-variables" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="simulating-random-variables"><span class="header-section-number">2.4</span> Simulating Random Variables</h2>
+<p>The R package <code>stats</code> contains functions that generate pseudo-random numbers following normal and other well-known statistical distributions. Here are some functions for simulating independent instances of a continuous or discrete random variable. In the table below, the “value” column distinguishes the function output as either continuous (<code>dbl</code>) or discrete (<code>int</code>).</p>
+<div class="cell">
+<div id="tbl-rng-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-rng-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.4: Some random number generators in the R stats package
+</figcaption>
+<div aria-describedby="tbl-rng-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Some random number generators in the R stats package</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">fn</th>
+<th style="text-align: left;">value</th>
+<th style="text-align: left;">distribution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">rbeta</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Beta</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rcauchy</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Cauchy</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rchisq</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">(non-central) Chi-Squared</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rexp</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Exponential</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rf</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">F</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rgamma</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Gamma</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rlnorm</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Log Normal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rlogis</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Logistic</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rnorm</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Normal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rt</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Student t</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">runif</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Uniform</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rweibull</td>
+<td style="text-align: left;">dbl</td>
+<td style="text-align: left;">Weibull</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rbinom</td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Binomial</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rgeom</td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Geometric</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rhyper</td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Hypergeometric</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rnbinom</td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Negative Binomial</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rpois</td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Poisson</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The functions listed above are designed to generate a user-prescribed number <span class="math inline">\(n\)</span> of independent instances of a single random variable <span class="math inline">\(X\)</span>. For some purposes we may want to simulate a pair of random variables <span class="math inline">\((X, Y)\)</span> or more generally a vector of random variables <span class="math inline">\(X_{\bullet} = (X_1, X_2, \ldots, X_K)\)</span> such that the components of the vector are statistically dependent. Such vectors are said to follow a <em>multivariate</em> distribution. For example the <code>stats</code> package contains function <code>rmultinom</code>, a multivariate extension of <code>rbinom</code>. In general multivariate distributions are addressed by special-purpose R packages created by members of the R community.</p>
+</section>
+<section id="cautionary-remarks" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="cautionary-remarks"><span class="header-section-number">2.5</span> Cautionary Remarks</h2>
+<section id="robust-statistics" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="robust-statistics"><span class="header-section-number">2.5.1</span> Robust statistics</h3>
+<p>The sample average (arithmetic mean) is notoriously sensitive to outliers (data points far removed from most of the other data points). For this reason, the median is often used in place of the mean to describe central or typical values. For example, medians are commonly used to typify home prices in a neighborhood, and for other financial data.</p>
+<p>Similarly, the interquartile range (IQR, the third minus the first quartile of the data) may be preferred to the standard deviation to measure how widely data points are spread around a central value (e.g., median).</p>
+<p>In the present context this means that both the SD line and the Regression line are highly sensitive to outlying data points.</p>
+</section>
+<section id="anscombe-quartet" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="anscombe-quartet"><span class="header-section-number">2.5.2</span> Anscombe Quartet</h3>
+<p>Professor <a href="https://en.wikipedia.org/wiki/Frank_Anscombe">Frank Anscombe</a> constructed the “Anscombe Quartet”: 4 data sets, each consisting of 11 observations of <span class="math inline">\((x, y)\)</span> pairs of numeric values. Here are the statistics per group.</p>
+<div id="tbl-xy-stats" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-xy-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.5: Identical (x, y) stats per group
+</figcaption>
+<div aria-describedby="tbl-xy-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 6
+    grp x_avg y_avg  x_sd  y_sd     r
+  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     1     9  7.50  3.32  2.03 0.816
+2     2     9  7.50  3.32  2.03 0.816
+3     3     9  7.5   3.32  2.03 0.816
+4     4     9  7.50  3.32  2.03 0.817</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>The four groups share virtually identical averages, standard deviations, and <span class="math inline">\((x, y)\)</span> correlation coefficients. Consequently the four data sets generate identical regression lines. Yet, as shown below, the pattern of <span class="math inline">\((x, y)\)</span> values differs markedly among these data sets.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-xy" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-xy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="conditioning_files/figure-html/fig-xy-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-xy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.6: Scatter diagram of (x, y) per group
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Moral: pay attention to the data! The graphical and tabular summaries we choose to present should be useful and informative. For example, it might be helpful to note that group 2 looks like the partial outline of a parabola. We should note that group 3 consists of 10 points falling on a line, with one outlier. In group 4 we should note that of the 11 data points, 10 have identical <span class="math inline">\(x\)</span>-values. We want to minimize the chance of inadvertently conveying false impressions by merely reporting standard summary statistics.</p>
+</section>
+</section>
+<section id="statistical-independence" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="statistical-independence"><span class="header-section-number">2.6</span> Statistical Independence</h2>
+<p>The father-son data is an example of a pair of statistically dependent variables, since the distribution of sons’ heights changes when conditioned on the father’s height. (The same can be said for fathers’ heights conditioned on the height of the son.) Short fathers tend to have short sons; tall fathers tend to have tall sons.</p>
+<p>Practical examples of statistically <em>independent</em> (unrelated) variables exist but are rare, since studies typically collect data on variables believed to be related. Nevertheless, the concept of statistical independence is very useful, as it gives rise to measures of departure from statistical independence (and thus measures of statistical association).</p>
+<p>The correlation coefficient <span class="math inline">\(r\)</span> is an example of such a measure for two continuous variables. If <span class="math inline">\((X, Y)\)</span> is a pair of statistically independent variables, then <span class="math inline">\(r = 0\)</span>. Note, however, that <span class="math inline">\((X, Y)\)</span> may be statistically dependent even if uncorrelated, that is, even if <span class="math inline">\(r = 0\)</span>.</p>
+<section id="definition" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">2.6.1</span> Definition</h3>
+<p>The pair of random variables <span class="math inline">\((X, Y)\)</span> is defined to be statistically independent if</p>
+<p><span id="eq-xy-indep"><span class="math display">\[
+\begin{align}
+  P(X \in A, \; Y \in B) &amp;= P(X \in A) \times P(Y \in B) \\ \\
+  &amp; \text{for all possible sets } A, B \\
+\end{align}
+\qquad(2.7)\]</span></span></p>
+<p>If <span class="math inline">\(P(X \in A) &gt; 0\)</span> then statistical independence implies:</p>
+<p><span id="eq-indep-y-per-x"><span class="math display">\[
+\begin{align}
+  P(Y \in B \; | \; X \in A) &amp;= \frac{P(X \in A, \; Y \in B)}{P(X \in A)} \\
+  &amp;= P(Y \in B) \\ \\
+  &amp; \text{whenever } P(X \in A) &gt; 0
+\end{align}
+\qquad(2.8)\]</span></span></p>
+<p>That is, the conditional probability of random variable <span class="math inline">\(Y\)</span> belonging to set <span class="math inline">\(B\)</span> given that <span class="math inline">\(X\)</span> belongs to set <span class="math inline">\(A\)</span> is equal to the unconditional probability that <span class="math inline">\(Y\)</span> belongs to set <span class="math inline">\(B\)</span>. It follows that the conditional expectation <span class="math inline">\(E(Y | X)\)</span> does not depend on <span class="math inline">\(X\)</span>, and thus equals the constant <span class="math inline">\(E(Y)\)</span>, the unconditional expected value of <span class="math inline">\(Y\)</span>.</p>
+</section>
+<section id="the-case-when-x-and-y-are-categorical-variables" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="the-case-when-x-and-y-are-categorical-variables"><span class="header-section-number">2.6.2</span> The case when X and Y are categorical variables</h3>
+<p>As previously noted, for a pair <span class="math inline">\((X,Y)\)</span> of continuous variables, the correlation coefficient is a measure (though not a definitive measure) of statistical association or dependence. In the case when <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are each restricted to a finite set of values, the chi-square statistic is often a useful measure of statistical association.</p>
+<p>To illustrate, we use data on handedness (right, left, or ambidextrous) of US adults aged 25-34. The data were collected by the US Health and Nutrition Examination Survey (HANES), as cited in <a href="https://www.goodreads.com/book/show/147358.Statistics">FPP</a>. The question we investigate is whether handedness is independent of sex (male, female). For each of the six possible combinations of handedness and sex, the table below counts the number of people in the sample having that combination.</p>
+<div class="cell">
+<div id="tbl-hs-wide" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-hs-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.6: XXX
+</figcaption>
+<div aria-describedby="tbl-hs-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Handedness counts among sampled males and females</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">handedness</th>
+<th style="text-align: right;">male</th>
+<th style="text-align: right;">female</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">right</td>
+<td style="text-align: right;">934</td>
+<td style="text-align: right;">1070</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">left</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ambi</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The percentages of handedness among males and among females are as follows.</p>
+<div class="cell">
+<div id="tbl-hs-pct-wide" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-hs-pct-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.7: XXX
+</figcaption>
+<div aria-describedby="tbl-hs-pct-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Percentage handedness among males, and among females</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">handedness</th>
+<th style="text-align: right;">male</th>
+<th style="text-align: right;">female</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">right</td>
+<td style="text-align: right;">87.5</td>
+<td style="text-align: right;">91.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">left</td>
+<td style="text-align: right;">10.6</td>
+<td style="text-align: right;">7.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ambi</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">0.7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>If handedness and sex were independent, we should see similar percentages of males and females for each type of handedness. The above table indeed shows similar percentages, but are they close enough to conclude independence?</p>
+<p>In the early 1900’s <a href="https://en.wikipedia.org/wiki/Karl_Pearson">Karl Pearson</a> developed the chi-squared test of independence of categorical variables. The reasoning is as follows. Suppose we accept as population estimates the data percentages of handedness (across males and females), and we also accept the somewhat different percentages of males and females in the sample. These so-called <em>marginal</em> distributions are not in dispute. What we’re investigating concerns the cell percentages, combinations of handedness and sex. Under the assumption of independence we would expect each cell percentage in the data to be close to the product of the handedness percentage and the male or female percentage. That product is an <em>expected</em> cell percentage (assuming independence). Multiplying the expected cell percentage by the by the sample size <span class="math inline">\(n\)</span> (number of people in the sample) gives an expected cell count. Pearson’s test of independence is based on the following chi-squared statistic.</p>
+<p><span id="eq-chi-sq-statistic"><span class="math display">\[
+\begin{align}
+  \chi^2 &amp;= \sum_{j = 1}^J {\sum_{k = 1}^K {\frac{(O_{j,k} - E_{j,k})^2}{E_{j,k}}}} \\ \\
+  O_{j,k} &amp;= \text{observed count for cell } \{j, k\} \\
+  E_{j,k} &amp;= \text{expected count for cell } \{j, k\} \\
+\end{align}
+\qquad(2.9)\]</span></span></p>
+<p>Under the assumption of independence Pearson determined the probability distribution of the <span class="math inline">\(\chi^2\)</span> statistic mathematically based on the notion of “degrees of freedom”.</p>
+<p>That is, for each row-index <span class="math inline">\(j\)</span> the expected counts summed across <span class="math inline">\(k\)</span> are constrained to match the corresponding sum of the observed values (the sum for row <span class="math inline">\(j\)</span>). Similarly, for each column-index <span class="math inline">\(k\)</span> the expected counts summed across <span class="math inline">\(j\)</span> are constrained to match the corresponding sum of the observed values (the sum for column <span class="math inline">\(k\)</span>). Given these fixed marginal sums, cell values can vary with <span class="math inline">\((J-1) \times (K-1)\)</span> degrees of freedom.</p>
+<p>Under the assumption of independence and for a large sample size <span class="math inline">\(n\)</span>, the chi-squared statistic approximately follows the distribution of the sum of squared independent standard normal variables, the number of independent normal variables matching the degrees of freedom.</p>
+<p>For the handedness data the degrees of freedom equals 2, and the value of the statistic is 11.8, which is beyond the 99% quantile of the corresponding chi-squared distribution (and thus yields a “p-value” of less than 1%). This would be regarded as strong evidence against the assumption of independence.</p>
+<p>The chi-squared statistic is the sum of squared terms of the following form.</p>
+<p><span id="eq-pearson-residuals"><span class="math display">\[
+\begin{align}
+  \frac{O_{j,k} - E_{j,k}}{\sqrt{E_{j,k}}} \\
+\end{align}
+\qquad(2.10)\]</span></span></p>
+<p>These terms are called “Pearson residuals”. For the handedness data, the Pearson residuals are as follows.</p>
+<div class="cell">
+<div id="tbl-hs-resid-wide" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-hs-resid-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.8: XXX
+</figcaption>
+<div aria-describedby="tbl-hs-resid-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Pearson residuals for handedness data</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">handedness</th>
+<th style="text-align: right;">male</th>
+<th style="text-align: right;">female</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">right</td>
+<td style="text-align: right;">-0.7</td>
+<td style="text-align: right;">0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">left</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">-1.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ambi</td>
+<td style="text-align: right;">1.8</td>
+<td style="text-align: right;">-1.7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Roughly speaking, under independence the magnitude of cell values should align with the scale of standard normal variables. For the handedness data, the large value of the chi-square statistic cannot be attributed to a single cell of the table, but rather to the left-handed and ambidextrous cells (handedness to which males are more prone than females).</p>
+</section>
+<section id="simpsons-paradox" class="level3" data-number="2.6.3">
+<h3 data-number="2.6.3" class="anchored" data-anchor-id="simpsons-paradox"><span class="header-section-number">2.6.3</span> Simpson’s Paradox</h3>
+<p>We now turn to a different set of categorical data from a study of graduate admissions at UC Berkeley in 1973 available in R as <code>datasets::UCBAdmissions</code>. The study was prompted by a concern of bias against females. The table below summarizes admission percentages for males and for females across the six largest departments.</p>
+<div class="cell">
+<div id="tbl-ucb-sa-pct" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ucb-sa-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.9: XXX
+</figcaption>
+<div aria-describedby="tbl-ucb-sa-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Admission percentages for males and for females</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">decision</th>
+<th style="text-align: right;">Male</th>
+<th style="text-align: right;">Female</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Admitted</td>
+<td style="text-align: right;">44.5</td>
+<td style="text-align: right;">30.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rejected</td>
+<td style="text-align: right;">55.5</td>
+<td style="text-align: right;">69.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>These percentages look damning, but the table below, showing admission rates per department, tells a different story.</p>
+<div class="cell">
+<div id="tbl-ucb-das-pct" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ucb-das-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.10: Admission percentages per department
+</figcaption>
+<div aria-describedby="tbl-ucb-das-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Admission percentages per department</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">dept</th>
+<th style="text-align: right;">among_males</th>
+<th style="text-align: right;">among_females</th>
+<th style="text-align: right;">overall</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">62.1</td>
+<td style="text-align: right;">82.4</td>
+<td style="text-align: right;">64.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">63.0</td>
+<td style="text-align: right;">68.0</td>
+<td style="text-align: right;">63.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">36.9</td>
+<td style="text-align: right;">34.1</td>
+<td style="text-align: right;">35.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: right;">33.1</td>
+<td style="text-align: right;">34.9</td>
+<td style="text-align: right;">34.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">E</td>
+<td style="text-align: right;">27.7</td>
+<td style="text-align: right;">23.9</td>
+<td style="text-align: right;">25.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">5.9</td>
+<td style="text-align: right;">7.0</td>
+<td style="text-align: right;">6.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The table shows that four of the six departments admitted a greater percentage of female applicants than male applicants. In the remaining two departments females did somewhat worse than males. Yet, summing over all six departments, women applicants fared decidedly worse than male applicants. How can this be?</p>
+<p>The answer can be found by: (1) noting that the table above lists departments, labeled A through F, in descending order of overall admission rates; and (2) examining the following table that shows each department’s share of applicants: male, female, and overall.</p>
+<div class="cell">
+<div id="tbl-ucb-ds-wide" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ucb-ds-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.11: Number of applications per department
+</figcaption>
+<div aria-describedby="tbl-ucb-ds-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Number of applications per department</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">dept</th>
+<th style="text-align: right;">from_males</th>
+<th style="text-align: right;">from_females</th>
+<th style="text-align: right;">overall</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">825</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">933</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">560</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">585</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">325</td>
+<td style="text-align: right;">593</td>
+<td style="text-align: right;">918</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">375</td>
+<td style="text-align: right;">792</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">E</td>
+<td style="text-align: right;">191</td>
+<td style="text-align: right;">393</td>
+<td style="text-align: right;">584</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">373</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">714</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Here are the same counts but now converted into per-department percentage of applications from males, females, and overall, respectively.</p>
+<div class="cell">
+<div id="tbl-ucb-ds-pct" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ucb-ds-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.12: Percent of applications per department
+</figcaption>
+<div aria-describedby="tbl-ucb-ds-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Percent of applications per department</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">dept</th>
+<th style="text-align: right;">from_males</th>
+<th style="text-align: right;">from_females</th>
+<th style="text-align: right;">overall</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">30.7</td>
+<td style="text-align: right;">5.9</td>
+<td style="text-align: right;">20.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">20.8</td>
+<td style="text-align: right;">1.4</td>
+<td style="text-align: right;">12.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">12.1</td>
+<td style="text-align: right;">32.3</td>
+<td style="text-align: right;">20.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: right;">15.5</td>
+<td style="text-align: right;">20.4</td>
+<td style="text-align: right;">17.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">E</td>
+<td style="text-align: right;">7.1</td>
+<td style="text-align: right;">21.4</td>
+<td style="text-align: right;">12.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">13.9</td>
+<td style="text-align: right;">18.6</td>
+<td style="text-align: right;">15.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>We see that relatively few females applied to departments A and B, which had the highest overall admission rates. Females tended more than males to apply to departments having overall low rates of admission. That is, departmental admission rate is an explanatory variable missing from the initial summary of male and female admission rates across all six departments.</p>
+<p>This phenomenon, a pattern per group that is masked when summarized across groups, is known as <a href="https://en.wikipedia.org/wiki/Simpson%27s_paradox">Simpson’s paradox</a>. More generally, we must be alelrt to the possibility that we have overlooked some variable (sometimes called a “confounding” variable) that could alter our conclusions.</p>
+</section>
+</section>
+<section id="entropy" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="entropy"><span class="header-section-number">2.7</span> Entropy</h2>
+<section id="background" class="level3" data-number="2.7.1">
+<h3 data-number="2.7.1" class="anchored" data-anchor-id="background"><span class="header-section-number">2.7.1</span> Background</h3>
+<p>The term “entropy” was defined in the mid-19th century (with the emergence of Statistical Mechanics) as a measure of the disorder of a physical system. In 1948 (with the emergence of Information Theory) <a href="https://en.wikipedia.org/wiki/Claude_Shannon">Claude Shannon</a> introduced the same term and equivalent mathematical definition as a measure of uncertainty.</p>
+</section>
+<section id="yes-no-questions" class="level3" data-number="2.7.2">
+<h3 data-number="2.7.2" class="anchored" data-anchor-id="yes-no-questions"><span class="header-section-number">2.7.2</span> Yes-No Questions</h3>
+<p>Let’s illustrate the concept of entropy with a variant of the game “<a href="https://en.wikipedia.org/wiki/Twenty_questions">Twenty Questions</a>”. The contestant is presented with a box of tickets, each ticket bearing a single capital letter of the English alphabet. The contestant is shown the box, and thus knows the number of tickets bearing each letter. (It may happen that only a few of the possible 26 letters actually appear in the box.) The game begins with the random drawing of a ticket not visible to the contestant. The contestant may ask yes-no questions about the ticket until the contestant determines with certainty the letter written on the ticket. (The contestant does not guess but rather comes to a firm conclusion.) The ticket is put back in the box, ending the first round of the game. Subsequent rounds of the game are exactly like the first, a new ticket is drawn at random; it’s letter must be deduced by the contestant through a sequence of yes-no questions. The contestant is evaluated on the average number of questions required to determine the letter on a randomly drawn ticket.</p>
+<p>We suppose that contestant devises the most informative sequence of questions possible. Consequently, the average number of required questions is a measure of the difficulty presented by the set of tickets in the box, that is, of the uncertainty of the value of a randomly drawn ticket.</p>
+<p>Here are some different scenarios.</p>
+<p><em>Box 1</em>: If the contents of the box were <span class="math inline">\(\{A, A , A, A \}\)</span> then the contestant needn’t spend any questions to determine with certainty the value of a randomly drawn ticket. The average number of required questions would be zero.</p>
+<p><em>Box 2</em>: If the contents of the box were <span class="math inline">\(\{A, A , B, B \}\)</span> then the contestant would require one question to determine with certainty the value of a randomly drawn ticket. The average number of required questions would be one.</p>
+<p><em>Box 3</em>: If the contents of the box were <span class="math inline">\(\{A, B , C, D \}\)</span> then the contestant would require two questions to determine with certainty the value of a randomly drawn ticket. The average number of required questions would be two.</p>
+<p><em>Box 4</em>: Now consider the box <span class="math inline">\(\{ A, A, B, C \}\)</span>. The contestant’s first question might be whether the ticket-value is <span class="math inline">\(A\)</span>, the most probable value. In half the rounds the answer would be a definitive yes, limiting the number of questions to 1. In the other half of the rounds, a single follow-up question would be required to identify the ticket-value with certainty. Averaged across rounds the required number of questions would be <span class="math inline">\((\frac{1}{2} \times 1) + (\frac{1}{2} \times 2) = \frac{3}{2}\)</span>.</p>
+<p>In general, consider a binary search strategy. Partition the set of all tickets into two subsets of distinct ticket-values, so that the two subsets contain a nearly equal number of tickets (to the extent possible). Devise the first question to determine to which of the two subsets the randomly drawn ticket belongs. Now partition the identified subset into two further subsets distinguished by ticket-values, again of equal or nearly equal size. Devise the second question to determine which of these two subsets is the origin of the randomly drawn ticket. Continue in this way until the randomly drawn ticket is identified.</p>
+<p>Under the binary search strategy the maximum number, say <span class="math inline">\(\mu\)</span>, of required questions is a function of the number, say <span class="math inline">\(K\)</span>, of distinct ticket-values, namely, <span class="math inline">\(\mu\)</span> is the smallest integer such that <span class="math inline">\(\mu \ge \log_2(K)\)</span>. But that is a worst-case scenario: <span class="math inline">\(\mu\)</span> is generally greater than the <em>average</em> number of required questions, as illustrated by Box 4.</p>
+</section>
+<section id="definition-1" class="level3" data-number="2.7.3">
+<h3 data-number="2.7.3" class="anchored" data-anchor-id="definition-1"><span class="header-section-number">2.7.3</span> Definition</h3>
+<p>The mathematical definition of entropy (usually denoted <span class="math inline">\(H\)</span>) gives a lower bound on the average number of required questions that follow an optimal strategy. For a finite probability distribution <span class="math inline">\(p_{\bullet} = (p_1, p_2, \ldots, p_K)\)</span> the mathematical definition is as follows.</p>
+<p><span id="eq-entropy-finite-distn"><span class="math display">\[
+\begin{align}
+  H(p_1, p_2, \ldots, p_K) \\
+  &amp;= \sum_{k = 1}^K { p_k \times \log_2(\frac{1}{p_k}) } \\
+  &amp;= - \sum_{k = 1}^K { p_k \times \log_2(p_k) } \\
+  \\
+  &amp; \text{with } p_k = \text{probability of drawing value } k \\
+  &amp; \text{and } K = \text{number of distinct values}
+\end{align}
+\qquad(2.11)\]</span></span></p>
+<p>(This definition of <span class="math inline">\(H\)</span> uses a base-2 logarithm <span class="math inline">\(\log_2()\)</span> to match our yes-no question game. The units of this <span class="math inline">\(H\)</span> are the required number of yes-no questions, that is, binary digits, or “bits”. <span class="math inline">\(H\)</span> is sometimes defined using the natural logarithm <span class="math inline">\(\log_e()\)</span> yielding a unit called “nats”. Changing the base of the logarithm changes <span class="math inline">\(H\)</span> by a multiplicative constant.)</p>
+<p>For the first box in the game above, we have a single value <span class="math inline">\(A\)</span>, which is thus drawn with probability one, which yields <span class="math inline">\(H = 0\)</span>.</p>
+<p>For the second box we have two values, each drawn with probability <span class="math inline">\(\frac{1}{2}\)</span>, so <span class="math inline">\(H = 1\)</span>.</p>
+<p>For the third box we have four values, each drawn with probability <span class="math inline">\(\frac{1}{4}\)</span>, so <span class="math inline">\(H = 2\)</span>.</p>
+<p>For the fourth box, we calculated that the average number of required questions is <span class="math inline">\(\frac{3}{2}\)</span>, which is the value of <span class="math inline">\(H\)</span>.</p>
+</section>
+<section id="h_x-y-for-independent-x-y" class="level3" data-number="2.7.4">
+<h3 data-number="2.7.4" class="anchored" data-anchor-id="h_x-y-for-independent-x-y"><span class="header-section-number">2.7.4</span> <span class="math inline">\(H_{X, Y}\)</span> for independent <span class="math inline">\((X, Y)\)</span></h3>
+<p>So far we’ve discussed entropy with respect to a single random variable. We now extend the discussion to a pair of random variables. Let’s change the game so that each ticket now bears both a letter and a positive integer.</p>
+<p>Let our first example be <span class="math inline">\(\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}\)</span>, in which the set of letter-tickets <span class="math inline">\(\{ A, A, B, C \}\)</span> is duplicated, initially with the subscript 1, and then with the subscript 2. Drawing a ticket at random from this box is equivalent to drawing a letter at random from <span class="math inline">\(\{ A, A, B, C \}\)</span> and then independently drawing a number from <span class="math inline">\(\{ 1, 2 \}\)</span>. The contestant may as well first ascertain the letter and then ascertain the number, requiring on average <span class="math inline">\(\frac{3}{2} + 1\)</span> questions.</p>
+<p>More generally, suppose we have a pair <span class="math inline">\((X, Y)\)</span> of independent random variables that take on a finite set of values. Then</p>
+<p><span class="math display">\[
+\begin{align}
+  P(X = x_j, \; Y = y_k) \\
+  &amp;= P(X = x_j) \times P(Y = y_k) \\
+\end{align}
+\]</span></p>
+<p>or more succinctly</p>
+<p><span class="math display">\[
+\begin{align}
+  p_{X, Y}(j, k) &amp;= p_X(j) \times p_Y(k)
+\end{align}
+\]</span></p>
+<p>The entropy of the distribution of <span class="math inline">\((X, Y)\)</span> is:</p>
+<p><span id="eq-entropy-xy-indep"><span class="math display">\[
+\begin{align}
+  H_{X, Y} &amp;= H(\; \{ p_{X, Y}(j, k) \} \;) \\
+  &amp;= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_{X, Y}(j,k) \times log_2(\; p_{X, Y} (j,k) \;)}} \\
+  &amp;= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_X(j) \times p_Y(k) \times log_2(\; p_X(j) \times p_Y(k) \;)}} \\
+  &amp;= - \sum_{j = 1}^J \sum_{k = 1}^K p_X(j) \times p_Y(k) \times \{ \; log_2(p_X(j) + log_2(p_Y(k) \; \} \\
+  &amp;= H_X \times \sum_{k = 1}^K p_Y(k) \; + \; \sum_{j = 1}^J p_X(j) \times H_Y \\
+  &amp;= H_X + H_Y
+\end{align}
+\qquad(2.12)\]</span></span></p>
+<p>In words, when <span class="math inline">\((X, Y)\)</span> are independent, their joint entropy equals the sum of their respective entropies.</p>
+</section>
+<section id="mutual-information" class="level3" data-number="2.7.5">
+<h3 data-number="2.7.5" class="anchored" data-anchor-id="mutual-information"><span class="header-section-number">2.7.5</span> Mutual Information</h3>
+<p>Now consider the case where <span class="math inline">\((X, Y)\)</span> are dependent. Suppose, for example, that our box of tickets is <span class="math inline">\(\{ A_1, A_2, B_1, C_2 \}\)</span>. The marginal distribution of letters remains <span class="math inline">\(\{A, A, B, C \}\)</span> and the marginal distribution of numbers is <span class="math inline">\(\{1, 2, 1, 2\}\)</span> which is equivalent to the box <span class="math inline">\(\{1, 2\}\)</span> of the previous example.</p>
+<p>In the previous example, had the contestant first determined the subscript on the randomly drawn ticket, that information would not have affected the subsequent process of determining the letter. The average number of required questions would remain <span class="math inline">\(1 + \frac{3}{2}\)</span>.</p>
+<p>Now, however, using the first question to determine the subscript reduces the letter possibilities to either <span class="math inline">\(\{A, B\}\)</span> or else <span class="math inline">\(\{A, C\}\)</span>. A single additional question is required to determine the letter. Thus the total number of required questions is 2, which equals the entropy value <span class="math inline">\(H\)</span>.</p>
+<p>Let’s continue to suppose that <span class="math inline">\((X, Y)\)</span> are dependent. An ill-informed contestant might adopt the strategy optimal for the independent case, attacking one variable at a time. But this strategy would no longer be optimal. There would now be instances in which knowledge of one variable would reduce the average number of additional questions required to determine the value of the other variable. Thus the joint entropy <span class="math inline">\(H_{X, Y}\)</span> never exceeds the entropy <span class="math inline">\(H_X + H_Y\)</span> of the independent case.</p>
+<p>The reduction in entropy when the distribution of <span class="math inline">\((X, Y)\)</span> is changed from independent to dependent (while retaining the original marginal distributions) goes by different names, including “information gain” and (less ambiguously) “mutual information”.</p>
+<p>We define mutual information <span class="math inline">\((MI)\)</span> as this reduction.</p>
+<p><span id="eq-mutual-info-xy"><span class="math display">\[
+\begin{align}
+  MI_{X, Y} &amp;= H_X + H_Y - H_{X, Y} \\
+\end{align}
+\qquad(2.13)\]</span></span></p>
+<p><span class="math inline">\(MI\)</span> is non-negative, and is zero when <span class="math inline">\((X, Y)\)</span> are independent.</p>
+</section>
+<section id="kl-divergence" class="level3" data-number="2.7.6">
+<h3 data-number="2.7.6" class="anchored" data-anchor-id="kl-divergence"><span class="header-section-number">2.7.6</span> KL Divergence</h3>
+<p>Continuing from the discussion of mutual information, suppose that an ill-informed contestant has optimized their questioning strategy for the box <span class="math inline">\(\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}\)</span>, in which letters and numbers occur independently, when in fact the box is <span class="math inline">\(\{ A_1, A_2, B_1, C_2 \}\)</span>. The contestant’s strategy requires an average of <span class="math inline">\(\frac{5}{2}\)</span> questions to determine the randomly drawn letter-number combination with certainty, but for the actual box one requires just 2 questions. The misinformation about the box from which tickets are randomly drawn costs the contestant, on average, <span class="math inline">\(\frac{1}{2}\)</span> per question more than necessary.</p>
+<p>Kullback-Liebler divergence is a mathematical representation of this phenomenon. It is defined as follows.</p>
+<p><span id="eq-kullback-liebler-divergence"><span class="math display">\[
+\begin{align}
+  KL(P \; || \; Q) \\
+  &amp;= E_P \left( \log_2 \left( \frac{ 1 }{ Q(X) } \right) \right) - E_P \left( \log_2 \left( \frac{ 1 }{ P(X) } \right) \right) \\  
+  &amp;= E_P \left( \log_2 \left( \frac{ P(X) }{ Q(X) } \right) \right) \\  
+  &amp;= \sum_{ \{x : P(x) &gt; 0 \}} P(x) \times \log_2 \left( \frac{P(x)}{Q(x)} \right) \\
+  \\
+  &amp; \text{with } P(x) = \text{reference probability mass function} \\
+  &amp; \text{and } Q(x) = \text{alternative probability mass function} \\
+\end{align}
+\qquad(2.14)\]</span></span></p>
+<p>In the example above, <span class="math inline">\(P(\cdot)\)</span> is the probability of drawing any given letter-number combination from <span class="math inline">\(\{ A_1, A_2, B_1, C_2 \}\)</span>, and <span class="math inline">\(Q(\cdot)\)</span> is the corresponding probability for <span class="math inline">\(\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}\)</span>. Here is the tally of the sum defining <span class="math inline">\(KL(P \; || \; Q)\)</span>.</p>
+<div class="cell">
+<div id="tbl-kl-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-kl-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.13: XXX
+</figcaption>
+<div aria-describedby="tbl-kl-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>KL Divergence example</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">x</th>
+<th style="text-align: right;">P(x)</th>
+<th style="text-align: right;">Q(x)</th>
+<th style="text-align: right;">log2_ratio</th>
+<th style="text-align: right;">term</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A_1</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B_1</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C_1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">-Inf</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A_2</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B_2</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">-Inf</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C_2</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.25</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>For purposes of illustration the table above includes any value <span class="math inline">\(x\)</span> assigned positive probability by either <span class="math inline">\(P(\cdot)\)</span> or <span class="math inline">\(Q(\cdot)\)</span>, even those for which <span class="math inline">\(P(x) = 0\)</span> and therefore do not contribute to the KL divergence, <span class="math inline">\(KL(P \; || \; Q)\)</span>. Also note that the sum of the terms, that is the KL divergence, is indeed <span class="math inline">\(\frac{1}{2}\)</span>. We will return to KL divergence in subsequent discussions.</p>
+</section>
+</section>
+<section id="team-exercises" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">2.8</span> Team Exercises</h2>
+<ol type="1">
+<li><p>Simulate bivariate normal variables: Using <code>stats::rnorm()</code> or otherwise, generate independent instances of a standard normal variable <span class="math inline">\(X\)</span> (that is, having mean zero and standard deviation 1). Next choose a value of <span class="math inline">\(r\)</span> such that <span class="math inline">\(-1 &lt; r &lt; 1\)</span>. Now for each instance of <span class="math inline">\(X\)</span> construct an instance of random variable <span class="math inline">\(Y\)</span> so that the distribution <span class="math inline">\(\mathcal{D}(Y \; | \; X)\)</span> of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> is normal with expected value <span class="math inline">\(r \times X\)</span> and standard deviation <span class="math inline">\(\sqrt{1 - r^2}\)</span>. (Hint: consider constructing <span class="math inline">\(Y\)</span> by using <span class="math inline">\(X\)</span> along with a new, independent standard normal variable <span class="math inline">\(Z\)</span>.) What are the <em>unconditional</em> mean and standard deviation of <span class="math inline">\(Y\)</span>? What is the correlation coefficient of the pair <span class="math inline">\((X, Y)\)</span>? How might you generalize your construction to accommodate other prescribed means <span class="math inline">\((\mu_x, \mu_y)\)</span> and standard deviations <span class="math inline">\((\sigma_x, \sigma_y)\)</span> of <span class="math inline">\((X, Y)\)</span>?</p></li>
+<li><p>Simpson’s paradox: In the discussion above we illustrated Simpson’s paradox using the UCB Admissions data. Find or construct a different example.</p></li>
+<li><p>Entropy, Discrete Uniform: If Box 5 is <span class="math inline">\(\{ A, B, C, D, E \}\)</span>, how many questions are required, on average, to determine with certainty the ticket that has been randomly drawn? What is the entropy <span class="math inline">\(H\)</span> of this box? More generally, calculate <span class="math inline">\(H\)</span> for a box <span class="math inline">\(\{ x_1, x_2, \ldots, x_K \}\)</span> that contains <span class="math inline">\(K\)</span> tickets, each having a unique value.</p></li>
+<li><p>Entropy, UCB Admissions: Consider a box of tickets that matches the UC Berkeley admissions data. The number of tickets in the box is the number of applications in the data. Each ticket has three markings: either “Male” or “Female” to denote the sex of the applicant; either “Admitted” or “Rejected” to denote the decision made on the application; and one of <span class="math inline">\(\{ A, B, C, D, E, F \}\)</span> to denote the department that made the decision.</p></li>
+</ol>
+<ul>
+<li><p>Restricting attention to just the “Admitted” or “Rejected” marking, calculate <span class="math inline">\(H_{\text{decision}}\)</span>.</p></li>
+<li><p>Now calculate <span class="math inline">\(H_{\text{decision, sex}}\)</span> and the mutual information <span class="math inline">\(MI_{\text{decision, sex}}\)</span>.</p></li>
+<li><p>How would you formulate the information gained in the analysis of sex bias by including departmental admission rates?</p></li>
+</ul>
+</section>
+<section id="resources" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="resources"><span class="header-section-number">2.9</span> Resources</h2>
+<p><a href="https://r-graphics.org/">R Graphics Cookbook (2e)</a> by Winston Chang</p>
+<p><a href="https://www.goodreads.com/book/show/147358.Statistics">Statistics (4e)</a> by Freedman, Pisani, Purves | Goodreads</p>
+<p><a href="https://en.wikipedia.org/wiki/Independence_(probability_theory)">Independence</a> (probability theory) - Wikipedia</p>
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/17835295/">Sex bias in graduate admissions</a>: data from Berkeley, by Bickel, Hammel, and O’connell</p>
+<p><a href="https://webarchive.loc.gov/all/20050415122608/http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf">A Mathematical Theory of Communication</a>, by <a href="https://en.wikipedia.org/wiki/Claude_Shannon">C.E. Shannon</a></p>
+<p><a href="https://medium.com/udacity/shannon-entropy-information-gain-and-picking-balls-from-buckets-5810d35d54b4">Shannon Entropy, Information Gain, and Picking Balls from Buckets</a> | by Luis Serrano | Udacity Inc | Medium</p>
+<p><a href="https://en.wikipedia.org/wiki/Mutual_information">Mutual information</a> - Wikipedia</p>
+<p><a href="https://nobel.web.unc.edu/wp-content/uploads/sites/13591/2020/11/Distance-Divergence.pdf">Distances and Divergences for Probability Distributions</a> by Andrew Nobel</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./eda.html" class="pagination-link" aria-label="Exploratory Data Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./clustering.html" class="pagination-link" aria-label="Clustering: EDA in Higher Dimensions">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/conditioning.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

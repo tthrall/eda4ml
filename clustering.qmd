@@ -1,29 +1,4 @@
----
-title: "Clustering: EDA in Higher Dimensions"
-subtitle: "Part 1, session 2a of Data Mining Intro"
-author: 
-  - name: "Send comments to: Tony T (adthral)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s2a"
-  file_prefix: "s2a_clustering"
-abstract: 
-  "Introduce statistical clustering methods."
----
+# Clustering: EDA in Higher Dimensions {#sec-clustering}
 
 ```{r}
 #| label: setup
@@ -202,9 +177,9 @@ expend_mid  <- median(college_factors$ Expend)
 # distinct pair of variables in a scatter diagram.
 g_grp_var_matrix <- college_factors |> 
   GGally::ggpairs(
-    columns = c("Top10perc", "Expend")
-  ) + 
-  ggplot2::labs("Variables `Top10perc` and `Expend`")
+    columns = c("Top10perc", "Expend"), 
+    title   = "Variables (Top10perc, Expend)"
+  )
 g_grp_var_matrix
 ```
 

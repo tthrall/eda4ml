@@ -1,0 +1,303 @@
+---
+title: "Summary"
+author: 
+  - name: "Send comments to: Tony T (adthral)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "s6a"
+  file_prefix: "s6a_topic_review"
+abstract: 
+  "Review of selected topics."
+bibliography: eda4ml.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r libraries}
+library(assertthat)
+library(GGally)
+# library(gutenbergr)
+library(here)
+# library(ISLR2)
+# library(janeaustenr)
+library(latex2exp)
+# library(learnr)
+# library(quanteda)
+# library(SAPP)
+# library(tidytext)
+library(tidyverse)
+# library(timeSeriesDataSets)
+library(tinytex)
+# library(tm)
+# library(tokenizers)
+# library(topicmodels)
+# library(tsibble)
+library(tufte)
+
+```
+
+```{r local_source}
+# source(here("code", "rmse_per_grp.R"))
+# source(here("code", "xtabs_to_jaccard.R"))
+# source(here("code", "gen_circuit.R"))
+```
+
+------------------------------------------------------------------------
+
+## Review of Selected Topics
+
+### Introduction
+
+We first review the course material in order to prepare you (should you choose) to present this material going forward. The primary reference is `eda_v3`:
+
+-   Notes on Exploratory Data Analysis (EDA)
+    -   MATH4350 version 3
+    -   by Karen Trageser
+
+The subsequent material for the course is based on the following `ml` reference:
+
+-   Machine Learning: a Concise Introduction
+    -   by Steven W. Knox
+    -   next edition pending publication by Wiley
+    -   (Course notes: ML Topics & Techniques, version 2.93)
+
+We first compare the `eda_v3` content to the selection of last week's topics. We'll then form small teams to select topics for discussion in the remainder of the session.
+
+Then we prepare to you to teach the course by discussing content and ideas to be emphasized, intended participants, desired learning outcomes, and instructor preparation.
+
+
+### Overview of Topics
+
+```{r eda_v3_outline}
+eda_v3_outline <- read_tsv(
+  file = here("data", "retain", "eda_v3_outline.txt")) |> 
+  dplyr::mutate(across(
+    .cols = idx_1:i_pg, 
+    .fns  = as.integer))
+```
+
+```{r jan_13_17_topics}
+jan_13_17_topics <- read_tsv(
+  file = here("data", "retain", "jan_13_17_topics.txt")) |> 
+  dplyr::mutate(dt_session = lubridate::dmy(dt_session)) |> 
+  dplyr::mutate(across(
+    .cols = c(idx_1, idx_2, idx_3, pg_doc), 
+    .fns  = as.integer))
+```
+
+Here are the chapter titles of `eda_v3`.
+
+```{r eda_v3_outline__kable}
+eda_v3_outline |> 
+  dplyr::filter(
+    idx_2 == 0L, idx_3 == 0L
+  ) |> 
+  dplyr::select(idx_1, title) |> 
+   knitr::kable(
+     caption = "EDA v3 chapters", 
+     col.names = c("chpt", "title")
+   )
+```
+
+And here are the topics we discussed last week.
+
+```{r jan_13_17_topics__kable}
+jan_13_17_topics |> 
+  dplyr::filter(
+    idx_2 == 0L, idx_3 == 0L
+  ) |> 
+  dplyr::select(dt_session, am_pm, title) |> 
+   knitr::kable(
+     caption = "Topics discussed Jan 13-17", 
+     col.names = c("date", "time", "topic")
+   )
+```
+
+### Class Exercise: Select Topics for Further Discussion
+
+Which topics presented last week merit further discussion? Which topics from `eda_v3` would you like to know more about? Form a team of 2-4 classmates, and take 10 minutes to record the 1-2 topics of greatest interest to you. We'll then use the remainder of the session to discuss them and follow up with write-ups.
+
+### Topics Nominated for Further Discussion
+
+Here are the topics nominated for further discussion by one or more teams.
+
+```{r topics_for_discussion}
+topics_for_discussion <- tibble::tribble(
+  ~topic, ~n_teams, 
+  "Time Series Forecasting", 2L, 
+  "LDA: Latent Dirichlet Allocation", 2L, 
+  "SVD:Singular Value Decomposition", 1L, 
+  "KDE: Kernel Density Estimation", 1L, 
+  "Clustering", 1L, 
+  "PCA v MDS v SNE: when to use?", 1L
+)
+
+# save file just once
+save_file <- FALSE
+if (save_file) {
+  topics_for_discussion |> write_tsv(here(
+    "data", "retain", "topics_for_discussion.txt"
+  ))
+}
+```
+
+```{r topics_for_discussion__kable}
+topics_for_discussion |> knitr::kable(
+  caption = "Topics Nominated by Teams"
+)
+```
+
+## Preparing to Teach Part 1
+
+
+
+Here are the class exercises from our last session concerning the EDA content.
+
+```{r part_1_review_exercises}
+part_1_review_exercises <- tibble::tribble(
+  ~heading, ~prep, 
+  "Clarification Needed",  10L, 
+  "Selection of Topics",   15L, 
+  "Intended Participants", 10L, 
+  "Learning Outcomes",     15L, 
+  "Teaching Style",        10L
+)
+```
+
+```{r part_1_review_exercises__kable}
+part_1_review_exercises |> 
+  knitr::kable(
+    caption = "Part 1 Review: Class Exercises", 
+    col.names = c("heading", "prep (minutes)")
+  )
+```
+
+### Primary References for the Course
+
+As noted in the previous session, the primary reference for Part 1 of MATH4350 is `eda_v3`:
+
+-   Notes on Exploratory Data Analysis (EDA)
+    -   MATH4350 version 3
+    -   by Karen Trageser
+
+The subsequent material for the course is based on the following `ml` reference:
+
+-   Machine Learning: a Concise Introduction
+    -   by Steven W. Knox
+    -   next edition pending publication by Wiley
+    -   (Course notes: ML Topics & Techniques, version 2.93)
+
+### Topics
+
+```{r eda_v3_outline}
+eda_v3_outline <- read_tsv(
+  file = here("data", "retain", "eda_v3_outline.txt")) |> 
+  dplyr::mutate(across(
+    .cols = idx_1:i_pg, 
+    .fns  = as.integer))
+```
+
+```{r jan_13_17_topics}
+jan_13_17_topics <- read_tsv(
+  file = here("data", "retain", "jan_13_17_topics.txt")) |> 
+  dplyr::mutate(dt_session = lubridate::dmy(dt_session)) |> 
+  dplyr::mutate(across(
+    .cols = c(idx_1, idx_2, idx_3, pg_doc), 
+    .fns  = as.integer))
+```
+
+Here are the chapter titles of `eda_v3`.
+
+```{r eda_v3_outline__kable}
+eda_v3_outline |> 
+  dplyr::filter(
+    idx_2 == 0L, idx_3 == 0L
+  ) |> 
+  dplyr::select(idx_1, title) |> 
+   knitr::kable(
+     caption = "EDA v3 chapters", 
+     col.names = c("chpt", "title")
+   )
+```
+
+This represents a broad range of topics to be covered in just a few days. Each chapter can easily take up a one-semester course at the undergraduate or graduate level. Consequently we must select and organize topics very carefully to equip participants with essential tools and prepare them for the remainder of the course
+
+Here are the topics we discussed last week.
+
+```{r jan_13_17_topics__kable}
+jan_13_17_topics |> 
+  dplyr::filter(
+    idx_2 == 0L, idx_3 == 0L
+  ) |> 
+  dplyr::select(dt_session, am_pm, title) |> 
+   knitr::kable(
+     caption = "Topics discussed Jan 13-17", 
+     col.names = c("date", "time", "topic")
+   )
+```
+
+### Class Exercises
+
+For each of the following talking points, form a small group with one or two classmates, and take 10-15 minutes to prepare to report your thoughts to the class.
+
+### Selection of Topics
+
+As you prepare to teach MATH4350, which topics and key points from `eda_v3` would you emphasize? Based on your experience with the material discussed last week, how would you organize classroom sessions? What guidance would you offer a friend preparing to teach this material? Take 15 minutes to prepare to report out to the class.
+
+#### Intended Participants
+
+Last week several of us noted that the EDA content was presented largely from a mathematical viewpoint, prompting us to consider whether and how to engage those potential participants whose expertise was more computational than mathematical. Take 10 minutes to report out to the class on the questions below, or on related questions of your own.
+
+-   The US version of the course lays out pre-requisites in mathematics, statistics, and computation, citing established textbooks.
+
+-   For the UK version of the course, should those pre-requisites be modified? How?
+
+-   How should the readiness of a potential participant be assessed?
+
+-   When should a potential participant be advised to shore up needed pre-requisites on their own? What guidance should we give on courses or other learning resources? Are high-side refresher courses feasible?
+
+#### Learning Outcomes
+
+From last week's discussions, we seem to be agreed that the goal of the EDA material should be to equip participants with tools they can (responsibly) use in their work, either immediately or eventually. Take 15 minutes to consider the questions below and then report to the class how you would express your goals for participant learning of the EDA content.
+
+-   Should this first week of content also be used to level-set, to ensure that participants share some common knowledge and vocabulary needed for the remainder of the course? If so, how should we define that baseline?
+
+-   As an instructor, should you attempt to detect gaps in needed participant knowledge? How would you go about that? How would you address such gaps?
+
+-   Responsible use of data science methods requires knowledge of the capabilities and limitations of the methods, and of one's current level of proficiency in a wide-ranging set of competencies. How would you help participants get a clear picture of both?
+
+-   How would you summarize your goals as an instructor for participants with respect to the EDA content?
+
+#### Instructor Preparation
+
+Each of us goes about learning a new area in our own distinct manner. As instructors we naturally emphasize what we know or enjoy most, and tend to present content in a way that we would want that content presented to us. How should we take advantage of instructor strengths while maintaining some degree of consistency in content and delivery? Take 10 minutes to consider the following questions and then report out to the class.
+
+-   In the US `eda_v3` followed by `mlci` are the reference materials on which MATH4350 is based. Other instructors contribute content on specific topics, thereby enabling each instructor to assemble content as seems best. Is this a model for the UK version of the course? Where and how should the content be maintained?
+
+-   In your experience as an instructor, have you ever encountered a course participant who seemed to learn differently from the way you learn?
+
+-   As a community of instructors, how should we share our successes and challenges?
+
+-   How, if at all, should we vet potential instructors?
+

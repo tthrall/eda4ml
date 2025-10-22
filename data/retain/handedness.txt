@@ -1,0 +1,7 @@
+sex	hnd	count
+male	right	934
+male	left	113
+male	ambi	20
+female	right	1070
+female	left	92
+female	ambi	8

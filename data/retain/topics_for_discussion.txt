@@ -1,0 +1,7 @@
+topic	n_teams
+Time Series Forecasting	2
+LDA: Latent Dirichlet Allocation	2
+SVD:Singular Value Decomposition	1
+KDE: Kernel Density Estimation	1
+Clustering	1
+PCA v MDS v SNE: when to use?	1

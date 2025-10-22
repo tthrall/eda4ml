@@ -1,29 +1,4 @@
----
-title: "Exploratory Data Analysis"
-subtitle: "Part 1, session 1a of Data Mining Intro"
-author: 
-  - name: "Send comments to: Tony T (tthral)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s1a"
-  file_prefix: "s1a_eda"
-abstract: 
-  "Review concepts and techniques of exploratory data analysis."
----
+# Exploratory Data Analysis {#sec-eda}
 
 ```{r}
 #| label: setup
@@ -260,10 +235,12 @@ The summary of individual differences in height (son minus father) strengthens t
 
 ## Resources
 
-[simpleR](https://github.com/buruzaemon/simpleR) Using R for Introductory Statistics.\
-By [John Verzani](https://www.math.csi.cuny.edu/~verzani/) Department of Mathematics at CSI
+[Hands-On Programming in R](https://rstudio-education.github.io/hopr/), by [Garrett Grolemund](https://education.rstudio.com/author/garrett/)
 
-[R for Data Science (2e)](https://r4ds.hadley.nz/), by [Hadley Wickham](https://hadley.nz/)
+
+[simpleR](https://github.com/buruzaemon/simpleR) Using R for Introductory Statistics., by [John Verzani](https://www.math.csi.cuny.edu/~verzani/)
+
+[R for Data Science (2e)](https://r4ds.hadley.nz/), by [Hadley Wickham](https://hadley.nz/), [Mine Çetinkaya-Rundel](https://mine-cr.com/), and [Garrett Grolemund](https://education.rstudio.com/author/garrett/)
 
 RPubs - [Diamonds Dataset](https://rpubs.com/Davo2812/1102821)
 

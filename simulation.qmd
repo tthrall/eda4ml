@@ -1,30 +1,4 @@
----
-title: "Statistical Simulation"
-subtitle: "Part 1, session 3b of Data Mining Intro"
-author: 
-  - name: "Send comments to: Tony T (adthral)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s3b"
-  file_prefix: "s3b_stat_sim"
-abstract: 
-  "Introduce basic ideas and methods of statistical simulation studies.  <br><br>"
-bibliography: s3b_references.bib
----
+# Statistical Simulation {#sec-simulation}
 
 ```{r}
 #| label: setup
@@ -228,7 +202,7 @@ c_tbl <- gen_circuit_tbl()
 g_c_tbl <- c_tbl |> 
   ggplot2::ggplot(mapping = aes(x = c, y = s)) + 
   ggplot2::geom_path() + 
-  ggplot2::labs("Monte Carlo estimation of area")
+  ggplot2::labs(title = "Monte Carlo estimation of area")
 g_c_tbl
 ```
 

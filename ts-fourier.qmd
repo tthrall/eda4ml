@@ -1,30 +1,4 @@
----
-title: "Time Series Spectrum Analysis"
-subtitle: "An Introduction"
-author:
-  - name: "Send comments to: Tony T (tthrall)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s5c"
-  file_prefix: "s5c_ts_fourier"
-abstract:
-  "Introduce the Fourier spectrum of a time series.  <br><br>"
-bibliography: s5c_references.bib
----
+# Time Series Spectrum Analysis {#sec-ts-fourier}
 
 ```{r}
 #| label: setup

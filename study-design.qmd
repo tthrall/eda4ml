@@ -1,29 +1,5 @@
----
-title: "Sampling and Study Design"
-subtitle: "Part 1, session 3a of Data Mining Intro"
-author: 
-  - name: "Send comments to: Tony T (adthral)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s3a"
-  file_prefix: "s3a_study_design"
-abstract: 
-  "Introduce basic ideas and methods in statistical sampling theory and the design of experimental or observational studies.  <br><br>"
----
+# Sampling and Study Design {#sec-study-design}
+
 
 ```{r}
 #| label: setup

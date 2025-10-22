@@ -1,0 +1,3 @@
+design	surgery	control
+randomized	60	60
+non_randomized	60	45

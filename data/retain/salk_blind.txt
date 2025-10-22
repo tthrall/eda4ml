@@ -1,0 +1,4 @@
+assignment	size	rate
+treatment	200000	28
+control	200000	71
+no_consent	350000	46

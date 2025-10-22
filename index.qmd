@@ -1,9 +1,7 @@
-# Preface {.unnumbered}
+# Welcome {.unnumbered}
 
-This is a Quarto book.
+This is the website for the [Quarto book](https://quarto.org/docs/books) **"EDA for ML"** (`eda4ml`), which presents exploratory data analysis (EDA) and related topics in order to prepare you to learn more about machine learning (ML).
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+This website is free, licensed under the [MIT](https://opensource.org/license/mit) License.  You are invited to copy and change the content to create your own version of this course.
 
-```{r}
-1 + 1
-```
+

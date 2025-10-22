@@ -1,0 +1,5 @@
+# Preface {.unnumbered}
+
+This online book is based on the preparatory part of a course on Machine Learning (ML) developed by former colleagues.  The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs.  The book also aims to follow the content and spirit of exploratory data analysis (EDA).
+
+Instructors, especially those preparing students for a Masters degree in data science, are invited to copy and modify portions of the book for their own purposes.

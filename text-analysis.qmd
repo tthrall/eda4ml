@@ -1,29 +1,4 @@
----
-title: "Text Analysis"
-subtitle: "Part 1, session 2b of Data Mining Intro"
-author: 
-  - name: "Send comments to: Tony T (adthral)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s2b"
-  file_prefix: "s2b_text_analysis"
-abstract: 
-  "Introduce basic ideas and methods of text analysis."
----
+# Text Analysis {#sec-text-analysis}
 
 ```{r}
 #| label: setup

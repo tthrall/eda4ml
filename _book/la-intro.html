@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (adthral)">
+
+<title>6&nbsp; Linear Algebra for Fitting Models to Data – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./reduce-dim.html" rel="next">
+<link href="./study-design.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./la-intro.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./la-intro.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./la-intro.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Graph Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-examples" id="toc-data-examples" class="nav-link active" data-scroll-target="#data-examples"><span class="header-section-number">6.1</span> Data Examples</a>
+  <ul class="collapse">
+  <li><a href="#heights-of-parents-and-oldest-child" id="toc-heights-of-parents-and-oldest-child" class="nav-link" data-scroll-target="#heights-of-parents-and-oldest-child"><span class="header-section-number">6.1.1</span> Heights of Parents and Oldest Child</a></li>
+  <li><a href="#survey-data-better-life-index" id="toc-survey-data-better-life-index" class="nav-link" data-scroll-target="#survey-data-better-life-index"><span class="header-section-number">6.1.2</span> Survey Data: Better Life Index</a></li>
+  <li><a href="#mnist-images-of-handwritten-digits" id="toc-mnist-images-of-handwritten-digits" class="nav-link" data-scroll-target="#mnist-images-of-handwritten-digits"><span class="header-section-number">6.1.3</span> MNIST: Images of Handwritten Digits</a></li>
+  </ul></li>
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">6.2</span> Notation</a></li>
+  <li><a href="#geometry" id="toc-geometry" class="nav-link" data-scroll-target="#geometry"><span class="header-section-number">6.3</span> Geometry</a>
+  <ul class="collapse">
+  <li><a href="#least-squares-two-perspectives" id="toc-least-squares-two-perspectives" class="nav-link" data-scroll-target="#least-squares-two-perspectives"><span class="header-section-number">6.3.1</span> Least Squares: Two Perspectives</a></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">6.3.2</span> Data Visualization</a></li>
+  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space"><span class="header-section-number">6.3.3</span> Sample Space</a></li>
+  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">6.3.4</span> Column Space</a></li>
+  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">6.3.5</span> Orthogonal Projection</a></li>
+  <li><a href="#reconciling-perspectives" id="toc-reconciling-perspectives" class="nav-link" data-scroll-target="#reconciling-perspectives"><span class="header-section-number">6.3.6</span> Reconciling Perspectives</a></li>
+  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">6.3.7</span> Why This Matters</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/la-intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./la-intro.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./la-intro.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-la-intro" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (adthral) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">23:56 Tue 21-Oct-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<p>Vectors and matrices are the central objects of linear algebra. And central to data science and machine learning is the notion of a <em>data matrix</em>, in which each row is composed of different types of values that represent a single case of data. For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study. In contrast, each column (known as a <em>feature vector</em> or <em>data variable</em>) represents multiple instances of just one of these prescribed types of values. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Let’s consider some examples.</p>
+<section id="data-examples" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="data-examples"><span class="header-section-number">6.1</span> Data Examples</h2>
+<section id="heights-of-parents-and-oldest-child" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="heights-of-parents-and-oldest-child"><span class="header-section-number">6.1.1</span> Heights of Parents and Oldest Child</h3>
+<p>In 1885 Sir Francis Galton examined the heights (in inches) of parents and their adult children to determine the strength of evidence to support height as a hereditary trait. The corresponding <code>R</code> data set <code>HistData::GaltonFamilies</code> consists of 934 adult children from a total of 205 families. Restricting attention to the oldest child in each family, there were 26 daughters and 179 sons.</p>
+<p>The table below shows a portion of this data matrix. Each row represents a family and consists of: a family identifier, the father’s height, the mother’s height, the oldest child’s height, and the oldest child’s gender.</p>
+<div class="cell">
+<div id="tbl-galton-3d" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-galton-3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6.1: Galton’s heights in inches of (father, mother, oldest child)
+</figcaption>
+<div aria-describedby="tbl-galton-3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Heights of (father, mother, oldest child)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">family</th>
+<th style="text-align: right;">father</th>
+<th style="text-align: right;">mother</th>
+<th style="text-align: right;">child</th>
+<th style="text-align: left;">gender</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">001</td>
+<td style="text-align: right;">78.5</td>
+<td style="text-align: right;">67.0</td>
+<td style="text-align: right;">73.2</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">002</td>
+<td style="text-align: right;">75.5</td>
+<td style="text-align: right;">66.5</td>
+<td style="text-align: right;">73.5</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">003</td>
+<td style="text-align: right;">75.0</td>
+<td style="text-align: right;">64.0</td>
+<td style="text-align: right;">71.0</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">004</td>
+<td style="text-align: right;">75.0</td>
+<td style="text-align: right;">64.0</td>
+<td style="text-align: right;">70.5</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">005</td>
+<td style="text-align: right;">75.0</td>
+<td style="text-align: right;">58.5</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">006</td>
+<td style="text-align: right;">74.0</td>
+<td style="text-align: right;">68.0</td>
+<td style="text-align: right;">69.5</td>
+<td style="text-align: left;">female</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The figure below represents all the families, with the gender of the oldest child distinguished by color: red for daughters and blue for sons.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-g-mfc-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-g-mfc-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-g-mfc-scat3d-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-g-mfc-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: (mother, father, child) heights, with daughters shown in red
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a> we regressed the son’s height on the father’s height. We obtained the regression line, which approximates the graph of averages: the average son’s height per father’s height. The linear regression can be interpreted as a linear prediction of the height of a son whose father is of some given height.</p>
+<p>We can now expand on this idea by regressing the son’s height on the heights of both the mother and the father. This is a model in which the predicted son’s height, <span class="math inline">\(\hat{s}\)</span>, is some constant plus some linear combination of the parents’ heights.</p>
+<p><span id="eq-s-per-mf-regression-plane"><span class="math display">\[
+\begin{align}   
+  \hat{s} &amp; = \mathcal{l}_{R}(m, f) \\   
+  &amp;= \beta_0 \; + \; \beta_m \times m \; + \; \beta_f \times f
+\end{align}
+\qquad(6.1)\]</span></span></p>
+<p>where</p>
+<p><span id="eq-s-per-mf-2"><span class="math display">\[
+\begin{align}
+  \hat{s} &amp;= \text{predicted height of son} \\
+  m &amp;= \text{height of mother}  \\
+  f &amp;= \text{height of father}
+\end{align}
+\qquad(6.2)\]</span></span></p>
+<p>This equation represents a plane in 3-dimensional space. Using least-squares regression to estimate the coefficients <span class="math inline">\((\beta_0, \beta_m, \beta_f)\)</span>, we obtain a plane (<a href="#fig-g-mfs-scat3d" class="quarto-xref">Figure&nbsp;<span>6.2</span></a>) that gives the best linear approximation <span class="math inline">\((\hat{s})\)</span> to the son’s height for a given pair of parent heights <span class="math inline">\((m, f)\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-g-mfs-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-g-mfs-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-g-mfs-scat3d-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-g-mfs-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.2: Observed (point) and predicted (plane) height of son given (mother, father) heights
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In vector-matrix notation we are seeking a vector <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)\)</span> of coefficient values that yields the least-squares solution to the following linear approximation problem.</p>
+<p><span id="eq-s-per-mf-3"><span class="math display">\[
+\begin{align}
+  s_\bullet &amp;\approx (1_\bullet, m_\bullet, f_\bullet) \times
+    \begin{pmatrix}
+      \hat{\beta}_0 \\ \hat{\beta}_m \\ \hat{\beta}_f
+    \end{pmatrix}
+\end{align}
+\qquad(6.3)\]</span></span></p>
+<p>where</p>
+<p><span id="eq-s-per-mf-4"><span class="math display">\[
+\begin{align}
+  s_\bullet &amp;= \text{data column vector: heights of sons} \\
+  1_\bullet &amp;= \text{column vector } (1, \ldots, 1) \\
+  m_\bullet &amp;= \text{data column vector: heights of mothers}  \\
+  f_\bullet &amp;= \text{data column vector: heights of fathers}
+\end{align}
+\qquad(6.4)\]</span></span></p>
+<p>This is a statistical estimation problem that corresponds to the following linear algebra problem and notation.</p>
+<p><span id="eq-b-Ax"><span class="math display">\[
+\begin{align}
+  b_\bullet &amp;\approx A_{\bullet, \bullet} \times x_\bullet
+\end{align}
+\qquad(6.5)\]</span></span></p>
+<p>where</p>
+<p><span id="eq-b-Ax-2"><span class="math display">\[
+\begin{align}
+  b_\bullet &amp;= s_\bullet \\
+  A_{\bullet, \bullet} &amp;= (1_\bullet, m_\bullet, f_\bullet) \\
+  x_\bullet &amp;= (\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)
+\end{align}
+\qquad(6.6)\]</span></span></p>
+<p>It turns out that the least squares solution <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)\)</span> can be obtained as the vector of coefficients of an orthogonal projection of vector <span class="math inline">\(s_\bullet\)</span> onto the 3-dimensional subspace spanned by vectors <span class="math inline">\((1_\bullet, m_\bullet, f_\bullet)\)</span>. More on this later.</p>
+</section>
+<section id="survey-data-better-life-index" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="survey-data-better-life-index"><span class="header-section-number">6.1.2</span> Survey Data: Better Life Index</h3>
+<p>We now turn to a data set having several data columns, namely the OECD’s Better Life Index (BLI). <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The following table shows a portion of the data.</p>
+<div id="tbl-bli-wide" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-bli-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6.2: Better Life Index (BLI)
+</figcaption>
+<div aria-describedby="tbl-bli-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 42 × 26
+  code  country     CG_SENG CG_VOTO EQ_AIRP EQ_WATER ES_EDUA ES_EDUEX ES_STCS
+  &lt;chr&gt; &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1 AUS   Australia       2.7      92     6.7       92      84       20     499
+2 AUT   Austria         1.3      76    12.2       92      86       17     491
+3 BEL   Belgium         2        88    12.8       79      80       19     500
+4 BRA   Brazil          2.2      80    11.7       70      57       16     400
+5 CAN   Canada          2.9      68     7.1       90      92       17     517
+6 CHE   Switzerland     2.3      45    10.1       96      89       17     498
+# ℹ 36 more rows
+# ℹ 17 more variables: HO_HISH &lt;dbl&gt;, HS_LEB &lt;dbl&gt;, HS_SFRH &lt;dbl&gt;,
+#   IW_HADI &lt;dbl&gt;, IW_HNFW &lt;dbl&gt;, JE_EMPL &lt;dbl&gt;, JE_LMIS &lt;dbl&gt;, JE_LTUR &lt;dbl&gt;,
+#   JE_PEARN &lt;dbl&gt;, PS_FSAFEN &lt;dbl&gt;, PS_REPH &lt;dbl&gt;, SC_SNTWS &lt;dbl&gt;,
+#   SW_LIFS &lt;dbl&gt;, WL_EWLH &lt;dbl&gt;, WL_TNOW &lt;dbl&gt;, HO_BASE &lt;dbl&gt;, HO_NUMR &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>Each row of this data matrix gives specified measurements of an identified country. The first two columns give, respectively, each country’s OECD code and name. The remaining 24 columns are measures pertaining to the well-being of the populace.</p>
+<p>The column name of each measures consists of a two-letter prefix followed by a suffix. The prefix is associated with a broad indicator of social well-being. The suffix pertains to a particular component of this indicator. Here is an expansion of these prefixes.</p>
+<div class="cell">
+<div id="tbl-bli-comp-prefix" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-bli-comp-prefix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6.3: BLI Indicators and Sub-Components
+</figcaption>
+<div aria-describedby="tbl-bli-comp-prefix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>BLI Indicators and Sub-Components</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 30%">
+<col style="width: 10%">
+<col style="width: 49%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">prefix</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: right;">n_comps</th>
+<th style="text-align: left;">components</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CG</td>
+<td style="text-align: left;">Civic Engagement</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">CG_SENG, CG_VOTO</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EQ</td>
+<td style="text-align: left;">Environmental Quality</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">EQ_AIRP, EQ_WATER</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ES</td>
+<td style="text-align: left;">Education System</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">ES_EDUA, ES_EDUEX, ES_STCS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HO</td>
+<td style="text-align: left;">Housing</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">HO_BASE, HO_HISH, HO_NUMR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HS</td>
+<td style="text-align: left;">Health Status</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">HS_LEB, HS_SFRH</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IW</td>
+<td style="text-align: left;">Income and Wealth</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">IW_HADI, IW_HNFW</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">JE</td>
+<td style="text-align: left;">Jobs Employment</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">JE_EMPL, JE_LMIS, JE_LTUR, JE_PEARN</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PS</td>
+<td style="text-align: left;">Personal Safety</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">PS_FSAFEN, PS_REPH</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SC</td>
+<td style="text-align: left;">Social Connections</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">SC_SNTWS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SW</td>
+<td style="text-align: left;">Subjective Well-Being</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">SW_LIFS</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WL</td>
+<td style="text-align: left;">Work Life Balance</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">WL_EWLH, WL_TNOW</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The component indicators (corresponding to the suffix of the column name) are elaborated in the following table.</p>
+<div class="cell">
+<div id="tbl-bli-components" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-bli-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6.4: BLI Component Indicators
+</figcaption>
+<div aria-describedby="tbl-bli-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>BLI Component Indicators</caption>
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 30%">
+<col style="width: 53%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">prefix</th>
+<th style="text-align: left;">suffix</th>
+<th style="text-align: left;">unit</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CG</td>
+<td style="text-align: left;">SENG</td>
+<td style="text-align: left;">AVSCORE</td>
+<td style="text-align: left;">Stakeholder Engagement</td>
+<td style="text-align: left;">Extent to which people can engage with government in rule-making</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CG</td>
+<td style="text-align: left;">VOTO</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Voter Turnout</td>
+<td style="text-align: left;">Percent of registered voters who voted in recent elections</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EQ</td>
+<td style="text-align: left;">AIRP</td>
+<td style="text-align: left;">MICRO_M3</td>
+<td style="text-align: left;">Air Pollution</td>
+<td style="text-align: left;">Concentration of PM2.5 particulate matter (micrograms per cubic meter)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EQ</td>
+<td style="text-align: left;">WATER</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Water Quality</td>
+<td style="text-align: left;">Percent satisfied with water quality</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ES</td>
+<td style="text-align: left;">EDUA</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Educational Attainment</td>
+<td style="text-align: left;">Percent aged 25-64 with at least upper-secondary education</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ES</td>
+<td style="text-align: left;">EDUEX</td>
+<td style="text-align: left;">YR</td>
+<td style="text-align: left;">Expected Years of Education</td>
+<td style="text-align: left;">Expected years of schooling</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ES</td>
+<td style="text-align: left;">STCS</td>
+<td style="text-align: left;">AVSCORE</td>
+<td style="text-align: left;">Student Cognitive Skills</td>
+<td style="text-align: left;">PISA scores in reading, mathematics, and science</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HO</td>
+<td style="text-align: left;">BASE</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Dwellings w/o Basic Facilities</td>
+<td style="text-align: left;">Percentage of dwellings that lack basic sanitary facilities</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HO</td>
+<td style="text-align: left;">HISH</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Housing Expenditure</td>
+<td style="text-align: left;">Percentage of household gross adjusted disposable income spent on housing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HO</td>
+<td style="text-align: left;">NUMR</td>
+<td style="text-align: left;">RATIO</td>
+<td style="text-align: left;">Rooms per Person</td>
+<td style="text-align: left;">Number of rooms per person in dwelling</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HS</td>
+<td style="text-align: left;">LEB</td>
+<td style="text-align: left;">YR</td>
+<td style="text-align: left;">Life Expectancy at Birth</td>
+<td style="text-align: left;">Average number of years a person can expect to live</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HS</td>
+<td style="text-align: left;">SFRH</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Self-Reported Health</td>
+<td style="text-align: left;">Percentage who report being in good or very good health</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IW</td>
+<td style="text-align: left;">HADI</td>
+<td style="text-align: left;">USD</td>
+<td style="text-align: left;">Household Adjusted Disposable Income</td>
+<td style="text-align: left;">Average household income after taxes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IW</td>
+<td style="text-align: left;">HNFW</td>
+<td style="text-align: left;">USD</td>
+<td style="text-align: left;">Household Net Financial Wealth</td>
+<td style="text-align: left;">Household net financial wealth (financial assets minus liabilities)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">JE</td>
+<td style="text-align: left;">EMPL</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Employment Rate</td>
+<td style="text-align: left;">Percentage of people aged 15-64 in paid employment</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JE</td>
+<td style="text-align: left;">LMIS</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Labour Market Insecurity</td>
+<td style="text-align: left;">Expected loss of earnings if someone becomes unemployed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">JE</td>
+<td style="text-align: left;">LTUR</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Long-Term Unemployment Rate</td>
+<td style="text-align: left;">Percentage unemployed for 12+ months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JE</td>
+<td style="text-align: left;">PEARN</td>
+<td style="text-align: left;">USD</td>
+<td style="text-align: left;">Personal Earnings</td>
+<td style="text-align: left;">Average annual earnings per full-time employee</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PS</td>
+<td style="text-align: left;">FSAFEN</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Feeling Safe Walking Alone at Night</td>
+<td style="text-align: left;">Percentage who feel safe</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PS</td>
+<td style="text-align: left;">REPH</td>
+<td style="text-align: left;">RATIO</td>
+<td style="text-align: left;">Homicide Rate</td>
+<td style="text-align: left;">Deaths per 100,000 people</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SC</td>
+<td style="text-align: left;">SNTWS</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Support Network Quality</td>
+<td style="text-align: left;">Percentage who believe they have someone to rely on in times of need</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SW</td>
+<td style="text-align: left;">LIFS</td>
+<td style="text-align: left;">AVSCORE</td>
+<td style="text-align: left;">Life Satisfaction</td>
+<td style="text-align: left;">Average self-evaluation on a scale from 0 to 10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WL</td>
+<td style="text-align: left;">EWLH</td>
+<td style="text-align: left;">PC</td>
+<td style="text-align: left;">Employees Working Long Hours</td>
+<td style="text-align: left;">Percentage of employees working 50+ hours per week</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WL</td>
+<td style="text-align: left;">TNOW</td>
+<td style="text-align: left;">HOUR</td>
+<td style="text-align: left;">Time Devoted to Leisure and Personal Care</td>
+<td style="text-align: left;">Hours per day spent on leisure, personal care, eating, and sleeping</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The <code>unit</code> column in the above table gives the unit of measure, with <code>PC</code> meaning percent, <code>YR</code> meaning number of years, and so on.</p>
+<p>We now turn to a statistical and algebraic treatment of the BLI data matrix of <a href="#tbl-bli-wide" class="quarto-xref">Table&nbsp;<span>6.2</span></a>. Consider the indicator component <code>SW_LIFS</code> (Life Satisfaction) as a response variable, with the remaining 23 indicator components serving as explanatory variables. As with the previous data example, we want to approximate or predict the response variable by a constant <span class="math inline">\(\beta_0\)</span> plus a linear combination of the explantory variables, as follows.</p>
+<p><span id="eq-L-per-C"><span class="math display">\[
+\begin{align}
+  L_\bullet &amp;\approx (1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet}) \times
+    \begin{pmatrix}
+      \hat{\beta}_0 \\ \hat{\beta}_1 \\ \vdots \\ \hat{\beta}_d
+    \end{pmatrix}
+\end{align}
+\qquad(6.7)\]</span></span></p>
+<p>where</p>
+<p><span id="eq-L-per-C-2"><span class="math display">\[
+\begin{align}
+  L_\bullet &amp;= \text{life satisfaction indicator per country} \\
+  1_\bullet &amp;= \text{column vector } (1, \ldots, 1) \\
+  C_{k, \bullet} &amp;= k^{th} \text{ indicator component per country} \\
+  d &amp;= \text{number of explanatory indicators}
+\end{align}
+\qquad(6.8)\]</span></span></p>
+<p>We now have more explanatory variables than in the previous example, a fact that merits some comment.</p>
+<p>On the one hand, the approach to determining least-squares regression coefficients <span class="math inline">\(\hat{\beta}_0, \ldots, \hat{\beta}_d\)</span> is unchanged. We project the response vector, now <span class="math inline">\(L_\bullet\)</span>, onto the space spanned by the constant vector <span class="math inline">\(1_\bullet\)</span> along with the explanatory variables, that is onto the space spanned by <span class="math inline">\((1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})\)</span>. The fitted coefficients yield a function of the explanatory variables that forms a linear hyperplane of dimension 23 that passes through a cloud of data points, <span class="math inline">\((C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)\)</span>, in a space of dimension 24.</p>
+<p>On the other hand, we are now estimating 24 regression coefficients based on observations from just 42 countries. From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients. From the perspective of numerical linear algebra, the vector of fitted coefficients <span class="math inline">\((\hat{\beta}_0, \ldots, \hat{\beta}_d)\)</span> is less stable (more sensitive to error in the data) than it was in the previous example.</p>
+</section>
+<section id="mnist-images-of-handwritten-digits" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="mnist-images-of-handwritten-digits"><span class="header-section-number">6.1.3</span> MNIST: Images of Handwritten Digits</h3>
+<p>The MNIST database (Modified National Institute of Standards and Technology database) is a large database of handwritten decimal digits consisting of 60,000 training images and 10,000 testing images. <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>The history of this database goes back to 1988, when the US Postal Service constructed images of digits appearing on handwritten zip codes. Around the same time the US Census Bureau requested NIST to evaluate optical character recognition (OCR) systems. In 1992, NIST and the Census Bureau sponsored a competition in which participating teams were given images of Handwriting Sample Forms (HSFs), including handwritten decimal digits. The initial version of MNIST was constructed sometime before summer 1994.</p>
+<p>Here’s an example of each handwritten digit from the training set of images.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-xmpl-train" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-xmpl-train-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-xmpl-train-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-xmpl-train-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Each image is represented by a <span class="math inline">\(28 \times 28\)</span> matrix of pixels, with each pixel represented as a grayscale integer value from 0 through 255. That is, each image represents a single vector in a space of dimension 784 (since <span class="math inline">\(28 \times 28 = 784\)</span>).</p>
+<p>The 1992 competition prompted the development of algorithms to determine the decimal digit represented by any such image. This is a classification problem: to label each case of data (image) as belonging to one of several possible categories (decimal digits).</p>
+<p>One such method, multinomial logistic regression, assigns a probability that a given image represents a specified digit, resulting in a 10-element probability vector per image. <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<section id="multinomial-logistic-regression" class="level4" data-number="6.1.3.1">
+<h4 data-number="6.1.3.1" class="anchored" data-anchor-id="multinomial-logistic-regression"><span class="header-section-number">6.1.3.1</span> Multinomial Logistic Regression</h4>
+<p>To formulate the model, we convert the representation of an image from a <span class="math inline">\(28 \times 28\)</span> matrix of pixels into a vector of pixels of length 784. <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> We’ll denote such a vector as <span class="math inline">\((P_1, \ldots, P_d)\)</span>, where <span class="math inline">\(d = 784\)</span>.</p>
+<p>Let <span class="math inline">\(D\)</span> denote the digit represented by the image. The ordering of the digits from 0 through 9 is not directly relevant to the image-recognition problem, so let us regard <span class="math inline">\(D\)</span> as a categorical variable having the set <span class="math inline">\(\{ 0, 1, \ldots, 9 \}\)</span> as possible values. An alternative representation is the set of indicator vectors <span class="math inline">\(e_0 = (1, 0, \ldots, 0)\)</span> through <span class="math inline">\(e_9 = (0, 0, \ldots, 1)\)</span>, called “one-hot encoding” in machine learning. <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
+<p>Then the multinomial logistic regression model can be formulated as follows.</p>
+<p><span id="eq-log-ratio-per-image"><span class="math display">\[
+\begin{align}
+  \log_e{ \frac{P(D = \nu)}{P(D = 0)} } &amp;= (1, P_1, \ldots, P_d) \times
+    \begin{pmatrix}
+      \beta_0^{(\nu)} \\ \beta_1^{(\nu)} \\ \vdots \\ \beta_d^{(\nu)}
+    \end{pmatrix} &amp; \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align}
+\qquad(6.9)\]</span></span></p>
+<p>with</p>
+<p><span id="eq-log-ratio-per-image-2"><span class="math display">\[
+\begin{align}
+  P(D = 0) &amp;= 1 - \sum_{\nu = 1}^9 P(D = \nu)
+\end{align}
+\qquad(6.10)\]</span></span></p>
+<p>For a more compact notation let <span class="math inline">\(X_{\bullet} = (1, P_1, \ldots, P_d)\)</span> and let <span class="math inline">\(\beta_{\bullet}^{(\nu)} = (\beta_0^{(\nu)}, \beta_1^{(\nu)}, \ldots, \beta_d^{(\nu)})\)</span>, with the inner product of these two vectors denoted as <span class="math inline">\(X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}\)</span>. Then we have</p>
+<p><span id="eq-log-ratio-per-image-3"><span class="math display">\[
+\begin{align}
+  \log_e{ \frac{P(D = \nu)}{P(D = 0)} } &amp;= X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)} &amp; \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align}
+\qquad(6.11)\]</span></span></p>
+<p>Exponentiation of <a href="#eq-log-ratio-per-image-3" class="quarto-xref">Equation&nbsp;<span>6.11</span></a> gives:</p>
+<p><span id="eq-log-ratio-per-image-4"><span class="math display">\[
+\begin{align}
+  \{ P(D = \nu) \} &amp;= \{ P(D = 0) \} \times e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}} &amp; \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align}
+\qquad(6.12)\]</span></span></p>
+<p>Taking the sum over <span class="math inline">\(\nu\)</span> we have:</p>
+<p><span id="eq-log-ratio-per-image-5"><span class="math display">\[
+\begin{align}
+  \sum_{\nu = 1}^9 {P(D = \nu)} &amp;= \{ P(D = 0) \} \times \sum_{\nu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}}
+\end{align}
+\qquad(6.13)\]</span></span></p>
+<p>Now applying <a href="#eq-log-ratio-per-image-2" class="quarto-xref">Equation&nbsp;<span>6.10</span></a> we have</p>
+<p><span id="eq-log-ratio-per-image-6"><span class="math display">\[
+\begin{align}
+  \left \{ 1 - P(D = 0) \right \} &amp;= \{ P(D = 0) \} \times \sum_{\nu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}}
+\end{align}
+\qquad(6.14)\]</span></span></p>
+<p>which yields:</p>
+<p><span id="eq-log-ratio-per-image-7"><span class="math display">\[
+\begin{align}
+  P(D = 0) &amp;= \frac{1} { 1 + \sum_{\nu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}} }
+\end{align}
+\qquad(6.15)\]</span></span></p>
+<p>Applying <a href="#eq-log-ratio-per-image-4" class="quarto-xref">Equation&nbsp;<span>6.12</span></a> gives:</p>
+<p><span id="eq-log-ratio-per-image-8"><span class="math display">\[
+\begin{align}
+  P(D = \nu) &amp;= \frac{ e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}} } { 1 +  \sum_{\mu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\mu)}} } &amp; \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align}
+\qquad(6.16)\]</span></span></p>
+</section>
+<section id="matrix-representation" class="level4" data-number="6.1.3.2">
+<h4 data-number="6.1.3.2" class="anchored" data-anchor-id="matrix-representation"><span class="header-section-number">6.1.3.2</span> Matrix Representation</h4>
+<p><a href="#eq-log-ratio-per-image-3" class="quarto-xref">Equation&nbsp;<span>6.11</span></a> pertains to the probability that a single image represents a single digit <span class="math inline">\(\nu \in \{1, \ldots, 9 \}\)</span>. Therefore, in a data set of <span class="math inline">\(n\)</span> images, with <span class="math inline">\(i\)</span> denoting the index of a particular image, we have:</p>
+<p><span id="eq-log-ratio-per-image-9"><span class="math display">\[
+\begin{align}
+  \log_e{ \frac{P(D_i = \nu)}{P(D_i = 0)} } &amp;= X_{i, \bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}
+\end{align}
+\qquad(6.17)\]</span></span></p>
+<p>Expanding the last equation to matrix notation, with <span class="math inline">\(i\)</span> as the row index and <span class="math inline">\(\nu\)</span> as a column index, we have</p>
+<p><span id="eq-log-ratio-per-image-10"><span class="math display">\[
+\begin{align}
+&amp;
+\begin{pmatrix}
+  \log_e{ \frac{P(D_1 = 1)}{P(D_1 = 0)} }, &amp; \ldots, &amp; \log_e{ \frac{P(D_1 = 9)}{P(D_1 = 0)} } \\
+  \vdots &amp; \vdots &amp; \vdots \\
+  \log_e{ \frac{P(D_n = 1)}{P(D_n = 0)} }, &amp; \ldots, &amp; \log_e{ \frac{P(D_n = 9)}{P(D_n = 0)} }
+\end{pmatrix}  \\ \\
+&amp;=
+\begin{pmatrix}
+  X_{1, \bullet} \\
+  \vdots \\
+  X_{n, \bullet}
+\end{pmatrix}
+\begin{pmatrix}
+  \beta_{\bullet}^{(1)}, &amp; \ldots, &amp; \beta_{\bullet}^{(9)}
+\end{pmatrix}
+\end{align}
+\qquad(6.18)\]</span></span></p>
+<p>The matrix on the left side of <a href="#eq-log-ratio-per-image-10" class="quarto-xref">Equation&nbsp;<span>6.18</span></a> has dimensions <span class="math inline">\(n \times 9\)</span>. On the right side, the first matrix factor has dimensions <span class="math inline">\(n \times 785\)</span>, and the second matrix factor has dimensions <span class="math inline">\(785 \times 9\)</span>.</p>
+</section>
+</section>
+</section>
+<section id="notation" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="notation"><span class="header-section-number">6.2</span> Notation</h2>
+<p>The preceding section introduced example data sets along with corresponding models of the following form.</p>
+<p><span id="eq-generic-lm"><span class="math display">\[
+\begin{align}
+  y &amp;= X \; \beta \; + \; \epsilon
+\end{align}
+\qquad(6.19)\]</span></span></p>
+<p>Each of the elements of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> has alternative names, including the following. <a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
+<p><span id="eq-generic-lm-2"><span class="math display">\[
+\begin{align}
+  y &amp;= \text{a } \textit{response, target,} \text{ or } \textit{labeling}  \text{ variable} \\
+  X &amp;= \text{columns of } \textit{explanatory, predictor,} \text{ or } \textit{feature}  \text{ variables} \\
+  \beta &amp;= \text{a vector of model } \textit{coefficients} \text{ or } \textit{parameters} \\
+  \epsilon &amp;= \text{an } \textit{error} \text{ or } \textit{residual} \text{ term}
+\end{align}
+\qquad(6.20)\]</span></span></p>
+<p>This linear regression format follows the more general mathematical notation <span class="math inline">\(y = f(x)\)</span>. In data science and machine learning, however, the response variable <span class="math inline">\(y\)</span> and the feature matrix <span class="math inline">\(X\)</span> have known values, whereas <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\epsilon\)</span> are determined or evaluated over the course of the modeling process.</p>
+<p>In the data examples of the preceding section, the response variable took the following form.</p>
+<ul>
+<li>Family heights: <span class="math inline">\(y =\)</span> oldest child’s height</li>
+<li>Better Life Index: <span class="math inline">\(y =\)</span> the Life Satisfaction indicator</li>
+<li>MNIST: <span class="math inline">\(y =\)</span> a probability vector <span class="math inline">\(\{ P(D = \nu) \}_{\nu = 0}^9\)</span> assigned to each image</li>
+</ul>
+<p>The MNIST example illustrates a <em>vector-valued</em> rather than <em>scalar-valued</em> response variable.</p>
+<p>If the data include a labeling or response variable, <span class="math inline">\(y\)</span>, then the problem is said to be <em>supervised</em>. In <em>unsupervised</em> problems (that lack a <span class="math inline">\(y\)</span> variable), we may need to find patterns in the given data. For example we may seek those feature variables (columns of the feature matrix <span class="math inline">\(X\)</span>), or linear combinations of feature variables, that account for most of the variability in the entire set of feature variables. Or we may need to find observations (rows of the feature matrix <span class="math inline">\(X\)</span>) that are similar and thereby form groups (or <em>clusters</em>) of observations. In these unsupervised situations we may model the data matrix (or covariance matrix) as the product of other matrices of special form (to be discussed later in this chapter).</p>
+<p>In the remainder of this chapter we will focus on ideas and methods that help us to solve <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a>, or rather, that help us to determine the value of <span class="math inline">\(\beta\)</span> that minimizes (in some sense) the residual term <span class="math inline">\(\epsilon\)</span>.</p>
+</section>
+<section id="geometry" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="geometry"><span class="header-section-number">6.3</span> Geometry</h2>
+<p>We’ll see the problem from both angles, then focus on where the mathematics actually happens.</p>
+<section id="least-squares-two-perspectives" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.3.1</span> Least Squares: Two Perspectives</h3>
+</section>
+<section id="data-visualization" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">6.3.2</span> Data Visualization</h3>
+<ul>
+<li>The 3D scatterplot view: each point is (mother_height, father_height, son_height)</li>
+<li>The fitted regression plane: ŷ = β₀ + β₁·mother + β₂·father</li>
+<li>This is how we visualize and interpret, but NOT where the projection occurs</li>
+<li>Dimension: p = 3 (number of features including intercept)</li>
+</ul>
+</section>
+<section id="sample-space" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="sample-space"><span class="header-section-number">6.3.3</span> Sample Space</h3>
+<ul>
+<li>Each observation is a vector in ℝⁿ (n = 179)</li>
+<li>The response vector y ∈ ℝ¹⁷⁹ has components [y₁, y₂, …, y₁₇₉]ᵀ</li>
+<li>Each column of X is also a vector in ℝ¹⁷⁹</li>
+<li>Example: the “mother_heights” column is one vector in 179-dimensional space</li>
+</ul>
+</section>
+<section id="column-space" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="column-space"><span class="header-section-number">6.3.4</span> Column Space</h3>
+<ul>
+<li>C(X) is the 3-dimensional subspace of ℝ¹⁷⁹ spanned by the columns of X</li>
+<li>All possible linear combinations: Xβ for any β ∈ ℝ³</li>
+<li>Key insight: C(X) contains all predictions our model can make</li>
+<li>Dimension: rank(X) ≤ min(n,p) = 3 (assuming full column rank)</li>
+</ul>
+</section>
+<section id="orthogonal-projection" class="level3" data-number="6.3.5">
+<h3 data-number="6.3.5" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">6.3.5</span> Orthogonal Projection</h3>
+<ul>
+<li>ŷ = Xβ̂ is the orthogonal projection of y onto C(X)</li>
+<li>The residual vector e = y - ŷ is orthogonal to C(X)</li>
+<li>Geometric interpretation: ŷ is the point in C(X) closest to y (in L₂ distance)</li>
+<li>The normal equations: XᵀX β̂ = Xᵀy arise from orthogonality condition Xᵀe = 0</li>
+<li>Include a 2D schematic diagram: y, C(X) as a plane, ŷ as projection, e perpendicular</li>
+</ul>
+</section>
+<section id="reconciling-perspectives" class="level3" data-number="6.3.6">
+<h3 data-number="6.3.6" class="anchored" data-anchor-id="reconciling-perspectives"><span class="header-section-number">6.3.6</span> Reconciling Perspectives</h3>
+<ul>
+<li>The 3D scatterplot shows relationships between variables (p-dimensional)</li>
+<li>The projection happens in observation space (n-dimensional)</li>
+<li>Both are valid and useful for different purposes</li>
+<li>The regression coefficients β connect the two views</li>
+</ul>
+</section>
+<section id="why-this-matters" class="level3" data-number="6.3.7">
+<h3 data-number="6.3.7" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">6.3.7</span> Why This Matters</h3>
+<ul>
+<li>Degrees of freedom: n - p (observations minus parameters)</li>
+<li>Overfitting: what happens when p approaches n?</li>
+<li>Preview: other norms (L₁) change the geometry but still live in ℝⁿ</li>
+</ul>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-wiki_categorical_variable" class="csl-entry" role="listitem">
+<span>“Categorical Variable | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Categorical_variable">https://en.wikipedia.org/wiki/Categorical_variable</a>.
+</div>
+<div id="ref-LeCun_Cortes_Burges_2005" class="csl-entry" role="listitem">
+LeCun, Yann, Corinna Cortes, and Christopher J. C. Burges. 2005. <span>“The MNIST Database of Handwritten Digits.”</span> <a href="https://web.archive.org/web/20200430193701/http://yann.lecun.com/exdb/mnist/">https://web.archive.org/web/20200430193701/http://yann.lecun.com/exdb/mnist/</a>.
+</div>
+<div id="ref-wiki_MNIST" class="csl-entry" role="listitem">
+<span>“MNIST Database | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/MNIST_database">https://en.wikipedia.org/wiki/MNIST_database</a>.
+</div>
+<div id="ref-wiki_multinomial_regression" class="csl-entry" role="listitem">
+<span>“Multinomial Logistic Regression | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Multinomial_logistic_regression">https://en.wikipedia.org/wiki/Multinomial_logistic_regression</a>.
+</div>
+<div id="ref-wiki_one-hot" class="csl-entry" role="listitem">
+<span>“One-Hot | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/One-hot">https://en.wikipedia.org/wiki/One-hot</a>.
+</div>
+<div id="ref-wiki_raster" class="csl-entry" role="listitem">
+<span>“Raster Graphics | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Raster_graphics">https://en.wikipedia.org/wiki/Raster_graphics</a>.
+</div>
+</div>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>To be more precise, every <em>data variable</em> qualifies as a <em>feature vector</em>, but a feature vector may also be some function of the data and other information.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>“Best” in the sense of minimizing the squared residuals of actual minus predicted sons’ heights.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>The OECD (Organisation for Economic Co-operation and Development) works with 100+ countries to collect and analyze data in order to promote public policy. The OECD’s 38 Member countries span the world, from North America and South America to Europe and Asia-Pacific.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>See <span class="citation" data-cites="LeCun_Cortes_Burges_2005">LeCun, Cortes, and Burges (<a href="references.html#ref-LeCun_Cortes_Burges_2005" role="doc-biblioref">2005</a>)</span> and <span class="citation" data-cites="wiki_MNIST"><span>“MNIST Database | Wikipedia”</span> (<a href="references.html#ref-wiki_MNIST" role="doc-biblioref">2025</a>)</span>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>See <span class="citation" data-cites="wiki_multinomial_regression"><span>“Multinomial Logistic Regression | Wikipedia”</span> (<a href="references.html#ref-wiki_multinomial_regression" role="doc-biblioref">2025</a>)</span>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>The conversion of a matrix of pixels to a vector of pixels is known as raster-to-vector (R2V) conversion, usually in row-major format, whereby the elements of the vector are taken from the top row and then from each succeeding row. See <span class="citation" data-cites="wiki_raster"><span>“Raster Graphics | Wikipedia”</span> (<a href="references.html#ref-wiki_raster" role="doc-biblioref">2025</a>)</span>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>See <span class="citation" data-cites="wiki_one-hot"><span>“One-Hot | Wikipedia”</span> (<a href="references.html#ref-wiki_one-hot" role="doc-biblioref">2025</a>)</span> and <span class="citation" data-cites="wiki_categorical_variable"><span>“Categorical Variable | Wikipedia”</span> (<a href="references.html#ref-wiki_categorical_variable" role="doc-biblioref">2025</a>)</span>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>Matrix <span class="math inline">\(X\)</span> on the right side of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> is called a <em>feature matrix</em> that may contain original data columns (other than the response or labeling variable) and may also contain columns that are functions of the data or of other information. A data matrix is model-agnostic, whereas a feature matrix is constructed to support a model of some form.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./study-design.html" class="pagination-link" aria-label="Sampling and Study Design">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./reduce-dim.html" class="pagination-link" aria-label="Dimension Reduction">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/la-intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

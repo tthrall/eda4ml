@@ -1,0 +1,554 @@
+---
+title: "Graph Theory for Machine Learning"
+author: 
+  - name: "Send comments to: Tony T (tthrall)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "graph-theory"
+  file_prefix: "graph-theory"
+abstract: 
+  "Introduce graph theory relevant to machine learning."
+bibliography: eda4ml.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r libraries}
+library(assertthat)
+library(GGally)
+# library(gutenbergr)
+library(here)
+# library(ISLR2)
+library(igraph)
+# library(janeaustenr)
+library(latex2exp)
+# library(learnr)
+# library(quanteda)
+library(rSpectral)
+# library(SAPP)
+# library(tidytext)
+library(tidyverse)
+# library(timeSeriesDataSets)
+library(tinytex)
+# library(tm)
+# library(tokenizers)
+# library(topicmodels)
+# library(tsibble)
+library(tufte)
+
+```
+
+```{r local_source}
+source(here("code", "graph_glossary.R"))
+```
+
+------------------------------------------------------------------------
+
+In mathematics and computer science, _graph theory_ is the study of graphs, which are mathematical structures used to model pairwise relations between objects. A graph in this context is made up of _vertices_ (also called nodes or points) which are connected by _edges_ (also called arcs, links or lines). A distinction is made between _undirected_ graphs, where edges link two vertices symmetrically, and _directed_ graphs, where edges link two vertices asymmetrically. [^wiki_graph_theory]
+
+[^wiki_graph_theory]: See @wiki_graph_theory.
+
+## Types of Data in which Graphs Arise
+
+### Transaction examples
+
+Suppose $A$ contacts or pays $B$, where the _nodes_ $A$ and $B$ are people (or perhaps software functions).  The edge connecting $A$ and $B$ might be labeled "contact" or "pay", in which case we need to distinguish whose contacting or paying whom.  That information is given by the _direction_ of the edge.
+
+On the other hand, suppose we have just two types of node: people and products.  And we have just one type of edge, say, "purchase".  Thus person $A$ purchases product $B$.  The subject-object relationship is evident from the distinct types of node.  Then the "A-B" connection could just as well be read as: $B$ is purchased by $A$.  Given the distinct types of node, the connection could be represented by an _undirected_ edge.  (This situation gives rise to a _bipartite_ graph.)
+
+### Relationship examples
+
+Person $A$ knows person $B$.
+
+Person $A$ helps to create content $B$ (article, book, movie, recording, ...).
+
+Person $A$ attends event $B$.
+
+Locations $A$ and $B$ are connected via public transport.
+
+$A$ is distance $d$ from $B$.  Then the $A-B$ edge might be given _weight_ $d$.
+
+## Glossary of Basic Terms
+
+A _graph_ is an ordered pair $G = (V, E)$ of a set of vertices $V$ and a set of edges $E$.  Each edge consists of a pair of vertices $(A, B)$.  The edge may be denoted as $e(A, B)$ or as $A-B$.  In an undirected graph the edge $A-B$ is identical to the edge $B-A$, whereas in an directed graph $A-B$ denotes the edge from $A$ to $B$ and is distinct from $B-A$, the edge from $B$ to $A$. [^wiki_graph_glossary]
+
+[^wiki_graph_glossary]: See @wiki_graph_glossary.
+
+```{r}
+#| label: tbl-graph-glossary
+#| tbl-cap: "Graph Theory: Basic Terms"
+
+graph_glossary <- gen_graph_glossary()
+graph_glossary |> knitr::kable(
+  caption = "Graph Theory: Basic Terms", 
+  col.names = c("term", "description")
+)
+```
+
+## Properties
+
+### Matrix Representations
+
+Let $G$ be a graph having $n_V$ nodes.
+
+#### Adjacency matrix
+
+The $n_V \times n_V$ adjacency matrix identifies adjacent nodes, and is defined as follows. [^wiki_adjacency_matrix]
+
+[^wiki_adjacency_matrix]: See @wiki_adjacency_matrix.
+
+$$
+\begin{align}
+  A_{j, k} &= 
+  \begin{cases}
+    1 & \text{ if } e(\nu_j, \nu_k) \in E \\
+    0 & \text{ otherwise}
+  \end{cases}
+\end{align}
+$$ {#eq-adjacency-matrix}
+
+The same information can be represented by a matrix having just two columns that lists only those vertex pairs $(\nu_1, \nu_2)$ that define an edge of the graph.  Such a sparse matrix representation may also be used to list only a subset of edges.  The selected subset may be designed, for example, to achieve computational efficiency.
+
+#### Degree matrix
+
+In an undirected graph, the degree matrix is an $n_V \times n_V$  diagonal matrix $D$ in which diagonal element $D_{i, i}$ counts the number of edges incident with node $\nu_i$.  $D_{i, i}$ is called the degree of node $\nu_i$, and is related to the adjacency matrix as follows. [^wiki_degree_matrix]
+
+[^wiki_degree_matrix]: See @wiki_degree_matrix.
+
+$$
+\begin{align}
+  D_{i, i} &= \sum_{k = 1}^{n_V} A_{i, k}
+\end{align}
+$$ {#eq-degree-matrix}
+
+In a directed graph the adjacency matrix may not be symmetric.  The edges incident with node $\nu_i$ of the form $e(\nu_i, \nu_k)$ are "out-edges" of $\nu_i$, whereas those of the form $e(\nu_j, \nu_i)$ are "in-edges".  The "out-degree" $D_{i, i}^{(out)}$ and "in-degree" $D_{i, i}^{(in)}$ are respectively the sum across columns of each row, and the sum across rows of each column.
+
+$$
+\begin{align}
+  D_{i, i}^{(out)} &= \sum_{k = 1}^{n_V} A_{i, k} \\ 
+  D_{i, i}^{(in)}  &= \sum_{j = 1}^{n_V} A_{j, i}
+\end{align}
+$$ {#eq-degree-matrix-in-out}
+
+#### Laplacian matrix
+
+In an undirected graph, the Laplacian (or Kirchhoff) matrix is an $n_V \times n_V$ matrix $L$ defined as follows. [^wiki_Laplacian_matrix]
+
+[^wiki_Laplacian_matrix]: See @wiki_Laplacian_matrix.
+
+$$
+\begin{align}
+  L &= D - A
+\end{align}
+$$ {#eq-Laplacian-matrix}
+
+Consequently 
+
+$$
+\begin{align}
+  L_{j, k} &= 
+  \begin{cases}
+    D_{j, j} & \text{ if } j = k \\ 
+    -1 & \text{ if } j\ne k \text{ and } e(\nu_j, \nu_k) \in E \\ 
+    0 & \text{ otherwise}
+  \end{cases}
+\end{align}
+$$ {#eq-Laplacian-matrix-elements}
+
+### Betweenness centrality
+
+Question: Which nodes and edges are "central"? [^wiki_betweenness_centrality]
+
+[^wiki_betweenness_centrality]: See @wiki_betweenness_centrality.
+
+#### Nodes
+
+The notion of `betweenness centrality` is that a node $v$ is central to a graph if it is often included in the shortest paths between any connected nodes of the graph.  This notion was formally defined in the late 1970's as the following measure $\gamma_V(v)$ of the betweenness centrality of node $v$.
+
+$$
+\begin{align}
+  \gamma_V(v) &= \sum_{s, t \ne v} 
+    \frac{\sigma_{s, t} (v)}{\sigma_{s, t}}
+\end{align}
+$$ {#eq-v-b-centrality-defn}
+
+where 
+
+$$
+\begin{align}
+  (s, t) &= \text{ distinct connected nodes} \\ 
+  \mathcal{P}_{s, t} &= \text{ shortest paths from } s \text{ to } t \\ 
+  \mathcal{P}_{s, t} (v) &= \text{ shortest paths from } s \text{ to } t \text{ that pass through } v \\ 
+  \sigma_{s, t} &= \text{ number of paths in } \mathcal{P}_{s, t} \\ 
+  \sigma_{s, t} (v) &= \text{ number of paths in } \mathcal{P}_{s, t} (v)
+\end{align}
+$$ {#eq-v-b-centrality-2}
+
+The following conventions simplify the notation.
+
+$$
+\begin{align}
+  \sigma_{s, t} &= 1 & \text{ if } s = t \\ 
+  \sigma_{s, t} (v) &= 0 & \text{ if } v \in \{ s, t \}
+\end{align}
+$$ {#eq-centrality-conventions}
+
+Note that each term in the sum within @eq-v-b-centrality-defn is a fraction known as the _pair dependency_ of $(s, t)$ on $v$, denoted as follows.
+
+$$
+\begin{align}
+  \delta_{s, t}(v) &= \frac{\sigma_{s, t} (v)}{\sigma_{s, t}}
+\end{align}
+$$ {#eq-pair-dependency-defn}
+
+This is the proportion of shortest paths from node $s$ to node $t$ that include node $v$.  The proportion thus falls within the closed unit interval: $0 \le \delta_{s, t}(v) \le 1$.
+
+A related quantity is the _single dependency_ of $s$ on $v$, defined as follows.
+
+$$
+\begin{align}
+  \delta_s(v) &= \sum_{t \not \in \{s, v \}} \delta_{s, t}(v)
+\end{align}
+$$ {#eq-single-dependency-defn}
+
+In words, for a fixed starting point $s$ and a fixed intermediate node $v$ this is the sum over end-points $t$ of the paired dependency of $(s, t)$ on $v$.  Then we have 
+
+$$
+\begin{align}
+  \gamma_V(v) &= \sum_{s \ne v} \delta_s(v)
+\end{align}
+$$ {#eq-v-b-centrality-3}
+
+#### Edges
+
+The betweenness centrality of an edge is defined similarly to that for a node.
+
+$$
+\begin{align}
+  \gamma_E(e) &= \sum_{s, t \in V} 
+    \frac{\sigma_{s, t} (e)}{\sigma_{s, t}}
+\end{align}
+$$ {#eq-e-b-centrality-defn}
+
+Summation is over all pairs $(s, t)$ of connected nodes.  Each term of the summation is a fraction, namely the proportion of shortest paths from $s$ to $t$ that include edge $e$.
+
+### Connected components
+
+In graph theory, a component of an undirected graph is a connected subgraph that is not part of any larger connected subgraph. The components of any graph partition its vertices into disjoint sets, and are the induced subgraphs of those sets. A graph that is itself connected has exactly one component, namely the entire graph. Components are sometimes called connected components.  In `R` graph components can be determined by function `igraph::components()`. [^wiki_connected_component]
+
+[^wiki_connected_component]: See @wiki_connected_component.
+
+### Communities
+
+In graph theory, the notion of "community" (or cluster, or module) is similar to but less stringent than that of a connected component.  A community is a subgraph, with many edges joining vertices of the same community and comparatively few edges joining vertices of different communities. [^Fortunato_2010]
+
+[^Fortunato_2010]: See @Fortunato_2010.
+
+### Modularity
+
+The strength of a given community structure of a graph can be measured as the _modularity_ of the graph, which compares the actual number of edges between node pairs to the expected number in a randomly generated graph (constrained to preserve the degree of each node).
+
+Suppose that $c(\nu_j)$ is the assignment by classification function of $c(\cdot)$ of each node $\nu_j$ to one of the integers $\{ 1, \ldots, n_c \}$.  Let $Q(c(\cdot))$ denote the modularity measure of $c(\cdot)$.  Then $Q(\cdot)$ is defined compatably but distinctly for directed versus undirected graphs.
+
+#### Undirected graphs
+
+For an undirected graph, modularity $Q(\cdot)$ is defined as follows.
+
+$$
+\begin{align}
+  Q &= \frac{1}{2 n_E} \sum_{j, k = 1}^{n_V} \left (A_{j, k} - \frac{D_{j, j} \; D_{k, k}}{2 n_E} \right ) \; \delta(c(\nu_j), c(\nu_k))
+\end{align}
+$$ {#eq-modularity-defn}
+
+where 
+
+$$
+\begin{align}
+  n_E &= \left| E \right| \text{ = number of edges} \\ 
+  n_V &= \left| V \right| \text{ = number of nodes} \\ 
+  A &= \text{adjacency matrix} \\ 
+  D_{i, i} &= \text{degree of node } \nu_i \\ 
+  \delta(\cdot) &= \text{Kronecker delta function}
+\end{align}
+$$ {#eq-modularity-defn-2}
+
+#### Directed graphs
+
+For a directed graph, modularity $Q(\cdot)$ is defined thus.
+
+$$
+\begin{align}
+  Q &= \frac{1}{n_E} \sum_{j, k = 1}^{n_V} \left (A_{j, k} - \frac{D_{j, j}^{(out)}D_{k, k}^{(in)}}{n_E} \right ) \; \delta(c(\nu_j), c(\nu_k))
+\end{align}
+$$ {#eq-modularity-defn-in-out}
+
+#### Agglomerative versus divisive algorithms
+
+Consider an algorithm designed to determine community structure based on modularity.  A divisive algorithm might initially assign all nodes to a single community by setting $n_c = 1$.  An agglomerative algorithm might initially assign each node to its own community by setting $n_c = n_V$.
+
+See @wiki_graph_modularity for further details.  The modularity of a graph can be calculated in `R` by function `igraph:modularity()`.
+
+## Algorithms: General
+
+### Page Rank
+
+Question: In a directed graph, which nodes have the most in-links?
+
+`PageRank` was the first algorithm used by Google to find relevant web pages in response to user queries.  The algorithm determines the number and quality of links to a page under the assumption that more important websites are likely to receive more links from other websites. [^wiki_PageRank]
+
+[^wiki_PageRank]: See @wiki_PageRank.
+
+This idea can be applied to any directed graph.  Here's an outline of a similar algorithm that assigns a score $s(\nu)$ to each node $\nu$ of directed graph $G = (V, E)$ having $n_V$ nodes.  For each node $\nu$ the score is initially set to $s(\nu) = \frac{1}{n_V}$.  Then the algorithm iterates over the following steps: [^out_nodes]
+
+[^out_nodes]: We assume each node has an edge to at least one other node.  This can be enforced if needed.  One possibility is to remove the set $\mathcal{N}$ of those nodes $\mathcal{n}$ having no out-link to any other node, and to also remove any edges of the form $\nu - \mathcal{n}$ incident with nodes in $\mathcal{N}$. Another possibility is to change the set of out-nodes of node $\mathcal{n} \in \mathcal{N}$ from the empty set to the singleton set $\{ \mathcal{n} \}$.
+
+  1.   *Distribute* $s(\nu)$ equally among the out-neighbors of $\nu$.
+  1.   *Update* $s(\nu)$ to be the sum of all scores received from the in-neighbors of $\nu$.
+  1.  *Shrink* toward uniformity: set $s(\nu) \leftarrow (1 - \epsilon) s(\nu) + \epsilon \frac{1}{n_V}$, for some $\epsilon \approx 0.15$.
+
+The algorithm can also be expressed using the $n_V \times n_V$ matrix $T$ to represent the distribution of each node's score to the scores of its out-neighbors, so that 
+
+$$
+\begin{align}
+  T_{j, k}  &= 
+  \begin{cases}
+    \frac{1}{d_j} & \text{if } \nu_j \text{ has a directed link to } \nu_k \\ 
+    0 & \text{ otherwise}
+  \end{cases} \\ \\
+  &\text{where} \\ \\
+  d_j &= \text{number of out-neighbors of } \nu_j
+\end{align}
+$$ {#eq-transition-matrix}
+
+Let $s^{(i)}_\bullet = (s^{(i)}_1, \ldots, s^{(i)}_{n_V})$ denote the vector of node-scores at the $i^{th}$ iteration.  Also let $1_\bullet = (1, \ldots, 1)$ denote the vector of length $n_V$ each of whose elements is equal to unity, so that $1_\bullet \otimes 1_\bullet$ denotes the $n_V \times n_V$ matrix each of whose elements is equal to unity.  Then the algorithm can be represented as the following linear system, iterated over index $i$.
+
+$$
+\begin{align}
+  s^{(0)}_\bullet &= \frac{1}{n_V} 1_\bullet \\ 
+  s^{(i)}_\bullet &= s^{(i-1)}_\bullet \; \times \; M \\ 
+  M &= (1 - \epsilon) \; T \; + \; \frac{\epsilon}{n_V} \; 1_\bullet \otimes 1_\bullet
+\end{align}
+$$ {#eq-node-score-iteration}
+
+The matrix $T$ is a Markov transition matrix: that is, the elements of each row are non-negative and sum to unity.  Then there is at least one probability vector $\pi_\bullet$ for which $\pi_\bullet \times T = \pi_\bullet$.  Vector $\pi_\bullet$ is thus a left eigenvector of $T$ corresponding to an eigenvalue of 1, and is a stationary probability vector corresponding to $T$. [^wiki_Markov_chain]
+
+[^wiki_Markov_chain]: See @wiki_Markov_chain.
+
+Matrix $M$ is also a Markov transition matrix with its own stationary distribution, say $\bar{s}_\bullet$.  Moreover, $M$ is irreducible, meaning that $M$ assigns positive probability of reaching any node from any other node.  Consequently $\bar{s}_\bullet$ is the _unique_ stationary distribution of $M$.  It also follows that iterating the above linear system gives a sequence of score vectors $s^{(i)}_\bullet$ that converge to $\bar{s}_\bullet$.
+
+$$
+\begin{align}
+  \lim_{i \rightarrow \infty}{s^{(i)}_\bullet} &= \bar{s}_\bullet
+\end{align}
+$$ {#eq-converge-to-stationary-dstn}
+
+In 1999 Google noted that acceptable convergence of the `PageRank` algorithm typically required about 50 iterations for internet-sized graphs. [^PageRank_convergence]
+
+[^PageRank_convergence]: See @wiki_PageRank.
+
+The algorithm is implemented in `R` as the function `igraph::page_rank()`.
+
+### Floyd-Warshall
+
+Question: In a directed weighted graph, what is the distance from one node to another: how long is the shortest path?
+
+Suppose we are given a directed weighted graph $G$ having $n_V$ nodes indexed as $\{ \nu_1, \nu_2, \ldots, \nu_{n_V} \}$.  For any path from node $\nu_j$ to node $\nu_k$, the length of the path is the sum of the weights of the edges making up the path.
+
+Consider the shortest of those paths from $\nu_j$ to $\nu_k$ that are restricted to intermediary nodes $N_m = \{ \nu_1, \nu_2, \ldots, \nu_m \}$, that is, constrained to exclude intermediary nodes other than those in $N_m$.  If there is such a shortest path that moreover excludes node $\nu_m$, then it is also the shortest path restricted to intermediary nodes $N_{m - 1} = \{ \nu_1, \nu_2, \ldots, \nu_{m - 1} \}$.
+
+Otherwise, if any shortest path includes node $\nu_m$, that path is the concatenation of: (1) a shortest path from $\nu_j$ to $\nu_m$ restricted to nodes $N_{m - 1}$; and (2) a shortest path from $\nu_m$ to $\nu_k$ restricted to nodes $N_{m - 1}$.
+
+If node $\nu_j$ happens to be connected to $\nu_k$ by the edge $\nu_j - \nu_k$, then that edge qualifies as the shortest path restricted to the empty set of intermediary nodes.
+
+We now use these observations about intermediary nodes to construct an algorithm to determine the minimal distance from any node to any node.  We will record these distances in the $n_v \times n_V$ matrix $D$. [^wiki_Floyd_Warshall_algo]
+
+[^wiki_Floyd_Warshall_algo]: See @wiki_Floyd_Warshall_algo.
+
+$$
+\begin{align}
+  D_{j, k} &= \text{distance from } \nu_j \text{ to } \nu_k
+\end{align}
+$$ {#eq-distance-matrix-defn}
+
+We set initial values to matrix $D$ as follows.
+
+$$
+\begin{align}
+  D^{(0)}_{j, k} &= 
+  \begin{cases}
+    \text{weight of edge } \nu_j - \nu_k & \text{if that edge exists} \\ 
+    \infty & \text{otherwise}
+  \end{cases}
+\end{align}
+$$ {#eq-distance-matrix-initial-values}
+
+We now update these matrix values as follows.
+
+$$
+\begin{align}
+  D^{(i + 1)}_{j, k} &= \min \left \{ D^{(i)}_{j, k} \;,\; \{ D^{(i)}_{j, m} + D^{(i)}_{m, k} \}_{m \not \in \{ j, k \}} \right \}
+\end{align}
+$$ {#eq-distance-matrix-updates}
+
+The algorithm is implemented in `R` as the function `Rfast::floyd()`.
+
+### Dijkstra
+
+Question: In a weighted graph, how long is the shortest path between two given nodes, or between a given node and every other node?
+
+$G$ is now an undirected, weighted graph, again having $n_V$ nodes.  A starting node $\nu_1$ is identified, but the remaining nodes will be later indexed as $\{ \nu_2, \ldots, \nu_{n_V} \}$ as part of the algorithm.  The $n_v \times n_V$ distance matrix $D$ is now symmetric.  Our goal is to determine the values of the first row of $D$ (or possibly an identified target cell in the first row).
+
+Dijkstra's algorithm starts with infinite distances and tries to improve them step by step: [^wiki_Dijkstra_algo]
+
+[^wiki_Dijkstra_algo]: See @wiki_Dijkstra_algo.
+
+  1.  Create a set $\mathcal{U}$ of unvisited nodes, with $\mathcal{U}$ initialized as $V$, the set of all nodes.
+  1.  Assign an initial distance $D^{(0)}_{1, j}$ from $\nu_1$ to every node $\nu_j$, with $D^{(0)}_{1, 1} = 0$ and $D^{(0)}_{1, j} = \infty$ for $j \ne 1$.
+  1.  From the unvisited set, select the current node, $\nu_i$, to be the one with the smallest (finite) distance; initially (for $i = 1$), this is the starting node $\nu_1$ (having distance zero).  If the unvisited set is empty, or contains only nodes with infinite distance (which are unreachable), then the algorithm terminates by skipping to step 6. If the only concern is the path to a target node, the algorithm terminates once the current node is the target node. Otherwise, the algorithm continues.
+  1.  Now examine nodes adjacent to $\nu_i$ that are still elements of $\mathcal{U}$.  Calculate the distance of each adjacent node from $\nu_1$ through the current node $\nu_i$.  Update the distance from $\nu_1$ to the adjacent node to be the minimum of the previously recorded distance and the new calculation.
+  1.  After considering all of the current node's unvisited neighbors, the current node is removed from the unvisited set. Thus a visited node is never rechecked, which is correct because the distance recorded on the current node is minimal (as ensured in step 3), and thus final. Repeat from step 3.
+  1.  Once the loop exits (steps 3–5), every visited node contains its shortest distance from the starting node.
+
+The algorithm is implemented in `R` as the function `igraph::distances()`.
+
+### Brandes
+
+Brandes' algorithm calculates the betweenness centrality of all nodes in a graph, with the aid of the following definitions. [^wiki_Brandes_algo]
+
+[^wiki_Brandes_algo]: See @wiki_Brandes_algo.
+
+Let $\mathcal{l}(s, v)$ denote the length of a shortest path from node $s$ to node $v$.  Note: Brandes' algorithm assumes that all edge-weights are equal to unity (or share some other positive constant value).
+
+Also let $\mathcal{C}_s(v)$ denote the neighbors of $v$ that are closer to $s$ than is $v$.
+
+$$
+\begin{align}
+  \mathcal{C}_s(v) &= \left \{ u \in V : 
+    (u-v) \in E \; \wedge \; \mathcal{l}(s, u) < \mathcal{l}(s, v) \right \}
+\end{align}
+$$ {#eq-closer-than-v}
+
+The idea here is that for any given node $s$, the remaining nodes can be partitioned based on their distance from $s$.  The partition is simplified by the assumption that all edges have the same weight (unity or some other positive constant).  Node $v$ belongs to the set of nodes that are the same distance from $s$ as is $v$.  If node $u$ is adjacent to $v$ and is closer to $s$ than is $v$, then it must be just one unit closer and thus belong to that corresponding set of nodes. 
+
+For each vertex $s$ the algorithm iterates over two stages: (1) shortest path determination ; and (2) back-propagation.  The algorithm is implemented in `R` as the function `igraph::betweenness()`.
+
+#### Single-source shortest path
+
+@eq-closer-than-v yields the following iterative formula for $\sigma_{s, v}$. [^Brandes-caveat]
+
+[^Brandes-caveat]: This formula assumes that if $(u-v) \in E$, then the $(u-v)$ edge is among the shortest paths from $u$ to $v$.  If all edges have the same weight, then the $(u-v)$ edge is the unique shortest path from $u$ to $v$.
+
+$$
+\begin{align}
+  \sigma_{s, v} &= \sum_{u \in \mathcal{C}_s(v)} \sigma_{s, u}
+\end{align}
+$$ {#eq-sigma-recursion}
+
+That is, if node $v$ is not adjacent to node $s$ then any shortest path from $s$ to $v$ must have a member of $\mathcal{C}_s(v)$ as its penultimate node, and these penultimate nodes partition the shortest paths from $s$ to $v$.  On the other hand, if $(s-v)$ is an edge then that edge is the unique shortest path from $s$ to $v$, in which case $\sigma_{s, v} = 1$.
+
+#### Backpropagation
+
+Brandes proved the following recursive formula for vertex dependencies:
+
+$$
+\begin{align}
+  \delta_{s} (u) &= \sum_{v : u \in \mathcal{C}_s(v)} 
+    \frac{\sigma_{s, u}}{\sigma_{s, v}} \times (\delta_s(v) + 1)
+\end{align}
+$$ {#eq-delta-recursion}
+
+According to this formula the single dependency of $s$ on a vertex $u$ at distance $\mathcal{l}(s, u)$ is determined by the the set of nodes at the next greater distance.  Furthermore, the order of summation is irrelevant, which enables calculations to start at the most distant set of nodes.
+
+## Algorithms: Clustering
+
+### Girvan-Newman
+
+Question: How can one identify highly connected communities of nodes? [^wiki_Girvan_Newman_algo]
+
+[^wiki_Girvan_Newman_algo]: See @wiki_Girvan_Newman_algo.
+
+If a graph contains groups (communities) of nodes that are only loosely connected by a few inter-group edges, then all shortest paths between different communities must go along one of these few edges. Thus the edges connecting communities will have high edge betweenness. By removing these edges, the communities are separated from one another and so the underlying community structure of the graph is revealed.
+
+Girvan–Newman is a hierarchical, divisive algorithm that detects communities by iteratively removing a most central edge, and then recomputing the betweenness centrality of edges belonging to the component containing the removed edge. The connected components of the resulting graph are the communities.
+
+The algorithm is as follows.
+
+  1. Calculate the betweenness for all edges.
+  1. Remove the edge with the highest betweenness.
+  1. Recalculate betweennesses for all edges affected by the removal.
+  1. Repeat from step 2 until no edges remain.
+
+The algorithm is implemented in `R` as the function `igraph::cluster_edge_betweenness()`.
+
+### Spectral clustering
+
+Spectral clustering is another hierarchical, divisive method for community detection in an undirected graph.  It is based on a spectral decomposition of the normalized Laplacian matrix.  An outline of the iterative algorithm is as follows.
+
+  1.  Compute the adjacent $(A)$, degree $(D)$, and normalized Laplacian $(\tilde{L})$ matrices, with 
+
+$$
+\begin{align}
+  \tilde{L} &= I - D^{-1/2} \; A \; D^{-1/2}
+\end{align}
+$$ {#eq-Laplacian-matrix-normalized}
+
+noting that 
+
+$$
+\begin{align}
+  \tilde{L} \times (D^{1/2} \times 1_{\bullet}) &= 0
+\end{align}
+$$ {#eq-Laplacian-matrix-evec-0}
+
+  2.  Compute the eigenvector $x$ corresponding to the second smallest eigenvalue of $(\tilde{L})$.
+  
+  3.  For each node $\nu_j$ calculate the inner product $<A_{j, \bullet}, x>$ (the $x-$coordinate of $\nu_j$).
+  
+  4.  Cluster nodes based on the sign (negative, or non-negative) of their $x-$coordinate.
+
+See @wiki_spectral_clustering for further details.  The algorithm can be implemented in `R` as the function `rSpectral::spectral_igraph_membership()`.
+
+### Clauset-Newman-Moore
+
+The Clauset-Newman-Moore (CNM) algorithm is a hierarchical agglomeration algorithm to find community structure in a graph.  It does so by local ("greedy") optimization.  It greedily merges clusters to increase modularity, and halts when the increase falls under some threshold.  It may be forced to track the hierarchy of clusters formed, and halt only when it has created a single cluster of the entire graph.  See @Clauset_Newman_Moore_2004 for details.  The algorithm is implemented in `R` as the function `igraph::cluster_fast_greedy()`.
+
+### Louvain
+
+The Louvain method, like the Clauset-Newman-Moore (CNM) algorithm, uses local optimization of subgraph modularity to find community structure in a graph.  Here's an outline of the algorithm.
+
+  1.  Perform CNM until modularity is maximized.
+  1.  Contract each cluster to a single new node.
+  1.  Set the edge-weight between new nodes to the sum of all old edge-weights between the old clusters.
+  1.  Return to step 1 with the contracted graph.
+
+See @wiki_louvain_method for further details.  
+
+Louvain produces non-overlapping communities: each node belongs to at most one community. This may be unrealistic in real-world applications. As an alternative, the Leiden algorithm can produce overlapping communities.
+
+The Louvain method is implemented in `R` as the function `igraph::cluster_louvain()`.
+
+### Leiden
+
+The Leiden method, developed in 2019 as a modification of the Louvain method, allows the identification of overlapping communities. See @wiki_leiden_algo for details.  The algorithm is implemented in `R` as the function `igraph::cluster_leiden()`.
+

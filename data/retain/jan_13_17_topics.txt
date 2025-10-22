@@ -1,0 +1,87 @@
+dt_session	am_pm	author	speaker	idx_1	ab	idx_2	idx_3	title	pg_doc
+13-Jan-2025	AM	TT	TT	1	a	0	0	Exploratory Data Analysis	1
+13-Jan-2025	AM	TT	TT	1	a	1	0	Heights of Fathers and Sons	1
+13-Jan-2025	AM	TT	TT	1	a	2	0	Class Exercise: Diamond Data	3
+13-Jan-2025	AM	TT	TT	1	a	3	0	Class Exercise: General Social Survey Data	4
+13-Jan-2025	AM	TT	TT	1	a	4	0	Discussion: what should EDA mean?	4
+13-Jan-2025	AM	TT	TT	1	a	5	0	Team Exercises	6
+13-Jan-2025	AM	TT	TT	1	a	6	0	Resources	7
+13-Jan-2025	PM	TT	TT	1	b	0	0	Conditional Distributions	1
+13-Jan-2025	PM	TT	TT	1	b	1	0	Heights of Fathers and Sons	2
+13-Jan-2025	PM	TT	TT	1	b	2	0	Z-Scores: transforming data values to standard units	3
+13-Jan-2025	PM	TT	TT	1	b	2	1	SD line	4
+13-Jan-2025	PM	TT	TT	1	b	2	2	Regression line	4
+13-Jan-2025	PM	TT	TT	1	b	2	3	The Normal distribution	7
+13-Jan-2025	PM	TT	TT	1	b	3	0	Class Exercise: Diamond Data	8
+13-Jan-2025	PM	TT	TT	1	b	4	0	Simulating Random Variables	8
+13-Jan-2025	PM	TT	TT	1	b	5	0	Cautionary Remarks	9
+13-Jan-2025	PM	TT	TT	1	b	5	1	Robust statistics	9
+13-Jan-2025	PM	TT	TT	1	b	5	2	Anscombe Quartet	9
+13-Jan-2025	PM	TT	TT	1	b	6	0	Statistical Independence	10
+13-Jan-2025	PM	TT	TT	1	b	6	1	Definition	11
+13-Jan-2025	PM	TT	TT	1	b	6	2	The case when X and Y are categorical variables	11
+13-Jan-2025	PM	TT	TT	1	b	6	3	Simpson’s Paradox	13
+13-Jan-2025	PM	TT	TT	1	b	7	0	Entropy	15
+13-Jan-2025	PM	TT	TT	1	b	7	1	Background	15
+13-Jan-2025	PM	TT	TT	1	b	7	2	Yes-No Questions	15
+13-Jan-2025	PM	TT	TT	1	b	7	3	Definition	16
+13-Jan-2025	PM	TT	TT	1	b	7	4	HX,Y for independent X,Y	17
+13-Jan-2025	PM	TT	TT	1	b	7	5	Mutual Information	18
+13-Jan-2025	PM	TT	TT	1	b	7	6	KL Divergence	18
+13-Jan-2025	PM	TT	TT	1	b	8	0	Team Exercises	19
+13-Jan-2025	PM	TT	TT	1	b	9	0	Resources	20
+14-Jan-2025	AM	TT	TT	2	a	0	0	Clustering: EDA in Higher Dimensions	1
+14-Jan-2025	AM	TT	TT	2	a	1	0	Initial Remarks	1
+14-Jan-2025	AM	TT	TT	2	a	2	0	US Colleges	2
+14-Jan-2025	AM	TT	TT	2	a	3	0	Class Exercise	3
+14-Jan-2025	AM	TT	TT	2	a	4	0	Grouping Variables	3
+14-Jan-2025	AM	TT	TT	2	a	4	1	Example: college data grouping variables	3
+14-Jan-2025	AM	TT	TT	2	a	4	2	Measures of clustering effectiveness	7
+14-Jan-2025	AM	TT	TT	2	a	4	3	Standardizing variables	7
+14-Jan-2025	AM	TT	TT	2	a	4	4	Within-group distances in standard units	8
+14-Jan-2025	AM	TT	TT	2	a	5	0	K-means Clustering	8
+14-Jan-2025	AM	TT	TT	2	a	5	1	Results for specified inital cluster centers	9
+14-Jan-2025	AM	TT	TT	2	a	5	2	Jaccard similarity	10
+14-Jan-2025	AM	TT	TT	2	a	5	3	Distribution of point-center distances	11
+14-Jan-2025	AM	TT	TT	2	a	5	4	Results for random inital cluster centers	12
+14-Jan-2025	AM	TT	TT	2	a	5	5	Which value of K?	14
+14-Jan-2025	AM	TT	TT	2	a	6	0	Other clustering algorithms	15
+14-Jan-2025	AM	TT	TT	2	a	7	0	Team Exercises	16
+14-Jan-2025	AM	TT	TT	2	a	8	0	Resources	16
+14-Jan-2025	PM	TT	TT	2	b	0	0	Text Analysis	1
+14-Jan-2025	PM	TT	TT	2	b	1	0	Introduction	1
+14-Jan-2025	PM	TT	TT	2	b	2	0	Text Example	2
+14-Jan-2025	PM	TT	TT	2	b	3	0	Larger Text Examples	3
+14-Jan-2025	PM	TT	TT	2	b	3	1	Jane Austen’s novels	3
+14-Jan-2025	PM	TT	TT	2	b	3	2	The Gutenberg Project	4
+14-Jan-2025	PM	TT	TT	2	b	4	0	Class Exercise	5
+14-Jan-2025	PM	TT	TT	2	b	5	0	TF-IDF: Term Frequency - Inverse Doc Frequency	5
+14-Jan-2025	PM	TT	TT	2	b	6	0	Document-Term Matrix (DTM)	6
+14-Jan-2025	PM	TT	TT	2	b	6	1	Example: Associated Press articles	7
+14-Jan-2025	PM	TT	TT	2	b	6	2	Example: inaugural addresses of US presidents	8
+14-Jan-2025	PM	TT	TT	2	b	7	0	Topic Models	9
+14-Jan-2025	PM	TT	TT	2	b	7	1	Latent Dirichlet allocation (LDA)	10
+14-Jan-2025	PM	TT	TT	2	b	7	2	Example: Associated Press articles	10
+14-Jan-2025	PM	TT	TT	2	b	8	0	Additional Aspects of Text Analysis	12
+14-Jan-2025	PM	TT	TT	2	b	9	0	Team Exercises	12
+14-Jan-2025	PM	TT	TT	2	b	10	0	Resources	13
+15-Jan-2025	AM	TT	TT	3	a	0	0	Sampling and Study Design	1
+15-Jan-2025	AM	TT	TT	3	a	1	0	Introduction	1
+15-Jan-2025	AM	TT	TT	3	a	2	0	Observational Study Examples	2
+15-Jan-2025	AM	TT	TT	3	a	2	1	Literary Digest Poll, 1936	2
+15-Jan-2025	AM	TT	TT	3	a	2	2	Truman versus Dewey, 1948	2
+15-Jan-2025	AM	TT	TT	3	a	2	3	Using Chance in Surveys	3
+15-Jan-2025	AM	TT	TT	3	a	2	4	More Recent Election Polls	4
+15-Jan-2025	AM	TT	TT	3	a	2	5	UC Berkeley Admissions	5
+15-Jan-2025	AM	TT	TT	3	a	3	0	Class Exercise	5
+15-Jan-2025	AM	TT	TT	3	a	4	0	Experimental Study Examples	6
+15-Jan-2025	AM	TT	TT	3	a	4	1	Salk Vaccine Field Trial	6
+15-Jan-2025	AM	TT	TT	3	a	4	2	Portacaval Shunt	7
+15-Jan-2025	AM	TT	TT	3	a	4	3	Repeated Weighing of NB10	8
+15-Jan-2025	AM	TT	TT	3	a	5	0	Accuracy of the Sample Average	13
+15-Jan-2025	AM	TT	TT	3	a	6	0	Team Exercises	14
+15-Jan-2025	AM	TT	TT	3	a	7	0	Resources	15
+15-Jan-2025	PM	MJ	TT	3	b	0	0	Linear Algebra	1
+16-Jan-2025	AM	KT	TT	4	a	0	0	Dimension Reduction	1
+17-Jan-2025	AM	KT	TT	5	a	0	0	Time Series	83
+17-Jan-2025	PM	TT	TT	5	b	0	0	Time Series & Point Processes: Frequency Analysis	1

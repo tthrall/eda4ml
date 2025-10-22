@@ -1,0 +1,18 @@
+fn	value	distribution
+rbeta	dbl	Beta
+rcauchy	dbl	Cauchy
+rchisq	dbl	(non-central) Chi-Squared
+rexp	dbl	Exponential
+rf	dbl	F
+rgamma	dbl	Gamma
+rlnorm	dbl	Log Normal
+rlogis	dbl	Logistic
+rnorm	dbl	Normal
+rt	dbl	Student t
+runif	dbl	Uniform
+rweibull	dbl	Weibull
+rbinom	int	Binomial
+rgeom	int	Geometric
+rhyper	int	Hypergeometric
+rnbinom	int	Negative Binomial
+rpois	int	Poisson

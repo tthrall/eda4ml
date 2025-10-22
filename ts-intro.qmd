@@ -1,30 +1,4 @@
----
-title: "Time Series Data Analysis"
-subtitle: "An Overview"
-author:
-  - name: "Send comments to: Tony T (tthrall)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s5a"
-  file_prefix: "s5a_ts_intro"
-abstract:
-  "Introduce data examples in which successive observations are statistically dependent.  Discuss corresponding data analysis methods.  <br><br>"
-bibliography: s5a_references.bib
----
+# Time Series Data Analysis {#sec-ts-intro}
 
 ```{r}
 #| label: setup

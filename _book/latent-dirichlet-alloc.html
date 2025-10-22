@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (adthral)">
+
+<title>10&nbsp; Latent Dirichlet Allocation – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ts-intro.html" rel="next">
+<link href="./dirichlet-dstn.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-analysis.html">Text Data</a></li><li class="breadcrumb-item"><a href="./latent-dirichlet-alloc.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Graph Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">10.1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#text-analysis" id="toc-text-analysis" class="nav-link" data-scroll-target="#text-analysis"><span class="header-section-number">10.1.1</span> Text Analysis</a></li>
+  <li><a href="#topic-modelsart-steyvers-griffiths-2007" id="toc-topic-modelsart-steyvers-griffiths-2007" class="nav-link" data-scroll-target="#topic-modelsart-steyvers-griffiths-2007"><span class="header-section-number">10.1.2</span> Topic Models</a></li>
+  <li><a href="#lda-method" id="toc-lda-method" class="nav-link" data-scroll-target="#lda-method"><span class="header-section-number">10.1.3</span> LDA Method</a></li>
+  </ul></li>
+  <li><a href="#book-review-example" id="toc-book-review-example" class="nav-link" data-scroll-target="#book-review-example"><span class="header-section-number">10.2</span> Book Review Example</a>
+  <ul class="collapse">
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">10.2.1</span> Data</a></li>
+  <li><a href="#lda-function" id="toc-lda-function" class="nav-link" data-scroll-target="#lda-function"><span class="header-section-number">10.2.2</span> LDA function</a></li>
+  <li><a href="#output-interpretation" id="toc-output-interpretation" class="nav-link" data-scroll-target="#output-interpretation"><span class="header-section-number">10.2.3</span> Output interpretation</a></li>
+  </ul></li>
+  <li><a href="#mathematical-framework" id="toc-mathematical-framework" class="nav-link" data-scroll-target="#mathematical-framework"><span class="header-section-number">10.3</span> Mathematical Framework</a>
+  <ul class="collapse">
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">10.3.1</span> Notation</a></li>
+  <li><a href="#generative-model" id="toc-generative-model" class="nav-link" data-scroll-target="#generative-model"><span class="header-section-number">10.3.2</span> Generative Model</a></li>
+  <li><a href="#lda-gibbs-algorithm" id="toc-lda-gibbs-algorithm" class="nav-link" data-scroll-target="#lda-gibbs-algorithm"><span class="header-section-number">10.3.3</span> LDA-Gibbs Algorithm</a></li>
+  </ul></li>
+  <li><a href="#concluding-remarks" id="toc-concluding-remarks" class="nav-link" data-scroll-target="#concluding-remarks"><span class="header-section-number">10.4</span> Concluding Remarks</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">10.5</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/latent-dirichlet-alloc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-analysis.html">Text Data</a></li><li class="breadcrumb-item"><a href="./latent-dirichlet-alloc.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-latent-dirichlet-alloc" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (adthral) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">20:53 Tue 14-Oct-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="introduction" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">10.1</span> Introduction</h2>
+<section id="text-analysis" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="text-analysis"><span class="header-section-number">10.1.1</span> Text Analysis</h3>
+<p>Part 1, Session 2b, of the course presents an overview of text analysis based on <span class="citation" data-cites="Silge_Robinson_2017">Silge and Robinson (<a href="references.html#ref-Silge_Robinson_2017" role="doc-biblioref">2017</a>)</span>. The authors describe topic models, and in particular the method of Latent Dirichlet Allocation (LDA). Several course participants requested a more detailed description. This note is a response to that request.</p>
+</section>
+<section id="topic-modelsart-steyvers-griffiths-2007" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="topic-modelsart-steyvers-griffiths-2007"><span class="header-section-number">10.1.2</span> Topic Models<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></h3>
+<p>A topic model treats documents as mixtures of topics, where a topic is a probability distribution over the elements of a vocabulary. According to the model, each document is generated in the following steps:</p>
+<ol type="1">
+<li>Generate a document-specific probability distribution over a fixed set of topics; and then</li>
+<li>For each word-position in that document:</li>
+</ol>
+<ol type="i">
+<li>Select a topic at random; and</li>
+<li>Generate a vocabulary term from the selected topic.</li>
+</ol>
+<p>Standard statistical techniques can be used to invert this process, inferring the set of topics that were responsible for generating a collection of documents.</p>
+</section>
+<section id="lda-method" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="lda-method"><span class="header-section-number">10.1.3</span> LDA Method</h3>
+<p>Latent Dirichlet Allocation (LDA) was proposed by <span class="citation" data-cites="BNJ2003LDA">(<a href="references.html#ref-BNJ2003LDA" role="doc-biblioref"><strong>BNJ2003LDA?</strong></a>)</span> as a method of topic modeling. <span class="citation" data-cites="Silge_Robinson_2017">Silge and Robinson (<a href="references.html#ref-Silge_Robinson_2017" role="doc-biblioref">2017</a>)</span> use the <code>R</code> function <code>topicmodels::LDA()</code> with default parameter setting <code>method = VEM</code>, which denotes the Variational Expectation Maximization (EM) algorithm. In this note we use an alternative implementation of LDA described below.</p>
+</section>
+</section>
+<section id="book-review-example" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="book-review-example"><span class="header-section-number">10.2</span> Book Review Example</h2>
+<p>As an experiment we construct a small set of documents from two distinct sources. We then run the documents through the LDA algorithm (without identifying the source of each document) specifying that <span class="math inline">\(K = 2\)</span> topics are to be constructed to see whether and how well the constructed topics match the original sources.</p>
+<section id="data" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="data"><span class="header-section-number">10.2.1</span> Data</h3>
+<p>“Animal Farm” by George Orwell was published in 1945<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, and nearly forty years later (1984) “The Butter Battle Book” by Dr.&nbsp;Seuss was published<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. The books are quite different of course, but they both allude to the Soviet Union in its earlier and later years, respectively.</p>
+<p>As a toy example of a corpus of documents, we have extracted Wikipedia’s description of the plots of the two books, counting each paragraph as a separate document.</p>
+<p>Here are the successive paragraphs (stripped of punctuation and stop-words) summarizing the two books.</p>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>af_bbb_para_tbl <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">72</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-af-bbb-para-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-af-bbb-para-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10.1: Paragraphs summarizing ‘Animal Farm’ (AF), then ‘The Butter Battle Book’ (BBB)
+</figcaption>
+<div aria-describedby="tbl-af-bbb-para-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 3
+  src     pdx para                                                      
+  &lt;chr&gt; &lt;int&gt; &lt;chr&gt;                                                     
+1 AF        1 animal populace poorly run manor farm near willingdon eng…
+2 AF        2 napoleon enacts changes political structure farm replacin…
+3 AF        3 mr frederick neighbouring farmer attacks farm using blast…
+4 AF        4 years pass windmill rebuilt another windmill constructed …
+5 AF        5 napoleon holds dinner party pigs newly allied human farme…
+6 BBB       1 yooks zooks live opposite sides long curving wall yooks w…
+7 BBB       2 race begins zook patrolman named vanitch slingshots yook …
+8 BBB       3 yooks create gun called kickapoo kid loaded powerful pooa…
+9 BBB       4 resolution reached books end generals sides wall poised d…</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>From these paragraphs (each treated as a document) we create the following <code>DocumentTermMatrix</code> object, which is a list that includes:</p>
+<ul>
+<li>a sparse matrix giving the document-index, the term-index, and the frequency (number of occurrences) of the indexed term; and</li>
+<li>a vector of the terms themselves</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>af_bbb_dtm_lst <span class="ot">&lt;-</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  tm<span class="sc">::</span><span class="fu">DocumentTermMatrix</span>(<span class="at">x =</span> af_bbb_para_tbl<span class="sc">$</span> para)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># date()</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] "Fri Aug  1 10:55:32 2025"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># af_bbb_dtm_lst  |&gt; object.size(): 44 KB</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 44464 bytes</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>af_bbb_dtm_lst</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;&lt;DocumentTermMatrix (documents: 9, terms: 485)&gt;&gt;
+Non-/sparse entries: 593/3772
+Sparsity           : 86%
+Maximal term length: 18
+Weighting          : term frequency (tf)</code></pre>
+</div>
+</div>
+<p>Here is a table showing the frequency of each term within each document (paragraph).</p>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>af_bbb_tf_tbl <span class="ot">&lt;-</span> af_bbb_dtm_lst <span class="sc">|&gt;</span> tidytext<span class="sc">::</span><span class="fu">tidy</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>af_bbb_tf_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-af-bbb-tf-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-af-bbb-tf-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10.2: Term-frequency: number of occurrences of each term within each document
+</figcaption>
+<div aria-describedby="tbl-af-bbb-tf-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 593 × 3
+   document term       count
+   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt;
+ 1 1        adopt          1
+ 2 1        adult          1
+ 3 1        alcoholic      1
+ 4 1        animal         3
+ 5 1        animalism      2
+ 6 1        animals        5
+ 7 1        announces      1
+ 8 1        aside          1
+ 9 1        associates     1
+10 1        assume         1
+# ℹ 583 more rows</code></pre>
+</div>
+</div>
+</figure>
+</div>
+</section>
+<section id="lda-function" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="lda-function"><span class="header-section-number">10.2.2</span> LDA function</h3>
+<p>We now employ function <code>topicmodels::LDA()</code><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> to perform latent Dirichlet allocation. The function determines the probable topic of each word within each document by one of two methods: (1) “VEM” (Variational Expectation Maximization); or else (2) “Gibbs” (Gibbs Sampling). The function output, depending on the choice of method, is a list conforming to the format of either <code>LDA_VEM</code> or else <code>LDA_Gibbs</code>.</p>
+<p>Here we choose the Gibbs Sampling method because it requires less memory. The <code>DocumentTermMatrix</code> (DTM) representing the corpus of documents (paragraphs) is the primary input to <code>topicmodels::LDA()</code>. (Note that the DTM does not identify the source of each document.) We specify that <code>LDA()</code> should construct <span class="math inline">\(K = 2\)</span> topics from this input corpus.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Latent Dirichlet Allocation via Gibbs Sampling</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>extract_from_list <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (extract_from_list <span class="sc">&amp;&amp;</span> topicmodels_loaded) {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs <span class="ot">&lt;-</span> af_bbb_dtm_lst <span class="sc">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    topicmodels<span class="sc">::</span><span class="fu">LDA</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="co"># number of topics</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">k =</span> <span class="dv">2</span>, </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">"Gibbs"</span>, </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="co"># set seed to ensure results can be reproduced</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">1234</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="do">## </span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract tibbles from LDA() output</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="do">## </span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_tbl_lst <span class="ot">&lt;-</span> af_bbb_gs <span class="sc">|&gt;</span> <span class="fu">list_lda_tbls</span>()</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># z: topic assignment of successive words across corpus</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_z <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> z_tbl</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># conc: initial Dirichlet concentration parameters</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_conc <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> conc_tbl</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># terms: unique words across the corpus</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_terms <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> terms_tbl</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta: topic-specific ln(probability) across unique terms</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_beta <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> beta_wide</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta_terms: append terms, then pivot longer</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_beta_terms <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> beta_terms</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># gamma: prob(topic | doc), a D-by-K matrix</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_gamma <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> gamma_tbl</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># dw_assign: topic assignment per (doc, term)</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_dw_assign <span class="ot">&lt;-</span> af_bbb_gs_tbl_lst<span class="sc">$</span> dw_assign_tbl</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  <span class="do">## </span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save output components as TSV files: only as needed</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  <span class="do">## </span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  save_file <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (save_file) {</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># z: topic assignment of successive words across corpus</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_z <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_z.txt"</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># conc: initial Dirichlet concentration parameters</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_conc <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_conc.txt"</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># terms: unique words across the corpus</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_terms <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_terms.txt"</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta: topic-specific ln(probability) across unique terms</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_beta <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_beta.txt"</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta_terms: append terms, then pivot longer</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_beta_terms <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_beta_terms.txt"</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gamma: prob(topic | doc), a D-by-K matrix</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_gamma <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_gamma.txt"</span></span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># dw_assign: topic assignment per (doc, term)</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>    af_bbb_gs_dw_assign <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_dw_assign.txt"</span></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># read previously saved LDA-Gibbs components</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>  <span class="co"># z: topic assignment of successive words across corpus</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_z <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_z.txt"</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>  <span class="co"># conc: initial Dirichlet concentration parameters</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_conc <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_conc.txt"</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>  <span class="co"># terms: unique words across the corpus</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_terms <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_terms.txt"</span></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta: topic-specific ln(probability) across unique terms</span></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_beta <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_beta.txt"</span></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta_terms: append terms, then pivot longer</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_beta_terms <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_beta_terms.txt"</span></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>  <span class="co"># gamma: prob(topic | doc), a D-by-K matrix</span></span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_gamma <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_gamma.txt"</span></span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>  <span class="co"># dw_assign: topic assignment per (doc, term)</span></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>  af_bbb_gs_dw_assign <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_gs_dw_assign.txt"</span></span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>From the <code>LDA_Gibbs</code> output we extract the following “beta” matrix consisting of two fitted probability vectors: the respective probability distributions of topic 1 and 2 across the unique terms of the corpus.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># af_bbb_topics: beta matrix in long format with column "term"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: tidytext::tidy(&lt;LDA_Gibbs&gt;) generates error </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># when &lt;LDA_Gibbs&gt; is large and memory is constrained.</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># In the meantime, patch as follows</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>extract_from_list <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (extract_from_list) {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta: K (topics) by N (terms) of log-probabilities</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  beta_mat           <span class="ot">&lt;-</span> af_bbb_gs<span class="sc">@</span>beta</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(beta_mat) <span class="ot">&lt;-</span> af_bbb_gs<span class="sc">@</span>terms</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(beta_mat) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"topic_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  beta_tbl           <span class="ot">&lt;-</span> beta_mat <span class="sc">|&gt;</span> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"topic"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">topic =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  beta_long          <span class="ot">&lt;-</span> beta_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">cols      =</span> <span class="sc">-</span> topic, </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_to  =</span> <span class="st">"term"</span>, </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_to =</span> <span class="st">"ln_prob"</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">arrange</span>(term)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># af_bbb_topics: N by K tibble of probabilities</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  af_bbb_topics <span class="ot">&lt;-</span> beta_long <span class="sc">|&gt;</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">beta =</span> <span class="fu">exp</span>(ln_prob)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> ln_prob)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save af_bbb_topics as TSV file only as needed</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  save_file <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (save_file) {</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    af_bbb_topics <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_topics.txt"</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># read in previously saved file</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>  af_bbb_topics <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"af_bbb_topics.txt"</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="co"># af_bbb_topics |&gt; object.size(): 49 KB</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co"># 48992 bytes</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>af_bbb_topics <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">4</span>, <span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 970 × 3
+  topic term          beta
+  &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+1     1 abolishes 0.00271 
+2     2 abolishes 0.000245
+3     1 abridged  0.000247
+4     2 abridged  0.00269 
+# ℹ 966 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="output-interpretation" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="output-interpretation"><span class="header-section-number">10.2.3</span> Output interpretation</h3>
+<p>Here are the most probable terms for each of the two constructed topics, along with their probabilities (beta), shown as a bar chart.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>g_af_bbb_top_terms <span class="ot">&lt;-</span> af_bbb_top_terms <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">term =</span> tidytext<span class="sc">::</span><span class="fu">reorder_within</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> term, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> beta, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">within =</span> topic)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> beta, <span class="at">y =</span> term, <span class="at">fill =</span> <span class="fu">factor</span>(topic)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">facet_wrap</span>(<span class="sc">~</span> <span class="fu">as_factor</span>(topic), <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  tidytext<span class="sc">::</span><span class="fu">scale_y_reordered</span>() <span class="sc">+</span> </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"AF-BBB paragraphs: most probable terms by topic"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>g_af_bbb_top_terms</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-af-bbb-top-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-af-bbb-top-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="latent-dirichlet-alloc_files/figure-html/fig-af-bbb-top-terms-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-af-bbb-top-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.1: AF-BBB paragraphs: most probable terms by topic
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Topic 1’s top ten terms include “yooks” and “zooks”, which do not appear in the top ten terms of topic 2. So topic 1 seems to match “The Butter Battle Book”. Similarly, topic 2’s top ten terms include “napoleon”, “snowball”, and “jones”, which match “Animal Farm”. Note however that “farm” appears under topic 1 and “battle” appears under topic 2.</p>
+<p>Another way to compare topics 1 and 2 is to examine the terms shared by the two topics and then find the terms having the biggest disparity in (topic, term) probability (beta). Here’s a bar chart showing the more prominent differences, expressed as</p>
+<p><span id="eq-log2-ratio-topic-term"><span class="math display">\[
+\begin{align}
+  \log_2 \left( \frac{\beta_2}{\beta_1} \right)
+\end{align}
+\qquad(10.1)\]</span></span></p>
+<p>restricting the set of terms to those assigned to both topics <span class="math inline">\((\min(\beta_1, \beta_2) &gt; 0)\)</span> with at least one of them exceeding a probability threshhold, say <span class="math inline">\((\max(\beta_1, \beta_2) &gt; 0.001)\)</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>g_af_bbb_b_ratio_wide <span class="ot">&lt;-</span> af_bbb_b_ratio_wide <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(<span class="at">direction =</span> log_ratio <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice_max</span>(<span class="fu">abs</span>(log_ratio), <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">reorder</span>(term, log_ratio)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="fu">aes</span>(log_ratio, term)) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Log2 ratio of beta in topic 2 / topic 1"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>g_af_bbb_b_ratio_wide</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-af-bbb-b-ratio-wide" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-af-bbb-b-ratio-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="latent-dirichlet-alloc_files/figure-html/fig-af-bbb-b-ratio-wide-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-af-bbb-b-ratio-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.2: Log2 ratio of beta in topic 2 / topic 1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This figure further supports the earlier conjecture that topic 1 best matches “The Butter Battle Book” and topic 2 best matches “Animal Farm”. But the match is not perfect, since “farm” is a key term distinguishing topic 1 from topic 2.</p>
+</section>
+</section>
+<section id="mathematical-framework" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="mathematical-framework"><span class="header-section-number">10.3</span> Mathematical Framework</h2>
+<section id="notation" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="notation"><span class="header-section-number">10.3.1</span> Notation</h3>
+<p>The data set to be analyzed is a <em>corpus</em> (set) <span class="math inline">\(\mathcal{D}\)</span> of documents. Each <em>document</em> <span class="math inline">\(d \in \mathcal{D}\)</span> is a vector (sequence) of words, that may include multiple instances of the same term.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p><span id="eq-doc-equals-word-seq"><span class="math display">\[
+\begin{align}
+  d &amp;= (w_1, \ldots, w_{|d|})
+\end{align}
+\qquad(10.2)\]</span></span></p>
+<p>The <em>vocabulary</em> <span class="math inline">\(V\)</span> of the corpus is the set of <em>distinct</em> terms that occur in one or more of the documents.</p>
+<p><span id="eq-vocab-defn"><span class="math display">\[
+\begin{align}
+  V &amp;= \cup_{d \in \mathcal{D}} \;  \{ v \in d \} \\
+  &amp;= \left \{ v_\nu \right \}_{\nu = 1}^N
+\end{align}
+\qquad(10.3)\]</span></span></p>
+<p>where the elements of <span class="math inline">\(V\)</span> may be indexed, typically in alphabetical order. These elements <span class="math inline">\(v_\nu\)</span> are referred to as <em>terms</em>. We will use <em>word</em> to mean an occurrence of a term within the corpus. With this distinction, the total number of words (term occurrences) in the corpus exceeds or equals the number of distinct terms.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
+<p><span id="eq-len-corpus-v-vocab"><span class="math display">\[
+\begin{align}
+  \left | \mathcal{D} \right | &amp;= \sum_{d \in \mathcal{D}} \; |d| \\
+  &amp;\ge | V |
+\end{align}
+\qquad(10.4)\]</span></span></p>
+<p>A <em>topic</em> <span class="math inline">\(\theta\)</span> is a probability distribution over vocabulary <span class="math inline">\(V\)</span>. Since <span class="math inline">\(V\)</span> consists of a finite number <span class="math inline">\(N = \left | V \right |\)</span> of distinct terms, <span class="math inline">\(\theta\)</span> can be represented as probability vector of length <span class="math inline">\(N\)</span>.</p>
+<p>The number <span class="math inline">\(K\)</span> of topics (categories) is prescribed for each analysis. Given <span class="math inline">\(K\)</span> and <span class="math inline">\(\mathcal{D}\)</span>, LDA produces a <em>topic model</em> defined by a set of constructed topics, <span class="math inline">\(\{ \theta_1, \ldots, \theta_K \}\)</span>. These topic-specific probability vectors are stored in matrix <span class="math inline">\(\beta\)</span>.</p>
+<p><span id="eq-matrix-beta"><span class="math display">\[
+\begin{align}
+  \beta [k, \nu] &amp;= \theta_k[\nu] \\
+  &amp;= \text{probability assigned by topic } \theta_k \text{ to term } v_\nu \in V
+\end{align}
+\qquad(10.5)\]</span></span></p>
+</section>
+<section id="generative-model" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="generative-model"><span class="header-section-number">10.3.2</span> Generative Model</h3>
+<p>LDA treats each document as a mixture of topics, and each topic as a mixture of terms. This is a <em>bag-of-words</em> model in which each document <span class="math inline">\(d\)</span> in a corpus of documents <span class="math inline">\(\mathcal{D}\)</span> is randomly generated as follows.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
+<ul>
+<li><p>Generate <span class="math inline">\(K\)</span> topics, <span class="math inline">\(\{ \theta_1, \ldots, \theta_K \}\)</span>, from given Dirichlet distribution <span class="math inline">\(Dir(\delta_\bullet)\)</span>, where topic <span class="math inline">\(\theta_k\)</span> is a probability vector over vocabulary <span class="math inline">\(V = \{ v_\nu \}_{\nu = 1}^N\)</span>.</p></li>
+<li><p>For each document <span class="math inline">\(d\)</span> generate probability vector <span class="math inline">\(\varphi_d\)</span> from given Dirichlet distribution <span class="math inline">\(Dir(\alpha_\bullet)\)</span>, where <span class="math inline">\(\varphi_d\)</span> is a probability distribution over topics <span class="math inline">\(\{ \theta_1, \ldots, \theta_K \}\)</span>.</p></li>
+<li><p>For each word-position<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> <span class="math inline">\(j\)</span> in document <span class="math inline">\(d\)</span>: use probability vector <span class="math inline">\(\varphi_d\)</span> to select at random a single topic <span class="math inline">\(\theta_k\)</span>; then use <span class="math inline">\(\theta_k\)</span> to generate a term <span class="math inline">\(v_\nu\)</span>, where <span class="math inline">\(z[d, j] = \nu\)</span> denotes the index of the selected term.</p></li>
+</ul>
+<p>These Dirichlet distributions are typically assumed to be symmetric. That is, if we define</p>
+<p><span id="eq-avg-Dirichlet-param"><span class="math display">\[
+\begin{align}
+  \bar{\alpha} &amp;= \frac{\alpha_+}{K} = \frac{1}{K} \sum_{k = 1}^K
+\alpha_k \\
+  \bar{\delta} &amp;= \frac{\delta_+}{N} = \frac{1}{N} \sum_{\nu = 1}^N
+\delta_\nu
+\end{align}
+\qquad(10.6)\]</span></span></p>
+<p>then current practice is to set all elements of vectors <span class="math inline">\(\alpha_\bullet\)</span> and <span class="math inline">\(\delta_\bullet\)</span> equal to their respective average values.</p>
+<p><span id="eq-symm-Dirichlet"><span class="math display">\[
+\begin{align}
+  \alpha_k &amp;= \bar{\alpha} \quad \text{for } k \in \{1, \ldots, K \} \\
+  \delta_\nu &amp;= \bar{\delta} \quad \text{for } \nu \in \{1, \ldots, N \}
+\end{align}
+\qquad(10.7)\]</span></span></p>
+<p>The values <span class="math inline">\(\bar{\alpha}\)</span> and <span class="math inline">\(\bar{\delta}\)</span> are called <em>concentration</em> parameters.</p>
+<p>For a symmetric Dirichlet distribution as above, if <span class="math inline">\(\bar{\alpha} &lt; 1\)</span> then for each document <span class="math inline">\(d\)</span>, <span class="math inline">\(Dir(\alpha_\bullet)\)</span> tends to generate a sparse probability vector <span class="math inline">\(\varphi_d\)</span> that gives most of its weight to just a few of the K topics (with the selection of topics varying across documents). On the other hand, if <span class="math inline">\(\bar{\alpha} &gt; 1\)</span> then <span class="math inline">\(Dir(\alpha_\bullet)\)</span> tends to generate a more uniform probability vector <span class="math inline">\(\varphi_d\)</span> spread more evenly across all topics.</p>
+<p>As for the distribution of terms within a topic, in most applications the number <span class="math inline">\(N\)</span> of distinct terms in the corpus <span class="math inline">\(\mathcal{D}\)</span> may be a few thousand or even a few tens of thousands. Then each topic is a mixture across a distinct subset of a large number of terms, typically with <span class="math inline">\(\bar{\delta} &lt; 1\)</span>.</p>
+<p>See <span class="citation" data-cites="Antoniak_2023">Antoniak (<a href="references.html#ref-Antoniak_2023" role="doc-biblioref">2023</a>)</span> for practical suggestions on these and other settings and workflows.</p>
+</section>
+<section id="lda-gibbs-algorithm" class="level3" data-number="10.3.3">
+<h3 data-number="10.3.3" class="anchored" data-anchor-id="lda-gibbs-algorithm"><span class="header-section-number">10.3.3</span> LDA-Gibbs Algorithm</h3>
+<p>The LDA identification of topics is a particular form of Markov chain Monte Carlo (MCMC) method. The data can be summarized as the set of unique terms across the corpus of documents, along with counts of those unique terms per document. The objective is to determine the topic of each term within each document.</p>
+<p>Assignment of topics to terms is intially made at random in a manner similar to the generative model outlined above. We thereby have initial values for:</p>
+<p><span id="eq-log-ratio-topic-term"><span class="math display">\[
+\begin{align}
+  n_{d, k} &amp;= \text{number of assignments of topic } k \text{ to document } d \\
+  n_{\nu, k} &amp;= \text{number of assignments of topic } k \text{ to term } v_\nu \\
+  n_k &amp;= \text{number of assignments of topic } k \text{ across corpus } \mathcal{D}
+\end{align}
+\qquad(10.8)\]</span></span></p>
+<p>The Gibbs sampling procedure treats in turn each word position in the corpus, and estimates the probability of assigning the term in that position to each topic, conditioned on the current topic assignments of all other terms. From this conditional distribution, a topic is generated and stored as the new topic assignment for the given term in the given position.</p>
+<p>Through many iterations the counts <span class="math inline">\(n_{d, k}, n_{\nu, k}, n_k\)</span> are updated, thereby updating the constructed topics <span class="math inline">\(\{ \theta_k \}\)</span> and document-specific topic distributions <span class="math inline">\(\{ \varphi_d \}\)</span>.</p>
+<p>A great computational savings is achieved by the choice of a Dirichlet prior for the probability vectors <span class="math inline">\(\{ \theta_k \}\)</span> and <span class="math inline">\(\{ \varphi_d \}\)</span>, and thus for the multinomial distributions of the counts <span class="math inline">\(n_{d, k}, n_{\nu, k}, n_k\)</span>. This is because the Dirichlet distribution is conjugate to the multinomial distribution. For further details on this updating algorithm see <span class="citation" data-cites="Steyvers_Griffiths_2007">Steyvers and Griffiths (<a href="references.html#ref-Steyvers_Griffiths_2007" role="doc-biblioref">2007</a>)</span>.</p>
+</section>
+</section>
+<section id="concluding-remarks" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="concluding-remarks"><span class="header-section-number">10.4</span> Concluding Remarks</h2>
+<p>Topic modeling is an active area of research that contributes to the statistical analysis of large document collections. The LDA model of document-generation specifies prior Dirichlet distributions for topics, and for the mixture of topics within each document, respectively. This enables efficient Bayesian analysis of the latent structure of a corpus of documents.</p>
+</section>
+<section id="references" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="references"><span class="header-section-number">10.5</span> References</h2>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-wiki_Animal_Farm" class="csl-entry" role="listitem">
+<span>“Animal Farm | Wikipedia.”</span> 2025. <em>Wikipedia</em>, July. <a href="https://en.wikipedia.org/wiki/Animal_Farm">https://en.wikipedia.org/wiki/Animal_Farm</a>.
+</div>
+<div id="ref-Antoniak_2023" class="csl-entry" role="listitem">
+Antoniak, Maria. 2023. <span>“Topic Modeling for the People.”</span> <em>Maria Antoniak</em>. University of Colorado Boulder. <a href="https://maria-antoniak.github.io/2022/07/27/topic-modeling-for-the-people.html">https://maria-antoniak.github.io/2022/07/27/topic-modeling-for-the-people.html</a>.
+</div>
+<div id="ref-Silge_Robinson_2017" class="csl-entry" role="listitem">
+Silge, Julia, and David Robinson. 2017. <em>Text Mining with r: A Tidy Approach</em>. O’Reilly Media. <a href="https://www.tidytextmining.com/">https://www.tidytextmining.com/</a>.
+</div>
+<div id="ref-Steyvers_Griffiths_2007" class="csl-entry" role="listitem">
+Steyvers, Mark, and Tom Griffiths. 2007. <em>Probabilistic Topic Models</em>. <a href="https://cocosci.princeton.edu/tom/papers/SteyversGriffiths.pdf">https://cocosci.princeton.edu/tom/papers/SteyversGriffiths.pdf</a>.
+</div>
+<div id="ref-wiki_Butter_Battle_Book" class="csl-entry" role="listitem">
+<span>“The Butter Battle Book | Wikipedia.”</span> 2025. <em>Wikipedia</em>, July. <a href="https://en.wikipedia.org/wiki/The_Butter_Battle_Book">https://en.wikipedia.org/wiki/The_Butter_Battle_Book</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>See <span class="citation" data-cites="Steyvers_Griffiths_2007">Steyvers and Griffiths (<a href="references.html#ref-Steyvers_Griffiths_2007" role="doc-biblioref">2007</a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See <span class="citation" data-cites="wiki_Animal_Farm"><span>“Animal Farm | Wikipedia”</span> (<a href="references.html#ref-wiki_Animal_Farm" role="doc-biblioref">2025</a>)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>See <span class="citation" data-cites="wiki_Butter_Battle_Book"><span>“The Butter Battle Book | Wikipedia”</span> (<a href="references.html#ref-wiki_Butter_Battle_Book" role="doc-biblioref">2025</a>)</span>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>See <span class="citation" data-cites="Grün_Hornik_2011">(<a href="references.html#ref-Grün_Hornik_2011" role="doc-biblioref"><strong>Grün_Hornik_2011?</strong></a>)</span>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><span class="math inline">\(| S |\)</span> denotes the number of elements in a finite set <span class="math inline">\(S\)</span> (or more generally the cardinality of set <span class="math inline">\(S\)</span>). We extend this notation to a sequence. If <span class="math inline">\(d = (w_1, \ldots, w_n)\)</span> is a finite sequence of words, we treat <span class="math inline">\(d\)</span> as a vector of length <span class="math inline">\(n = |d|\)</span>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>In natural language processing (NLP), text is broken into <em>tokens</em>, a broad term that must be defined for each analysis. In the present context the original text is stripped of punctuation and of commonly occurring words (“stop-words”) so that the remaining words are the tokens analyzed.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>For clarity we use <em>term</em> to mean a distinct element of a vocabulary, and we use <em>word</em> to mean an occurrence of a term in the corpus. There does not seem to be an established jargon for this distinction.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>Other authors use the verb “sample” rather than “generate” to mean random generation from a specified probability distribution.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>We assume that document <span class="math inline">\(d\)</span> is a sequence of <span class="math inline">\(n_d = |d|\)</span> words, where <span class="math inline">\(n_d\)</span> is either a given positive integer, or else is generated independently of other random variables.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./dirichlet-dstn.html" class="pagination-link" aria-label="The Dirichlet Distribution">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ts-intro.html" class="pagination-link" aria-label="Time Series Data Analysis">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/latent-dirichlet-alloc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

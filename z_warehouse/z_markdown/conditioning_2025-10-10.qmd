@@ -1,0 +1,1261 @@
+---
+title: "Conditional Distributions"
+subtitle: "Part 1, session 1b of Data Mining Intro"
+author: 
+  - name: "Send comments to: Tony T (adthral)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf: default
+  docx: default
+params:
+  file_id: "s1b"
+  file_prefix: "s1b_condl_distn"
+abstract: 
+  "Review the concepts of conditional distribution, conditional expectation, simple linear regression, statistical independence, entropy, and KL divergence."
+bibliography: eda4ml.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(here)
+library(latex2exp)
+library(tidyverse)
+library(tinytex)
+library(UsingR)
+
+```
+
+```{r}
+#| label: local-source
+
+# previously used functions to load small data sets
+
+# source(here("code", "handedness_data.R"))
+# source(here("code", "rng_tbl.R"))
+```
+
+------------------------------------------------------------------------
+
+## Heights of Fathers and Sons
+
+```{r}
+#| label: father-son-ht
+
+father_son_ht <- UsingR::father.son |> 
+  tibble::as_tibble() |> 
+  dplyr::rename(father = fheight, son = sheight)
+```
+
+```{r}
+#| label: fs-moments
+
+# vector of first and second central moments
+fs_moments <- father_son_ht |> 
+  dplyr::summarise(
+    f_avg = mean(father, na.rm = TRUE), 
+    s_avg = mean(son, na.rm = TRUE), 
+    f_sd  = sd(father, na.rm = TRUE), 
+    s_sd  = sd(son, na.rm = TRUE), 
+    r     = cor(father, son)
+  ) |> 
+  as.vector() |> list_simplify()
+```
+
+```{r}
+#| label: f-mpt
+
+# construct additional variables
+# f_ivl: successive 2-inch intervals of father heights
+# f_mpt: mid-point of each interval
+father_son_ht <- father_son_ht |> 
+  dplyr::mutate(
+    f_ivl = cut(father, seq(58, 76, 2)), 
+    f_mpt = (2 * ceiling(father/2)) - 1
+  )
+```
+
+The box-plot below can be regarded as the (sample) *conditional distribution* of sons' heights grouped by the height (rounded to the nearest odd inch) of each son's father.
+
+```{r}
+#| label: fig-f-mpt
+#| fig-cap: "Range of son heights for given height of father"
+
+g_f_mpt <- father_son_ht |> 
+  dplyr::filter(! is.na(f_mpt)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = f_mpt |> as_factor(), 
+    y = son
+  )) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::labs(title = "Son heights per father's height") + 
+  ggplot2::xlab("father's height rounded to nearest odd inch") + 
+  ggplot2::ylab("son heights in inches")
+g_f_mpt
+```
+
+```{r}
+#| label: tbl-s-stats-per-f-mpt
+#| tbl-cap: "Son stats per father's height"
+
+# son statistics per f_ivl
+s_stats_per_f_mpt <- father_son_ht |>    
+  group_by(f_ivl, f_mpt) |>    
+  summarise(     
+    s_count = n(),      
+    s_min   = min(son, na.rm = TRUE),      
+    s_mid   = median(son, na.rm = TRUE),      
+    s_max   = max(son, na.rm = TRUE),      
+    s_avg   = mean(son, na.rm = TRUE)
+  ) |> 
+  ungroup()
+s_stats_per_f_mpt |> print(digits = 1)
+```
+
+The last column in the table above is the sample average of the son's height given the father's height, which we take as an estimate of the population average of the son's height given the father's height, that is, the *conditional expectation* of son's height given father's height.
+
+The figure below represents these sample conditional averages per father's height as diamonds, whose area is roughly proportional to the number of sons in each group. The figure includes a reference line showing the father's (midpoint) height plus 1 inch, corresponding to our previous calculation of an average son-minus father difference.
+
+```{r}
+#| label: fig-s-avg-per-f-mpt
+#| fig-cap: "Average of son heights per father's height"
+
+g_s_avg_per_f_mpt <- s_stats_per_f_mpt |> 
+  ggplot2::ggplot(mapping = aes(
+  x = f_mpt, 
+  y = s_avg, 
+)) + 
+  ggplot2::geom_line() + 
+  ggplot2::geom_count(
+    shape = 23, 
+    size = s_stats_per_f_mpt$s_count |> sqrt()) + 
+  ggplot2::geom_abline(
+    intercept = 1, 
+    slope = 1, 
+    linetype = "dotted", 
+    linewidth = 2, 
+    color = "red") + 
+  ggplot2::labs(
+    title = "Average of son heights per father's height", 
+    subtitle = "(dotted red line shows father's height + 1 inch)")  + 
+  ggplot2::xlab("father's height rounded to nearest odd inch") + 
+  ggplot2::ylab("average of son heights in inches")
+g_s_avg_per_f_mpt
+```
+
+The above graph of average son-height per father's height forms an approximate straight line, although the slope of the line is less than 1 (which is the slope of the reference line).
+
+## Z-Scores: transforming data values to standard units
+
+Imagine choosing a father-son pair at random from the entire population and measuring their respective heights. This would be an example of a pair of random variables $(X, Y)$. If we happened to know the average and standard deviation of (father, son) heights, respectively, from the entire population, we could convert the given heights to so-called standard units, or z-scores, as follows.
+
+$$
+\begin{align}
+  Z_x(X) = \frac{X - \mu_x}{\sigma_x} \\
+  Z_y(Y) = \frac{Y - \mu_y}{\sigma_y} \\
+\end{align}
+$$ {#eq-z-score}
+
+Here $\mu$ signifies the average (arithmetic mean) height across the entire population, and $\sigma$ denotes the population standard deviation. Thus $Z_x(X)$ gives the number of standard deviations above or below the population average (expected value).
+
+Of course we seldom have precise values for these population parameters. In practice we then use sample estimates of the parameters, say $\hat{\mu}$ for the sample average and $\hat{\sigma}$ for the sample standard deviation.
+
+$$ 
+\begin{align}
+  \hat{\mu}_x &= \frac{1}{n} \sum_{k = 1}^{n} x_k \\ 
+  \hat{\sigma}_{x}^2 &= \frac{1}{n-1} \sum_{k = 1}^{n} (x_k - \hat{\mu}_x)^2 \\ 
+\end{align} 
+$$ {#eq-sample-moments-2}
+
+So the term "z-score" or "standard unit" is usually understood with respect to the sample distribution.
+
+$$
+\begin{align}
+  \hat{Z}_x(x_k) = \frac{x_k - \hat{\mu}_x}{\hat{\sigma}_x} \\ 
+  \hat{Z}_y(y_k) = \frac{y_k - \hat{\mu}_y}{\hat{\sigma}_y} \\ 
+\end{align} 
+$$ {#eq-sample-z-score}
+
+### SD line
+
+The line given by the equation $\hat{Z}_y(y) = \hat{Z}_x(x)$ is called the "SD line". Here's an equivalent equation of this line.
+
+$$
+\begin{align}
+  \text{SD line: } \\
+  y & = \mathcal{l}_{SD}(x) \\
+  &= \hat{\mu}_y + \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\
+\end{align}
+$$ {#eq-sd-line}
+
+Of all lines $y = \mathcal{l}(x)$ we might draw through the $(x_k,y_k)$ data points, the SD line $y = \mathcal{l}_{SD}(x)$ minimizes the sum of squared distances from each $(x_k,y_k)$ data point to its orthogonal projection to the line.
+
+### Regression line
+
+Consider the father's height as the predictor variable $(x)$ and the son's height as the response variable $(y)$. We now seek a line that minimizes a different metric, namely the distance between the son's height and its linear prediction based on the father's height. In statistical parlance we are regressing the son's height on the father's height. (Because we have just *one* predictor variable this is called *simple* linear regression.) The minimizing line is called the regression line, and has the following equation.
+
+$$
+\begin{align}   
+  \text{Regression line: } \\   
+y & = \mathcal{l}_{R}(x) \\   
+&= \hat{\mu}_y + \hat{r}  \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\ \end{align} 
+$$ {#eq-regression-line}
+
+An equivalent equation is $\hat{Z}_y(y) = \hat{r} \hat{Z}_x(x)$, where $\hat{r}$ denotes the sample correlation coefficient.
+
+$$
+  \hat{r} = \frac{1}{n-1} \sum_{k = 1}^{n} \hat{Z}_x(x_k) \hat{Z}_y(y_k)
+$$ {#eq-sample-cor}
+
+Note that $\hat{r}$ is restricted to the closed interval $[-1, 1]$.
+
+The figure below shows the SD line and the Regression line for the father-son data.
+
+```{r}
+#| label: fig-fs-points
+#| fig-cap: "XXX"
+
+g_fs_points <- father_son_ht |> 
+  ggplot(mapping = aes(x = father, y = son)) + 
+  geom_point()
+```
+
+```{r}
+#| label: fig-fs-lines
+#| fig-cap: "Father-son heights: regression line and SD line"
+
+SD_slope = fs_moments[["s_sd"]] / fs_moments[["f_sd"]]
+R_slope  = fs_moments[["r"]] * SD_slope
+
+g_fs_lines <- g_fs_points + 
+  # SD line
+  geom_abline(
+    slope = SD_slope, 
+    intercept = 
+      fs_moments[["s_avg"]] - SD_slope * fs_moments[["f_avg"]], 
+    linetype = "dotted", 
+    linewidth = 2, 
+    color = "red"
+  ) + 
+  # Regression line
+  geom_abline(
+    slope = R_slope, 
+    intercept = 
+      fs_moments[["s_avg"]] - R_slope * fs_moments[["f_avg"]], 
+    linetype = "solid", 
+    linewidth = 2, 
+    color = "blue"
+  ) + 
+  labs(
+    title = "Father-son heights", 
+    subtitle = "Regression line (solid blue), SD line (dotted red)"
+  )
+g_fs_lines
+```
+
+The two lines intersect at the "point of averages", that is, at $(\hat{\mu}_x, \hat{\mu}_y)$, which need not coincide with any data point.
+
+The following figure and table summarize the regression "residuals", that is the son's height $(y)$ minus the height $(\hat{y})$ predicted by the linear model.
+
+```{r}
+#| label: lm-fs
+
+# call functon stats::lm() to fit a linear model
+lm_fs <- lm(
+  data = father_son_ht, 
+  formula = son ~ father
+)
+lm_fs
+```
+
+```{r}
+#| label: fs-residuals
+
+# join fitted values and regression residuals to original data
+fs_residuals <- father_son_ht |> 
+  mutate(
+    fitted_value = lm_fs$fitted.values, 
+    residual     = lm_fs$residuals
+  )
+```
+
+```{r}
+#| label: fig-fs-residuals
+#| fig-cap: "Variation of son heights from regression line"
+
+# histogram of residuals
+g_fs_residuals <- fs_residuals |> 
+  ggplot(mapping = aes(x = residual)) + 
+  geom_histogram() + 
+  labs(
+    title = "Histogram of regression residuals", 
+    subtitle = "son's height minus predicted height"
+  )
+g_fs_residuals
+```
+
+```{r}
+#| label: tbl-fs-residuals
+#| tbl-cap: "Stats: son's height minus predicted height"
+
+# summarize distribution of residuals
+fs_residuals$residual |> summary() |> print(digits = 1)
+```
+
+There are many ways to examine how well a model represents the data. Here's a scatter diagram of the value predicted (fitted) by the model versus the son's actual height.
+
+```{r}
+#| label: fig-resid-son
+#| fig-cap: "Model-fitted value versus son's height"
+
+# scatter diagram with (x, y) = (son, fitted)
+g_resid_son <- fs_residuals |> 
+  ggplot2::ggplot(mapping = aes(
+    x = son, y = fitted_value
+  )) + 
+  ggplot2::geom_point() + 
+  ggplot2::geom_abline(
+    intercept = 0, 
+    slope = 1, 
+    linetype = "dotted", 
+    linewidth = 2, 
+    colour = "red"
+  ) + 
+  ggplot2::labs(
+    title = "Model-fitted value versus son's height", 
+    subtitle = "(reference line: fitted = son)") + 
+  ggplot2::xlab("son's height in inches") + 
+  ggplot2::ylab("son's height estimated from father's height")
+g_resid_son
+```
+
+We see that the sons who are extremely short or extremely tall are not represented well by the model, which is heavily influenced by mid-range father-son heights containing most of the data. The father's height alone is a helpful but imperfect predictor of the son's height.
+
+### The Normal distribution
+
+The father-son data set is well approximated by a bivariate normal distribution. The parameter estimates are as follows.
+
+```{r}
+#| label: tbl-fs-moments
+#| tbl-cap: "Father-son heights: average, sd, and correlation"
+
+fs_moments |> print(digits = 1)
+```
+
+Sons are on average about an inch taller than fathers. Fathers and sons share similar standard deviations (2.7 versus 2.8). The sample correlation coefficient is about 0.5.
+
+Among the mathematical properties of normal distributions is the fact that if the pair of random variables $(X, Y)$ has a bivariate normal distribution, then the conditional expectation $E(Y | X)$ is indeed the linear regression function $\mathcal{l}_R(X)$ whose equation is that of the population regression line, $Z_y(Y) = r \; Z_x(X)$. The conditional distribution $\mathcal{D}(Y | X)$ of $Y$ given $X$ is normal with a mean of $\mathcal{l}_R(X)$ and a standard deviation of $\sqrt{1 - r^2} \; \sigma_y$. Conditioning on $X$ thus shrinks the standard deviation of $Y$ by a factor of $\sqrt{1 - r^2}$. For the father-son data, with $r$ approximately equal to 0.5, this shrinkage factor is approximately 0.87, amounting to a 13% reduction in the standard deviation of $Y$.
+
+## Class Exercise: Diamond Data
+
+Team up with a classmate and load the diamond data provided by R package ggplot2. Of the 10 variables (data columns) choose one of them as the response variable $(y)$, and another as a predictor variable $(x)$. Construct a scatter diagram of $(x, y)$ data points. Calculate the equation of the regression line. Is the predictor variable useful, or irrelevant? The R package stats includes potentially helpful functions including a linear regression function, `stats::lm()`, and a local polynomial regression function `stats::loess()`. Take 20 minutes to prepare to report out to the class.
+
+```{r}
+#| label: diamonds
+
+# make your own copy of the diamond data
+diamonds <- ggplot2::diamonds
+```
+
+## Simulating Random Variables
+
+The R package `stats` contains functions that generate pseudo-random numbers following normal and other well-known statistical distributions. Here are some functions for simulating independent instances of a continuous or discrete random variable. In the table below, the "value" column distinguishes the function output as either continuous (`dbl`) or discrete (`int`).
+
+```{r}
+#| label: rng-tbl
+
+rng_tbl <- tibble::tribble(
+    ~fn, ~value, ~distribution,
+    "rbeta", "dbl", "Beta",
+    "rcauchy", "dbl", "Cauchy",
+    "rchisq", "dbl", "(non-central) Chi-Squared",
+    "rexp", "dbl", "Exponential",
+    "rf", "dbl", "F",
+    "rgamma", "dbl", "Gamma",
+    "rlnorm", "dbl", "Log Normal",
+    "rlogis", "dbl", "Logistic",
+    "rnorm", "dbl", "Normal",
+    "rt", "dbl", "Student t",
+    "runif", "dbl", "Uniform",
+    "rweibull", "dbl", "Weibull",
+    "rbinom", "int", "Binomial",
+    "rgeom", "int", "Geometric",
+    "rhyper", "int", "Hypergeometric",
+    "rnbinom", "int", "Negative Binomial",
+    "rpois", "int", "Poisson",
+  )
+```
+
+```{r}
+#| label: tbl-rng-tbl
+#| tbl-cap: "Some random number generators in the R stats package"
+
+rng_tbl |> knitr::kable(
+  caption = "Some random number generators in the R stats package"
+)
+```
+
+The functions listed above are designed to generate a user-prescribed number $n$ of independent instances of a single random variable $X$. For some purposes we may want to simulate a pair of random variables $(X, Y)$ or more generally a vector of random variables $X_{\bullet} = (X_1, X_2, \ldots, X_K)$ such that the components of the vector are statistically dependent. Such vectors are said to follow a *multivariate* distribution. For example the `stats` package contains function `rmultinom`, a multivariate extension of `rbinom`. In general multivariate distributions are addressed by special-purpose R packages created by members of the R community.
+
+## Cautionary Remarks
+
+### Robust statistics
+
+The sample average (arithmetic mean) is notoriously sensitive to outliers (data points far removed from most of the other data points). For this reason, the median is often used in place of the mean to describe central or typical values. For example, medians are commonly used to typify home prices in a neighborhood, and for other financial data.
+
+Similarly, the interquartile range (IQR, the third minus the first quartile of the data) may be preferred to the standard deviation to measure how widely data points are spread around a central value (e.g., median).
+
+In the present context this means that both the SD line and the Regression line are highly sensitive to outlying data points.
+
+### Anscombe Quartet
+
+Professor [Frank Anscombe](https://en.wikipedia.org/wiki/Frank_Anscombe) constructed the "Anscombe Quartet": 4 data sets, each consisting of 11 observations of $(x, y)$ pairs of numeric values. Here are the statistics per group.
+
+```{r}
+#| label: anscombe-tbl
+
+anscombe_tbl <- datasets::anscombe |> 
+  as_tibble()
+
+# construct 4 groups of x-values
+x_tbl <- anscombe_tbl |> 
+  # original row index
+  mutate(idx = 1:nrow(anscombe)) |> 
+  dplyr::select(idx, x1:x4) |> 
+  pivot_longer(
+    cols = x1:x4, 
+    names_to = "grp", 
+    names_prefix = "x", 
+    values_to = "x"
+  ) |> 
+  mutate(grp = as.integer(grp))
+
+# construct 4 groups of y-values
+y_tbl <- anscombe_tbl |> 
+  # original row index
+  mutate(idx = 1:nrow(anscombe)) |> 
+  dplyr::select(idx, y1:y4) |> 
+  pivot_longer(
+    cols = y1:y4, 
+    names_to = "grp", 
+    names_prefix = "y", 
+    values_to = "y"
+  ) |> 
+  mutate(grp = as.integer(grp))
+
+# join x and y values
+xy_long <- x_tbl |> left_join(
+  y  = y_tbl, 
+  by = c("idx", "grp")
+) |> 
+  dplyr::select(grp, idx, x, y) |> 
+  arrange(grp, idx)
+```
+
+```{r}
+#| label: tbl-xy-stats
+#| tbl-cap: "Identical (x, y) stats per group"
+
+xy_stats <- xy_long |> 
+  summarise(
+    .by   = grp, 
+    x_avg = mean(x, na.rm = TRUE), 
+    y_avg = mean(y, na.rm = TRUE), 
+    x_sd  = sd(x, na.rm = TRUE), 
+    y_sd  = sd(y, na.rm = TRUE), 
+    r     = cor(x, y)
+  )
+xy_stats
+```
+
+The four groups share virtually identical averages, standard deviations, and $(x, y)$ correlation coefficients. Consequently the four data sets generate identical regression lines. Yet, as shown below, the pattern of $(x, y)$ values differs markedly among these data sets.
+
+```{r}
+#| label: fig-xy
+#| fig-cap: "Scatter diagram of (x, y) per group"
+
+g_xy <- xy_long |> 
+  ggplot2::ggplot(mapping = aes(
+    x = x, y = y, group = grp
+  )) + 
+  ggplot2::geom_point() + 
+  ggplot2::facet_grid(cols = vars(grp))
+g_xy
+```
+
+Moral: pay attention to the data! The graphical and tabular summaries we choose to present should be useful and informative. For example, it might be helpful to note that group 2 looks like the partial outline of a parabola. We should note that group 3 consists of 10 points falling on a line, with one outlier. In group 4 we should note that of the 11 data points, 10 have identical $x$-values. We want to minimize the chance of inadvertently conveying false impressions by merely reporting standard summary statistics.
+
+## Statistical Independence
+
+The father-son data is an example of a pair of statistically dependent variables, since the distribution of sons' heights changes when conditioned on the father's height. (The same can be said for fathers' heights conditioned on the height of the son.) Short fathers tend to have short sons; tall fathers tend to have tall sons.
+
+Practical examples of statistically *independent* (unrelated) variables exist but are rare, since studies typically collect data on variables believed to be related. Nevertheless, the concept of statistical independence is very useful, as it gives rise to measures of departure from statistical independence (and thus measures of statistical association).
+
+The correlation coefficient $r$ is an example of such a measure for two continuous variables. If $(X, Y)$ is a pair of statistically independent variables, then $r = 0$. Note, however, that $(X, Y)$ may be statistically dependent even if uncorrelated, that is, even if $r = 0$.
+
+### Definition
+
+The pair of random variables $(X, Y)$ is defined to be statistically independent if
+
+$$
+\begin{align}
+  P(X \in A, \; Y \in B) &= P(X \in A) \times P(Y \in B) \\ \\
+  & \text{for all possible sets } A, B \\ 
+\end{align}
+$$ {#eq-xy-indep}
+
+If $P(X \in A) > 0$ then statistical independence implies:
+
+$$
+\begin{align}
+  P(Y \in B \; | \; X \in A) &= \frac{P(X \in A, \; Y \in B)}{P(X \in A)} \\ 
+  &= P(Y \in B) \\ \\ 
+  & \text{whenever } P(X \in A) > 0 
+\end{align}
+$$ {#eq-indep-y-per-x}
+
+That is, the conditional probability of random variable $Y$ belonging to set $B$ given that $X$ belongs to set $A$ is equal to the unconditional probability that $Y$ belongs to set $B$. It follows that the conditional expectation $E(Y | X)$ does not depend on $X$, and thus equals the constant $E(Y)$, the unconditional expected value of $Y$.
+
+### The case when X and Y are categorical variables
+
+As previously noted, for a pair $(X,Y)$ of continuous variables, the correlation coefficient is a measure (though not a definitive measure) of statistical association or dependence. In the case when $X$ and $Y$ are each restricted to a finite set of values, the chi-square statistic is often a useful measure of statistical association.
+
+To illustrate, we use data on handedness (right, left, or ambidextrous) of US adults aged 25-34. The data were collected by the US Health and Nutrition Examination Survey (HANES), as cited in [FPP](https://www.goodreads.com/book/show/147358.Statistics). The question we investigate is whether handedness is independent of sex (male, female). For each of the six possible combinations of handedness and sex, the table below counts the number of people in the sample having that combination.
+
+```{r}
+#| label: hs-tbl
+
+hs_tbl <- tibble::tribble(
+    ~sex, ~hnd, ~count,
+    "male",   "right",  934L,
+    "male",   "left",   113L,
+    "male",   "ambi",    20L,
+    "female", "right", 1070L,
+    "female", "left",    92L,
+    "female", "ambi",     8L
+  )
+```
+
+```{r}
+#| label: hs-wide
+
+hs_wide <- hs_tbl |> 
+  pivot_wider(
+    names_from  = "sex", 
+    values_from = "count"
+  )
+```
+
+```{r}
+#| label: tbl-hs-wide
+#| tbl-cap: "XXX"
+
+hs_wide |> knitr::kable(
+  caption = "Handedness counts among sampled males and females", 
+  col.names = c("handedness", "male", "female")
+)
+```
+
+The percentages of handedness among males and among females are as follows.
+
+```{r}
+#| label: h-smy
+
+h_smy <- hs_tbl |> 
+  summarise(
+    .by = "hnd", 
+    count = sum(count, na.rm = TRUE)
+  )
+# # A tibble: 3 × 2
+#   hnd   count
+#   <chr> <int>
+# 1 right  2004
+# 2 left    205
+# 3 ambi     28
+```
+
+```{r}
+#| label: s-smy
+
+s_smy <- hs_tbl |> 
+  summarise(
+    .by = "sex", 
+    count = sum(count, na.rm = TRUE)
+  )
+# # A tibble: 2 × 2
+#   sex    count
+#   <chr>  <int>
+# 1 male    1067
+# 2 female  1170
+```
+
+```{r}
+#| label: hs-pct-wide
+
+m_total <- s_smy[[1, 2]]
+f_total <- s_smy[[2, 2]]
+
+hs_pct_wide <- hs_wide |> 
+  mutate(
+    male   = 100 * male   / m_total, 
+    female = 100 * female / f_total
+  )
+```
+
+```{r}
+#| label: tbl-hs-pct-wide
+#| tbl-cap: "XXX"
+
+hs_pct_wide |> knitr::kable(
+  caption = "Percentage handedness among males, and among females", 
+  col.names = c("handedness", "male", "female"), 
+  digits = 1
+)
+```
+
+If handedness and sex were independent, we should see similar percentages of males and females for each type of handedness. The above table indeed shows similar percentages, but are they close enough to conclude independence?
+
+In the early 1900's [Karl Pearson](https://en.wikipedia.org/wiki/Karl_Pearson) developed the chi-squared test of independence of categorical variables. The reasoning is as follows. Suppose we accept as population estimates the data percentages of handedness (across males and females), and we also accept the somewhat different percentages of males and females in the sample. These so-called *marginal* distributions are not in dispute. What we're investigating concerns the cell percentages, combinations of handedness and sex. Under the assumption of independence we would expect each cell percentage in the data to be close to the product of the handedness percentage and the male or female percentage. That product is an *expected* cell percentage (assuming independence). Multiplying the expected cell percentage by the by the sample size $n$ (number of people in the sample) gives an expected cell count. Pearson's test of independence is based on the following chi-squared statistic.
+
+$$
+\begin{align}
+  \chi^2 &= \sum_{j = 1}^J {\sum_{k = 1}^K {\frac{(O_{j,k} - E_{j,k})^2}{E_{j,k}}}} \\ \\ 
+  O_{j,k} &= \text{observed count for cell } \{j, k\} \\ 
+  E_{j,k} &= \text{expected count for cell } \{j, k\} \\ 
+\end{align}
+$$ {#eq-chi-sq-statistic}
+
+Under the assumption of independence Pearson determined the probability distribution of the $\chi^2$ statistic mathematically based on the notion of "degrees of freedom".
+
+That is, for each row-index $j$ the expected counts summed across $k$ are constrained to match the corresponding sum of the observed values (the sum for row $j$). Similarly, for each column-index $k$ the expected counts summed across $j$ are constrained to match the corresponding sum of the observed values (the sum for column $k$). Given these fixed marginal sums, cell values can vary with $(J-1) \times (K-1)$ degrees of freedom.
+
+Under the assumption of independence and for a large sample size $n$, the chi-squared statistic approximately follows the distribution of the sum of squared independent standard normal variables, the number of independent normal variables matching the degrees of freedom.
+
+```{r}
+#| label: hs-chi-sq
+
+hs_chi_sq <- hs_wide |> 
+  dplyr::select(male, female) |> 
+  as.matrix() |> 
+  chisq.test()
+
+# data:  as.matrix(dplyr::select(hs_wide, male, female))
+# X-squared = 11.806, df = 2, p-value = 0.002731
+```
+
+For the handedness data the degrees of freedom equals 2, and the value of the statistic is `r round(hs_chi_sq$statistic, 1)`, which is beyond the 99% quantile of the corresponding chi-squared distribution (and thus yields a "p-value" of less than 1%). This would be regarded as strong evidence against the assumption of independence.
+
+The chi-squared statistic is the sum of squared terms of the following form.
+
+$$
+\begin{align}
+  \frac{O_{j,k} - E_{j,k}}{\sqrt{E_{j,k}}} \\ 
+\end{align}
+$$ {#eq-pearson-residuals}
+
+These terms are called "Pearson residuals". For the handedness data, the Pearson residuals are as follows.
+
+```{r}
+#| label: hs-resid-wide
+
+# Pearson residuals
+hs_resid_wide <- hs_wide |> 
+  dplyr::select(hnd) |> 
+  mutate(
+    male   = hs_chi_sq$residuals[, 1], 
+    female = hs_chi_sq$residuals[, 2]
+  )
+```
+
+```{r}
+#| label: tbl-hs-resid-wide
+#| tbl-cap: "XXX"
+
+hs_resid_wide |> knitr::kable(
+  caption = "Pearson residuals for handedness data", 
+  col.names = c("handedness", "male", "female"), 
+  digits = 1
+)
+```
+
+Roughly speaking, under independence the magnitude of cell values should align with the scale of standard normal variables. For the handedness data, the large value of the chi-square statistic cannot be attributed to a single cell of the table, but rather to the left-handed and ambidextrous cells (handedness to which males are more prone than females).
+
+### Simpson's Paradox
+
+```{r}
+#| label: ucb-admissions
+
+# reformat data
+ucb_admissions <- datasets::UCBAdmissions |> 
+  as_tibble() |> 
+  rename_with(tolower) |> 
+  rename(sex = gender) |> 
+  rename(count = n) |> 
+  dplyr::select(dept, sex, admit, count)
+```
+
+```{r}
+#| label: ucb-sex-smy
+
+# count Male and Female applicants
+ucb_sex_smy <- ucb_admissions |> 
+  summarise(
+    .by = c("sex"), 
+    count = sum(count, na.rm = TRUE)
+  )
+# ucb_sex_smy
+# # A tibble: 2 × 2
+#   sex    count
+#   <chr>  <dbl>
+# 1 Male    2691
+# 2 Female  1835
+```
+
+```{r}
+#| label: ucb-total-applicants
+
+# count all applicants
+ucb_total_applicants <- 
+  ucb_sex_smy[[1, 2]] + 
+  ucb_sex_smy[[2, 2]]
+```
+
+```{r}
+#| label: ucb-sa-smy
+
+# count admissions/rejections per sex
+ucb_sa_smy <- ucb_admissions |> 
+  summarise(
+    .by = c("sex", "admit"), 
+    count = sum(count, na.rm = TRUE)
+  )
+# ucb_sa_smy
+# # A tibble: 4 × 3
+#   sex    admit    count
+#   <chr>  <chr>    <dbl>
+# 1 Male   Admitted  1198
+# 2 Male   Rejected  1493
+# 3 Female Admitted   557
+# 4 Female Rejected  1278
+```
+
+```{r}
+#| label: ucb-sa-wide
+
+# count Males and Females in separate columns
+ucb_sa_wide <- ucb_sa_smy |> 
+  pivot_wider(
+    names_from = "sex", 
+    values_from = "count"
+  )
+# ucb_sa_wide
+# # A tibble: 2 × 3
+#   admit     Male Female
+#   <chr>    <dbl>  <dbl>
+# 1 Admitted  1198    557
+# 2 Rejected  1493   1278
+```
+
+```{r}
+#| label: ucb-sa-pct
+
+# convert counts to percentages
+ucb_sa_pct <- ucb_sa_wide |> 
+  mutate(
+    Male   = 100 * Male   / ucb_sex_smy[[1, 2]], 
+    Female = 100 * Female / ucb_sex_smy[[2, 2]]
+  )
+# ucb_sa_pct |> print(digits = 1)
+# # A tibble: 2 × 3
+#   admit     Male Female
+#   <chr>    <dbl>  <dbl>
+# 1 Admitted  44.5   30.4
+# 2 Rejected  55.5   69.6
+```
+
+We now turn to a different set of categorical data from a study of graduate admissions at UC Berkeley in 1973 available in R as `datasets::UCBAdmissions`. The study was prompted by a concern of bias against females. The table below summarizes admission percentages for males and for females across the six largest departments.
+
+```{r}
+#| label: tbl-ucb-sa-pct
+#| tbl-cap: "XXX"
+
+ucb_sa_pct |> 
+  rename(decision = admit) |> 
+  knitr::kable(
+  caption = "Admission percentages for males and for females", 
+  digits = 1
+)
+```
+
+These percentages look damning, but the table below, showing admission rates per department, tells a different story.
+
+```{r}
+#| label: ucb-dept-smy
+
+# applicants per department
+ucb_dept_smy <- ucb_admissions |> 
+  summarise(
+    .by = c("dept"), 
+    count = sum(count, na.rm = TRUE)
+  ) |> 
+  mutate(
+    # percent of all applicants applying to each dept
+    pct = 100 * count / ucb_total_applicants
+  )
+# ucb_dept_smy |> print(digits = 1)
+# # A tibble: 6 × 3
+#   dept  count   pct
+#   <chr> <dbl> <dbl>
+# 1 A       933  20.6
+# 2 B       585  12.9
+# 3 C       918  20.3
+# 4 D       792  17.5
+# 5 E       584  12.9
+# 6 F       714  15.8
+```
+
+```{r}
+#| label: ucb-da-smy
+
+# count addmissions/rejections per department
+ucb_da_smy <- ucb_admissions |> 
+  summarise(
+    .by = c("dept", "admit"), 
+    count = sum(count, na.rm = TRUE)
+  )
+```
+
+```{r}
+#| label: ucb-da-wide
+
+# move (Admitted, Rejected) into separate columns
+ucb_da_wide <- ucb_da_smy |> 
+  pivot_wider(
+    names_from = admit, 
+    values_from = count
+  )
+# ucb_da_wide
+# # A tibble: 6 × 3
+#   dept  Admitted Rejected
+#   <chr>    <dbl>    <dbl>
+# 1 A          601      332
+# 2 B          370      215
+# 3 C          322      596
+# 4 D          269      523
+# 5 E          147      437
+# 6 F           46      668
+```
+
+```{r}
+#| label: ucb-da-pct
+
+# overall admission rate per department
+ucb_da_pct <- ucb_da_wide |> 
+  mutate(
+    # percent admitted per department (Male + Female)
+    MF_pct = 100 * Admitted / ucb_dept_smy$count
+  )
+# ucb_da_pct |> print(digits = 1)
+# # A tibble: 6 × 4
+#   dept  Admitted Rejected MF_pct
+#   <chr>    <dbl>    <dbl>  <dbl>
+# 1 A          601      332  64.4 
+# 2 B          370      215  63.2 
+# 3 C          322      596  35.1 
+# 4 D          269      523  34.0 
+# 5 E          147      437  25.2 
+# 6 F           46      668   6.44
+```
+
+```{r}
+#| label: ucb-m-da-pct
+
+# filter on males
+# count per-department applications and admissions
+
+# count male applicants per department
+ucb_m_d_smy <- ucb_admissions |> 
+  filter(sex == "Male") |> 
+  summarise(
+    .by = "dept", 
+    count = sum(count, na.rm = TRUE)
+  )
+
+# count male admissions/rejections per department
+ucb_m_da_smy <- ucb_admissions |> 
+  filter(sex == "Male") |> 
+  summarise(
+    .by = c("dept", "admit"), 
+    count = sum(count, na.rm = TRUE)
+  )
+
+# move (Admitted, Rejected) counts into separate columns
+ucb_m_da_wide <- ucb_m_da_smy |> 
+  pivot_wider(
+    names_from  = "admit", 
+    values_from = "count"
+  )
+
+# convert counts to percents
+ucb_m_da_pct <- ucb_m_da_wide |> 
+  mutate(
+    Admitted = 100 * Admitted / ucb_m_d_smy$count, 
+    Rejected = 100 * Rejected / ucb_m_d_smy$count
+  )
+```
+
+```{r}
+#| label: ucb-f-da-pct
+
+# filter on females
+# count per-department applications and admissions
+
+# count female applicants per department
+ucb_f_d_smy <- ucb_admissions |> 
+  filter(sex == "Female") |> 
+  summarise(
+    .by = "dept", 
+    count = sum(count, na.rm = TRUE)
+  )
+
+# count female admissions/rejections per department
+ucb_f_da_smy <- ucb_admissions |> 
+  filter(sex == "Female") |> 
+  summarise(
+    .by = c("dept", "admit"), 
+    count = sum(count, na.rm = TRUE)
+  )
+
+# move (Admitted, Rejected) counts into separate columns
+ucb_f_da_wide <- ucb_f_da_smy |> 
+  pivot_wider(
+    names_from  = "admit", 
+    values_from = "count"
+  )
+
+# convert counts to percents
+ucb_f_da_pct <- ucb_f_da_wide |> 
+  mutate(
+    Admitted = 100 * Admitted / ucb_f_d_smy$count, 
+    Rejected = 100 * Rejected / ucb_f_d_smy$count
+  )
+```
+
+```{r}
+#| label: ucb-das-pct
+
+# admission rate of each department:  
+# among males, among females, and overall
+ucb_das_pct <- ucb_da_pct |> 
+  dplyr::select(dept, MF_pct) |> 
+  left_join(
+    y  = ucb_m_da_pct |> 
+      dplyr::select(dept, Admitted) |> 
+      rename(M_pct = Admitted), 
+    by = "dept"
+  ) |> 
+  left_join(
+    y  = ucb_f_da_pct |> 
+      dplyr::select(dept, Admitted) |> 
+      rename(F_pct = Admitted), 
+    by = "dept"
+  ) |> 
+  dplyr::select(dept, M_pct, F_pct, MF_pct)
+```
+
+```{r}
+#| label: tbl-ucb-das-pct
+#| tbl-cap: "Admission percentages per department"
+
+ucb_das_pct |> knitr::kable(
+  caption = "Admission percentages per department", 
+  col.names = c("dept", "among_males", "among_females", "overall"), 
+  digits = 1
+)
+```
+
+The table shows that four of the six departments admitted a greater percentage of female applicants than male applicants. In the remaining two departments females did somewhat worse than males. Yet, summing over all six departments, women applicants fared decidedly worse than male applicants. How can this be?
+
+The answer can be found by: (1) noting that the table above lists departments, labeled A through F, in descending order of overall admission rates; and (2) examining the following table that shows each department's share of applicants: male, female, and overall.
+
+```{r}
+#| label: ucb-ds-smy
+
+# count number of applicantions per (dept, sex)
+ucb_ds_smy <- ucb_admissions |> 
+  summarise(
+    .by = c("dept", "sex"), 
+    count = sum(count, na.rm = TRUE)
+  )
+```
+
+```{r}
+#| label: ucb-ds-wide
+
+# list (Male, Female) as separate columns
+ucb_ds_wide <- ucb_ds_smy |> 
+  pivot_wider(
+    names_from  = "sex", 
+    values_from = "count"
+  ) |> 
+  mutate(
+    total = Male + Female
+  )
+```
+
+```{r}
+#| label: tbl-ucb-ds-wide
+#| tbl-cap: "Number of applications per department"
+
+ucb_ds_wide |> knitr::kable(
+  caption = "Number of applications per department", 
+  col.names = c("dept", "from_males", "from_females", "overall")
+)
+```
+
+Here are the same counts but now converted into per-department percentage of applications from males, females, and overall, respectively.
+
+```{r ucb_ds_pct}
+#| label: ucb-ds-pct
+
+# convert counts to percents
+ucb_ds_pct <- ucb_ds_wide |> 
+  mutate(
+    Male   = 100 * Male   / ucb_sex_smy[[1, 2]], 
+    Female = 100 * Female / ucb_sex_smy[[2, 2]], 
+    total  = 100 * total  / ucb_total_applicants
+  )
+```
+
+```{r}
+#| label: tbl-ucb-ds-pct
+#| tbl-cap: "Percent of applications per department"
+
+ucb_ds_pct |> knitr::kable(
+  caption = "Percent of applications per department", 
+  col.names = c("dept", "from_males", "from_females", "overall"), 
+  digits = 1
+)
+```
+
+We see that relatively few females applied to departments A and B, which had the highest overall admission rates. Females tended more than males to apply to departments having overall low rates of admission. That is, departmental admission rate is an explanatory variable missing from the initial summary of male and female admission rates across all six departments.
+
+This phenomenon, a pattern per group that is masked when summarized across groups, is known as [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox). More generally, we must be alelrt to the possibility that we have overlooked some variable (sometimes called a "confounding" variable) that could alter our conclusions.
+
+## Entropy
+
+### Background
+
+The term "entropy" was defined in the mid-19th century (with the emergence of Statistical Mechanics) as a measure of the disorder of a physical system. In 1948 (with the emergence of Information Theory) [Claude Shannon](https://en.wikipedia.org/wiki/Claude_Shannon) introduced the same term and equivalent mathematical definition as a measure of uncertainty.
+
+### Yes-No Questions
+
+Let's illustrate the concept of entropy with a variant of the game "[Twenty Questions](https://en.wikipedia.org/wiki/Twenty_questions)". The contestant is presented with a box of tickets, each ticket bearing a single capital letter of the English alphabet. The contestant is shown the box, and thus knows the number of tickets bearing each letter. (It may happen that only a few of the possible 26 letters actually appear in the box.) The game begins with the random drawing of a ticket not visible to the contestant. The contestant may ask yes-no questions about the ticket until the contestant determines with certainty the letter written on the ticket. (The contestant does not guess but rather comes to a firm conclusion.) The ticket is put back in the box, ending the first round of the game. Subsequent rounds of the game are exactly like the first, a new ticket is drawn at random; it's letter must be deduced by the contestant through a sequence of yes-no questions. The contestant is evaluated on the average number of questions required to determine the letter on a randomly drawn ticket.
+
+We suppose that contestant devises the most informative sequence of questions possible. Consequently, the average number of required questions is a measure of the difficulty presented by the set of tickets in the box, that is, of the uncertainty of the value of a randomly drawn ticket.
+
+Here are some different scenarios.
+
+*Box 1*: If the contents of the box were $\{A, A , A, A \}$ then the contestant needn't spend any questions to determine with certainty the value of a randomly drawn ticket. The average number of required questions would be zero.
+
+*Box 2*: If the contents of the box were $\{A, A , B, B \}$ then the contestant would require one question to determine with certainty the value of a randomly drawn ticket. The average number of required questions would be one.
+
+*Box 3*: If the contents of the box were $\{A, B , C, D \}$ then the contestant would require two questions to determine with certainty the value of a randomly drawn ticket. The average number of required questions would be two.
+
+*Box 4*: Now consider the box $\{ A, A, B, C \}$. The contestant's first question might be whether the ticket-value is $A$, the most probable value. In half the rounds the answer would be a definitive yes, limiting the number of questions to 1. In the other half of the rounds, a single follow-up question would be required to identify the ticket-value with certainty. Averaged across rounds the required number of questions would be $(\frac{1}{2} \times 1) + (\frac{1}{2} \times 2) = \frac{3}{2}$.
+
+In general, consider a binary search strategy. Partition the set of all tickets into two subsets of distinct ticket-values, so that the two subsets contain a nearly equal number of tickets (to the extent possible). Devise the first question to determine to which of the two subsets the randomly drawn ticket belongs. Now partition the identified subset into two further subsets distinguished by ticket-values, again of equal or nearly equal size. Devise the second question to determine which of these two subsets is the origin of the randomly drawn ticket. Continue in this way until the randomly drawn ticket is identified.
+
+Under the binary search strategy the maximum number, say $\mu$, of required questions is a function of the number, say $K$, of distinct ticket-values, namely, $\mu$ is the smallest integer such that $\mu \ge \log_2(K)$. But that is a worst-case scenario: $\mu$ is generally greater than the *average* number of required questions, as illustrated by Box 4.
+
+### Definition
+
+The mathematical definition of entropy (usually denoted $H$) gives a lower bound on the average number of required questions that follow an optimal strategy. For a finite probability distribution $p_{\bullet} = (p_1, p_2, \ldots, p_K)$ the mathematical definition is as follows.
+
+$$
+\begin{align}
+  H(p_1, p_2, \ldots, p_K) \\ 
+  &= \sum_{k = 1}^K { p_k \times \log_2(\frac{1}{p_k}) } \\ 
+  &= - \sum_{k = 1}^K { p_k \times \log_2(p_k) } \\ 
+  \\ 
+  & \text{with } p_k = \text{probability of drawing value } k \\ 
+  & \text{and } K = \text{number of distinct values}
+\end{align}
+$$ {#eq-entropy-finite-distn}
+
+(This definition of $H$ uses a base-2 logarithm $\log_2()$ to match our yes-no question game. The units of this $H$ are the required number of yes-no questions, that is, binary digits, or "bits". $H$ is sometimes defined using the natural logarithm $\log_e()$ yielding a unit called "nats". Changing the base of the logarithm changes $H$ by a multiplicative constant.)
+
+For the first box in the game above, we have a single value $A$, which is thus drawn with probability one, which yields $H = 0$.
+
+For the second box we have two values, each drawn with probability $\frac{1}{2}$, so $H = 1$.
+
+For the third box we have four values, each drawn with probability $\frac{1}{4}$, so $H = 2$.
+
+For the fourth box, we calculated that the average number of required questions is $\frac{3}{2}$, which is the value of $H$.
+
+### $H_{X, Y}$ for independent $(X, Y)$
+
+So far we've discussed entropy with respect to a single random variable. We now extend the discussion to a pair of random variables. Let's change the game so that each ticket now bears both a letter and a positive integer.
+
+Let our first example be $\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}$, in which the set of letter-tickets $\{ A, A, B, C \}$ is duplicated, initially with the subscript 1, and then with the subscript 2. Drawing a ticket at random from this box is equivalent to drawing a letter at random from $\{ A, A, B, C \}$ and then independently drawing a number from $\{ 1, 2 \}$. The contestant may as well first ascertain the letter and then ascertain the number, requiring on average $\frac{3}{2} + 1$ questions.
+
+More generally, suppose we have a pair $(X, Y)$ of independent random variables that take on a finite set of values. Then
+
+$$
+\begin{align}
+  P(X = x_j, \; Y = y_k) \\ 
+  &= P(X = x_j) \times P(Y = y_k) \\
+\end{align}
+$$
+
+or more succinctly
+
+$$
+\begin{align}
+  p_{X, Y}(j, k) &= p_X(j) \times p_Y(k)
+\end{align}
+$$
+
+The entropy of the distribution of $(X, Y)$ is:
+
+$$
+\begin{align}
+  H_{X, Y} &= H(\; \{ p_{X, Y}(j, k) \} \;) \\ 
+  &= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_{X, Y}(j,k) \times log_2(\; p_{X, Y} (j,k) \;)}} \\ 
+  &= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_X(j) \times p_Y(k) \times log_2(\; p_X(j) \times p_Y(k) \;)}} \\ 
+  &= - \sum_{j = 1}^J \sum_{k = 1}^K p_X(j) \times p_Y(k) \times \{ \; log_2(p_X(j) + log_2(p_Y(k) \; \} \\ 
+  &= H_X \times \sum_{k = 1}^K p_Y(k) \; + \; \sum_{j = 1}^J p_X(j) \times H_Y \\ 
+  &= H_X + H_Y
+\end{align}
+$$ {#eq-entropy-xy-indep}
+
+In words, when $(X, Y)$ are independent, their joint entropy equals the sum of their respective entropies.
+
+### Mutual Information
+
+Now consider the case where $(X, Y)$ are dependent. Suppose, for example, that our box of tickets is $\{ A_1, A_2, B_1, C_2 \}$. The marginal distribution of letters remains $\{A, A, B, C \}$ and the marginal distribution of numbers is $\{1, 2, 1, 2\}$ which is equivalent to the box $\{1, 2\}$ of the previous example.
+
+In the previous example, had the contestant first determined the subscript on the randomly drawn ticket, that information would not have affected the subsequent process of determining the letter. The average number of required questions would remain $1 + \frac{3}{2}$.
+
+Now, however, using the first question to determine the subscript reduces the letter possibilities to either $\{A, B\}$ or else $\{A, C\}$. A single additional question is required to determine the letter. Thus the total number of required questions is 2, which equals the entropy value $H$.
+
+Let's continue to suppose that $(X, Y)$ are dependent. An ill-informed contestant might adopt the strategy optimal for the independent case, attacking one variable at a time. But this strategy would no longer be optimal. There would now be instances in which knowledge of one variable would reduce the average number of additional questions required to determine the value of the other variable. Thus the joint entropy $H_{X, Y}$ never exceeds the entropy $H_X + H_Y$ of the independent case.
+
+The reduction in entropy when the distribution of $(X, Y)$ is changed from independent to dependent (while retaining the original marginal distributions) goes by different names, including "information gain" and (less ambiguously) "mutual information".
+
+We define mutual information $(MI)$ as this reduction.
+
+$$
+\begin{align}
+  MI_{X, Y} &= H_X + H_Y - H_{X, Y} \\
+\end{align}
+$$ {#eq-mutual-info-xy}
+
+$MI$ is non-negative, and is zero when $(X, Y)$ are independent.
+
+### KL Divergence
+
+Continuing from the discussion of mutual information, suppose that an ill-informed contestant has optimized their questioning strategy for the box $\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}$, in which letters and numbers occur independently, when in fact the box is $\{ A_1, A_2, B_1, C_2 \}$. The contestant's strategy requires an average of $\frac{5}{2}$ questions to determine the randomly drawn letter-number combination with certainty, but for the actual box one requires just 2 questions. The misinformation about the box from which tickets are randomly drawn costs the contestant, on average, $\frac{1}{2}$ per question more than necessary.
+
+Kullback-Liebler divergence is a mathematical representation of this phenomenon. It is defined as follows.
+
+$$
+\begin{align}
+  KL(P \; || \; Q) \\ 
+  &= E_P \left( \log_2 \left( \frac{ 1 }{ Q(X) } \right) \right) - E_P \left( \log_2 \left( \frac{ 1 }{ P(X) } \right) \right) \\  
+  &= E_P \left( \log_2 \left( \frac{ P(X) }{ Q(X) } \right) \right) \\  
+  &= \sum_{ \{x : P(x) > 0 \}} P(x) \times \log_2 \left( \frac{P(x)}{Q(x)} \right) \\ 
+  \\ 
+  & \text{with } P(x) = \text{reference probability mass function} \\ 
+  & \text{and } Q(x) = \text{alternative probability mass function} \\
+\end{align}
+$$ {#eq-kullback-liebler-divergence}
+
+In the example above, $P(\cdot)$ is the probability of drawing any given letter-number combination from $\{ A_1, A_2, B_1, C_2 \}$, and $Q(\cdot)$ is the corresponding probability for $\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}$. Here is the tally of the sum defining $KL(P \; || \; Q)$.
+
+```{r}
+#| label: kl-tbl
+
+kl_tbl <- tibble::tibble(
+  ltr        = rep(LETTERS[1:3], 2), 
+  num        = rep(1:2, each = 3), 
+  x          = paste0(ltr, "_", num), 
+  p          = c(1, 1, 0, 1, 0, 1)/4, 
+  q          = c(2, 1, 1, 2, 1, 1)/8, 
+  log2_ratio = log2(p/q), 
+  term       = dplyr::if_else(p == 0, 0, p * log2_ratio)
+)
+kl_sum = sum(kl_tbl$term, na.rm = TRUE)
+```
+
+```{r}
+#| label: tbl-kl-tbl
+#| tbl-cap: "XXX"
+
+kl_tbl |> 
+  dplyr::select(- ltr, - num) |> 
+  knitr::kable(
+  caption = "KL Divergence example", 
+  col.names = c("x", "P(x)", "Q(x)", "log2_ratio", "term")
+)
+```
+
+For purposes of illustration the table above includes any value $x$ assigned positive probability by either $P(\cdot)$ or $Q(\cdot)$, even those for which $P(x) = 0$ and therefore do not contribute to the KL divergence, $KL(P \; || \; Q)$. Also note that the sum of the terms, that is the KL divergence, is indeed $\frac{1}{2}$. We will return to KL divergence in subsequent discussions.
+
+## Team Exercises
+
+1.  Simulate bivariate normal variables: Using `stats::rnorm()` or otherwise, generate independent instances of a standard normal variable $X$ (that is, having mean zero and standard deviation 1). Next choose a value of $r$ such that $-1 < r < 1$. Now for each instance of $X$ construct an instance of random variable $Y$ so that the distribution $\mathcal{D}(Y \; | \; X)$ of $Y$ given $X$ is normal with expected value $r \times X$ and standard deviation $\sqrt{1 - r^2}$. (Hint: consider constructing $Y$ by using $X$ along with a new, independent standard normal variable $Z$.) What are the *unconditional* mean and standard deviation of $Y$? What is the correlation coefficient of the pair $(X, Y)$? How might you generalize your construction to accommodate other prescribed means $(\mu_x, \mu_y)$ and standard deviations $(\sigma_x, \sigma_y)$ of $(X, Y)$?
+
+2.  Simpson's paradox: In the discussion above we illustrated Simpson's paradox using the UCB Admissions data. Find or construct a different example.
+
+3.  Entropy, Discrete Uniform: If Box 5 is $\{ A, B, C, D, E \}$, how many questions are required, on average, to determine with certainty the ticket that has been randomly drawn? What is the entropy $H$ of this box? More generally, calculate $H$ for a box $\{ x_1, x_2, \ldots, x_K \}$ that contains $K$ tickets, each having a unique value.
+
+4.  Entropy, UCB Admissions: Consider a box of tickets that matches the UC Berkeley admissions data. The number of tickets in the box is the number of applications in the data. Each ticket has three markings: either "Male" or "Female" to denote the sex of the applicant; either "Admitted" or "Rejected" to denote the decision made on the application; and one of $\{ A, B, C, D, E, F \}$ to denote the department that made the decision.
+
+-   Restricting attention to just the "Admitted" or "Rejected" marking, calculate $H_{\text{decision}}$.
+
+-   Now calculate $H_{\text{decision, sex}}$ and the mutual information $MI_{\text{decision, sex}}$.
+
+-   How would you formulate the information gained in the analysis of sex bias by including departmental admission rates?
+
+## Resources
+
+[R Graphics Cookbook (2e)](https://r-graphics.org/) by Winston Chang
+
+[Statistics (4e)](https://www.goodreads.com/book/show/147358.Statistics) by Freedman, Pisani, Purves \| Goodreads
+
+[Independence](https://en.wikipedia.org/wiki/Independence_(probability_theory)) (probability theory) - Wikipedia
+
+[Sex bias in graduate admissions](https://pubmed.ncbi.nlm.nih.gov/17835295/): data from Berkeley, by Bickel, Hammel, and O'connell
+
+[A Mathematical Theory of Communication](https://webarchive.loc.gov/all/20050415122608/http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf), by [C.E. Shannon](https://en.wikipedia.org/wiki/Claude_Shannon)
+
+[Shannon Entropy, Information Gain, and Picking Balls from Buckets](https://medium.com/udacity/shannon-entropy-information-gain-and-picking-balls-from-buckets-5810d35d54b4) \| by Luis Serrano \| Udacity Inc \| Medium
+
+[Mutual information](https://en.wikipedia.org/wiki/Mutual_information) - Wikipedia
+
+[Distances and Divergences for Probability Distributions](https://nobel.web.unc.edu/wp-content/uploads/sites/13591/2020/11/Distance-Divergence.pdf) by Andrew Nobel

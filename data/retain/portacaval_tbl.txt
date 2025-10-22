@@ -1,0 +1,4 @@
+design	marked	moderate	none
+No controls	24	7	1
+Controls, but not randomized	10	3	2
+Randomized controlled	0	1	3

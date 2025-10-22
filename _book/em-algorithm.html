@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (adthral)">
+
+<title>15&nbsp; EM: the Expectation-Maximization Algorithm – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./summary.html" rel="next">
+<link href="./graph-theory.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./em-algorithm.html">Appendices</a></li><li class="breadcrumb-item"><a href="./em-algorithm.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Statistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Graph Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">15.1</span> Background</a></li>
+  <li><a href="#example-old-faithful-eruptions" id="toc-example-old-faithful-eruptions" class="nav-link" data-scroll-target="#example-old-faithful-eruptions"><span class="header-section-number">15.2</span> Example: Old Faithful eruptions</a>
+  <ul class="collapse">
+  <li><a href="#delay-and-duration" id="toc-delay-and-duration" class="nav-link" data-scroll-target="#delay-and-duration"><span class="header-section-number">15.2.1</span> Delay and Duration</a></li>
+  <li><a href="#gausian-mixture-model" id="toc-gausian-mixture-model" class="nav-link" data-scroll-target="#gausian-mixture-model"><span class="header-section-number">15.2.2</span> Gausian Mixture Model</a></li>
+  <li><a href="#latent-variable-cluster-membership" id="toc-latent-variable-cluster-membership" class="nav-link" data-scroll-target="#latent-variable-cluster-membership"><span class="header-section-number">15.2.3</span> Latent Variable: Cluster Membership</a></li>
+  <li><a href="#initial-estimates" id="toc-initial-estimates" class="nav-link" data-scroll-target="#initial-estimates"><span class="header-section-number">15.2.4</span> Initial Estimates</a></li>
+  <li><a href="#log-likelihood" id="toc-log-likelihood" class="nav-link" data-scroll-target="#log-likelihood"><span class="header-section-number">15.2.5</span> Log Likelihood</a></li>
+  </ul></li>
+  <li><a href="#em-iterations" id="toc-em-iterations" class="nav-link" data-scroll-target="#em-iterations"><span class="header-section-number">15.3</span> EM Iterations</a></li>
+  <li><a href="#group-membership-over-time" id="toc-group-membership-over-time" class="nav-link" data-scroll-target="#group-membership-over-time"><span class="header-section-number">15.4</span> Group Membership over Time</a></li>
+  <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">15.5</span> Closing Remarks</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">15.6</span> Resources</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">15.7</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/em-algorithm.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./em-algorithm.html">Appendices</a></li><li class="breadcrumb-item"><a href="./em-algorithm.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-em-algorithm" class="quarto-section-identifier"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (adthral) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">20:49 Tue 14-Oct-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="background" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="background"><span class="header-section-number">15.1</span> Background</h2>
+<p>Latent Dirichlet Allocation (LDA) was proposed as a method of topic modeling in 2003 in a paper by Blei, Ng, and Jordan. The method is briefly mentioned in Part 1 of the course. Several course participants requested a more detailed description. This note prepares for the requested response by introducing the EM Algorithm.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</section>
+<section id="example-old-faithful-eruptions" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="example-old-faithful-eruptions"><span class="header-section-number">15.2</span> Example: Old Faithful eruptions</h2>
+<section id="delay-and-duration" class="level3" data-number="15.2.1">
+<h3 data-number="15.2.1" class="anchored" data-anchor-id="delay-and-duration"><span class="header-section-number">15.2.1</span> Delay and Duration</h3>
+<p>The figure below represents the duration of eruptions (“duration”) and the interval between eruptions (“delay”)<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> of the “Old Faithful” geyser in Yellowstone National Park, Wyoming from August 1 to August 15, 1985.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-faithful-tbl" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-faithful-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="em-algorithm_files/figure-html/fig-faithful-tbl-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-faithful-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.1: Old Faithful eruptions: delay and duration (minutes)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="gausian-mixture-model" class="level3" data-number="15.2.2">
+<h3 data-number="15.2.2" class="anchored" data-anchor-id="gausian-mixture-model"><span class="header-section-number">15.2.2</span> Gausian Mixture Model</h3>
+<p>The figure shows two clusters of data points.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Here is probability model in which the delay and duration of each eruption follows one of two possible bivariate normal distributions depending on the group, <span class="math inline">\(G\)</span>, to which it belongs.</p>
+<p><span id="eq-nrm-2-given-group"><span class="math display">\[
+\begin{align}
+  \{ \; (\text{delay}, \text{duration}) \; | \; \text{group } G \; \} &amp;\sim \mathcal{N}(\mu_{\bullet}^{(G)}, \Sigma^{(G)}) \\ \\
+  &amp; \text{where } \\ \\
+  G &amp;=
+  \begin{cases}
+    1 &amp; \text{with probability } p_1 \\
+    2 &amp; \text{with probability } p_2 = 1 - p_1
+  \end{cases}
+\end{align}
+\qquad(15.1)\]</span></span></p>
+<p>Averaging across the two groups, a randomly selected eruption has the following mixture of bivariate normal distributions.</p>
+<p><span id="eq-nrm-2-mixture"><span class="math display">\[
+\begin{align}
+  (\text{delay}, \text{duration}) &amp;\sim p_1 \; \mathcal{N}(\mu_{\bullet}^{(1)}, \Sigma^{(1)}) +
+  p_2 \; \mathcal{N}(\mu_{\bullet}^{(2)}, \Sigma^{(2)}) \\
+  \\
+  &amp; \text{where } p_1 + p_2 = 1\\
+\end{align}
+\qquad(15.2)\]</span></span></p>
+<p>Fitting a single multivariate normal distribution is straightforward<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>, but less so for the above mixture of bivariate normal distributions. The Expectation-Maximization (EM) algorithm provides an approach for doing so, as follows.</p>
+</section>
+<section id="latent-variable-cluster-membership" class="level3" data-number="15.2.3">
+<h3 data-number="15.2.3" class="anchored" data-anchor-id="latent-variable-cluster-membership"><span class="header-section-number">15.2.3</span> Latent Variable: Cluster Membership</h3>
+<p>In the EM framework, we iteratively assign group-membership, <span class="math inline">\(G = g \in \{ 1, 2 \}\)</span>, to each data point. Based on this set of assignments we update the parameter estimates (the “E” step of the EM algorithm). The new set of parameter estimates yields a new estimate of the likelihood function. We then re-assign cluster-membership to maximize the updated likelihood estimate (the “M” step). The iteration terminates once the magnitude of changes falls below a prescribed threshold.</p>
+<p>In <code>R</code> this procedure is implemented by the function <code>mixtools::mvnormalmixEM()</code>.</p>
+</section>
+<section id="initial-estimates" class="level3" data-number="15.2.4">
+<h3 data-number="15.2.4" class="anchored" data-anchor-id="initial-estimates"><span class="header-section-number">15.2.4</span> Initial Estimates</h3>
+<p>Based on the preceding figure we adopt the following initial estimates of the parameters.</p>
+<ol type="1">
+<li><p>Calculate the respective medians of the (<code>delay</code>, <code>duration</code>) variables.</p></li>
+<li><p>For each data point determine whether the <code>delay</code> value is less than the median of all observed <code>delay</code> values. Similarly determine whether the <code>duration</code> value is less than the median of all observed <code>duration</code> values.</p></li>
+<li><p>Based on these inequalities, categorize each (<code>delay</code>, <code>duration</code>) data point as belonging to one of four groups: (lower, lower), (lower, upper), (upper, lower), (upper, upper).</p></li>
+<li><p>Restrict attention to the (lower, lower), and (upper, upper) groups. Within this restricted set of data points calculate the sample averages and covariance matrices for each of the two groups. Use these as initial estimates of <span class="math inline">\((\mu_{\bullet}^{(1)}, \mu_{\bullet}^{(2)})\)</span> and <span class="math inline">\((\Sigma^{(1)}, \Sigma^{(2)})\)</span>.</p></li>
+</ol>
+<p>The table below summarizes the groups delineated by the respective medians of (<code>delay</code>, <code>duration</code>).</p>
+<div class="cell">
+<div id="tbl-faithful-4-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-faithful-4-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.1: Summary statistics for initial groups of data points
+</figcaption>
+<div aria-describedby="tbl-faithful-4-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Summary statistics for initial groups of data points</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 17%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">delay_low</th>
+<th style="text-align: left;">duration_low</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">delay_mean</th>
+<th style="text-align: right;">duration_mean</th>
+<th style="text-align: right;">delay_sd</th>
+<th style="text-align: right;">duration_sd</th>
+<th style="text-align: right;">dd_cor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">81.1</td>
+<td style="text-align: right;">3.7</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">0.2</td>
+<td style="text-align: right;">-0.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: right;">56.6</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">7.7</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: right;">82.4</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;">4.6</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">73.0</td>
+<td style="text-align: right;">4.4</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Restricting attention to the groups in which (<code>delay</code>, <code>duration</code>) jointly fall either below or above their respective medians, we extract the initial parameter estimates from the table above. Variable <code>g</code> is the labeling of each point in the restricted data set to cluster 1 or cluster 2.</p>
+<div class="cell">
+<div id="tbl-initial-est" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-initial-est-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.2: Initial parameter estimates
+</figcaption>
+<div aria-describedby="tbl-initial-est-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Initial parameter estimates</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">g</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">delay_mean</th>
+<th style="text-align: right;">duration_mean</th>
+<th style="text-align: right;">delay_sd</th>
+<th style="text-align: right;">duration_sd</th>
+<th style="text-align: right;">dd_cor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: right;">56.6</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">7.7</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: right;">82.4</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;">4.6</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The figure below summarizes results so far. We’ve restricted attention to data points (<code>delay</code>, <code>duration</code>) such that the two variables are either both below their respective medians or else both above their respective medians. We’ve defined variable <code>g</code> as the grouping variable taking integer values (1, 2) in these two respective cases. For each of the two groups we’ve constructed an ellipse conforming to the sample mean vector and covariance matrix of the group. The ellipse is designed to capture 50% of the area under a bivariate normal distribution having these parameter values.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-faithful-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-faithful-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="em-algorithm_files/figure-html/fig-faithful-2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-faithful-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.2: Old Faithful eruptions: initial normal estimates
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This completes the initial “E” step in the EM algorithm, the estimation of parameter values.</p>
+</section>
+<section id="log-likelihood" class="level3" data-number="15.2.5">
+<h3 data-number="15.2.5" class="anchored" data-anchor-id="log-likelihood"><span class="header-section-number">15.2.5</span> Log Likelihood</h3>
+<p>We now begin the initial “M” step (maximization) of the EM algorithm. Using the above parameter estimates we now assign cluster membership (variable <code>g</code>) to the points not yet labeled by maximizing the likelihood function, or equivalently (and more conveniently), the logarithm of the likelihood function.</p>
+<p>In general, recall that a multivariate normal distribution having mean vector <span class="math inline">\(\mu_{\bullet} \in \mathbb{R}^m\)</span> and covariance matrix <span class="math inline">\(\Sigma\)</span> has likelihood function equal to the product of the multivariate normal density evaluated at each observation vector, say <span class="math inline">\(x_{\bullet}^{(\nu)}\)</span>, (that is, at each row of the design matrix <span class="math inline">\(X\)</span>).</p>
+<p><span class="math display">\[
+\begin{align}
+  \mathcal{L}(X, \mu_{\bullet}, \Sigma) &amp;= \prod_{\nu = 1}^n \mathcal{N}(x_{\bullet}^{(\nu)} - \mu_{\bullet}, \;  \Sigma)
+\end{align}
+\]</span></p>
+<p>Taking the natural logarithm of both sides of this equation, we obtain the log-likelihood function.</p>
+<p><span class="math display">\[
+\begin{align}
+  \mathcal{l}(X, \mu_{\bullet}, \Sigma) &amp;= \sum_{\nu = 1}^n \log_e(\mathcal{N}(x_{\bullet}^{(\nu)} - \mu_{\bullet}, \;  \Sigma)) \\
+  &amp;= -\frac{m}{2} \log_e(2 \pi) - \frac{1}{2}\log_e(\det{\Sigma}) -
+  \frac{1}{2} \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \mu_{\bullet})^{\intercal} \;  \Sigma^{-1} (x_{\bullet}^{(\nu)} - \mu_{\bullet}) \\
+\end{align}
+\]</span></p>
+<p>Consequently, fitting parameters <span class="math inline">\(\mu_{\bullet}\)</span> and <span class="math inline">\(\Sigma\)</span> to the design matrix <span class="math inline">\(X\)</span> via maximum likelihood amounts to minimizing the sum of quadratic forms on the right side of this equation. (Each term in the sum is referred to as the squared <em>Mahalanobis distance</em> between the observation vector and the mean vector.)</p>
+<p><span class="math display">\[
+\begin{align}
+  (\hat{\mu}_{\bullet}, \hat{\Sigma}) &amp; = \arg \min \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \mu_{\bullet})^{\intercal} \;  \Sigma^{-1} (x_{\bullet}^{(\nu)} - \mu_{\bullet}) \\
+\end{align}
+\]</span></p>
+<p>which yields the sample mean and a variant of the sample covariance matrix.</p>
+<p><span class="math display">\[
+\begin{align}
+  \hat{\mu}_{\bullet} &amp; = \frac{1}{n} \sum_{\nu = 1}^n x_{\bullet}^{(\nu)} \\
+  \\
+  \hat{\Sigma} &amp; = \frac{1}{n} \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \hat{\mu}_{\bullet}) (x_{\bullet}^{(\nu)} - \hat{\mu}_{\bullet})^{\intercal} \\
+\end{align}
+\]</span></p>
+<p>For the Old Faithful data, however, we propose a mixture of two distnct normal distributions, that is, two clusters in which the cluster to which each data point belongs is unknown.</p>
+<p>Having estimated the normal parameters for clusters 1 and 2, we now label each data point as belonging to the cluster to which it is closest, in the sense of Mahalanobis distance. The results are shown in the next figure.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-f-tag-tbl" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-f-tag-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="em-algorithm_files/figure-html/fig-f-tag-tbl-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-f-tag-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.3: Old Faithful: inital clustering of all points
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This completes the initial maximization step. The table below shows the revised summary statistics per cluster now that the initial assignment to clusters has been completed.</p>
+<div class="cell">
+<div id="tbl-f-tag-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-f-tag-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.3: Summary statistics for initial clusters of data points
+</figcaption>
+<div aria-describedby="tbl-f-tag-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Summary statistics for initial clusters of data points</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">g</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">delay_mean</th>
+<th style="text-align: right;">duration_mean</th>
+<th style="text-align: right;">delay_sd</th>
+<th style="text-align: right;">duration_sd</th>
+<th style="text-align: right;">dd_cor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">115</td>
+<td style="text-align: right;">57.1</td>
+<td style="text-align: right;">2.3</td>
+<td style="text-align: right;">8.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">157</td>
+<td style="text-align: right;">81.0</td>
+<td style="text-align: right;">4.4</td>
+<td style="text-align: right;">5.3</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+</section>
+<section id="em-iterations" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="em-iterations"><span class="header-section-number">15.3</span> EM Iterations</h2>
+<p>We illustrate the iterations of the EM algorithm using function <code>mvnormalmixEM()</code> in R package <code>mixtools</code>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> We provide the function with our initial estimates of normal parameters.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>em_out <span class="ot">&lt;-</span> faithful_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  mixtools<span class="sc">::</span><span class="fu">mvnormalmixEM</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">lambda =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>), </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> <span class="fu">list</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># delay, duration</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="fl">56.6</span>, <span class="fl">2.25</span>), <span class="co"># (lower, lower)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="fl">82.4</span>, <span class="fl">4.47</span>)  <span class="co"># (upper, upper)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sigma =</span> <span class="fu">list</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="co"># (lower, lower)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">matrix</span>(</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>, </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> <span class="fu">c</span>(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>          <span class="fl">59.7</span>,  <span class="fl">3.27</span>, </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>          <span class="fl">3.27</span>,  <span class="fl">0.35</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        )), </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="co"># (upper, upper)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">matrix</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>, </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> <span class="fu">c</span>(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>          <span class="fl">21.5</span>,  <span class="fl">0.19</span>, </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.19</span>,  <span class="fl">0.08</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        ))</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">verb =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>iteration= 1 diff= 41.60226 log-likelihood -1168.518 
+iteration= 2 diff= 14.54077 log-likelihood -1153.978 
+iteration= 3 diff= 12.21481 log-likelihood -1141.763 
+iteration= 4 diff= 9.461094 log-likelihood -1132.302 
+iteration= 5 diff= 1.962679 log-likelihood -1130.339 
+iteration= 6 diff= 0.0717014 log-likelihood -1130.267 
+iteration= 7 diff= 0.003089365 log-likelihood -1130.264 
+iteration= 8 diff= 0.000168951 log-likelihood -1130.264 
+iteration= 9 diff= 9.661982e-06 log-likelihood -1130.264 
+iteration= 10 diff= 5.582749e-07 log-likelihood -1130.264 
+iteration= 11 diff= 3.233686e-08 log-likelihood -1130.264 
+iteration= 12 diff= 1.874241e-09 log-likelihood -1130.264 
+number of iterations= 12 </code></pre>
+</div>
+</div>
+<p>Reports from each iteration were requested by setting function parameter <code>verb = TRUE</code> (verbose). The estimated log-likelihood is shown for each iteration, along with the change in that value from the previous iteration.</p>
+<p>The final estimates of the normal parameters are shown in the table below, and illustrated in the figure below.</p>
+<div class="cell">
+<div id="tbl-f-em-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-f-em-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.4: Summary statistics for final groups of data points
+</figcaption>
+<div aria-describedby="tbl-f-em-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Summary statistics for final groups of data points</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">g</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">delay_mean</th>
+<th style="text-align: right;">duration_mean</th>
+<th style="text-align: right;">delay_sd</th>
+<th style="text-align: right;">duration_sd</th>
+<th style="text-align: right;">dd_cor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">54.5</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">5.8</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">80.0</td>
+<td style="text-align: right;">4.3</td>
+<td style="text-align: right;">6.0</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-f-em" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-f-em-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="em-algorithm_files/figure-html/fig-f-em-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-f-em-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.4: Old Faithful eruptions: final normal estimates
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="group-membership-over-time" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="group-membership-over-time"><span class="header-section-number">15.4</span> Group Membership over Time</h2>
+<p>According to the EM algorithm, here is the pattern of group membership as a function of time. More precisely, here is the posterior probability of group-1 membership as a function of cumulative delay expressed in days.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-grp-per-cum-delay" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-grp-per-cum-delay-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="em-algorithm_files/figure-html/fig-grp-per-cum-delay-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grp-per-cum-delay-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.5: Group 1 posterior probability over cumulative delay (days)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Recall that group 1 refers to the eruptions having shorter delays and shorter durations. The figure shows that these are interupted by short stretches of eruptions from group 2. The figure also show that posterior probabilities come out to be nearly zero or else nearly unity, with rare exceptions.</p>
+</section>
+<section id="closing-remarks" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="closing-remarks"><span class="header-section-number">15.5</span> Closing Remarks</h2>
+<p>Several papers present the mathematics underlying the EM algorithm, and one can also find tutorials that illustrate the convergence of the algorithm.</p>
+</section>
+<section id="resources" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="resources"><span class="header-section-number">15.6</span> Resources</h2>
+<p>In addition to the references listed below, see the following.</p>
+<p><a href="https://medium.com/@chloebee/the-em-algorithm-explained-52182dbb19d9">The EM Algorithm Explained</a> blog by Chloe Bi, 2019</p>
+</section>
+<section id="references" class="level2" data-number="15.7">
+<h2 data-number="15.7" class="anchored" data-anchor-id="references"><span class="header-section-number">15.7</span> References</h2>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Anderson_Olkin_2002" class="csl-entry" role="listitem">
+Anderson, T. W., and Ingram Olkin. 2002. <span>“Maximum-Likelihood Estimation of the Parameters of a Multivariate Normal Distribution.”</span> <em>Linear Algebra and Its Applications</em>, May. <a href="https://www.sciencedirect.com/science/article/pii/0024379585900497">https://www.sciencedirect.com/science/article/pii/0024379585900497</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>See <span class="citation" data-cites="rdpeng2022advstatcomp">(<a href="references.html#ref-rdpeng2022advstatcomp" role="doc-biblioref"><strong>rdpeng2022advstatcomp?</strong></a>, chp. 4)</span>, and <span class="citation" data-cites="EM_algo_Wikipedia_2025">(<a href="references.html#ref-EM_algo_Wikipedia_2025" role="doc-biblioref"><strong>EM_algo_Wikipedia_2025?</strong></a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>“Delay” here refers to the length of time <em>preceding</em> the current eruption. The (<code>delay</code>, <code>duration</code>) variables are recorded in minutes.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>There are two prominent <code>R</code> packages representing the Old Faithful measurements during August, 1985. The <code>MASS::geyser</code> data set of 299 observations includes nocturnal measurements whose duration was coded as 2, 3 or 4 minutes, having originally been described as ‘short’, ‘medium’ or ‘long’. The <code>datasets::faithful</code> data set of 272 measurements, shown in the figure, excludes 27 of these nocturnal measurements.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Old Faithful eruptions are conjectured to occur in 2 distinct temporal patterns due to the presence of an upper and lower chamber beneath the vertical column (tube) that forms the geyser. See <span class="citation" data-cites="Vandemeulebrouck_Roux_Cros_2013">(<a href="references.html#ref-Vandemeulebrouck_Roux_Cros_2013" role="doc-biblioref"><strong>Vandemeulebrouck_Roux_Cros_2013?</strong></a>)</span>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>See <span class="citation" data-cites="Anderson_Olkin_2002">Anderson and Olkin (<a href="references.html#ref-Anderson_Olkin_2002" role="doc-biblioref">2002</a>)</span>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>See <span class="citation" data-cites="mixtools2009">(<a href="references.html#ref-mixtools2009" role="doc-biblioref"><strong>mixtools2009?</strong></a>)</span>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./graph-theory.html" class="pagination-link" aria-label="Graph Theory for Machine Learning">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./summary.html" class="pagination-link" aria-label="Summary">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/em-algorithm.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

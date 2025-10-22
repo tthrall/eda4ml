@@ -1,9 +1,31 @@
 project:
   type: book
   output-dir: _book
-
+author: 
+  - name: "Send comments to: Tony T (tthrall)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 3
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf:
+    documentclass: scrreprt
+  docx: default
+bibliography: eda4ml.bib
 book:
   title: "EDA for Machine Learning"
+  cover-image: eda4ml.jpg
   author: "Tony Thrall"
   date: last-modified
   date-format: HH:mm ddd D-MMM-YYYY
@@ -14,37 +36,33 @@ book:
   chapters:
     - index.qmd
     - preface.qmd
-    - part: basics.qmd
+    - part: Statistics
       chapters: 
         - eda.qmd
         - conditioning.qmd
-        - em-algorithm.qmd
         - clustering.qmd
         - simulation.qmd
         - study-design.qmd
-    - part: text.qmd
+    - part: Linear Algebra
+      chapters: 
+        - la-intro.qmd
+        - reduce-dim.qmd
+    - part: Text Data
       chapters:
         - text-analysis.qmd
         - dirichlet-dstn.qmd
         - latent-dirichlet-alloc.qmd
-    - part: time-series.qmd
+    - part: Time Series Data
       chapters:
         - ts-intro.qmd
         - ts-forecast.qmd
         - ts-fourier.qmd
-    - summary-1.qmd
-    - summary-2.qmd
+    - part: Graph Theory
+      chapters:
+        - graph-theory.qmd
+    - part: Appendices
+      chapters:
+        - em-algorithm.qmd
+    - summary.qmd
     - references.qmd
-
-bibliography: eda4ml.bib
-
-format:
-  html:
-    theme:
-      - cosmo
-      - brand
-  pdf:
-    documentclass: scrreprt
-
-editor: source
 

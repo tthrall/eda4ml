@@ -1,0 +1,117 @@
+# Some Linear Algebra {#sec-la-intro}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(GGally)
+library(HistData)
+library(here)
+library(latex2exp)
+library(plotly)
+library(scatterplot3d)
+library(tidyverse)
+library(tinytex)
+library(UsingR)
+```
+
+```{r}
+#| label: local-source
+
+# source(here("code", "xxx.R"))
+```
+
+------------------------------------------------------------------------
+
+Vectors and matrices are the central objects of linear algebra.  In data science and machine learning, the rows and columns of a _data matrix_ have paticular roles.  Each row represents a subject (case of data), whereas each column (known as a _feature vector_ or _data variable_) represents a prescribed type of observation.  Let's consider some examples.
+
+## Example Data Sets
+
+### Heights of Parents and Oldest Child
+
+```{r}
+#| label: galton_3d
+
+data(HistData::GaltonFamilies)
+galton_3d <- GaltonFamilies |> 
+  tibble::as_tibble() |> 
+  dplyr::group_by(family) |> 
+  dplyr::filter(childNum == 1) |>  # Oldest child
+  dplyr::select(father, mother, childHeight, gender) |> 
+  dplyr::rename(child = childHeight) |> 
+  dplyr::ungroup()
+
+# cite the following values in the narrative
+n_children_all      <- nrow(GaltonFamilies)
+n_families          <- nrow(galton_3d)
+n_child_1_daughters <- sum(galton_3d$ gender == "female")
+n_child_1_sons      <- sum(galton_3d$ gender == "male")
+```
+
+In 1885 Sir Francis Galton examined the heights (in inches) of parents and their adult children to determine the strength of evidence to support height as a hereditary trait.  The corresponding `R` data set `HistData::GaltonFamilies` consists of `r n_children_all` adult children from a total of `r n_families` families.  Restricting attention to the oldest child in each family, there were `r n_child_1_daughters` daughters and `r n_child_1_sons` sons, shown in the figures below.
+
+```{r}
+#| label: fig-daughter-parent-heights
+#| fig-cap: "Heights of (daughter, mother, father)"
+
+# Form a matrix of figures, showing each 
+# distinct pair of variables in a scatter diagram.
+g_dmf_hts <- galton_3d |> 
+  dplyr::filter(gender == "female") |> 
+  dplyr::rename(daughter = child) |> 
+  GGally::ggpairs(
+    columns = c("daughter", "mother", "father"), 
+    title   = "(daughter, mother, father) heights"
+  )
+g_dmf_hts
+```
+
+```{r}
+#| label: fig-son-parent-heights
+#| fig-cap: "Heights of (son, mother, father)"
+
+# Form a matrix of figures, showing each 
+# distinct pair of variables in a scatter diagram.
+g_smf_hts <- galton_3d |> 
+  dplyr::filter(gender == "male") |> 
+  dplyr::rename(son = child) |> 
+  GGally::ggpairs(
+    columns = c("son", "mother", "father"), 
+    title   = "(son, mother, father) heights"
+  )
+g_smf_hts
+```
+
+The figures indicate that in aggregate the average height of daughters is about 2 inches greater than the average height of mothers.  Similarly sons as a group average about 1 inch taller than fathers as a group.
+
+Estimated correlations coefficients are shown for each pair of variables.  There were only `r n_child_1_daughters` families for whom the oldest child was a daughter, too few for any of the estmated correlation coefficients to be statistically significant.  Even so, it is intersting to note that parent-child correlations are stronger within the same sex (mother-daughter and father-son).
+
+The next figure is a 3-D scatterplot of heights, with the gender of the child distinguished by color: red for daughters and blue for sons.
+
+```{r}
+#| label: fig-g-mfc-scat3d
+#| fig-cap: "(mother, father, child) heights, with daughters shown in red"
+
+g_mfc_s3d <- scatterplot3d::scatterplot3d(
+  x = galton_3d$ mother, xlab = "mother", 
+  y = galton_3d$ father, ylab = "father", 
+  z = galton_3d$ child,  zlab = "child", 
+  color = dplyr::if_else(
+    galton_3d$ gender == "male", "blue", "red"), 
+  main = "(mother, father, child) heights", 
+  sub  = "daughters in red, sons in blue"
+)
+```
+

@@ -1,0 +1,14 @@
+s_idx	s_tag	topic	f_prefix	auth	title	src_1	src_2	use	todo	GL_status
+1	s1a	eda	s1a_eda	TT	Exploratory Data Analysis	none		present		done
+1	s1b	condl_distn	s1b_condl_distn	TT	Conditional Distributions	none		present		done
+2	s2a	clustering	s2a_clustering	TT	Clustering: EDA in Higher Dimensions	rmse_per_grp.R	xtabs_to_jaccard.R	present		done
+2	s2b	text_analysis	s2b_text_analysis	TT	Text Analysis	rmse_per_grp.R	xtabs_to_jaccard.R	present		done
+3	s3a	study_design	s3a_study_design	TT	Sampling and Study Design	none		present		check
+3	s3b	stat_sim	s3b_stat_sim	TT	Statistical Simulation	gen_circuit.R		present	todo	check
+4	s4a			MJ	<MJ slides on Linear Algebra>	none				NA
+4	s4b			MJ	<MJ slides on Dimension Reduction>	none				NA
+5	s5a	ts_intro	s5a_ts_intro	TT	Time Series Data Analysis	gen_ds_tbl.R	get_ref_materials.R	ref		g2g
+5	s5b	ts_forecast	s5b_ts_forecast	TT	Time Series Forecasting	gen_ds_tbl.R	get_ref_materials.R	ref		g2g
+6	s6a	topic_review	s6a_topic_review	TT	Part 1: Review of Selected Topics	none		present		g2g
+6	s6b	discussion	s6b_discussion	TT	Preparing to Teach Part 1	none		present		g2g
+7	xtra	Dirichlet_dstn	xtra_Dirichlet_dstn	TT	The Dirichlet Distribution	none		ref		g2g

@@ -1,29 +1,4 @@
----
-title: "Conditional Distributions"
-subtitle: "Part 1, session 1b of Data Mining Intro"
-author: 
-  - name: "Send comments to: Tony T (adthral)"
-date: last-modified
-date-format: HH:mm ddd D-MMM-YYYY
-editor: source
-toc: true
-toc-depth: 3
-format:
-  html:
-    toc_float: true
-    code-fold: true
-    code-summary: "Show the code"
-    html-math-method:
-      method: mathjax
-      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  pdf: default
-  docx: default
-params:
-  file_id: "s1b"
-  file_prefix: "s1b_condl_distn"
-abstract: 
-  "Review the concepts of conditional distribution, conditional expectation, simple linear regression, statistical independence, entropy, and KL divergence."
----
+# Conditional Distributions {#sec-conditioning}
 
 ```{r}
 #| label: setup

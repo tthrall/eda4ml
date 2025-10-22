@@ -1,0 +1,3 @@
+param	value
+alpha	25
+delta	0.1

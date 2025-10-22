@@ -1,0 +1,477 @@
+# Some Linear Algebra {#sec-la-intro}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(dslabs)
+library(GGally)
+library(ggimg)
+library(HistData)
+library(here)
+library(keras)
+library(latex2exp)
+library(OECD)
+library(plotly)
+library(R.utils)
+library(reticulate)
+library(scatterplot3d)
+library(tensorflow)
+library(tidyverse)
+library(tinytex)
+library(UsingR)
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "mnist_file_mgmt.R"))
+source(here("code", "oecd_bli.R"))
+source(here("code", "z_score.R"))
+```
+
+------------------------------------------------------------------------
+
+Vectors and matrices are the central objects of linear algebra.  In data science and machine learning, the rows and columns of a _data matrix_ have particular roles.  Each row is composed of different types of values and represents a single subject, or more generally, a single case of data.  Each column (known as a _feature vector_ or _data variable_) represents one of these prescribed types of values.  Let's consider some examples.
+
+## Example Data Sets
+
+### Heights of Parents and Oldest Child
+
+```{r}
+#| label: galton_3d
+
+data(HistData::GaltonFamilies)
+galton_3d <- GaltonFamilies |> 
+  tibble::as_tibble() |> 
+  dplyr::group_by(family) |> 
+  dplyr::filter(childNum == 1) |>  # Oldest child
+  dplyr::select(father, mother, childHeight, gender) |> 
+  dplyr::rename(child = childHeight) |> 
+  dplyr::ungroup()
+
+# cite the following values in the narrative
+n_children_all      <- nrow(GaltonFamilies)
+n_families          <- nrow(galton_3d)
+n_child_1_daughters <- sum(galton_3d$ gender == "female")
+n_child_1_sons      <- sum(galton_3d$ gender == "male")
+```
+
+In 1885 Sir Francis Galton examined the heights (in inches) of parents and their adult children to determine the strength of evidence to support height as a hereditary trait.  The corresponding `R` data set `HistData::GaltonFamilies` consists of `r n_children_all` adult children from a total of `r n_families` families.  Restricting attention to the oldest child in each family, there were `r n_child_1_daughters` daughters and `r n_child_1_sons` sons.
+
+The table below shows a portion of this data matrix.  Each row represents a family and consists of: a family identifier, the father's height, the mother's height, the oldest child's height, and the oldest child's gender.
+
+```{r}
+#| label: tbl-galton-3d
+#| tbl-cap: "Galton's heights in inches of (father, mother, oldest child)"
+
+galton_3d |> 
+  dplyr::slice_head(n = 6) |> 
+  knitr::kable(
+  caption = "Heights of (father, mother, oldest child)"
+)
+```
+
+The figure below represents all the families, with the gender of the oldest child distinguished by color: red for daughters and blue for sons.
+
+```{r}
+#| label: fig-g-mfc-scat3d
+#| fig-cap: "(mother, father, child) heights, with daughters shown in red"
+
+g_mfc_s3d <- scatterplot3d::scatterplot3d(
+  x = galton_3d$ mother, xlab = "mother", 
+  y = galton_3d$ father, ylab = "father", 
+  z = galton_3d$ child,  zlab = "child", 
+  color = dplyr::if_else(
+    galton_3d$ gender == "male", "blue", "red"), 
+  main = "(mother, father, child) heights", 
+  sub  = "daughters in red, sons in blue"
+)
+```
+
+In @sec-conditioning we regressed the son's height on the father's height.  We obtained the regression line, which approximates the graph of averages: the average son's height per father's height.  The linear regression can be interpreted as a linear prediction of the height of a son whose father is of some given height.
+
+We can now expand on this idea by regressing the son's height on the heights of both the mother and the father.  This is a model in which the predicted son's height, $\hat{s}$, is some constant plus some linear combination of the parents' heights.
+
+$$
+\begin{align}   
+  \hat{s} & = \mathcal{l}_{R}(m, f) \\   
+  &= \beta_0 \; + \; \beta_m \times m \; + \; \beta_f \times f 
+\end{align} 
+$$ {#eq-s-per-mf-regression-plane}
+
+where 
+
+$$
+\begin{align} 
+  \hat{s} &= \text{predicted height of son} \\ 
+  m &= \text{height of mother}  \\ 
+  f &= \text{height of father} 
+\end{align} 
+$$ {#eq-s-per-mf-2}
+
+This equation represents a plane in 3-dimensional space.  Using least-squares regression to estimate the coefficients $(\beta_0, \beta_m, \beta_f)$, we obtain a plane (@fig-g-mfs-scat3d) that gives the best linear approximation to the son's height $(\hat{s})$ for a given pair of parent heights $(m, f)$. [^least-squares-approximation]
+
+[^least-squares-approximation]: "Best" in the sense of minimizing the squared residuals of actual minus predicted sons' heights.
+
+```{r}
+#| label: s-mf-lm
+
+s_mf_lm <- lm(
+  data    = galton_3d |> dplyr::filter(gender == "male"), 
+  formula = child ~ mother + father)
+```
+
+```{r}
+#| label: s-mf-tbl
+
+s_mf_tbl <- galton_3d |> 
+  dplyr::filter(gender == "male") |> 
+  dplyr::rename(son = child) |> 
+  dplyr::mutate(s_hat = s_mf_lm$ fitted.values)
+```
+
+```{r}
+#| label: fig-g-mfs-scat3d
+#| fig-cap: "Predicted height of son given (mother, father) heights"
+
+g_mfs_s3d <- scatterplot3d(
+  x = s_mf_tbl$ mother, xlab = "mother", 
+  y = s_mf_tbl$ father, ylab = "father", 
+  z = s_mf_tbl$ son,    zlab = "son", 
+  pch = 16, 
+  color = "steelblue",
+  angle = 55)
+
+# Add the regression plane
+g_mfs_s3d$ plane3d(
+  s_mf_lm, lty.box = "solid", col = "purple")
+```
+
+```{r}
+#| label: g-mfs-scat3d-OLD
+
+g_mfs_s3d_OLD <- scatterplot3d::scatterplot3d(
+  x = s_mf_tbl$ mother, xlab = "mother", 
+  y = s_mf_tbl$ father, ylab = "father", 
+  z = s_mf_tbl$ s_hat,  zlab = "son", 
+  color = "purple", 
+  main = "(mother, father, son) heights", 
+  sub  = "predicted sons' heights in purple"
+)
+```
+
+In vector-matrix notation we are seeking a vector $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ of coefficient values that yields the least-squares solution to the following linear approximation problem.
+
+$$
+\begin{align} 
+  s_\bullet &\approx (1_\bullet, m_\bullet, f_\bullet) \times 
+    \begin{pmatrix} 
+      \hat{\beta}_0 \\ \hat{\beta}_m \\ \hat{\beta}_f
+    \end{pmatrix} 
+\end{align} 
+$$ {#eq-s-per-mf-3}
+
+where 
+
+$$
+\begin{align} 
+  s_\bullet &= \text{data column vector: heights of sons} \\ 
+  1_\bullet &= \text{column vector } (1, \ldots, 1) \\ 
+  m_\bullet &= \text{data column vector: heights of mothers}  \\ 
+  f_\bullet &= \text{data column vector: heights of fathers} 
+\end{align} 
+$$ {#eq-s-per-mf-4}
+
+This is a statistical estimation problem that corresponds to the following linear algebra problem and notation.
+
+$$
+\begin{align} 
+  b_\bullet &\approx A_{\bullet, \bullet} \times x_\bullet
+\end{align} 
+$$ {#eq-b-Ax}
+
+where 
+
+$$
+\begin{align} 
+  b_\bullet &= s_\bullet \\ 
+  A_{\bullet, \bullet} &= (1_\bullet, m_\bullet, f_\bullet) \\ 
+  x_\bullet &= (\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f) 
+\end{align} 
+$$ {#eq-b-Ax-2}
+
+It turns out that the least squares solution $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ can be obtained as the vector of coefficients of an orthogonal projection of vector $s_\bullet$ onto the 3-dimensional subspace spanned by vectors $(1_\bullet, m_\bullet, f_\bullet)$.  More on this later.
+
+### Survey Data: Better Life Index
+
+```{r}
+#| label: bli-long
+bli_long <- get_bli_long()
+```
+
+```{r}
+#| label: bli-wide
+
+bli_wide <- assert_bli_wide(bli_long)
+
+# record constants to be used in narrative
+n_bli_loc   <- nrow(bli_wide)
+n_bli_comps <- ncol(bli_wide) - 2L
+```
+
+We now turn to a data set having several data columns, namely the OECD's Better Life Index (BLI). [^OECD-about] The following table shows a portion of the data.
+
+[^OECD-about]: The OECD (Organisation for Economic Co-operation and Development) works with 100+ countries to collect and analyze data in order to promote public policy.  The OECD's 38 Member countries span the world, from North America and South America to Europe and Asia-Pacific.
+
+```{r}
+#| label: tbl-bli-wide
+#| tbl-cap: "Better Life Index (BLI)"
+
+bli_wide |> print(n = 6)
+```
+
+Each row of this data matrix gives specified measurements of an identified country.  The first two columns give, respectively, each country's OECD code and name.  The remaining `r n_bli_comps` columns are measures pertaining to the well-being of the populace.
+
+The column name of each measures consists of a two-letter prefix followed by a suffix.  The prefix is associated with a broad indicator of social well-being.  The suffix pertains to a particular component of this indicator.  Here is an expansion of these prefixes.
+
+```{r}
+#| label: bli-comp-prefix
+bli_comp_prefix <- assert_bli_comp_prefix()
+```
+
+```{r}
+#| label: tbl-bli-comp-prefix
+#| tbl-cap: "BLI Indicators and Sub-Components"
+
+bli_comp_prefix |> 
+  dplyr::rename(components = comps) |> 
+  knitr::kable(
+    caption = "BLI Indicators and Sub-Components")
+```
+
+The component indicators (corresponding to the suffix of the column name) are elaborated in the following table.
+
+```{r}
+#| label: bli-components
+bli_components <- assert_bli_component_indicators()
+```
+
+```{r}
+#| label: tbl-bli-components
+#| tbl-cap: "BLI Component Indicators"
+
+bli_components |> 
+  dplyr::select(prefix, suffix, unit, post_name, dscr) |> 
+  dplyr::rename(
+    name = post_name, 
+    description = dscr
+  ) |> 
+  knitr::kable(
+    caption = "BLI Component Indicators")
+```
+
+The `unit` column in the above table gives the unit of measure, with `PC` meaning percent, `YR` meaning number of years, and so on.
+
+We now turn to a statistical and algebraic treatment of the BLI data matrix of @tbl-bli-wide.  Consider the indicator component `SW_LIFS` (Life Satisfaction) as a response variable, with the remaining `r n_bli_comps -1L` indicator components serving as explanatory variables.  As with the previous data example, we want to approximate or predict the response variable by a constant $\beta_0$ plus a linear combination of the explantory variables, as follows.
+
+$$
+\begin{align} 
+  L_\bullet &\approx (1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet}) \times 
+    \begin{pmatrix} 
+      \hat{\beta}_0 \\ \hat{\beta}_1 \\ \vdots \\ \hat{\beta}_d
+    \end{pmatrix} 
+\end{align} 
+$$ {#eq-L-per-C}
+
+where 
+
+$$
+\begin{align} 
+  L_\bullet &= \text{life satisfaction indicator per country} \\ 
+  1_\bullet &= \text{column vector } (1, \ldots, 1) \\ 
+  C_{k, \bullet} &= k^{th} \text{ indicator component per country} \\ 
+  d &= \text{number of explanatory indicators}
+\end{align} 
+$$ {#eq-L-per-C-2}
+
+We now have more explanatory variables than in the previous example, a fact that merits some comment.
+
+On the one hand, the approach to determining least-squares regression coefficients $\hat{\beta}_0, \ldots, \hat{\beta}_d$ is unchanged.  We project the response vector, now $L_\bullet$, onto the space spanned by the constant vector $1_\bullet$ along with the explanatory variables, that is onto the space spanned by $(1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})$.  The fitted coefficients yield a function of the explanatory variables that forms a linear hyperplane of dimension `r n_bli_comps - 1L` that passes through a cloud of data points, $(C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)$, in a space of dimension `r n_bli_comps`.
+
+On the other hand, we are now estimating `r n_bli_comps` regression coefficients based on observations from just `r n_bli_loc` countries.  From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients.  From the perspective of numerical linear algebra, the vector of fitted coefficients $(\hat{\beta}_0, \ldots, \hat{\beta}_d)$ is less stable (more sensitive to error in the data) than it was in the previous example.
+
+### MNIST: Images of Handwritten Digits
+
+The MNIST database (Modified National Institute of Standards and Technology database) is a large database of handwritten decimal digits consisting of 60,000 training images and 10,000 testing images. [^MNIST-refs]
+
+[^MNIST-refs]: See @LeCun_Cortes_Burges_2005 and @wiki_MNIST.
+
+The history of this database goes back to 1988, when the US Postal Service constructed images of digits appearing on handwritten zip codes.  Around the same time the US Census Bureau requested NIST to evaluate optical character recognition (OCR) systems.  In 1992, NIST and the Census Bureau sponsored a competition in which participating teams were given images of Handwriting Sample Forms (HSFs), including handwritten decimal digits.  The initial version of MNIST was constructed sometime before summer 1994.
+
+```{r}
+#| label: read-xmpl-train
+# Read a tibble (created in another project) that represents 
+# a minimal subset of one (training set) image per distinct label.
+
+xmpl_train_image_tbl <- read_tsv(here::here(
+  "data", "mnist_xmpl_per_digit", "xmpl_train_image_tbl.txt"
+))
+
+```
+
+Here's an example of each handwritten digit from the training set of images.
+
+```{r}
+#| label: fig-xmpl-train
+#| fig-cap: "Example images of handwritten digits from the MNIST dataset"
+
+g_xampl_train <- xmpl_train_image_tbl |> 
+  arrange(label, img_dx, col_dx, row_dx) |> 
+  ggplot2::ggplot(aes(x = col_dx, y = row_dx, fill = pixel)) +
+  geom_raster() +  
+  scale_fill_gradient(low = "white", high = "black") +
+  scale_y_reverse() +
+  facet_wrap(~ label, nrow = 2, ncol = 5,
+             labeller = labeller(label = \(x) paste("Digit:", x))) +
+  coord_equal() +
+  theme_void() +
+  theme(
+    strip.text = element_text(size = 11, face = "bold"),
+    legend.position = "none",
+    panel.spacing = unit(0.5, "lines")
+  )
+g_xampl_train
+
+```
+
+Each image is represented by a $28 \times 28$ matrix of pixels, with each pixel represented as a grayscale integer value from 0 through 255.  That is, each image represents a single vector in a space of dimension 784 $(28 \times 28)$.
+
+The 1992 competition prompted the development of algorithms to determine the decimal digit represented by any such image.  This is a classification problem: to label each case of data (image) as belonging to one of several possible categories (decimal digits).
+
+One such method, multinomial logistic regression, assigns a probability that a given image represents a specified digit, resulting in a 10-element probability vector per image. [^wiki-multinomial-regression]
+
+[^wiki-multinomial-regression]: See @wiki_multinomial_regression.
+
+#### Multinomial Logistic Regression
+
+To formulate the model, we convert the representation of an image from a $28 \times 28$ matrix of pixels into a vector of pixels of length 784. [^row-major-format]  We'll denote such a vector as $(P_1, \ldots, P_d)$, where $d = 784$.
+
+[^row-major-format]: The conversion of a matrix of pixels to a vector of pixels is known as raster-to-vector (R2V) conversion, usually in row-major format, whereby the elements of the vector are taken from the top row and then from each succeeding row.  See @wiki_raster.
+
+Let $D$ denote the digit represented by the image.  The ordering of the digits from 0 through 9 is not directly relevant to the image-recognition problem, so let us regard $D$ as a categorical variable having the set $\{ 0, 1, \ldots, 9 \}$ as possible values.  An alternative representation is the set of indicator vectors $e_0 = (1, 0, \ldots, 0)$ through $e_9 = (0, 0, \ldots, 1)$, called "one-hot encoding" in machine learning. [^one-hot]
+
+[^one-hot]: See @wiki_one-hot and @wiki_categorical_variable.
+
+Then the multinomial logistic regression model can be formulated as follows.
+
+$$
+\begin{align} 
+  \log_e{ \frac{P(D = \nu)}{P(D = 0)} } &= (1, P_1, \ldots, P_d) \times 
+    \begin{pmatrix} 
+      \beta_0^{(\nu)} \\ \beta_1^{(\nu)} \\ \vdots \\ \beta_d^{(\nu)}
+    \end{pmatrix} & \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align} 
+$$ {#eq-log-ratio-per-image}
+
+with 
+
+$$
+\begin{align} 
+  P(D = 0) &= 1 - \sum_{\nu = 1}^9 P(D = \nu)
+\end{align} 
+$$ {#eq-log-ratio-per-image-2}
+
+For a more compact notation let $X_{\bullet} = (1, P_1, \ldots, P_d)$ and let $\beta_{\bullet}^{(\nu)} = (\beta_0^{(\nu)}, \beta_1^{(\nu)}, \ldots, \beta_d^{(\nu)})$, with the inner product of these two vectors denoted as $X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}$.  Then we have 
+
+$$
+\begin{align} 
+  \log_e{ \frac{P(D = \nu)}{P(D = 0)} } &= X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)} & \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align} 
+$$ {#eq-log-ratio-per-image-3}
+
+Exponentiation of @eq-log-ratio-per-image-3 gives:
+
+$$
+\begin{align} 
+  \{ P(D = \nu) \} &= \{ P(D = 0) \} \times e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}} & \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align} 
+$$ {#eq-log-ratio-per-image-4}
+
+Taking the sum over $\nu$ we have: 
+
+$$
+\begin{align} 
+  \sum_{\nu = 1}^9 {P(D = \nu)} &= \{ P(D = 0) \} \times \sum_{\nu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}}
+\end{align} 
+$$ {#eq-log-ratio-per-image-5}
+
+Now applying @eq-log-ratio-per-image-2 we have 
+
+$$
+\begin{align} 
+  \left \{ 1 - P(D = 0) \right \} &= \{ P(D = 0) \} \times \sum_{\nu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}}
+\end{align} 
+$$ {#eq-log-ratio-per-image-6}
+
+which yields: 
+
+$$
+\begin{align} 
+  P(D = 0) &= \frac{1} { 1 + \sum_{\nu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}} }
+\end{align} 
+$$ {#eq-log-ratio-per-image-7}
+
+Applying @eq-log-ratio-per-image-4 gives: 
+
+$$
+\begin{align} 
+  P(D = \nu) &= \frac{ e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}} } { 1 +  \sum_{\mu = 1}^9 e^{X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\mu)}} } & \text{ for } \nu \in \{ 1, \ldots, 9 \}
+\end{align} 
+$$ {#eq-log-ratio-per-image-8}
+
+#### Matrix-Vector Representation
+
+@eq-log-ratio-per-image-3 pertains to the probability that a single image represents a single digit $\nu \in \{1, \ldots, 9 \}$.  We adopt the following matrix notation to represent all, say $n$, images in a data set, and all 9 possible values of $\nu$.  Using $i$ as a row index representing a single image, and $\nu$ as a column index, we have:
+
+$$
+\begin{align} 
+  \log_e{ \frac{P(D_i = \nu)}{P(D_i = 0)} } &= X_{i, \bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)} 
+\end{align} 
+$$ {#eq-log-ratio-per-image-9}
+
+Expanding the last equation to matrix notation, we have
+
+$$
+\begin{align} 
+&
+\begin{pmatrix} 
+  \log_e{ \frac{P(D_1 = 1)}{P(D_1 = 0)} }, & \ldots, & \log_e{ \frac{P(D_1 = 9)}{P(D_1 = 0)} } \\ 
+  \vdots & \vdots & \vdots \\
+  \log_e{ \frac{P(D_n = 1)}{P(D_n = 0)} }, & \ldots, & \log_e{ \frac{P(D_n = 9)}{P(D_n = 0)} }
+\end{pmatrix}  \\ \\ 
+&= 
+\begin{pmatrix} 
+  X_{1, \bullet} \\ 
+  \vdots \\
+  X_{n, \bullet}
+\end{pmatrix}
+\begin{pmatrix} 
+  \beta_{\bullet}^{(1)}, & \ldots, & \beta_{\bullet}^{(9)}
+\end{pmatrix}
+\end{align} 
+$$ {#eq-log-ratio-per-image-10}
+
+The matrix on the left side of @eq-log-ratio-per-image-10 has dimensions $n \times 9$.  On the right side, the first matrix factor has dimensions $n \times 785$, and the second matrix factor has dimensions $785 \times 9$.

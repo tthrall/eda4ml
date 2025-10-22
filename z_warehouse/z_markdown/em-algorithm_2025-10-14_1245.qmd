@@ -1,0 +1,567 @@
+# EM: the Expectation-Maximization Algorithm {#sec-em-algo}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(GGally)
+# library(gutenbergr)
+library(here)
+# library(ISLR2)
+# library(janeaustenr)
+library(LaplacesDemon)
+library(latex2exp)
+# library(learnr)
+library(MASS)
+library(mixtools)
+# library(quanteda)
+# library(SAPP)
+# library(tidytext)
+library(tidyverse)
+# library(timeSeriesDataSets)
+library(tinytex)
+# library(tm)
+# library(tokenizers)
+library(topicmodels)
+# library(tsibble)
+library(tufte)
+
+```
+
+```{r}
+#| label: local-source
+
+# source(here("code", "rmse_per_grp.R"))
+# source(here("code", "xtabs_to_jaccard.R"))
+# source(here("code", "gen_circuit.R"))
+```
+
+------------------------------------------------------------------------
+
+## Background
+
+Latent Dirichlet Allocation (LDA) was proposed as a method of topic modeling in 2003 in a paper by Blei, Ng, and Jordan. The method is briefly mentioned in Part 1 of the course. Several course participants requested a more detailed description. This note prepares for the requested response by introducing the EM Algorithm.[^book-Peng-ASC-EM]
+
+[^book-Peng-ASC-EM]:  See @rdpeng2022advstatcomp [chp. 4], and @EM_algo_Wikipedia_2025.
+
+## Example: Old Faithful eruptions
+
+### Delay and Duration
+
+The figure below represents the duration of eruptions ("duration") and the interval between eruptions ("delay")[^delay] of the "Old Faithful" geyser in Yellowstone National Park, Wyoming from August 1 to August 15, 1985.[^faithful-data]
+
+[^delay]: "Delay" here refers to the length of time *preceding* the current eruption. The (`delay`, `duration`) variables are recorded in minutes.
+
+[^faithful-data]: There are two prominent `R` packages representing the Old Faithful measurements during August, 1985. The `MASS::geyser` data set of 299 observations includes nocturnal measurements whose duration was coded as 2, 3 or 4 minutes, having originally been described as ‘short’, ‘medium’ or ‘long’. The `datasets::faithful` data set of 272 measurements, shown in the figure, excludes 27 of these nocturnal measurements.
+
+```{r}
+#| label: faithful-tbl
+
+faithful_tbl <- datasets::faithful |> 
+  tibble::as_tibble() |> 
+  dplyr::rename(
+    duration = eruptions, 
+    delay    = waiting
+  ) |> 
+  dplyr::select(delay, duration)
+```
+
+```{r}
+#| label: fig-faithful-tbl
+#| fig-cap: "Old Faithful eruptions: delay and duration (minutes)"
+
+
+g_faithful_tbl <- faithful_tbl |> 
+  ggplot2::ggplot(mapping = aes(
+    x = delay, y = duration
+  )) + 
+  ggplot2::geom_point() + 
+  ggplot2::labs(title = "Old Faithful eruptions: delay and duration") + 
+  ggplot2::xlab("delay (minutes") + 
+  ggplot2::ylab("duration (minutes")
+g_faithful_tbl
+```
+
+### Gausian Mixture Model
+
+The figure shows two clusters of data points.[^faithful-chambers] Here is probability model in which the delay and duration of each eruption follows one of two possible bivariate normal distributions depending on the group, $G$, to which it belongs.
+
+[^faithful-chambers]: Old Faithful eruptions are conjectured to occur in 2 distinct temporal patterns due to the presence of an upper and lower chamber beneath the vertical column (tube) that forms the geyser.  See @Vandemeulebrouck_Roux_Cros_2013.
+
+$$
+\begin{align}
+  \{ \; (\text{delay}, \text{duration}) \; | \; \text{group } G \; \} &\sim \mathcal{N}(\mu_{\bullet}^{(G)}, \Sigma^{(G)}) \\ \\ 
+  & \text{where } \\ \\ 
+  G &= 
+  \begin{cases}
+    1 & \text{with probability } p_1 \\ 
+    2 & \text{with probability } p_2 = 1 - p_1
+  \end{cases}
+\end{align}
+$$ {#eq-nrm-2-given-group}
+
+Averaging across the two groups, a randomly selected eruption has the following mixture of bivariate normal distributions.
+
+$$
+\begin{align}
+  (\text{delay}, \text{duration}) &\sim p_1 \; \mathcal{N}(\mu_{\bullet}^{(1)}, \Sigma^{(1)}) + 
+  p_2 \; \mathcal{N}(\mu_{\bullet}^{(2)}, \Sigma^{(2)}) \\ 
+  \\
+  & \text{where } p_1 + p_2 = 1\\
+\end{align}
+$$ {#eq-nrm-2-mixture}
+
+Fitting a single multivariate normal distribution is straightforward[^art-mv-normal-est], but less so for the above mixture of bivariate normal distributions. The Expectation-Maximization (EM) algorithm provides an approach for doing so, as follows.
+
+[^art-mv-normal-est]:  See @Anderson_Olkin_2002.
+
+### Latent Variable: Cluster Membership
+
+In the EM framework, we iteratively assign group-membership, $G = g \in \{ 1, 2 \}$, to each data point.  Based on this set of assignments we update the parameter estimates (the "E" step of the EM algorithm). The new set of parameter estimates yields a new estimate of the likelihood function. We then re-assign cluster-membership to maximize the updated likelihood estimate (the "M" step). The iteration terminates once the magnitude of changes falls below a prescribed threshold.
+
+In `R` this procedure is implemented by the function `mixtools::mvnormalmixEM()`.
+
+### Initial Estimates
+
+Based on the preceding figure we adopt the following initial estimates of the parameters.
+
+1.  Calculate the respective medians of the (`delay`, `duration`) variables.
+
+2.  For each data point determine whether the `delay` value is less than the median of all observed `delay` values. Similarly determine whether the `duration` value is less than the median of all observed `duration` values.
+
+3.  Based on these inequalities, categorize each (`delay`, `duration`) data point as belonging to one of four groups: (lower, lower), (lower, upper), (upper, lower), (upper, upper).
+
+4.  Restrict attention to the (lower, lower), and (upper, upper) groups. Within this restricted set of data points calculate the sample averages and covariance matrices for each of the two groups. Use these as initial estimates of $(\mu_{\bullet}^{(1)}, \mu_{\bullet}^{(2)})$ and $(\Sigma^{(1)}, \Sigma^{(2)})$.
+
+The table below summarizes the groups delineated by the respective medians of (`delay`, `duration`).
+
+```{r}
+#| label: faithful-4
+
+faithful_4 <- faithful_tbl |> 
+  dplyr::mutate(
+    delay_low     = delay    < median(delay), 
+    duration_low  = duration < median(duration)
+  )
+```
+
+```{r}
+#| label: faithful-4-smy
+
+faithful_4_smy <- faithful_4 |> 
+  dplyr::summarise(
+    .by           = c(delay_low, duration_low), 
+    count         = n(), 
+    delay_mean    = mean(delay), 
+    duration_mean = mean(duration), 
+    delay_sd      = sd(delay), 
+    duration_sd   = sd(duration), 
+    dd_cor        = cor(delay, duration), 
+    delay_var     = var(delay), 
+    duration_var  = var(duration), 
+    dd_cov        = cov(delay, duration)
+  )
+```
+
+```{r}
+#| label: tbl-faithful-4-smy
+#| tbl-cap: "Summary statistics for initial groups of data points"
+
+faithful_4_smy |> 
+  dplyr::select(delay_low, duration_low, count:dd_cor) |> 
+  knitr::kable(
+    caption = "Summary statistics for initial groups of data points", 
+    digits = 1
+  )
+```
+
+Restricting attention to the groups in which (`delay`, `duration`) jointly fall either below or above their respective medians, we extract the initial parameter estimates from the table above. Variable `g` is the labeling of each point in the restricted data set to cluster 1 or cluster 2.
+
+```{r}
+#| label: faithful-2
+
+faithful_2 <- faithful_4 |> 
+  dplyr::filter(delay_low == duration_low) |> 
+  dplyr::mutate(
+    g = dplyr::if_else(delay_low, 1L, 2L)
+  ) |> 
+  dplyr::select(g, delay, duration)
+```
+
+```{r initial_est}
+#| label: initial-est
+
+initial_est <- faithful_4_smy |> 
+  dplyr::filter(delay_low == duration_low) |> 
+  dplyr::mutate(
+    g      = dplyr::if_else(delay_low, 1L, 2L), 
+    ct_sum = sum(count), 
+    p      = count/ct_sum
+  ) |> 
+  dplyr::select(
+    g, count, p, delay_mean:dd_cov
+  )
+```
+
+```{r initial_est__kable}
+#| label: tbl-initial-est
+#| tbl-cap: "Initial parameter estimates"
+
+initial_est |> 
+  dplyr::select(g, count, delay_mean:dd_cor) |> 
+  knitr::kable(
+    caption = "Initial parameter estimates", 
+    digits = 1
+  )
+```
+
+The figure below summarizes results so far. We've restricted attention to data points (`delay`, `duration`) such that the two variables are either both below their respective medians or else both above their respective medians. We've defined variable `g` as the grouping variable taking integer values (1, 2) in these two respective cases. For each of the two groups we've constructed an ellipse conforming to the sample mean vector and covariance matrix of the group. The ellipse is designed to capture 50% of the area under a bivariate normal distribution having these parameter values.
+
+```{r}
+#| label: fig-faithful-2
+#| fig-cap: "Old Faithful eruptions: initial normal estimates"
+
+delay_median    <- faithful_tbl$ delay    |> median()
+duration_median <- faithful_tbl$ duration |> median()
+
+g_faithful_2 <- faithful_2 |> 
+  dplyr::mutate(g = forcats::as_factor(g)) |> 
+  dplyr::group_by(g) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = delay, y = duration, colour = g
+  )) + 
+  ggplot2::geom_point(
+    mapping = aes(colour = g, shape = g), 
+    show.legend = TRUE
+  ) + 
+  ggplot2::geom_vline(xintercept = delay_median) + 
+  ggplot2::geom_hline(yintercept = duration_median) + 
+  ggplot2::stat_ellipse(level = 0.5) + 
+  labs(
+    title = "Old Faithful eruptions: initial normal estimates", 
+    subtitle = "50% normal ellipses for quadrants 1 and 3"
+  )
+g_faithful_2
+```
+
+This completes the initial "E" step in the EM algorithm, the estimation of parameter values.
+
+### Log Likelihood
+
+We now begin the initial "M" step (maximization) of the EM algorithm. Using the above parameter estimates we now assign cluster membership (variable `g`) to the points not yet labeled by maximizing the likelihood function, or equivalently (and more conveniently), the logarithm of the likelihood function.
+
+In general, recall that a multivariate normal distribution having mean vector $\mu_{\bullet} \in \mathbb{R}^m$ and covariance matrix $\Sigma$ has likelihood function equal to the product of the multivariate normal density evaluated at each observation vector, say $x_{\bullet}^{(\nu)}$, (that is, at each row of the design matrix $X$).
+
+$$
+\begin{align}
+  \mathcal{L}(X, \mu_{\bullet}, \Sigma) &= \prod_{\nu = 1}^n \mathcal{N}(x_{\bullet}^{(\nu)} - \mu_{\bullet}, \;  \Sigma)
+\end{align}
+$$
+
+Taking the natural logarithm of both sides of this equation, we obtain the log-likelihood function.
+
+$$
+\begin{align}
+  \mathcal{l}(X, \mu_{\bullet}, \Sigma) &= \sum_{\nu = 1}^n \log_e(\mathcal{N}(x_{\bullet}^{(\nu)} - \mu_{\bullet}, \;  \Sigma)) \\ 
+  &= -\frac{m}{2} \log_e(2 \pi) - \frac{1}{2}\log_e(\det{\Sigma}) - 
+  \frac{1}{2} \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \mu_{\bullet})^{\intercal} \;  \Sigma^{-1} (x_{\bullet}^{(\nu)} - \mu_{\bullet}) \\ 
+\end{align}
+$$
+
+Consequently, fitting parameters $\mu_{\bullet}$ and $\Sigma$ to the design matrix $X$ via maximum likelihood amounts to minimizing the sum of quadratic forms on the right side of this equation. (Each term in the sum is referred to as the squared *Mahalanobis distance* between the observation vector and the mean vector.)
+
+$$
+\begin{align}
+  (\hat{\mu}_{\bullet}, \hat{\Sigma}) & = \arg \min \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \mu_{\bullet})^{\intercal} \;  \Sigma^{-1} (x_{\bullet}^{(\nu)} - \mu_{\bullet}) \\ 
+\end{align}
+$$
+
+which yields the sample mean and a variant of the sample covariance matrix.
+
+$$
+\begin{align}
+  \hat{\mu}_{\bullet} & = \frac{1}{n} \sum_{\nu = 1}^n x_{\bullet}^{(\nu)} \\ 
+  \\ 
+  \hat{\Sigma} & = \frac{1}{n} \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \hat{\mu}_{\bullet}) (x_{\bullet}^{(\nu)} - \hat{\mu}_{\bullet})^{\intercal} \\ 
+\end{align}
+$$
+
+For the Old Faithful data, however, we propose a mixture of two distnct normal distributions, that is, two clusters in which the cluster to which each data point belongs is unknown.
+
+Having estimated the normal parameters for clusters 1 and 2, we now label each data point as belonging to the cluster to which it is closest, in the sense of Mahalanobis distance. The results are shown in the next figure.
+
+```{r}
+#| label: f-mu
+
+f_mu <- c(initial_est$delay_mean, initial_est$duration_mean) |> 
+  matrix(nrow = 2, ncol = 2)
+colnames(f_mu) <- c("delay", "duration")
+```
+
+```{r}
+#| label: f-sigma
+
+f_sigma <- list()
+
+f_sigma[[1]] <- c(
+  initial_est$ delay_var    [[1]], 
+  initial_est$ dd_cov       [[1]], 
+  initial_est$ dd_cov       [[1]], 
+  initial_est$ duration_var [[1]]
+) |> 
+  matrix(nrow = 2, ncol = 2)
+
+colnames(f_sigma [[1]]) <- c("delay", "duration")
+rownames(f_sigma [[1]]) <- c("delay", "duration")
+
+f_sigma[[2]] <- c(
+  initial_est$ delay_var    [[2]], 
+  initial_est$ dd_cov       [[2]], 
+  initial_est$ dd_cov       [[2]], 
+  initial_est$ duration_var [[2]]
+) |> 
+  matrix(nrow = 2, ncol = 2)
+
+colnames(f_sigma [[2]]) <- c("delay", "duration")
+rownames(f_sigma [[2]]) <- c("delay", "duration")
+```
+
+```{r}
+#| label: f-tag-tbl
+
+f_tag_tbl <- faithful_tbl |> 
+  dplyr::rowwise() |> 
+  dplyr::mutate(
+    md_1 = mahalanobis(
+      x      = c(delay, duration), 
+      center = f_mu    [1, ], 
+      cov    = f_sigma [[1]]
+    ), 
+    md_2 = mahalanobis(
+      x      = c(delay, duration), 
+      center = f_mu    [2, ], 
+      cov    = f_sigma [[2]]
+    ), 
+    g = dplyr::if_else(md_1 < md_2, 1L, 2L)
+  )
+f_tag_tbl <- f_tag_tbl |> 
+  dplyr::ungroup()
+```
+
+```{r}
+#| label: fig-f-tag-tbl
+#| fig-cap: "Old Faithful: inital clustering of all points"
+
+g_f_tag_tbl <- f_tag_tbl |> 
+  dplyr::mutate(g = forcats::as_factor(g)) |> 
+  dplyr::group_by(g) |> 
+  ggplot(mapping = aes(
+    x = delay, y = duration, group = g
+  )) + 
+  geom_point(
+    aes(
+      colour = g, 
+      shape  = g, 
+    ), 
+    show.legend = TRUE
+  ) + 
+  geom_vline(xintercept = delay_median) + 
+  geom_hline(yintercept = duration_median) + 
+  labs(
+    title = "Old Faithful: inital clustering of all points", 
+    subtitle = "with original quadrants defined by medians"
+  )
+g_f_tag_tbl
+```
+
+This completes the initial maximization step. The table below shows the revised summary statistics per cluster now that the initial assignment to clusters has been completed.
+
+```{r}
+#| label: f-tag-smy
+
+f_tag_smy <- f_tag_tbl |> 
+  dplyr::ungroup() |> 
+  dplyr::summarise(
+    .by = g, 
+    count         = n(), 
+    delay_mean    = mean(delay), 
+    duration_mean = mean(duration), 
+    delay_sd      = sd(delay), 
+    duration_sd   = sd(duration), 
+    dd_cor        = cor(delay, duration), 
+    delay_var     = var(delay), 
+    duration_var  = var(duration), 
+    dd_cov        = cov(delay, duration)
+  )
+```
+
+```{r}
+#| label: tbl-f-tag-smy
+#| tbl-cap: "Summary statistics for initial clusters of data points"
+
+f_tag_smy |> 
+  dplyr::select(g:dd_cor) |> 
+  knitr::kable(
+    caption = "Summary statistics for initial clusters of data points", 
+    digits = 1
+  )
+```
+
+## EM Iterations
+
+We illustrate the iterations of the EM algorithm using function `mvnormalmixEM()` in R package `mixtools`.[^art-mixtools] We provide the function with our initial estimates of normal parameters.
+
+[^art-mixtools]:  See @mixtools2009.
+
+```{r}
+#| label: em-out
+#| echo: true
+
+em_out <- faithful_tbl |> 
+  mixtools::mvnormalmixEM(
+    lambda = c(0.5, 0.5), 
+    mu = list(
+      # delay, duration
+      c(56.6, 2.25), # (lower, lower)
+      c(82.4, 4.47)  # (upper, upper)
+    ), 
+    sigma = list(
+      # (lower, lower)
+      matrix(
+        nrow = 2, ncol = 2, 
+        data = c(
+          59.7,  3.27, 
+          3.27,  0.35
+        )), 
+      # (upper, upper)
+      matrix(
+        nrow = 2, ncol = 2, 
+        data = c(
+          21.5,  0.19, 
+          0.19,  0.08
+        ))
+    ), 
+    verb = TRUE
+  )
+```
+
+Reports from each iteration were requested by setting function parameter `verb = TRUE` (verbose). The estimated log-likelihood is shown for each iteration, along with the change in that value from the previous iteration.
+
+The final estimates of the normal parameters are shown in the table below, and illustrated in the figure below.
+
+```{r}
+#| label: f-em
+
+f_em <- faithful_tbl |> 
+  dplyr::bind_cols(em_out$posterior) |> 
+  dplyr::mutate(
+    g = dplyr::if_else(comp.1 > comp.2, 1L, 2L)
+  )
+```
+
+```{r}
+#| label: f-em-smy
+
+f_em_smy <- f_em |> 
+  dplyr::summarise(
+    .by           = g, 
+    count         = n(), 
+    delay_mean    = mean(delay), 
+    duration_mean = mean(duration), 
+    delay_sd      = sd(delay), 
+    duration_sd   = sd(duration), 
+    dd_cor        = cor(delay, duration), 
+    delay_var     = var(delay), 
+    duration_var  = var(duration), 
+    dd_cov        = cov(delay, duration)
+  ) |> 
+  arrange(g)
+```
+
+```{r}
+#| label: tbl-f-em-smy
+#| tbl-cap: "Summary statistics for final groups of data points"
+
+f_em_smy |> 
+  dplyr::select(g, count:dd_cor) |> 
+  knitr::kable(
+    caption = "Summary statistics for final groups of data points", 
+    digits = 1
+  )
+```
+
+```{r}
+#| label: fig-f-em
+#| fig-cap: "Old Faithful eruptions: final normal estimates"
+
+g_f_em <- f_em |> 
+  dplyr::mutate(g = forcats::as_factor(g)) |> 
+  dplyr::group_by(g) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = delay, y = duration, colour = g
+  )) + 
+  ggplot2::geom_point(
+    mapping = aes(colour = g, shape = g), 
+    show.legend = TRUE
+  ) + 
+  ggplot2::geom_vline(xintercept = delay_median) + 
+  ggplot2::geom_hline(yintercept = duration_median) + 
+  ggplot2::stat_ellipse(level = 0.5) + 
+  ggplot2::labs(
+    title = "Old Faithful eruptions: final normal estimates", 
+    subtitle = "50% normal ellipses for clusters 1 and 2"
+  )
+g_f_em
+```
+
+## Group Membership over Time
+
+According to the EM algorithm, here is the pattern of group membership as a function of time.  More precisely, here is the posterior probability of group-1 membership as a function of cumulative delay expressed in days.
+
+```{r}
+#| label: fig-grp-per-cum-delay
+#| fig-cap: "Group 1 posterior probability over cumulative delay (days)"
+
+g_grp_per_cum_delay <- f_em |> 
+  # cumulative delay in days
+  dplyr::mutate(
+    cum_delay = cumsum(delay) / (60 * 24), 
+    g = forcats::as_factor(g)
+  ) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = cum_delay, y = comp.1, color = g, fill = g)) + 
+  ggplot2::geom_point(
+    mapping = aes(colour = g, shape = g), 
+    show.legend = TRUE) + 
+  ggplot2::labs(
+    title = "Group 1 posterior probability over cumulative delay (days)") + 
+  ggplot2::xlab("cumulative delay (days)") + 
+  ggplot2::ylab("group 1 posterior probability")
+g_grp_per_cum_delay
+```
+
+Recall that group 1 refers to the eruptions having shorter delays and shorter durations.  The figure shows that these are interupted by short stretches of eruptions from group 2.  The figure also show that posterior probabilities come out to be nearly zero or else nearly unity, with rare exceptions.
+
+## Closing Remarks
+
+Several papers present the mathematics underlying the EM algorithm, and one can also find tutorials that illustrate the convergence of the algorithm.
+
+## Resources
+
+In addition to the references listed below, see the following.
+
+[The EM Algorithm Explained](https://medium.com/@chloebee/the-em-algorithm-explained-52182dbb19d9) blog by Chloe Bi, 2019
+
+## References

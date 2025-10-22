@@ -1,0 +1,8 @@
+example	type	page
+Lit_Digest_Poll	obs	334
+Truman_Dewey	obs	337
+US_elections	obs	342
+UCB_Admissions	obs	17
+Salk_Vaccine	dox	3
+Portacaval_Shunt	dox	7
+NB10	dox	98
