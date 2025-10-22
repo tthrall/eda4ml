@@ -392,7 +392,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">23:56 Tue 21-Oct-2025</p>
+      <p class="date">10:20 Wed 22-Oct-2025</p>
     </div>
   </div>
   
@@ -405,7 +405,7 @@ window.Quarto = {
 
 
 <hr>
-<p>Vectors and matrices are the central objects of linear algebra. And central to data science and machine learning is the notion of a <em>data matrix</em>, in which each row is composed of different types of values that represent a single case of data. For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study. In contrast, each column (known as a <em>feature vector</em> or <em>data variable</em>) represents multiple instances of just one of these prescribed types of values. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Let’s consider some examples.</p>
+<p>Vectors and matrices are the central objects of linear algebra. And central to data science and machine learning is the notion of a <em>data matrix</em>, in which each row is composed of different types of values that represent a single case of data. For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study. In contrast, each column (known as a <em>feature vector</em> or <em>data variable</em>) represents multiple instances of just one of these prescribed types of value. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Let’s consider some examples.</p>
 <section id="data-examples" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="data-examples"><span class="header-section-number">6.1</span> Data Examples</h2>
 <section id="heights-of-parents-and-oldest-child" class="level3" data-number="6.1.1">
@@ -416,12 +416,12 @@ window.Quarto = {
 <div id="tbl-galton-3d" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-galton-3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;6.1: Galton’s heights in inches of (father, mother, oldest child)
+Table&nbsp;6.1: Family heights in inches: father, mother, oldest child
 </figcaption>
 <div aria-describedby="tbl-galton-3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Heights of (father, mother, oldest child)</caption>
+<caption>Family heights: father, mother, oldest child</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">family</th>
@@ -484,13 +484,13 @@ Table&nbsp;6.1: Galton’s heights in inches of (father, mother, oldest child)
 <p>The figure below represents all the families, with the gender of the oldest child distinguished by color: red for daughters and blue for sons.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-g-mfc-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-mfc-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-g-mfc-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-g-mfc-scat3d-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-mfc-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-mfc-scat3d-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-g-mfc-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.1: (mother, father, child) heights, with daughters shown in red
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mfc-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Height of oldest child: daughters (red), sons (blue)
 </figcaption>
 </figure>
 </div>
@@ -512,16 +512,16 @@ Figure&nbsp;6.1: (mother, father, child) heights, with daughters shown in red
   f &amp;= \text{height of father}
 \end{align}
 \qquad(6.2)\]</span></span></p>
-<p>This equation represents a plane in 3-dimensional space. Using least-squares regression to estimate the coefficients <span class="math inline">\((\beta_0, \beta_m, \beta_f)\)</span>, we obtain a plane (<a href="#fig-g-mfs-scat3d" class="quarto-xref">Figure&nbsp;<span>6.2</span></a>) that gives the best linear approximation <span class="math inline">\((\hat{s})\)</span> to the son’s height for a given pair of parent heights <span class="math inline">\((m, f)\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>Each set of coefficient values determines some plane in 3-dimensional space. The coefficients <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)\)</span> obtained by linear regression determines the plane (<a href="#fig-mfs-scat3d" class="quarto-xref">Figure&nbsp;<span>6.2</span></a>) that gives the best linear approximation <span class="math inline">\((\hat{s})\)</span> to the son’s height for a given pair of parent heights <span class="math inline">\((m, f)\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-g-mfs-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-mfs-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-g-mfs-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-g-mfs-scat3d-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-mfs-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-mfs-scat3d-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-g-mfs-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.2: Observed (point) and predicted (plane) height of son given (mother, father) heights
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mfs-scat3d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.2: Son’s height given (mother, father) heights: predicted (plane) and observed (point)
 </figcaption>
 </figure>
 </div>
@@ -1034,7 +1034,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 \end{align}
 \qquad(6.19)\]</span></span></p>
 <p>Each of the elements of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> has alternative names, including the following. <a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
-<p><span id="eq-generic-lm-2"><span class="math display">\[
+<p><span id="eq-generic-lm-terms"><span class="math display">\[
 \begin{align}
   y &amp;= \text{a } \textit{response, target,} \text{ or } \textit{labeling}  \text{ variable} \\
   X &amp;= \text{columns of } \textit{explanatory, predictor,} \text{ or } \textit{feature}  \text{ variables} \\
@@ -1055,7 +1055,39 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 </section>
 <section id="geometry" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="geometry"><span class="header-section-number">6.3</span> Geometry</h2>
-<p>We’ll see the problem from both angles, then focus on where the mathematics actually happens.</p>
+<p>In this section we’ll discuss the example of family heights, in particular the linear regression of the son’s height on the heights of the mother and father. We’ll discuss the geometry of the least-squares solution as a reference point for the remainder of this chapter.</p>
+<p>Here’s the linear regression problem in matrix format.</p>
+<p><span id="eq-generic-lm-mat"><span class="math display">\[
+\begin{align}
+  y_\bullet &amp;= X_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
+\end{align}
+\qquad(6.21)\]</span></span></p>
+<p>where</p>
+<p><span id="eq-generic-lm-2"><span class="math display">\[
+\begin{align}
+  y_\bullet &amp;= \text{heights of sons } = s_\bullet \\
+  m_\bullet &amp;= \text{heights of mothers } \\
+  f_\bullet &amp;= \text{heights of fathers } \\
+  X_{_\bullet, _\bullet} &amp;= \text{feature matrix} = (1_\bullet, m_\bullet, f_\bullet) \\
+  \beta_\bullet &amp;= \text{coefficient vector} = (\beta_0, \beta_1, \beta_2)^\top \\
+  \epsilon_\bullet &amp;= \text{residual vector}
+\end{align}
+\qquad(6.22)\]</span></span></p>
+<p>Consider the least-squares estimate <span class="math inline">\(\hat{\beta}_\bullet\)</span> and the consequent predicted height <span class="math inline">\(\hat{y}_\bullet\)</span> of the son. <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> is based on a random sample of 20 families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the plane of predictions.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-smf-smpl" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-smf-smpl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-smf-smpl-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-smf-smpl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <section id="least-squares-two-perspectives" class="level3" data-number="6.3.1">
 <h3 data-number="6.3.1" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.3.1</span> Least Squares: Two Perspectives</h3>
 </section>

@@ -44,7 +44,7 @@ source(here("code", "z_score.R"))
 
 ------------------------------------------------------------------------
 
-Vectors and matrices are the central objects of linear algebra.  And central to data science and machine learning is the notion of a _data matrix_, in which each row is composed of different types of values that represent a single case of data.  For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study.  In contrast, each column (known as a _feature vector_ or _data variable_) represents multiple instances of just one of these prescribed types of values. [^data-variable]  Let's consider some examples.
+Vectors and matrices are the central objects of linear algebra.  And central to data science and machine learning is the notion of a _data matrix_, in which each row is composed of different types of values that represent a single case of data.  For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study.  In contrast, each column (known as a _feature vector_ or _data variable_) represents multiple instances of just one of these prescribed types of value. [^data-variable]  Let's consider some examples.
 
 [^data-variable]: To be more precise, every _data variable_ qualifies as a _feature vector_, but a feature vector may also be some function of the data and other information.
 
@@ -77,28 +77,29 @@ The table below shows a portion of this data matrix.  Each row represents a fami
 
 ```{r}
 #| label: tbl-galton-3d
-#| tbl-cap: "Galton's heights in inches of (father, mother, oldest child)"
+#| tbl-cap: "Family heights in inches: father, mother, oldest child"
 
 galton_3d |> 
   dplyr::slice_head(n = 6) |> 
   knitr::kable(
-  caption = "Heights of (father, mother, oldest child)"
+  caption = "Family heights: father, mother, oldest child"
 )
 ```
 
 The figure below represents all the families, with the gender of the oldest child distinguished by color: red for daughters and blue for sons.
 
 ```{r}
-#| label: fig-g-mfc-scat3d
-#| fig-cap: "(mother, father, child) heights, with daughters shown in red"
+#| label: fig-mfc-scat3d
+#| fig-cap: "Height of oldest child: daughters (red), sons (blue)"
 
 g_mfc_s3d <- scatterplot3d::scatterplot3d(
   x = galton_3d$ mother, xlab = "mother", 
   y = galton_3d$ father, ylab = "father", 
   z = galton_3d$ child,  zlab = "child", 
+  pch = 16, 
   color = dplyr::if_else(
-    galton_3d$ gender == "male", "blue", "red"), 
-  main = "(mother, father, child) heights", 
+    galton_3d$ gender == "male", "steelblue", "red"), 
+  main = "Family heights: mother, father, child", 
   sub  = "daughters in red, sons in blue"
 )
 ```
@@ -124,7 +125,7 @@ $$
 \end{align} 
 $$ {#eq-s-per-mf-2}
 
-This equation represents a plane in 3-dimensional space.  Using least-squares regression to estimate the coefficients $(\beta_0, \beta_m, \beta_f)$, we obtain a plane (@fig-g-mfs-scat3d) that gives the best linear approximation $(\hat{s})$ to the son's height for a given pair of parent heights $(m, f)$. [^least-squares-approximation]
+Each set of coefficient values determines some plane in 3-dimensional space.  The coefficients $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ obtained by linear regression determines the plane (@fig-mfs-scat3d) that gives the best linear approximation $(\hat{s})$ to the son's height for a given pair of parent heights $(m, f)$. [^least-squares-approximation]
 
 [^least-squares-approximation]: "Best" in the sense of minimizing the squared residuals of actual minus predicted sons' heights.
 
@@ -146,23 +147,25 @@ s_mf_tbl <- galton_3d |>
 ```
 
 ```{r}
-#| label: fig-g-mfs-scat3d
-#| fig-cap: "Observed (point) and predicted (plane) height of son given (mother, father) heights"
+#| label: fig-mfs-scat3d
+#| fig-cap: "Son's height given (mother, father) heights: predicted (plane) and observed (point)"
 
-g_mfs_s3d <- scatterplot3d(
+g_mfs_pt <- scatterplot3d(
   x = s_mf_tbl$ mother, xlab = "mother", 
   y = s_mf_tbl$ father, ylab = "father", 
   z = s_mf_tbl$ son,    zlab = "son", 
   pch = 16, 
   color = "steelblue",
-  angle = 55)
+  angle = 55, 
+  main = "Family heights: mother, father, son", 
+  sub  = "The plane contains the predicted heights of sons.")
 
-# Add the regression plane
-s_mf_lm |> g_mfs_s3d$ plane3d(
-  lty          = "solid", 
-  lty.box      = "solid", 
-  draw_polygon = TRUE, 
-  col          = "purple")
+# Add the regression plane ("g_mfs_plane")
+s_mf_lm |> g_mfs_pt$ plane3d(
+  lty          = "solid",
+  lty.box      = "solid",
+  draw_polygon = TRUE,
+  col          = "grey")
 ```
 
 In vector-matrix notation we are seeking a vector $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ of coefficient values that yields the least-squares solution to the following linear approximation problem.
@@ -489,7 +492,7 @@ $$
   \beta &= \text{a vector of model } \textit{coefficients} \text{ or } \textit{parameters} \\ 
   \epsilon &= \text{an } \textit{error} \text{ or } \textit{residual} \text{ term}
 \end{align} 
-$$ {#eq-generic-lm-2}
+$$ {#eq-generic-lm-terms}
 
 This linear regression format follows the more general mathematical notation $y = f(x)$.  In data science and machine learning, however, the response variable $y$ and the feature matrix $X$ have known values, whereas $\beta$ and $\epsilon$ are determined or evaluated over the course of the modeling process.
 
@@ -507,7 +510,92 @@ In the remainder of this chapter we will focus on ideas and methods that help us
 
 ## Geometry
 
-We'll see the problem from both angles, then focus on where the mathematics actually happens.
+In this section we'll discuss the example of family heights, in particular the linear regression of the son's height on the heights of the mother and father.  We'll discuss the geometry of the least-squares solution as a reference point for the remainder of this chapter.
+
+Here's the linear regression problem in matrix format.
+
+$$
+\begin{align} 
+  y_\bullet &= X_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
+\end{align} 
+$$ {#eq-generic-lm-mat}
+
+where 
+
+$$
+\begin{align} 
+  y_\bullet &= \text{heights of sons } = s_\bullet \\ 
+  m_\bullet &= \text{heights of mothers } \\ 
+  f_\bullet &= \text{heights of fathers } \\ 
+  X_{_\bullet, _\bullet} &= \text{feature matrix} = (1_\bullet, m_\bullet, f_\bullet) \\ 
+  \beta_\bullet &= \text{coefficient vector} = (\beta_0, \beta_1, \beta_2)^\top \\ 
+  \epsilon_\bullet &= \text{residual vector}
+\end{align} 
+$$ {#eq-generic-lm-2}
+
+```{r}
+#| label: smf-smpl
+
+n_smf        <- nrow(s_mf_tbl)
+n_smf_smpl   <- 20
+
+set.seed(37)
+smf_smpl_idx <- sample.int(n = n_smf, size = n_smf_smpl)
+smf_smpl_tbl <- 
+  s_mf_tbl [smf_smpl_idx, ] |> 
+  dplyr::select(- s_hat)
+
+```
+
+```{r}
+#| label: smf-smpl-lm
+
+# fit linear model to sampled data
+smf_smpl_lm <- lm(
+  data    = smf_smpl_tbl, 
+  formula = son ~ mother + father
+)
+
+# append column of fitted values
+smf_smpl_tbl <- smf_smpl_tbl |> 
+  dplyr::mutate(s_hat = smf_smpl_lm$ fitted.values)
+```
+
+Consider the least-squares estimate $\hat{\beta}_\bullet$ and the consequent predicted height $\hat{y}_\bullet$ of the son.  @fig-smf-smpl is based on a random sample of `r n_smf_smpl` families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the plane of predictions.
+
+```{r}
+#| label: fig-smf-smpl
+#| fig-cap: "Sampled son heights: residual = observed - predicted"
+
+g_smf_smpl <- scatterplot3d(
+  x = smf_smpl_tbl$ mother, xlab = "mother", 
+  y = smf_smpl_tbl$ father, ylab = "father", 
+  z = smf_smpl_tbl$ son,    zlab = "son", 
+  pch = 16, 
+  color = "steelblue",
+  angle = 55, 
+  main = "Sampled family heights: mother, father, son", 
+  sub  = "son residual = observed - predicted")
+
+# Add the regression plane
+s_mf_lm |> g_smf_smpl$ plane3d(
+  lty          = "solid",
+  lty.box      = "solid",
+  draw_polygon = TRUE,
+  col          = "grey")
+
+# Add line segments from predicted to actual values
+# The key is using g_smf_smpl$xyz.convert() to get the 2D coordinates
+for(i in 1:nrow(smf_smpl_tbl)) {
+  g_smf_smpl$ points3d(
+    c(smf_smpl_tbl$ mother [i], smf_smpl_tbl$ mother [i]),
+    c(smf_smpl_tbl$ father [i], smf_smpl_tbl$ father [i]),
+    c(smf_smpl_tbl$ s_hat  [i], smf_smpl_tbl$ son    [i]),
+    type = "l", col = "red", lwd = 1
+  )
+}
+
+```
 
 ### Least Squares: Two Perspectives
 
