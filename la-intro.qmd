@@ -25,6 +25,7 @@ library(keras)
 library(latex2exp)
 library(OECD)
 library(plotly)
+library(rgl)
 library(R.utils)
 library(reticulate)
 library(scatterplot3d)
@@ -125,7 +126,7 @@ $$
 \end{align} 
 $$ {#eq-s-per-mf-2}
 
-Each set of coefficient values determines some plane in 3-dimensional space.  The coefficients $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ obtained by linear regression determines the plane (@fig-mfs-scat3d) that gives the best linear approximation $(\hat{s})$ to the son's height for a given pair of parent heights $(m, f)$. [^least-squares-approximation]
+Each set of coefficient values determines some plane in the 3-dimensional space of (mother, father, son) heights.  The coefficients $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ obtained by linear regression determine the _regression plane_ (@fig-mfs-scat3d) that gives the best linear approximation $(\hat{s})$ to the son's height for a given pair of parent heights $(m, f)$. [^least-squares-approximation]
 
 [^least-squares-approximation]: "Best" in the sense of minimizing the squared residuals of actual minus predicted sons' heights.
 
@@ -140,6 +141,7 @@ s_mf_lm <- lm(
 ```{r}
 #| label: s-mf-tbl
 
+# append fitted values (predictions)
 s_mf_tbl <- galton_3d |> 
   dplyr::filter(gender == "male") |> 
   dplyr::rename(son = child) |> 
@@ -158,7 +160,7 @@ g_mfs_pt <- scatterplot3d(
   color = "steelblue",
   angle = 55, 
   main = "Family heights: mother, father, son", 
-  sub  = "The plane contains the predicted heights of sons.")
+  sub  = "The regression plane contains the predicted heights of sons.")
 
 # Add the regression plane ("g_mfs_plane")
 s_mf_lm |> g_mfs_pt$ plane3d(
@@ -304,7 +306,7 @@ $$ {#eq-L-per-C-2}
 
 We now have more explanatory variables than in the previous example, a fact that merits some comment.
 
-On the one hand, the approach to determining least-squares regression coefficients $\hat{\beta}_0, \ldots, \hat{\beta}_d$ is unchanged.  We project the response vector, now $L_\bullet$, onto the space spanned by the constant vector $1_\bullet$ along with the explanatory variables, that is onto the space spanned by $(1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})$.  The fitted coefficients yield a function of the explanatory variables that forms a linear hyperplane of dimension `r n_bli_comps - 1L` that passes through a cloud of data points, $(C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)$, in a space of dimension `r n_bli_comps`.
+On the one hand, the approach to determining least-squares regression coefficients $\hat{\beta}_0, \ldots, \hat{\beta}_d$ is unchanged.  We project the response vector, now $L_\bullet$, onto the space spanned by the constant vector $1_\bullet$ along with the explanatory variables, that is onto the space spanned by $(1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})$.  The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension `r n_bli_comps - 1L` that passes through a cloud of data points, $(C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)$, in a space of dimension `r n_bli_comps`.
 
 On the other hand, we are now estimating `r n_bli_comps` regression coefficients based on observations from just `r n_bli_loc` countries.  From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients.  From the perspective of numerical linear algebra, the vector of fitted coefficients $(\hat{\beta}_0, \ldots, \hat{\beta}_d)$ is less stable (more sensitive to error in the data) than it was in the previous example.
 
@@ -512,6 +514,8 @@ In the remainder of this chapter we will focus on ideas and methods that help us
 
 In this section we'll discuss the example of family heights, in particular the linear regression of the son's height on the heights of the mother and father.  We'll discuss the geometry of the least-squares solution as a reference point for the remainder of this chapter.
 
+### Family heights
+
 Here's the linear regression problem in matrix format.
 
 $$
@@ -556,12 +560,17 @@ smf_smpl_lm <- lm(
   formula = son ~ mother + father
 )
 
-# append column of fitted values
+# append columns: (fitted values, residuals)
 smf_smpl_tbl <- smf_smpl_tbl |> 
-  dplyr::mutate(s_hat = smf_smpl_lm$ fitted.values)
+  dplyr::mutate(
+    s_hat = smf_smpl_lm$ fitted.values, 
+    resid = smf_smpl_lm$ residuals
+  )
 ```
 
-Consider the least-squares estimate $\hat{\beta}_\bullet$ and the consequent predicted height $\hat{y}_\bullet$ of the son.  @fig-smf-smpl is based on a random sample of `r n_smf_smpl` families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the plane of predictions.
+Consider the least-squares estimate $\hat{\beta}_\bullet$ and the consequent predicted height $\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet$ of the son.  @fig-smf-smpl is based on a random sample of `r n_smf_smpl` families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the regression plane. [^son_resid]
+
+[^son_resid]: The residual son's height is the error term in the regression formula.  In the figure, residuals are color-coded according to their sign: black if positive and red otherwise. 
 
 ```{r}
 #| label: fig-smf-smpl
@@ -587,14 +596,327 @@ s_mf_lm |> g_smf_smpl$ plane3d(
 # Add line segments from predicted to actual values
 # The key is using g_smf_smpl$xyz.convert() to get the 2D coordinates
 for(i in 1:nrow(smf_smpl_tbl)) {
+    m     <- smf_smpl_tbl$ mother [i]
+    f     <- smf_smpl_tbl$ father [i]
+    s     <- smf_smpl_tbl$ son    [i]
+    s_hat <- smf_smpl_tbl$ s_hat  [i]
+    resid <- smf_smpl_tbl$ resid  [i]
+    r_clr <- ifelse(resid > 0, "black", "red")
+    
   g_smf_smpl$ points3d(
-    c(smf_smpl_tbl$ mother [i], smf_smpl_tbl$ mother [i]),
-    c(smf_smpl_tbl$ father [i], smf_smpl_tbl$ father [i]),
-    c(smf_smpl_tbl$ s_hat  [i], smf_smpl_tbl$ son    [i]),
-    type = "l", col = "red", lwd = 1
+    c(m, m),
+    c(f, f),
+    c(s_hat, s),
+    type = "l", col = r_clr, lwd = 1
   )
 }
 
+```
+
+@fig-smf-smpl represents individual rows of data, $\{ (m_i, f_i, s_i) \}_{i = 1}^n$ along with model predictions and residuals in three-dimensional $(m, f, s)$ space.
+
+To gain more insight into linear regression we'll first reduce the regression problem to the simple case in which the response variable and the predictor variables have all been coerced to have an average value of zero, a process called _centering_.  This will eliminate the need for the intercept coefficient, $\beta_0$, and consequently eliminate the need to include the constant vector $1_\bullet$ in the feature matrix $X_{_\bullet, _\bullet}$.
+
+### Centering Data Vectors
+
+The regression plane that we glimpse in @fig-smf-smpl actually spans all the $(m, f)$ combinations that are mathematically possible.  If we imagine infinitesimally short parents with $(m, f) = (0, 0)$, the predicted height of their son would be $\hat{\beta}_0$, which is not zero.  That is, the plane does not pass through the origin $(0, 0, 0)$ and therefore does not qualify as a subspace of $(m, f, s)$ space. [^lin-manifold] But the regression plane determines a parallel subspace (that passes through the origin).
+
+[^lin-manifold]:  The regression plane qualifies as a linear manifold, mathematically speaking.
+
+One way to generate this subspace is to center each of the $(m_i, f_i, s_i)$ data values, that is, to replace data value $v_i$ with its centered version $\dot{v}_i = v_i - \bar{v}$, where $\bar{v}$ denotes the average value (arithmetic mean) of vector $v_\bullet$.
+
+Now it turns out that the regression plane passes through the theoretical _point of averages_, $(\bar{m}, \bar{f}, \bar{s})$.  If we were to center the $(m_\bullet, f_\bullet, s_\bullet)$ vectors, and regress the centered son's height against centered versions of the (mother, father) heights, the new regression plane would pass through the origin and thus qualify as a subspace.  That is, the fitted intercept coefficient of the centered regression problem must be zero.  Therefore we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector $1_\bullet$ from the feature matrix $X_{_\bullet, _\bullet}$. Then we have the following centered linear model.
+
+$$
+\begin{align} 
+  \dot{y}_\bullet &= \dot{X}_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
+\end{align} 
+$$ {#eq-generic-lm-ctr}
+
+where 
+
+$$
+\begin{align} 
+  \dot{y}_\bullet &= \text{centered heights of sons } = \dot{s}_\bullet \\ 
+  \dot{m}_\bullet &= \text{centered heights of mothers } \\ 
+  \dot{f}_\bullet &= \text{centered heights of fathers } \\ 
+  \dot{X}_{_\bullet, _\bullet} &= \text{centered feature matrix} = (\dot{m}_\bullet, \dot{f}_\bullet) \\ 
+  \beta_\bullet &= \text{coefficient vector} = (\beta_1, \beta_2)^\top \\ 
+  \epsilon_\bullet &= \text{residual vector}
+\end{align} 
+$$ {#eq-generic-lm-ctr-2}
+
+```{r}
+#| label: smf-smpl-ctr
+
+# center data variables using base::scale()
+smf_smpl_ctr <- smf_smpl_tbl |> 
+  dplyr::select(- c(s_hat, resid)) |> 
+  dplyr::mutate(dplyr::across(
+    .cols = c(mother, father, son), 
+    .fns  = scale, scale = FALSE
+  )) |> 
+  # change scale() output from matrix to vector
+  dplyr::mutate(dplyr::across(
+    .cols = c(mother, father, son), 
+    .fns  = as.vector
+  ))
+```
+
+```{r}
+#| label: smf-smpl-ctr-lm
+
+# fit linear model to centered variables
+smf_smpl_ctr_lm <- lm(
+  data    = smf_smpl_ctr, 
+  formula = son ~ 0 + mother + father)
+```
+
+```{r}
+#| label: smf-smpl-ctr-append
+
+# append (fitted values, residuals)
+smf_smpl_ctr <- smf_smpl_ctr |> 
+  dplyr::mutate(
+    s_hat = smf_smpl_ctr_lm$ fitted.values, 
+    resid = smf_smpl_ctr_lm$ residuals
+  )
+```
+
+@fig-smf-smpl-ctr is a version of @fig-smf-smpl corresponding to @eq-generic-lm-ctr.  Geometrically it's the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.
+
+```{r}
+#| label: fig-smf-smpl-ctr
+#| fig-cap: "Centered family heights"
+
+g_smf_smpl_ctr <- scatterplot3d(
+  x = smf_smpl_ctr$ mother, xlab = "mother", 
+  y = smf_smpl_ctr$ father, ylab = "father", 
+  z = smf_smpl_ctr$ son,    zlab = "son", 
+  pch = 16, 
+  color = "steelblue",
+  angle = 55, 
+  main = "Centered family heights: mother, father, son", 
+  sub  = "son residual = observed - predicted")
+
+# Add the regression plane
+smf_smpl_ctr_lm |> g_smf_smpl_ctr$ plane3d(
+  lty          = "solid",
+  lty.box      = "solid",
+  draw_polygon = TRUE,
+  col          = "grey")
+
+# Add line segments from predicted to actual values
+# The key is using g_smf_smpl_ctr$xyz.convert() to get the 2D coordinates
+for(i in 1:nrow(smf_smpl_ctr)) {
+    m     <- smf_smpl_ctr$ mother [i]
+    f     <- smf_smpl_ctr$ father [i]
+    s     <- smf_smpl_ctr$ son    [i]
+    s_hat <- smf_smpl_ctr$ s_hat  [i]
+    resid <- smf_smpl_ctr$ resid  [i]
+    r_clr <- ifelse(resid > 0, "black", "red")
+    
+  g_smf_smpl_ctr$ points3d(
+    c(m, m),
+    c(f, f),
+    c(s_hat, s),
+    type = "l", col = r_clr, lwd = 1
+  )
+}
+
+```
+
+### Least Squares Solutions
+
+Having centered the data, let's discuss least-squares linear regression, which determines coefficient values $(\hat{\beta}_0, \hat{\beta}_1)$ that minimize the sum of squared residuals.
+
+$$
+\begin{align} 
+  \sum_{i = 1}^n \epsilon_i^2 &= \lVert \epsilon_\bullet \rVert^2 \\ 
+  &= \epsilon_\bullet^\top\epsilon_\bullet \\ 
+  &= (\dot{y}_\bullet - \dot{X}_{\bullet, \bullet} \beta_\bullet)^\top (\dot{y}_\bullet - \dot{X}_{\bullet, \bullet} \beta_\bullet)
+\end{align} 
+$$ {#eq-resid-ss}
+
+To find coefficient values that minimize this sum of squares, one can take derivatives of the above expression with respect to $\beta_\bullet$ and set that result to zero.  This gives the following _normal equations_: 
+
+$$
+\begin{align} 
+  \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet} \hat{\beta}_\bullet 
+  &= \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
+\end{align} 
+$$ {#eq-lin-reg-nrml}
+
+On the left side of the normal equations we have the matrix factor $\left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )$, which in our case is a multiple of the (mother, father) covariance matrix, a $2 \times 2$ non-negative-definite matrix. In fact the matrix is positive-definite, and thus invertible, provided only that parental heights are not perfectly correlated (which they are not).  Then we can invert this matrix to solve for $\hat{\beta}_\bullet$. 
+
+$$
+\begin{align} 
+  \hat{\beta}_\bullet 
+  &= \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
+\end{align} 
+$$ {#eq-lin-reg-beta-hat}
+
+The predicted vector $\hat{\dot{y}}_\bullet$ is thus: 
+
+$$
+\begin{align} 
+  \hat{\dot{y}}_\bullet 
+  &= \dot{X}_{\bullet, \bullet} \hat{\beta}_\bullet \\ 
+  &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
+\end{align} 
+$$ {#eq-lin-reg-y-hat}
+
+### Data Vectors in $n-$Dimensional Space
+
+Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to a 2-dimensional subspace of $n-$space, where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
+
+The particular coefficient vector $\hat{\beta}_\bullet$ obtained by least squares linear regression has a special form.  That is, @eq-lin-reg-y-hat gives a linear mapping from the centered heights of sons $\dot{y}_\bullet$ to their corresponding linear prediction $\hat{\dot{y}}_\bullet$.  Let $P$ denote the matrix of that mapping.
+
+$$
+\begin{align} 
+  P
+  &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top
+\end{align} 
+$$ {#eq-lin-reg-projection}
+
+Matrix $P$ is symmetric and idempotent, that is, both the transpose and the squaring of $P$ equal $P$. 
+
+$$
+\begin{align} 
+  P^\top
+  &= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \}^\top \\ 
+  &=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\ 
+  &= P \\ \\
+  P^2
+  &= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \} 
+  \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \} \\ 
+  &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\ 
+  &= P
+\end{align} 
+$$ {#eq-projection-properties}
+
+An idempotent matrix $M$ is called a _projection_.  If $M^2 = M$, then repeated applications of $M$ to vector $v$ return the initial application, i.e., $M^k v = Mv$ for any positive integer $k$.  If in addition matrix $M$ is symmetric (as is $P$), then $M$ is said to be an _orthogonal projection_.  In this case the complement of $M$, $I - M$, also qualifies as an orthogonal projection and the product of the two matrices is the zero matrix.  Any vector $v$ can be expressed as the sum of two vectors $v = x + y$ that are mutually orthogonal $(x^\top y = 0)$, namely $x = M v$ and $y = (I-M) v$.
+
+In our example, this means that the respective vectors of predicted centered heights $\hat{\dot{y}_\bullet}$ and their residuals $\hat{\epsilon}_\bullet$ are mutually orthogonal.
+
+$$
+\begin{align} 
+  \hat{\dot{y}}_\bullet &= P \; \dot{y}_\bullet \\ \\ 
+  \hat{\epsilon}_\bullet &= \dot{y}_\bullet - \hat{\dot{y}}_\bullet \\ 
+  &= (I - P) \; \dot{y}_\bullet \\ \\ 
+  \hat{\epsilon}_\bullet^\top \; \dot{y}_\bullet &= \dot{y}_\bullet^\top \; (I - P)^\top P \; \dot{y}_\bullet \\ 
+  &= 0
+\end{align} 
+$$ {#eq-resid-predicted-ortho}
+
+Now let $v_\bullet$ be any vector in the parental space.  Then $v_\bullet$ is some linear combination of the parental vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$ and therefore can be represented as $v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ for some coefficient vector $\gamma_\bullet = (\gamma_1, \gamma_2)^\top$.  It now follows the $P \; v_\bullet = v_\bullet$: 
+
+$$
+\begin{align} 
+  P \; v_\bullet &= P \; (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
+  &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \;  (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
+  &= \dot{X}_{\bullet, \bullet} \gamma_\bullet \\ 
+  &= v_\bullet
+\end{align} 
+$$ {#eq-subspace-invariance}
+
+Consequently, the residual vector $\hat{\epsilon}_\bullet$ is orthogonal to any vector $v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ in the parental subspace: 
+
+$$
+\begin{align} 
+  \hat{\epsilon}_\bullet^\top \; v_\bullet &= \dot{y}_\bullet^\top \; (I - P)^\top v_\bullet \\ 
+  &= \dot{y}_\bullet^\top \; (I - P) \; v_\bullet \\ 
+  &= \dot{y}_\bullet^\top \; 0_\bullet \\ 
+  &= 0
+\end{align} 
+$$ {#eq-resid-mf-ortho}
+
+It now follows that of all vectors $v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ in the parental subspace, the predicted vector $\hat{\dot{y}}_\bullet$ is closest to the given vector $\dot{y}_\bullet$:
+
+$$
+\begin{align} 
+  \lVert \dot{y_\bullet} - v_\bullet \rVert^2 
+  &= \lVert (\dot{y_\bullet} - \hat{\dot{y}}_\bullet) + (\hat{\dot{y}}_\bullet - v_\bullet) \rVert^2  \\ 
+  &= \lVert \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \rVert^2 \\ 
+  &= \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \right )^\top 
+  \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \right ) \\
+  &= \hat{\epsilon}_\bullet^\top \hat{\epsilon}_\bullet \; + \; 0 \; + \; 0 \; + \; (\hat{\dot{y}}_\bullet - v_\bullet)^\top (\hat{\dot{y}}_\bullet - v_\bullet) \\ 
+  &= \lVert \hat{\epsilon}_\bullet \rVert^2 \; + \; \lVert \hat{\dot{y}}_\bullet - v_\bullet \rVert^2 \\
+  &\ge \lVert \hat{\epsilon}_\bullet \rVert^2 \\ 
+  &= \lVert \dot{y_\bullet} - \hat{\dot{y}}_\bullet \rVert^2
+\end{align} 
+$$ {#eq-lin-reg-min-distance}
+
+To summarize, 
+
+  - The parental centered heights $(\dot{m}_\bullet, \dot{f}_\bullet)$ constitute a basis of the 2-dimensional subspace that they span within $n-$space.
+  - Matrix $P$ sends the vector $\dot{y}_\bullet$ of sons' centered heights to prediction vector $\hat{\dot{y}_\bullet}$.
+  - This mapping is an orthogonal projection onto the parental subspace.
+  - Moreover, $(\hat{\beta}_1, \hat{\beta}_2)$ are the coordinates of the prediction vector in this subspace with respect to the parental basis.
+  - Of all the vectors in the parental subspace, the prediction vector $\hat{\dot{y}_\bullet}$ is the closest (in Euclidean distance) to the given vector $\dot{y}_\bullet$.
+
+Figure xxx illustrates these points.
+
+```{r}
+#| label: fig-ortho-projection
+#| fig-cap: "TBD"
+
+# After computing your centered vectors and projection
+# Visualize in the 3D subspace spanned by m_dot, f_dot, and y_dot
+
+# map xxx_dot variables below to smf_smpl_ctr columns
+m_dot     <- smf_smpl_ctr$ mother
+f_dot     <- smf_smpl_ctr$ father
+y_dot     <- smf_smpl_ctr$ son
+y_hat_dot <- smf_smpl_ctr$ s_hat
+
+# Create basis vectors for visualization
+basis1 <- m_dot / norm(m_dot, "2")  # normalized mother heights
+basis2 <- f_dot - sum(basis1 * f_dot) * basis1  # Gram-Schmidt
+basis2 <- basis2 / norm(basis2, "2")
+
+# Project all relevant vectors onto these 2D + perpendicular direction
+coords_m <- c(sum(m_dot * basis1), sum(m_dot * basis2), 0)
+coords_f <- c(sum(f_dot * basis1), sum(f_dot * basis2), 0)
+coords_y <- c(sum(y_dot * basis1), sum(y_dot * basis2), 
+              norm(y_dot - y_hat_dot, "2"))
+coords_yhat <- c(sum(y_hat_dot * basis1), sum(y_hat_dot * basis2), 0)
+
+# Create 3D plot with plotly
+fig <- plot_ly() %>%
+  # Add vectors
+  add_trace(x = c(0, coords_m[1]), y = c(0, coords_m[2]), 
+            z = c(0, coords_m[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "red", width = 4), name = "m̃",
+            marker = list(size = 4)) %>%
+  add_trace(x = c(0, coords_f[1]), y = c(0, coords_f[2]), 
+            z = c(0, coords_f[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "blue", width = 4), name = "f̃",
+            marker = list(size = 4)) %>%
+  add_trace(x = c(0, coords_y[1]), y = c(0, coords_y[2]), 
+            z = c(0, coords_y[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "green", width = 4), name = "ỹ",
+            marker = list(size = 4)) %>%
+  add_trace(x = c(0, coords_yhat[1]), y = c(0, coords_yhat[2]), 
+            z = c(0, coords_yhat[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "purple", width = 4), name = "ŷ̃",
+            marker = list(size = 4)) %>%
+  # Add residual (perpendicular line)
+  add_trace(x = c(coords_yhat[1], coords_y[1]), 
+            y = c(coords_yhat[2], coords_y[2]),
+            z = c(coords_yhat[3], coords_y[3]), 
+            type = "scatter3d", mode = "lines",
+            line = list(color = "orange", width = 3, dash = "dash"), 
+            name = "residual",
+            marker = list(size = 4)) %>%
+  layout(scene = list(
+    xaxis = list(title = "Basis 1 (m̃ direction)"),
+    yaxis = list(title = "Basis 2 (f̃ direction)"),
+    zaxis = list(title = "Perpendicular to plane"),
+    aspectmode = "cube"
+  ))
+
+fig
 ```
 
 ### Least Squares: Two Perspectives

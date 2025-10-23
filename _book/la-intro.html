@@ -90,6 +90,24 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="site_libs/plotly-binding-4.11.0/plotly.js"></script>
+
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+
+<link href="site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
@@ -359,13 +377,17 @@ window.Quarto = {
   <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">6.2</span> Notation</a></li>
   <li><a href="#geometry" id="toc-geometry" class="nav-link" data-scroll-target="#geometry"><span class="header-section-number">6.3</span> Geometry</a>
   <ul class="collapse">
-  <li><a href="#least-squares-two-perspectives" id="toc-least-squares-two-perspectives" class="nav-link" data-scroll-target="#least-squares-two-perspectives"><span class="header-section-number">6.3.1</span> Least Squares: Two Perspectives</a></li>
-  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">6.3.2</span> Data Visualization</a></li>
-  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space"><span class="header-section-number">6.3.3</span> Sample Space</a></li>
-  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">6.3.4</span> Column Space</a></li>
-  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">6.3.5</span> Orthogonal Projection</a></li>
-  <li><a href="#reconciling-perspectives" id="toc-reconciling-perspectives" class="nav-link" data-scroll-target="#reconciling-perspectives"><span class="header-section-number">6.3.6</span> Reconciling Perspectives</a></li>
-  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">6.3.7</span> Why This Matters</a></li>
+  <li><a href="#family-heights" id="toc-family-heights" class="nav-link" data-scroll-target="#family-heights"><span class="header-section-number">6.3.1</span> Family heights</a></li>
+  <li><a href="#centering-data-vectors" id="toc-centering-data-vectors" class="nav-link" data-scroll-target="#centering-data-vectors"><span class="header-section-number">6.3.2</span> Centering Data Vectors</a></li>
+  <li><a href="#least-squares-solutions" id="toc-least-squares-solutions" class="nav-link" data-scroll-target="#least-squares-solutions"><span class="header-section-number">6.3.3</span> Least Squares Solutions</a></li>
+  <li><a href="#data-vectors-in-n-dimensional-space" id="toc-data-vectors-in-n-dimensional-space" class="nav-link" data-scroll-target="#data-vectors-in-n-dimensional-space"><span class="header-section-number">6.3.4</span> Data Vectors in <span class="math inline">\(n-\)</span>Dimensional Space</a></li>
+  <li><a href="#least-squares-two-perspectives" id="toc-least-squares-two-perspectives" class="nav-link" data-scroll-target="#least-squares-two-perspectives"><span class="header-section-number">6.3.5</span> Least Squares: Two Perspectives</a></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">6.3.6</span> Data Visualization</a></li>
+  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space"><span class="header-section-number">6.3.7</span> Sample Space</a></li>
+  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">6.3.8</span> Column Space</a></li>
+  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">6.3.9</span> Orthogonal Projection</a></li>
+  <li><a href="#reconciling-perspectives" id="toc-reconciling-perspectives" class="nav-link" data-scroll-target="#reconciling-perspectives"><span class="header-section-number">6.3.10</span> Reconciling Perspectives</a></li>
+  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">6.3.11</span> Why This Matters</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/la-intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -392,7 +414,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:20 Wed 22-Oct-2025</p>
+      <p class="date">02:24 Thu 23-Oct-2025</p>
     </div>
   </div>
   
@@ -512,7 +534,7 @@ Figure&nbsp;6.1: Height of oldest child: daughters (red), sons (blue)
   f &amp;= \text{height of father}
 \end{align}
 \qquad(6.2)\]</span></span></p>
-<p>Each set of coefficient values determines some plane in 3-dimensional space. The coefficients <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)\)</span> obtained by linear regression determines the plane (<a href="#fig-mfs-scat3d" class="quarto-xref">Figure&nbsp;<span>6.2</span></a>) that gives the best linear approximation <span class="math inline">\((\hat{s})\)</span> to the son’s height for a given pair of parent heights <span class="math inline">\((m, f)\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>Each set of coefficient values determines some plane in the 3-dimensional space of (mother, father, son) heights. The coefficients <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)\)</span> obtained by linear regression determine the <em>regression plane</em> (<a href="#fig-mfs-scat3d" class="quarto-xref">Figure&nbsp;<span>6.2</span></a>) that gives the best linear approximation <span class="math inline">\((\hat{s})\)</span> to the son’s height for a given pair of parent heights <span class="math inline">\((m, f)\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-mfs-scat3d" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -912,7 +934,7 @@ Table&nbsp;6.4: BLI Component Indicators
 \end{align}
 \qquad(6.8)\]</span></span></p>
 <p>We now have more explanatory variables than in the previous example, a fact that merits some comment.</p>
-<p>On the one hand, the approach to determining least-squares regression coefficients <span class="math inline">\(\hat{\beta}_0, \ldots, \hat{\beta}_d\)</span> is unchanged. We project the response vector, now <span class="math inline">\(L_\bullet\)</span>, onto the space spanned by the constant vector <span class="math inline">\(1_\bullet\)</span> along with the explanatory variables, that is onto the space spanned by <span class="math inline">\((1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})\)</span>. The fitted coefficients yield a function of the explanatory variables that forms a linear hyperplane of dimension 23 that passes through a cloud of data points, <span class="math inline">\((C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)\)</span>, in a space of dimension 24.</p>
+<p>On the one hand, the approach to determining least-squares regression coefficients <span class="math inline">\(\hat{\beta}_0, \ldots, \hat{\beta}_d\)</span> is unchanged. We project the response vector, now <span class="math inline">\(L_\bullet\)</span>, onto the space spanned by the constant vector <span class="math inline">\(1_\bullet\)</span> along with the explanatory variables, that is onto the space spanned by <span class="math inline">\((1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})\)</span>. The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension 23 that passes through a cloud of data points, <span class="math inline">\((C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)\)</span>, in a space of dimension 24.</p>
 <p>On the other hand, we are now estimating 24 regression coefficients based on observations from just 42 countries. From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients. From the perspective of numerical linear algebra, the vector of fitted coefficients <span class="math inline">\((\hat{\beta}_0, \ldots, \hat{\beta}_d)\)</span> is less stable (more sensitive to error in the data) than it was in the previous example.</p>
 </section>
 <section id="mnist-images-of-handwritten-digits" class="level3" data-number="6.1.3">
@@ -1056,6 +1078,8 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 <section id="geometry" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="geometry"><span class="header-section-number">6.3</span> Geometry</h2>
 <p>In this section we’ll discuss the example of family heights, in particular the linear regression of the son’s height on the heights of the mother and father. We’ll discuss the geometry of the least-squares solution as a reference point for the remainder of this chapter.</p>
+<section id="family-heights" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="family-heights"><span class="header-section-number">6.3.1</span> Family heights</h3>
 <p>Here’s the linear regression problem in matrix format.</p>
 <p><span id="eq-generic-lm-mat"><span class="math display">\[
 \begin{align}
@@ -1073,7 +1097,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   \epsilon_\bullet &amp;= \text{residual vector}
 \end{align}
 \qquad(6.22)\]</span></span></p>
-<p>Consider the least-squares estimate <span class="math inline">\(\hat{\beta}_\bullet\)</span> and the consequent predicted height <span class="math inline">\(\hat{y}_\bullet\)</span> of the son. <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> is based on a random sample of 20 families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the plane of predictions.</p>
+<p>Consider the least-squares estimate <span class="math inline">\(\hat{\beta}_\bullet\)</span> and the consequent predicted height <span class="math inline">\(\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet\)</span> of the son. <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> is based on a random sample of 20 families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the regression plane. <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-smf-smpl" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1088,11 +1112,174 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 </div>
 </div>
 </div>
-<section id="least-squares-two-perspectives" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.3.1</span> Least Squares: Two Perspectives</h3>
+<p><a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> represents individual rows of data, <span class="math inline">\(\{ (m_i, f_i, s_i) \}_{i = 1}^n\)</span> along with model predictions and residuals in three-dimensional <span class="math inline">\((m, f, s)\)</span> space.</p>
+<p>To gain more insight into linear regression we’ll first reduce the regression problem to the simple case in which the response variable and the predictor variables have all been coerced to have an average value of zero, a process called <em>centering</em>. This will eliminate the need for the intercept coefficient, <span class="math inline">\(\beta_0\)</span>, and consequently eliminate the need to include the constant vector <span class="math inline">\(1_\bullet\)</span> in the feature matrix <span class="math inline">\(X_{_\bullet, _\bullet}\)</span>.</p>
 </section>
-<section id="data-visualization" class="level3" data-number="6.3.2">
-<h3 data-number="6.3.2" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">6.3.2</span> Data Visualization</h3>
+<section id="centering-data-vectors" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="centering-data-vectors"><span class="header-section-number">6.3.2</span> Centering Data Vectors</h3>
+<p>The regression plane that we glimpse in <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> actually spans all the <span class="math inline">\((m, f)\)</span> combinations that are mathematically possible. If we imagine infinitesimally short parents with <span class="math inline">\((m, f) = (0, 0)\)</span>, the predicted height of their son would be <span class="math inline">\(\hat{\beta}_0\)</span>, which is not zero. That is, the plane does not pass through the origin <span class="math inline">\((0, 0, 0)\)</span> and therefore does not qualify as a subspace of <span class="math inline">\((m, f, s)\)</span> space. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> But the regression plane determines a parallel subspace (that passes through the origin).</p>
+<p>One way to generate this subspace is to center each of the <span class="math inline">\((m_i, f_i, s_i)\)</span> data values, that is, to replace data value <span class="math inline">\(v_i\)</span> with its centered version <span class="math inline">\(\dot{v}_i = v_i - \bar{v}\)</span>, where <span class="math inline">\(\bar{v}\)</span> denotes the average value (arithmetic mean) of vector <span class="math inline">\(v_\bullet\)</span>.</p>
+<p>Now it turns out that the regression plane passes through the theoretical <em>point of averages</em>, <span class="math inline">\((\bar{m}, \bar{f}, \bar{s})\)</span>. If we were to center the <span class="math inline">\((m_\bullet, f_\bullet, s_\bullet)\)</span> vectors, and regress the centered son’s height against centered versions of the (mother, father) heights, the new regression plane would pass through the origin and thus qualify as a subspace. That is, the fitted intercept coefficient of the centered regression problem must be zero. Therefore we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector <span class="math inline">\(1_\bullet\)</span> from the feature matrix <span class="math inline">\(X_{_\bullet, _\bullet}\)</span>. Then we have the following centered linear model.</p>
+<p><span id="eq-generic-lm-ctr"><span class="math display">\[
+\begin{align}
+  \dot{y}_\bullet &amp;= \dot{X}_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
+\end{align}
+\qquad(6.23)\]</span></span></p>
+<p>where</p>
+<p><span id="eq-generic-lm-ctr-2"><span class="math display">\[
+\begin{align}
+  \dot{y}_\bullet &amp;= \text{centered heights of sons } = \dot{s}_\bullet \\
+  \dot{m}_\bullet &amp;= \text{centered heights of mothers } \\
+  \dot{f}_\bullet &amp;= \text{centered heights of fathers } \\
+  \dot{X}_{_\bullet, _\bullet} &amp;= \text{centered feature matrix} = (\dot{m}_\bullet, \dot{f}_\bullet) \\
+  \beta_\bullet &amp;= \text{coefficient vector} = (\beta_1, \beta_2)^\top \\
+  \epsilon_\bullet &amp;= \text{residual vector}
+\end{align}
+\qquad(6.24)\]</span></span></p>
+<p><a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> is a version of <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> corresponding to <a href="#eq-generic-lm-ctr" class="quarto-xref">Equation&nbsp;<span>6.23</span></a>. Geometrically it’s the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-smf-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.5: Centered family heights
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="least-squares-solutions" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="least-squares-solutions"><span class="header-section-number">6.3.3</span> Least Squares Solutions</h3>
+<p>Having centered the data, let’s discuss least-squares linear regression, which determines coefficient values <span class="math inline">\((\hat{\beta}_0, \hat{\beta}_1)\)</span> that minimize the sum of squared residuals.</p>
+<p><span id="eq-resid-ss"><span class="math display">\[
+\begin{align}
+  \sum_{i = 1}^n \epsilon_i^2 &amp;= \lVert \epsilon_\bullet \rVert^2 \\
+  &amp;= \epsilon_\bullet^\top\epsilon_\bullet \\
+  &amp;= (\dot{y}_\bullet - \dot{X}_{\bullet, \bullet} \beta_\bullet)^\top (\dot{y}_\bullet - \dot{X}_{\bullet, \bullet} \beta_\bullet)
+\end{align}
+\qquad(6.25)\]</span></span></p>
+<p>To find coefficient values that minimize this sum of squares, one can take derivatives of the above expression with respect to <span class="math inline">\(\beta_\bullet\)</span> and set that result to zero. This gives the following <em>normal equations</em>:</p>
+<p><span id="eq-lin-reg-nrml"><span class="math display">\[
+\begin{align}
+  \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet} \hat{\beta}_\bullet
+  &amp;= \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
+\end{align}
+\qquad(6.26)\]</span></span></p>
+<p>On the left side of the normal equations we have the matrix factor <span class="math inline">\(\left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )\)</span>, which in our case is a multiple of the (mother, father) covariance matrix, a <span class="math inline">\(2 \times 2\)</span> non-negative-definite matrix. In fact the matrix is positive-definite, and thus invertible, provided only that parental heights are not perfectly correlated (which they are not). Then we can invert this matrix to solve for <span class="math inline">\(\hat{\beta}_\bullet\)</span>.</p>
+<p><span id="eq-lin-reg-beta-hat"><span class="math display">\[
+\begin{align}
+  \hat{\beta}_\bullet
+  &amp;= \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
+\end{align}
+\qquad(6.27)\]</span></span></p>
+<p>The predicted vector <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span> is thus:</p>
+<p><span id="eq-lin-reg-y-hat"><span class="math display">\[
+\begin{align}
+  \hat{\dot{y}}_\bullet
+  &amp;= \dot{X}_{\bullet, \bullet} \hat{\beta}_\bullet \\
+  &amp;= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
+\end{align}
+\qquad(6.28)\]</span></span></p>
+</section>
+<section id="data-vectors-in-n-dimensional-space" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="data-vectors-in-n-dimensional-space"><span class="header-section-number">6.3.4</span> Data Vectors in <span class="math inline">\(n-\)</span>Dimensional Space</h3>
+<p>Now whatever the value of the coefficient vector <span class="math inline">\(\beta_\bullet\)</span>, the mapping <span class="math inline">\(\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet\)</span> sends <span class="math inline">\(\beta_\bullet\)</span> to a 2-dimensional subspace of <span class="math inline">\(n-\)</span>space, where <span class="math inline">\(n\)</span> denotes the number of data cases, i.e., the row dimension of <span class="math inline">\(\dot{X}_{\bullet, \bullet}\)</span>. This 2-dimensional subspace is spanned by the two <span class="math inline">\(n-\)</span>vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>, the centered vectors of (mother, father) heights.</p>
+<p>The particular coefficient vector <span class="math inline">\(\hat{\beta}_\bullet\)</span> obtained by least squares linear regression has a special form. That is, <a href="#eq-lin-reg-y-hat" class="quarto-xref">Equation&nbsp;<span>6.28</span></a> gives a linear mapping from the centered heights of sons <span class="math inline">\(\dot{y}_\bullet\)</span> to their corresponding linear prediction <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span>. Let <span class="math inline">\(P\)</span> denote the matrix of that mapping.</p>
+<p><span id="eq-lin-reg-projection"><span class="math display">\[
+\begin{align}
+  P
+  &amp;= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top
+\end{align}
+\qquad(6.29)\]</span></span></p>
+<p>Matrix <span class="math inline">\(P\)</span> is symmetric and idempotent, that is, both the transpose and the squaring of <span class="math inline">\(P\)</span> equal <span class="math inline">\(P\)</span>.</p>
+<p><span id="eq-projection-properties"><span class="math display">\[
+\begin{align}
+  P^\top
+  &amp;= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \}^\top \\
+  &amp;=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\
+  &amp;= P \\ \\
+  P^2
+  &amp;= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \}
+  \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \} \\
+  &amp;= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\
+  &amp;= P
+\end{align}
+\qquad(6.30)\]</span></span></p>
+<p>An idempotent matrix <span class="math inline">\(M\)</span> is called a <em>projection</em>. If <span class="math inline">\(M^2 = M\)</span>, then repeated applications of <span class="math inline">\(M\)</span> to vector <span class="math inline">\(v\)</span> return the initial application, i.e., <span class="math inline">\(M^k v = Mv\)</span> for any positive integer <span class="math inline">\(k\)</span>. If in addition matrix <span class="math inline">\(M\)</span> is symmetric (as is <span class="math inline">\(P\)</span>), then <span class="math inline">\(M\)</span> is said to be an <em>orthogonal projection</em>. In this case the complement of <span class="math inline">\(M\)</span>, <span class="math inline">\(I - M\)</span>, also qualifies as an orthogonal projection and the product of the two matrices is the zero matrix. Any vector <span class="math inline">\(v\)</span> can be expressed as the sum of two vectors <span class="math inline">\(v = x + y\)</span> that are mutually orthogonal <span class="math inline">\((x^\top y = 0)\)</span>, namely <span class="math inline">\(x = M v\)</span> and <span class="math inline">\(y = (I-M) v\)</span>.</p>
+<p>In our example, this means that the respective vectors of predicted centered heights <span class="math inline">\(\hat{\dot{y}_\bullet}\)</span> and their residuals <span class="math inline">\(\hat{\epsilon}_\bullet\)</span> are mutually orthogonal.</p>
+<p><span id="eq-resid-predicted-ortho"><span class="math display">\[
+\begin{align}
+  \hat{\dot{y}}_\bullet &amp;= P \; \dot{y}_\bullet \\ \\
+  \hat{\epsilon}_\bullet &amp;= \dot{y}_\bullet - \hat{\dot{y}}_\bullet \\
+  &amp;= (I - P) \; \dot{y}_\bullet \\ \\
+  \hat{\epsilon}_\bullet^\top \; \dot{y}_\bullet &amp;= \dot{y}_\bullet^\top \; (I - P)^\top P \; \dot{y}_\bullet \\
+  &amp;= 0
+\end{align}
+\qquad(6.31)\]</span></span></p>
+<p>Now let <span class="math inline">\(v_\bullet\)</span> be any vector in the parental space. Then <span class="math inline">\(v_\bullet\)</span> is some linear combination of the parental vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> and therefore can be represented as <span class="math inline">\(v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet\)</span> for some coefficient vector <span class="math inline">\(\gamma_\bullet = (\gamma_1, \gamma_2)^\top\)</span>. It now follows the <span class="math inline">\(P \; v_\bullet = v_\bullet\)</span>:</p>
+<p><span id="eq-subspace-invariance"><span class="math display">\[
+\begin{align}
+  P \; v_\bullet &amp;= P \; (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\
+  &amp;= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \;  (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\
+  &amp;= \dot{X}_{\bullet, \bullet} \gamma_\bullet \\
+  &amp;= v_\bullet
+\end{align}
+\qquad(6.32)\]</span></span></p>
+<p>Consequently, the residual vector <span class="math inline">\(\hat{\epsilon}_\bullet\)</span> is orthogonal to any vector <span class="math inline">\(v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet\)</span> in the parental subspace:</p>
+<p><span id="eq-resid-mf-ortho"><span class="math display">\[
+\begin{align}
+  \hat{\epsilon}_\bullet^\top \; v_\bullet &amp;= \dot{y}_\bullet^\top \; (I - P)^\top v_\bullet \\
+  &amp;= \dot{y}_\bullet^\top \; (I - P) \; v_\bullet \\
+  &amp;= \dot{y}_\bullet^\top \; 0_\bullet \\
+  &amp;= 0
+\end{align}
+\qquad(6.33)\]</span></span></p>
+<p>It now follows that of all vectors <span class="math inline">\(v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet\)</span> in the parental subspace, the predicted vector <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span> is closest to the given vector <span class="math inline">\(\dot{y}_\bullet\)</span>:</p>
+<p><span id="eq-lin-reg-min-distance"><span class="math display">\[
+\begin{align}
+  \lVert \dot{y_\bullet} - v_\bullet \rVert^2
+  &amp;= \lVert (\dot{y_\bullet} - \hat{\dot{y}}_\bullet) + (\hat{\dot{y}}_\bullet - v_\bullet) \rVert^2  \\
+  &amp;= \lVert \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \rVert^2 \\
+  &amp;= \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \right )^\top
+  \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \right ) \\
+  &amp;= \hat{\epsilon}_\bullet^\top \hat{\epsilon}_\bullet \; + \; 0 \; + \; 0 \; + \; (\hat{\dot{y}}_\bullet - v_\bullet)^\top (\hat{\dot{y}}_\bullet - v_\bullet) \\
+  &amp;= \lVert \hat{\epsilon}_\bullet \rVert^2 \; + \; \lVert \hat{\dot{y}}_\bullet - v_\bullet \rVert^2 \\
+  &amp;\ge \lVert \hat{\epsilon}_\bullet \rVert^2 \\
+  &amp;= \lVert \dot{y_\bullet} - \hat{\dot{y}}_\bullet \rVert^2
+\end{align}
+\qquad(6.34)\]</span></span></p>
+<p>To summarize,</p>
+<ul>
+<li>The parental centered heights <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> constitute a basis of the 2-dimensional subspace that they span within <span class="math inline">\(n-\)</span>space.</li>
+<li>Matrix <span class="math inline">\(P\)</span> sends the vector <span class="math inline">\(\dot{y}_\bullet\)</span> of sons’ centered heights to prediction vector <span class="math inline">\(\hat{\dot{y}_\bullet}\)</span>.</li>
+<li>This mapping is an orthogonal projection onto the parental subspace.</li>
+<li>Moreover, <span class="math inline">\((\hat{\beta}_1, \hat{\beta}_2)\)</span> are the coordinates of the prediction vector in this subspace with respect to the parental basis.</li>
+<li>Of all the vectors in the parental subspace, the prediction vector <span class="math inline">\(\hat{\dot{y}_\bullet}\)</span> is the closest (in Euclidean distance) to the given vector <span class="math inline">\(\dot{y}_\bullet\)</span>.</li>
+</ul>
+<p>Figure xxx illustrates these points.</p>
+<div class="cell">
+<div id="fig-ortho-projection" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ortho-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-a5dfc98c5013f46851ef" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-a5dfc98c5013f46851ef">{"x":{"visdat":{"4efc28157d9":["function () ","plotlyVisDat"]},"cur_data":"4efc28157d9","attrs":{"4efc28157d9":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":[0,9.1098572985530328],"y":[0,3.1225022567582528e-17],"z":[0,0],"type":"scatter3d","mode":"lines+markers","line":{"color":"red","width":4},"name":"m̃","marker":{"size":4},"inherit":true},"4efc28157d9.1":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":[0,-1.9531041394936095],"y":[0,10.271459692774583],"z":[0,0],"type":"scatter3d","mode":"lines+markers","line":{"color":"blue","width":4},"name":"f̃","marker":{"size":4},"inherit":true},"4efc28157d9.2":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":[0,1.4954131062144946],"y":[0,8.4063706727817937],"z":[0,12.808539017138376],"type":"scatter3d","mode":"lines+markers","line":{"color":"green","width":4},"name":"ỹ","marker":{"size":4},"inherit":true},"4efc28157d9.3":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":[0,1.4954131062144944],"y":[0,8.406370672781792],"z":[0,0],"type":"scatter3d","mode":"lines+markers","line":{"color":"purple","width":4},"name":"ŷ̃","marker":{"size":4},"inherit":true},"4efc28157d9.4":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":[1.4954131062144944,1.4954131062144946],"y":[8.406370672781792,8.4063706727817937],"z":[0,12.808539017138376],"type":"scatter3d","mode":"lines","line":{"color":"orange","width":3,"dash":"dash"},"name":"residual","marker":{"size":4},"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Basis 1 (m̃ direction)"},"yaxis":{"title":"Basis 2 (f̃ direction)"},"zaxis":{"title":"Perpendicular to plane"},"aspectmode":"cube"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0,9.1098572985530328],"y":[0,3.1225022567582528e-17],"z":[0,0],"type":"scatter3d","mode":"lines+markers","line":{"color":"red","width":4},"name":"m̃","marker":{"color":"rgba(31,119,180,1)","size":4,"line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,-1.9531041394936095],"y":[0,10.271459692774583],"z":[0,0],"type":"scatter3d","mode":"lines+markers","line":{"color":"blue","width":4},"name":"f̃","marker":{"color":"rgba(255,127,14,1)","size":4,"line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,1.4954131062144946],"y":[0,8.4063706727817937],"z":[0,12.808539017138376],"type":"scatter3d","mode":"lines+markers","line":{"color":"green","width":4},"name":"ỹ","marker":{"color":"rgba(44,160,44,1)","size":4,"line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,1.4954131062144944],"y":[0,8.406370672781792],"z":[0,0],"type":"scatter3d","mode":"lines+markers","line":{"color":"purple","width":4},"name":"ŷ̃","marker":{"color":"rgba(214,39,40,1)","size":4,"line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null},{"x":[1.4954131062144944,1.4954131062144946],"y":[8.406370672781792,8.4063706727817937],"z":[0,12.808539017138376],"type":"scatter3d","mode":"lines+markers","line":{"color":"orange","width":3,"dash":"dash"},"name":"residual","marker":{"color":"rgba(148,103,189,1)","size":4,"line":{"color":"rgba(148,103,189,1)"}},"error_y":{"color":"rgba(148,103,189,1)"},"error_x":{"color":"rgba(148,103,189,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ortho-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.6: TBD
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="least-squares-two-perspectives" class="level3" data-number="6.3.5">
+<h3 data-number="6.3.5" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.3.5</span> Least Squares: Two Perspectives</h3>
+</section>
+<section id="data-visualization" class="level3" data-number="6.3.6">
+<h3 data-number="6.3.6" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">6.3.6</span> Data Visualization</h3>
 <ul>
 <li>The 3D scatterplot view: each point is (mother_height, father_height, son_height)</li>
 <li>The fitted regression plane: ŷ = β₀ + β₁·mother + β₂·father</li>
@@ -1100,8 +1287,8 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 <li>Dimension: p = 3 (number of features including intercept)</li>
 </ul>
 </section>
-<section id="sample-space" class="level3" data-number="6.3.3">
-<h3 data-number="6.3.3" class="anchored" data-anchor-id="sample-space"><span class="header-section-number">6.3.3</span> Sample Space</h3>
+<section id="sample-space" class="level3" data-number="6.3.7">
+<h3 data-number="6.3.7" class="anchored" data-anchor-id="sample-space"><span class="header-section-number">6.3.7</span> Sample Space</h3>
 <ul>
 <li>Each observation is a vector in ℝⁿ (n = 179)</li>
 <li>The response vector y ∈ ℝ¹⁷⁹ has components [y₁, y₂, …, y₁₇₉]ᵀ</li>
@@ -1109,8 +1296,8 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 <li>Example: the “mother_heights” column is one vector in 179-dimensional space</li>
 </ul>
 </section>
-<section id="column-space" class="level3" data-number="6.3.4">
-<h3 data-number="6.3.4" class="anchored" data-anchor-id="column-space"><span class="header-section-number">6.3.4</span> Column Space</h3>
+<section id="column-space" class="level3" data-number="6.3.8">
+<h3 data-number="6.3.8" class="anchored" data-anchor-id="column-space"><span class="header-section-number">6.3.8</span> Column Space</h3>
 <ul>
 <li>C(X) is the 3-dimensional subspace of ℝ¹⁷⁹ spanned by the columns of X</li>
 <li>All possible linear combinations: Xβ for any β ∈ ℝ³</li>
@@ -1118,8 +1305,8 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 <li>Dimension: rank(X) ≤ min(n,p) = 3 (assuming full column rank)</li>
 </ul>
 </section>
-<section id="orthogonal-projection" class="level3" data-number="6.3.5">
-<h3 data-number="6.3.5" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">6.3.5</span> Orthogonal Projection</h3>
+<section id="orthogonal-projection" class="level3" data-number="6.3.9">
+<h3 data-number="6.3.9" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">6.3.9</span> Orthogonal Projection</h3>
 <ul>
 <li>ŷ = Xβ̂ is the orthogonal projection of y onto C(X)</li>
 <li>The residual vector e = y - ŷ is orthogonal to C(X)</li>
@@ -1128,8 +1315,8 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 <li>Include a 2D schematic diagram: y, C(X) as a plane, ŷ as projection, e perpendicular</li>
 </ul>
 </section>
-<section id="reconciling-perspectives" class="level3" data-number="6.3.6">
-<h3 data-number="6.3.6" class="anchored" data-anchor-id="reconciling-perspectives"><span class="header-section-number">6.3.6</span> Reconciling Perspectives</h3>
+<section id="reconciling-perspectives" class="level3" data-number="6.3.10">
+<h3 data-number="6.3.10" class="anchored" data-anchor-id="reconciling-perspectives"><span class="header-section-number">6.3.10</span> Reconciling Perspectives</h3>
 <ul>
 <li>The 3D scatterplot shows relationships between variables (p-dimensional)</li>
 <li>The projection happens in observation space (n-dimensional)</li>
@@ -1137,8 +1324,8 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 <li>The regression coefficients β connect the two views</li>
 </ul>
 </section>
-<section id="why-this-matters" class="level3" data-number="6.3.7">
-<h3 data-number="6.3.7" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">6.3.7</span> Why This Matters</h3>
+<section id="why-this-matters" class="level3" data-number="6.3.11">
+<h3 data-number="6.3.11" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">6.3.11</span> Why This Matters</h3>
 <ul>
 <li>Degrees of freedom: n - p (observations minus parameters)</li>
 <li>Overfitting: what happens when p approaches n?</li>
@@ -1179,6 +1366,8 @@ LeCun, Yann, Corinna Cortes, and Christopher J. C. Burges. 2005. <span>“The MN
 <li id="fn6"><p>The conversion of a matrix of pixels to a vector of pixels is known as raster-to-vector (R2V) conversion, usually in row-major format, whereby the elements of the vector are taken from the top row and then from each succeeding row. See <span class="citation" data-cites="wiki_raster"><span>“Raster Graphics | Wikipedia”</span> (<a href="references.html#ref-wiki_raster" role="doc-biblioref">2025</a>)</span>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn7"><p>See <span class="citation" data-cites="wiki_one-hot"><span>“One-Hot | Wikipedia”</span> (<a href="references.html#ref-wiki_one-hot" role="doc-biblioref">2025</a>)</span> and <span class="citation" data-cites="wiki_categorical_variable"><span>“Categorical Variable | Wikipedia”</span> (<a href="references.html#ref-wiki_categorical_variable" role="doc-biblioref">2025</a>)</span>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn8"><p>Matrix <span class="math inline">\(X\)</span> on the right side of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> is called a <em>feature matrix</em> that may contain original data columns (other than the response or labeling variable) and may also contain columns that are functions of the data or of other information. A data matrix is model-agnostic, whereas a feature matrix is constructed to support a model of some form.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>The residual son’s height is the error term in the regression formula. In the figure, residuals are color-coded according to their sign: black if positive and red otherwise.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p>The regression plane qualifies as a linear manifold, mathematically speaking.<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
