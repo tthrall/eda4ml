@@ -744,7 +744,7 @@ $$
 \end{align} 
 $$ {#eq-resid-ss}
 
-To find coefficient values that minimize this sum of squares, one can take derivatives of the above expression with respect to $\beta_\bullet$ and set that result to zero.  This gives the following _normal equations_: 
+To find coefficient values that minimize this sum of squares, one can take derivatives of the above expression with respect to $\beta_\bullet$ and set that result to zero, which yields the following _normal equations_: 
 
 $$
 \begin{align} 
@@ -774,9 +774,11 @@ $$ {#eq-lin-reg-y-hat}
 
 ### Data Vectors in $n-$Dimensional Space
 
-Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to the linear combination $\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet$, which belongs to a 2-dimensional subspace of $n-$space, where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
+Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to the linear combination $\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet$, which belongs to a 2-dimensional subspace of $n-$space [^n-space], where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace (let's say the "parental" subspace) is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
 
-The particular coefficient vector $\hat{\beta}_\bullet$ obtained by least squares linear regression has a special form.  That is, @eq-lin-reg-y-hat gives a linear mapping:
+[^n-space]: The terms $n-$dimensional space and $n-$space are colloquial versions of "an $n-$dimensional vector space $\mathcal{V}$ over the field $\mathbb{R}$ of real numbers".  Similarly, the term $n-$vector means a vector $v \in \mathcal{V}$.  Once a set of basis vectors is identified in $\mathcal{V}$, any $v \in \mathcal{V}$ can be identified by its coordinates with respect to the given basis.  This gives an isomorphism from $\mathcal{V}$ to $\mathbb{R}^n$.  Now for a numeric column of data, the successive rows of values provide an automatic representation as a vector in $\mathbb{R}^n$.  In the data set of family heights, for example, each row of data corresponds to a distinct family, and a column vector, the mother's height for example, is represented as $m_\bullet = (m_1, \ldots, m_n) \in \mathbb{R}^n$, where $m_i$ refers to the height in inches of the mother in family $i$.
+
+The particular coefficient vector $\hat{\beta}_\bullet$ obtained by least squares linear regression produces the linear mapping of @eq-lin-reg-y-hat:
 
 $$
 \begin{align} 
@@ -784,7 +786,7 @@ $$
 \end{align} 
 $$ {#eq-lin-reg-projection}
 
-This mapping sends the centered heights of sons $\dot{y}_\bullet$ to their corresponding linear prediction $\hat{\dot{y}}_\bullet$, where $P$ denotes the matrix of that mapping.
+This mapping sends the centered heights of sons $\dot{y}_\bullet$ to their corresponding linear prediction $\hat{\dot{y}}_\bullet = P \; \dot{y}_\bullet$, where $P$ is the following matrix.
 
 $$
 \begin{align} 
@@ -887,17 +889,17 @@ $$ {#eq-lin-reg-min-distance}
 
 To summarize, 
 
-  - The parental centered heights $(\dot{m}_\bullet, \dot{f}_\bullet)$ constitute a basis of the 2-dimensional subspace that they span within $n-$space.
+  - The parental centered heights $(\dot{m}_\bullet, \dot{f}_\bullet)$ constitute a basis of the 2-dimensional subspace (the "parental" subspace) that they span within $n-$space.
   - Matrix $P$ sends the vector $\dot{y}_\bullet$ of sons' centered heights to prediction vector $\hat{\dot{y}_\bullet}$.
-  - This mapping is an orthogonal projection onto the parental subspace.
+  - $P$ is the orthogonal projection of $n-$space onto the parental subspace.
   - Moreover, $(\hat{\beta}_1, \hat{\beta}_2)$ are the coordinates of the prediction vector in this subspace with respect to the parental basis.
-  - Of all the vectors in the parental subspace, the prediction vector $\hat{\dot{y}_\bullet}$ is the closest (in Euclidean distance) to the given vector $\dot{y}_\bullet$.
+  - Of all the vectors in the parental subspace, the prediction vector $\hat{\dot{y}_\bullet} = P \; \dot{y}_\bullet$ is the closest (in Euclidean distance) to the given vector $\dot{y}_\bullet$.
 
-Figure xxx illustrates these points.
+@fig-plotly-10-22a illustrates these points.
 
 ```{r}
-#| label: fig-ortho-projection
-#| fig-cap: "TBD"
+#| label: fig-plotly-10-22a
+#| fig-cap: "plotly-10-22a"
 
 # After computing your centered vectors and projection
 # Visualize in the 3D subspace spanned by m_dot, f_dot, and y_dot
@@ -921,7 +923,7 @@ coords_y <- c(sum(y_dot * basis1), sum(y_dot * basis2),
 coords_yhat <- c(sum(y_hat_dot * basis1), sum(y_hat_dot * basis2), 0)
 
 # Create 3D plot with plotly
-fig <- plot_ly() %>%
+g_ply_10_22a <- plot_ly() %>%
   # Add vectors
   add_trace(x = c(0, coords_m[1]), y = c(0, coords_m[2]), 
             z = c(0, coords_m[3]), type = "scatter3d", mode = "lines+markers",
@@ -954,8 +956,227 @@ fig <- plot_ly() %>%
     aspectmode = "cube"
   ))
 
-fig
+g_ply_10_22a
 ```
+
+@fig-plotly-10-23a illustrates these points.
+
+```{r}
+#| label: fig-plotly-10-23a
+#| fig-cap: "plotly-10-23a"
+
+# Using same centered data as above
+# (mother, father, son vectors)
+
+# Create vectors for visualization (using first 3 obs as schematic)
+# mother_vec <- mother[1:3]
+# father_vec <- father[1:3]
+# y_vec <- son[1:3]
+# y_hat_vec <- y_hat[1:3]
+
+# use smf_smpl_ctr$yyy to define xxx_vec
+mother_vec <- smf_smpl_ctr$ mother
+father_vec <- smf_smpl_ctr$ father
+y_vec      <- smf_smpl_ctr$ son
+y_hat_vec  <- smf_smpl_ctr$ s_hat
+
+# use smf_smpl_ctr_lm$coefficients to define beta
+beta <- smf_smpl_ctr_lm$coefficients
+
+# Create plane mesh
+alpha_seq <- seq(-1.5, 1.5, length.out = 20)
+beta_seq  <- seq(-1.5, 1.5, length.out = 20)
+
+plane_x <- outer(alpha_seq, mother_vec [1], "*") + 
+           outer(beta_seq,  father_vec [1], "*")
+
+plane_y <- outer(alpha_seq, mother_vec [2], "*") + 
+           outer(beta_seq,  father_vec [2], "*")
+
+plane_z <- outer(alpha_seq, mother_vec[3], "*") + 
+           outer(beta_seq,  father_vec[3], "*")
+
+# Create the plot
+g_ply_10_23a <- plot_ly() %>%
+  # Add the plane (column space)
+  add_surface(x = ~plane_x, y = ~plane_y, z = ~plane_z,
+              colorscale = list(c(0, "lightblue"), c(1, "lightblue")),
+              opacity = 0.3,
+              showscale = FALSE,
+              name = "C(X)") %>%
+  
+  # Mother basis vector
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, mother_vec[1] * 1.5), 
+            y = c(0, mother_vec[2] * 1.5),
+            z = c(0, mother_vec[3] * 1.5),
+            line = list(color = "blue", width = 6),
+            marker = list(size = 6, color = "blue"),
+            name = "mother",
+            showlegend = TRUE) %>%
+  
+  # Father basis vector
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, father_vec[1] * 1.5), 
+            y = c(0, father_vec[2] * 1.5),
+            z = c(0, father_vec[3] * 1.5),
+            line = list(color = "darkgreen", width = 6),
+            marker = list(size = 6, color = "darkgreen"),
+            name = "father",
+            showlegend = TRUE) %>%
+  
+  # y vector
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, y_vec[1]), 
+            y = c(0, y_vec[2]),
+            z = c(0, y_vec[3]),
+            line = list(color = "red", width = 8),
+            marker = list(size = 8, color = "red"),
+            name = "y",
+            showlegend = TRUE) %>%
+  
+  # y_hat vector (projection)
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, y_hat_vec[1]), 
+            y = c(0, y_hat_vec[2]),
+            z = c(0, y_hat_vec[3]),
+            line = list(color = "purple", width = 8, dash = "dash"),
+            marker = list(size = 8, color = "purple"),
+            name = "ŷ",
+            showlegend = TRUE) %>%
+  
+  # Residual vector
+  add_trace(type = "scatter3d", mode = "lines",
+            x = c(y_hat_vec[1], y_vec[1]), 
+            y = c(y_hat_vec[2], y_vec[2]),
+            z = c(y_hat_vec[3], y_vec[3]),
+            line = list(color = "gray", width = 4, dash = "dot"),
+            name = "residual e",
+            showlegend = TRUE) %>%
+  
+  layout(
+    title = list(
+      text = paste0("OLS Geometric Interpretation<br>",
+                   "<sub>ŷ = ", round(beta[1], 2), "·mother + ", 
+                   round(beta[2], 2), "·father</sub>"),
+      x = 0.5
+    ),
+    scene = list(
+      xaxis = list(title = ""),
+      yaxis = list(title = ""),
+      zaxis = list(title = ""),
+      camera = list(
+        eye = list(x = 1.5, y = 1.5, z = 1.3)
+      ),
+      aspectmode = "cube"
+    )
+  )
+
+g_ply_10_23a
+
+```
+
+@fig-s3d-10-23a illustrates these points.
+
+```{r}
+#| label: fig-s3d-10-23a
+#| fig-cap: "s3d-10-23a"
+
+# Using same centered data
+# mother_vec <- mother[1:3]
+# father_vec <- father[1:3]
+# y_vec <- son[1:3]
+# y_hat_vec <- y_hat[1:3]
+
+# use smf_smpl_ctr$yyy to define xxx_vec
+mother_vec <- smf_smpl_ctr$ mother
+father_vec <- smf_smpl_ctr$ father
+y_vec      <- smf_smpl_ctr$ son
+y_hat_vec  <- smf_smpl_ctr$ s_hat
+
+# use smf_smpl_ctr_lm$coefficients to define beta
+beta <- smf_smpl_ctr_lm$coefficients
+
+# Create the base plot
+s3d <- scatterplot3d(
+  x = c(0), y = c(0), z = c(0),
+  xlim = range(c(0, mother_vec[1]*2, father_vec[1]*2, y_vec[1])),
+  ylim = range(c(0, mother_vec[2]*2, father_vec[2]*2, y_vec[2])),
+  zlim = range(c(0, mother_vec[3]*2, father_vec[3]*2, y_vec[3])),
+  type = "n",
+  xlab = "", ylab = "", zlab = "",
+  main = "OLS: Orthogonal Projection onto C(X)",
+  sub = paste0("ŷ = ", round(beta[1], 2), "·mother + ", 
+               round(beta[2], 2), "·father"),
+  angle = 55,
+  box = FALSE
+)
+
+# Draw plane as a grid
+alpha_seq <- seq(-1, 1, length.out = 10)
+beta_seq <- seq(-1, 1, length.out = 10)
+
+for(a in alpha_seq) {
+  for(b in beta_seq) {
+    p1 <- a * mother_vec * 1.5 + b * father_vec * 1.5
+    p2 <- a * mother_vec * 1.5 + (b + 0.2) * father_vec * 1.5
+    s3d$points3d(c(p1[1], p2[1]), c(p1[2], p2[2]), c(p1[3], p2[3]),
+                 type = "l", col = "lightblue", lwd = 0.5)
+    
+    p3 <- (a + 0.2) * mother_vec * 1.5 + b * father_vec * 1.5
+    s3d$points3d(c(p1[1], p3[1]), c(p1[2], p3[2]), c(p1[3], p3[3]),
+                 type = "l", col = "lightblue", lwd = 0.5)
+  }
+}
+
+# Draw basis vectors
+s3d$points3d(c(0, mother_vec[1]*1.5), c(0, mother_vec[2]*1.5), 
+             c(0, mother_vec[3]*1.5), type = "l", col = "blue", lwd = 3)
+s3d$points3d(c(0, father_vec[1]*1.5), c(0, father_vec[2]*1.5), 
+             c(0, father_vec[3]*1.5), type = "l", col = "darkgreen", lwd = 3)
+
+# Draw y vector
+s3d$points3d(c(0, y_vec[1]), c(0, y_vec[2]), c(0, y_vec[3]), 
+             type = "l", col = "red", lwd = 3)
+
+# Draw y_hat vector
+s3d$points3d(c(0, y_hat_vec[1]), c(0, y_hat_vec[2]), c(0, y_hat_vec[3]), 
+             type = "l", col = "purple", lwd = 3, lty = 2)
+
+# Draw residual
+s3d$points3d(c(y_hat_vec[1], y_vec[1]), c(y_hat_vec[2], y_vec[2]), 
+             c(y_hat_vec[3], y_vec[3]), type = "l", col = "gray40", lwd = 2)
+
+# Add arrow endpoints
+s3d$points3d(mother_vec[1]*1.5, mother_vec[2]*1.5, mother_vec[3]*1.5, 
+             col = "blue", pch = 19, cex = 2)
+s3d$points3d(father_vec[1]*1.5, father_vec[2]*1.5, father_vec[3]*1.5, 
+             col = "darkgreen", pch = 19, cex = 2)
+s3d$points3d(y_vec[1], y_vec[2], y_vec[3], 
+             col = "red", pch = 19, cex = 2)
+s3d$points3d(y_hat_vec[1], y_hat_vec[2], y_hat_vec[3], 
+             col = "purple", pch = 19, cex = 2)
+
+# Add labels
+text(s3d$xyz.convert(mother_vec[1]*1.7, mother_vec[2]*1.7, mother_vec[3]*1.7), 
+     "mother", col = "blue", cex = 1.2, font = 2)
+text(s3d$xyz.convert(father_vec[1]*1.7, father_vec[2]*1.7, father_vec[3]*1.7), 
+     "father", col = "darkgreen", cex = 1.2, font = 2)
+text(s3d$xyz.convert(y_vec[1]*1.15, y_vec[2]*1.15, y_vec[3]*1.15), 
+     "y", col = "red", cex = 1.5, font = 2)
+text(s3d$xyz.convert(y_hat_vec[1]*1.15, y_hat_vec[2]*1.15, y_hat_vec[3]*1.15), 
+     "ŷ", col = "purple", cex = 1.5, font = 2)
+
+# Add legend
+legend("topright", 
+       legend = c("mother", "father", "y", "ŷ (projection)", "residual e"),
+       col = c("blue", "darkgreen", "red", "purple", "gray40"),
+       lwd = c(3, 3, 3, 3, 2),
+       lty = c(1, 1, 1, 2, 1),
+       cex = 0.8)
+
+```
+
 
 ### Least Squares: Two Perspectives
 
