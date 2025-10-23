@@ -391,7 +391,9 @@ $$
 \end{align} 
 $$ {#eq-log-ratio-per-image-2}
 
-For a more compact notation let $X_{\bullet} = (1, P_1, \ldots, P_d)$ and let $\beta_{\bullet}^{(\nu)} = (\beta_0^{(\nu)}, \beta_1^{(\nu)}, \ldots, \beta_d^{(\nu)})$, with the inner product of these two vectors denoted as $X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}$.  Then we have 
+For a more compact notation let $X_{\bullet} = (1, P_1, \ldots, P_d)$ and let $\beta_{\bullet}^{(\nu)} = (\beta_0^{(\nu)}, \beta_1^{(\nu)}, \ldots, \beta_d^{(\nu)})$, with the inner product [^inner-product] of these two vectors denoted as $X_{\bullet} \boldsymbol\cdot \beta_{\bullet}^{(\nu)}$.  Then we have 
+
+[^inner-product]: The inner product of vectors $x, y \in \mathcal{V}$ has alternative notations, including $x \boldsymbol\cdot y$, $\left < x, y \right >$, and $x^\top y$.
 
 $$
 \begin{align} 
@@ -475,7 +477,7 @@ The matrix on the left side of @eq-log-ratio-per-image-10 has dimensions $n \tim
 
 ## Notation
 
-The preceding section introduced example data sets along with corresponding models of the following form.
+The preceding section introduced example data sets along with corresponding linear regression models of the following form.
 
 $$
 \begin{align} 
@@ -490,13 +492,13 @@ Each of the elements of @eq-generic-lm has alternative names, including the foll
 $$
 \begin{align} 
   y &= \text{a } \textit{response, target,} \text{ or } \textit{labeling}  \text{ variable} \\ 
-  X &= \text{columns of } \textit{explanatory, predictor,} \text{ or } \textit{feature}  \text{ variables} \\ 
+  X &= \text{feature matrix of } \textit{explanatory, predictor,} \text{ or } \textit{feature}  \text{ variables} \\ 
   \beta &= \text{a vector of model } \textit{coefficients} \text{ or } \textit{parameters} \\ 
   \epsilon &= \text{an } \textit{error} \text{ or } \textit{residual} \text{ term}
 \end{align} 
 $$ {#eq-generic-lm-terms}
 
-This linear regression format follows the more general mathematical notation $y = f(x)$.  In data science and machine learning, however, the response variable $y$ and the feature matrix $X$ have known values, whereas $\beta$ and $\epsilon$ are determined or evaluated over the course of the modeling process.
+This linear regression format follows the more general mathematical notation $y = f(x)$.  In data science and machine learning, however, the response variable $y$ and the feature matrix $X$ have known values, whereas $\beta$ and $\epsilon$ are _fit_ (determined or evaluated based on $y$ and $X$) over the course of the modeling process.
 
 In the data examples of the preceding section, the response variable took the following form.
 
@@ -506,7 +508,7 @@ In the data examples of the preceding section, the response variable took the fo
 
 The MNIST example illustrates a _vector-valued_ rather than _scalar-valued_ response variable.
 
-If the data include a labeling or response variable, $y$, then the problem is said to be _supervised_.  In _unsupervised_ problems (that lack a $y$ variable), we may need to find patterns in the given data.  For example we may seek those feature variables (columns of the feature matrix $X$), or linear combinations of feature variables, that account for most of the variability in the entire set of feature variables.  Or we may need to find observations (rows of the feature matrix $X$) that are similar and thereby form groups (or _clusters_) of observations.  In these unsupervised situations we may model the data matrix (or covariance matrix) as the product of other matrices of special form (to be discussed later in this chapter).
+If the data include a labeling or response variable, $y$, then the problem is said to be _supervised_.  In _unsupervised_ problems (that lack a $y$ variable), we may need to find patterns in the given data.  For example we may seek those feature variables (columns of the feature matrix $X$), or linear combinations of feature variables, that account for most of the variability in the entire set of feature variables.  Or we may need to find observations (rows of the feature matrix $X$) that are similar and thereby form groups (or _clusters_) of observations.  In these unsupervised situations we may model the feature matrix (or its covariance matrix) as the product of other matrices of special form (to be discussed later in this chapter).
 
 In the remainder of this chapter we will focus on ideas and methods that help us to solve @eq-generic-lm, or rather, that help us to determine the value of $\beta$ that minimizes (in some sense) the residual term $\epsilon$.
 
@@ -568,9 +570,9 @@ smf_smpl_tbl <- smf_smpl_tbl |>
   )
 ```
 
-Consider the least-squares estimate $\hat{\beta}_\bullet$ and the consequent predicted height $\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet$ of the son.  @fig-smf-smpl is based on a random sample of `r n_smf_smpl` families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the regression plane. [^son_resid]
+Consider the least-squares estimate $\hat{\beta}_\bullet$ and the consequent predicted height $\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet$ of the son.  @fig-smf-smpl is based on a random sample of `r n_smf_smpl` families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the _regression plane_. [^son_resid]
 
-[^son_resid]: The residual son's height is the error term in the regression formula.  In the figure, residuals are color-coded according to their sign: black if positive and red otherwise. 
+[^son_resid]: The residual son's height is the error term in the regression formula.  In the figure, residuals are color-coded according to their sign: black if positive and red otherwise.
 
 ```{r}
 #| label: fig-smf-smpl
@@ -613,7 +615,7 @@ for(i in 1:nrow(smf_smpl_tbl)) {
 
 ```
 
-@fig-smf-smpl represents individual rows of data, $\{ (m_i, f_i, s_i) \}_{i = 1}^n$ along with model predictions and residuals in three-dimensional $(m, f, s)$ space.
+@fig-smf-smpl represents individual rows of data, $\{ (m_i, f_i, s_i) \}_{i = 1}^n$ along with model predictions $(\hat{s} = \hat{\beta}_0 + \hat{\beta}_1 m + \hat{\beta}_2 f)$ and residuals $(\hat{\epsilon} = s - \hat{s})$ in three-dimensional $(m, f, s)$ space.
 
 To gain more insight into linear regression we'll first reduce the regression problem to the simple case in which the response variable and the predictor variables have all been coerced to have an average value of zero, a process called _centering_.  This will eliminate the need for the intercept coefficient, $\beta_0$, and consequently eliminate the need to include the constant vector $1_\bullet$ in the feature matrix $X_{_\bullet, _\bullet}$.
 
@@ -623,7 +625,11 @@ The regression plane that we glimpse in @fig-smf-smpl actually spans all the $(m
 
 [^lin-manifold]:  The regression plane qualifies as a linear manifold, mathematically speaking.
 
-One way to generate this subspace is to center each of the $(m_i, f_i, s_i)$ data values, that is, to replace data value $v_i$ with its centered version $\dot{v}_i = v_i - \bar{v}$, where $\bar{v}$ denotes the average value (arithmetic mean) of vector $v_\bullet$.
+The concept of a subspace is central to linear algebra.  Therefore determining the subspace parallel to the regression plane will enable us to apply linear algebra methods to better understand linear regression.
+
+One way to generate this subspace is to center each of the $(m_i, f_i, s_i)$ data values, that is, to replace data value $v_i$ with its centered version $\dot{v}_i = v_i - \bar{v}$, where $\bar{v}$ denotes the average value (arithmetic mean) of vector $v_\bullet$. [^centering-matrix]
+
+[^centering-matrix]: Centering is a linear operation, which means that it can be represented by a matrix $C = I - \frac{1}{n} \; 1_\bullet \; 1_\bullet^\top$.
 
 Now it turns out that the regression plane passes through the theoretical _point of averages_, $(\bar{m}, \bar{f}, \bar{s})$.  If we were to center the $(m_\bullet, f_\bullet, s_\bullet)$ vectors, and regress the centered son's height against centered versions of the (mother, father) heights, the new regression plane would pass through the origin and thus qualify as a subspace.  That is, the fitted intercept coefficient of the centered regression problem must be zero.  Therefore we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector $1_\bullet$ from the feature matrix $X_{_\bullet, _\bullet}$. Then we have the following centered linear model.
 
@@ -768,34 +774,63 @@ $$ {#eq-lin-reg-y-hat}
 
 ### Data Vectors in $n-$Dimensional Space
 
-Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to a 2-dimensional subspace of $n-$space, where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
+Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to the linear combination $\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet$, which belongs to a 2-dimensional subspace of $n-$space, where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
 
-The particular coefficient vector $\hat{\beta}_\bullet$ obtained by least squares linear regression has a special form.  That is, @eq-lin-reg-y-hat gives a linear mapping from the centered heights of sons $\dot{y}_\bullet$ to their corresponding linear prediction $\hat{\dot{y}}_\bullet$.  Let $P$ denote the matrix of that mapping.
+The particular coefficient vector $\hat{\beta}_\bullet$ obtained by least squares linear regression has a special form.  That is, @eq-lin-reg-y-hat gives a linear mapping:
+
+$$
+\begin{align} 
+  \hat{\dot{y}}_\bullet &= P \; \dot{y}_\bullet
+\end{align} 
+$$ {#eq-lin-reg-projection}
+
+This mapping sends the centered heights of sons $\dot{y}_\bullet$ to their corresponding linear prediction $\hat{\dot{y}}_\bullet$, where $P$ denotes the matrix of that mapping.
 
 $$
 \begin{align} 
   P
   &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top
 \end{align} 
-$$ {#eq-lin-reg-projection}
+$$ {#eq-lin-reg-projection-mat}
 
-Matrix $P$ is symmetric and idempotent, that is, both the transpose and the squaring of $P$ equal $P$. 
+Matrix $P$ is idempotent and symmetric, that is, both the square $P^2$ and the transpose $P^\top$ equal $P$.
 
 $$
 \begin{align} 
-  P^\top
-  &= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \}^\top \\ 
-  &=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\ 
-  &= P \\ \\
   P^2
   &= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \} 
   \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \} \\ 
   &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\ 
-  &= P
+  &= P \\ \\ 
+  P^\top
+  &= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \}^\top \\ 
+  &=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top
 \end{align} 
 $$ {#eq-projection-properties}
 
-An idempotent matrix $M$ is called a _projection_.  If $M^2 = M$, then repeated applications of $M$ to vector $v$ return the initial application, i.e., $M^k v = Mv$ for any positive integer $k$.  If in addition matrix $M$ is symmetric (as is $P$), then $M$ is said to be an _orthogonal projection_.  In this case the complement of $M$, $I - M$, also qualifies as an orthogonal projection and the product of the two matrices is the zero matrix.  Any vector $v$ can be expressed as the sum of two vectors $v = x + y$ that are mutually orthogonal $(x^\top y = 0)$, namely $x = M v$ and $y = (I-M) v$.
+If matrix $M$ is idempotent, that is, if $M^2 = M$, then $M$ represents a _projection_.  Repeated applications of $M$ to vector $v$ return the initial application, i.e., $M^k v = Mv$ for any positive integer $k$.
+
+If in addition matrix $M$ is symmetric, that is, if $M^\top = M$, then $M$ represents an _orthogonal projection_.  In this case the complement of $M$, $I - M$, also qualifies as an orthogonal projection and the product of the two matrices is the zero matrix.
+
+Consequently, any vector $v$ can be expressed as the sum of two vectors $v = x + y$, with  $x = M v$ and $y = (I-M) v$.  Vector $x$ belongs to the subspace generated by $M$, which is called the _range_ of $M$, denoted as $\mathcal{R} (M)$.  Similarly $y \in \mathcal{R} (I - M)$.  Moreover, these two vectors are orthogonal: $(x^\top y = y^\top x = 0)$.  That is, subspace $\mathcal{R} (I - M)$ is the orthogonal complement of subspace $\mathcal{R} (M)$.
+
+Let's apply these ideas to matrix $P$.  First, we have shown that matrix $P$ represents an orthogonal projection.  On closer inspection, we can show that the subspace generated by $P$, $\mathcal{R} (P)$, is the parental subspace.  That is, for any vector $v_\bullet$ we have:
+
+$$
+\begin{align} 
+  P \; v_\bullet &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \; v_\bullet \\ 
+  &= \dot{X}_{\bullet, \bullet} \left \{ \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \; v_\bullet \right \} \\ 
+  &= \dot{X}_{\bullet, \bullet} \left \{ \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} 
+  \begin{pmatrix}
+    \dot{m}_{\bullet}^\top \; v_\bullet \\ 
+    \dot{f}_{\bullet}^\top \; v_\bullet
+  \end{pmatrix}
+  \right \} \\ 
+  &= \dot{X}_{\bullet, \bullet} \; \gamma_\bullet (v_\bullet)
+\end{align} 
+$$ {#eq-parental-projection}
+
+That is, for any vector $v_\bullet$ in $n-$space, $P$ sends $v_\bullet$ to an $n-$vector of the form $\dot{X}_{\bullet, \bullet} \; \gamma_\bullet$, which is a linear combination of $(\dot{m}_\bullet, \dot{f}_\bullet)$ and thus belongs to the parental subspace.
 
 In our example, this means that the respective vectors of predicted centered heights $\hat{\dot{y}_\bullet}$ and their residuals $\hat{\epsilon}_\bullet$ are mutually orthogonal.
 
@@ -805,43 +840,46 @@ $$
   \hat{\epsilon}_\bullet &= \dot{y}_\bullet - \hat{\dot{y}}_\bullet \\ 
   &= (I - P) \; \dot{y}_\bullet \\ \\ 
   \hat{\epsilon}_\bullet^\top \; \dot{y}_\bullet &= \dot{y}_\bullet^\top \; (I - P)^\top P \; \dot{y}_\bullet \\ 
+  &= \dot{y}_\bullet^\top \; (I - P) \; P \; \dot{y}_\bullet \\ 
+  &= \dot{y}_\bullet^\top \; (P - P^2) \; \dot{y}_\bullet \\ 
+  &= \dot{y}_\bullet^\top \; 0_{\bullet, \bullet} \; \dot{y}_\bullet \\ 
   &= 0
 \end{align} 
 $$ {#eq-resid-predicted-ortho}
 
-Now let $v_\bullet$ be any vector in the parental space.  Then $v_\bullet$ is some linear combination of the parental vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$ and therefore can be represented as $v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ for some coefficient vector $\gamma_\bullet = (\gamma_1, \gamma_2)^\top$.  It now follows the $P \; v_\bullet = v_\bullet$: 
+Now let $p_\bullet$ be any vector in the parental space.  Then $p_\bullet$ is some linear combination of the parental vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$ and therefore can be represented as $p_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ for some coefficient vector $\gamma_\bullet = (\gamma_1, \gamma_2)^\top$.  It now follows the $P \; p_\bullet = p_\bullet$: 
 
 $$
 \begin{align} 
-  P \; v_\bullet &= P \; (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
+  P \; p_\bullet &= P \; (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
   &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \;  (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
   &= \dot{X}_{\bullet, \bullet} \gamma_\bullet \\ 
-  &= v_\bullet
+  &= p_\bullet
 \end{align} 
 $$ {#eq-subspace-invariance}
 
-Consequently, the residual vector $\hat{\epsilon}_\bullet$ is orthogonal to any vector $v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ in the parental subspace: 
+Consequently, the residual vector $\hat{\epsilon}_\bullet$ is orthogonal to any vector $p_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ in the parental subspace: 
 
 $$
 \begin{align} 
-  \hat{\epsilon}_\bullet^\top \; v_\bullet &= \dot{y}_\bullet^\top \; (I - P)^\top v_\bullet \\ 
-  &= \dot{y}_\bullet^\top \; (I - P) \; v_\bullet \\ 
+  \hat{\epsilon}_\bullet^\top \; p_\bullet &= \dot{y}_\bullet^\top \; (I - P)^\top p_\bullet \\ 
+  &= \dot{y}_\bullet^\top \; (I - P) \; p_\bullet \\ 
   &= \dot{y}_\bullet^\top \; 0_\bullet \\ 
   &= 0
 \end{align} 
 $$ {#eq-resid-mf-ortho}
 
-It now follows that of all vectors $v_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ in the parental subspace, the predicted vector $\hat{\dot{y}}_\bullet$ is closest to the given vector $\dot{y}_\bullet$:
+It now follows that of all vectors $p_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet$ in the parental subspace, the predicted vector $\hat{\dot{y}}_\bullet$ is closest to the given vector $\dot{y}_\bullet$:
 
 $$
 \begin{align} 
-  \lVert \dot{y_\bullet} - v_\bullet \rVert^2 
-  &= \lVert (\dot{y_\bullet} - \hat{\dot{y}}_\bullet) + (\hat{\dot{y}}_\bullet - v_\bullet) \rVert^2  \\ 
-  &= \lVert \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \rVert^2 \\ 
-  &= \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \right )^\top 
-  \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - v_\bullet) \right ) \\
-  &= \hat{\epsilon}_\bullet^\top \hat{\epsilon}_\bullet \; + \; 0 \; + \; 0 \; + \; (\hat{\dot{y}}_\bullet - v_\bullet)^\top (\hat{\dot{y}}_\bullet - v_\bullet) \\ 
-  &= \lVert \hat{\epsilon}_\bullet \rVert^2 \; + \; \lVert \hat{\dot{y}}_\bullet - v_\bullet \rVert^2 \\
+  \lVert \dot{y_\bullet} - p_\bullet \rVert^2 
+  &= \lVert (\dot{y_\bullet} - \hat{\dot{y}}_\bullet) + (\hat{\dot{y}}_\bullet - p_\bullet) \rVert^2  \\ 
+  &= \lVert \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - p_\bullet) \rVert^2 \\ 
+  &= \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - p_\bullet) \right )^\top 
+  \left ( \hat{\epsilon}_\bullet + (\hat{\dot{y}}_\bullet - p_\bullet) \right ) \\
+  &= \hat{\epsilon}_\bullet^\top \hat{\epsilon}_\bullet \; + \; 0 \; + \; 0 \; + \; (\hat{\dot{y}}_\bullet - p_\bullet)^\top (\hat{\dot{y}}_\bullet - p_\bullet) \\ 
+  &= \lVert \hat{\epsilon}_\bullet \rVert^2 \; + \; \lVert \hat{\dot{y}}_\bullet - p_\bullet \rVert^2 \\
   &\ge \lVert \hat{\epsilon}_\bullet \rVert^2 \\ 
   &= \lVert \dot{y_\bullet} - \hat{\dot{y}}_\bullet \rVert^2
 \end{align} 
