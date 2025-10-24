@@ -15,26 +15,22 @@
 ##
 create_mnist_ve <- function() {
   # install_python()
-  py_sys_time <- system.time(
-    reticulate::install_python()
-  )
+  begin_py <- lubridate::now()
+  reticulate::install_python()
+  end_py <- lubridate::now()
+  dur_py <- lubridate::time_length(end_py - begin_py)
   
   # install_tensorflow()
-  tf_sys_time <- system.time(
-    tensorflow::install_tensorflow()
-  )
+  begin_tf <- lubridate::now()
+  tensorflow::install_tensorflow()
+  end_tf <- lubridate::now()
+  dur_tf <- lubridate::time_length(end_tf - begin_tf)
   
   # return process duration in seconds
-  dur_tbl <- dplyr::bind_rows(
-    py_sys_time |> 
-      tibble::as_tibble_row() |> 
-      dplyr::mutate(proc = "reticulate::install_python"), 
-    tf_sys_time |> 
-      tibble::as_tibble_row() |> 
-      dplyr::mutate(proc = "tensorflow::install_tensorflow")
-  ) |> 
-    dplyr::select(proc, everything())
-  
+  dur_tbl <- tibble::tibble(
+    proc = paste0("install_", c("python", "tensorflow")), 
+    secs = c(dur_py, dur_tf)
+  )
   return(dur_tbl)
 }
 
