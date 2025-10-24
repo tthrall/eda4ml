@@ -2,7 +2,7 @@
 ###
 #     pgram_grid.R
 #
-#       Tessellate (2D, 3D) with (parallelogram, parallelepiped).
+#       Tessellate (2D, 3D) with (parallelograms, parallelepipeds).
 ###
 #####
 

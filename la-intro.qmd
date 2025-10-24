@@ -40,6 +40,7 @@ library(UsingR)
 
 source(here("code", "mnist_file_mgmt.R"))
 source(here("code", "oecd_bli.R"))
+source(here("code", "pgram_grid.R"))
 source(here("code", "z_score.R"))
 ```
 
@@ -772,11 +773,11 @@ $$
 \end{align} 
 $$ {#eq-lin-reg-y-hat}
 
-### Data Vectors in $n-$Dimensional Space
+### Orthogonal Projections
 
 Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to the linear combination $\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet$, which belongs to a 2-dimensional subspace of $n-$space [^n-space], where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace (let's say the "parental" subspace) is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
 
-[^n-space]: The terms $n-$dimensional space and $n-$space are colloquial versions of "an $n-$dimensional vector space $\mathcal{V}$ over the field $\mathbb{R}$ of real numbers".  Similarly, the term $n-$vector means a vector $v \in \mathcal{V}$.  Once a set of basis vectors is identified in $\mathcal{V}$, any $v \in \mathcal{V}$ can be identified by its coordinates with respect to the given basis.  This gives an isomorphism from $\mathcal{V}$ to $\mathbb{R}^n$.  Now for a numeric column of data, the successive rows of values provide an automatic representation as a vector in $\mathbb{R}^n$.  In the data set of family heights, for example, each row of data corresponds to a distinct family, and a column vector, the mother's height for example, is represented as $m_\bullet = (m_1, \ldots, m_n) \in \mathbb{R}^n$, where $m_i$ refers to the height in inches of the mother in family $i$.
+[^n-space]: The terms $n-$dimensional space and $n-$space are shorthand for "an $n-$dimensional vector space $\mathcal{V}$ over the field $\mathbb{R}$ of real numbers".  Similarly, the term $n-$vector means a vector $v \in \mathcal{V}$.  Once a set of basis vectors is identified in $\mathcal{V}$, any $v \in \mathcal{V}$ can be identified by its coordinates with respect to the given basis.  An identified basis of $n$ vectors gives an isomorphism from $\mathcal{V}$ to $\mathbb{R}^n$.  Data are often collected and presented in the form of a data matrix, where a column of numeric values in $n$ successive rows provides an automatic representation as a vector in $\mathbb{R}^n$.  In the data set of family heights, for example, each row of data corresponds to a distinct family, and a column vector, the mother's height for example, is represented as $m_\bullet = (m_1, \ldots, m_n) \in \mathbb{R}^n$, where $m_i$ refers to the height in inches of the mother in family $i$.
 
 The particular coefficient vector $\hat{\beta}_\bullet$ obtained by least squares linear regression produces the linear mapping of @eq-lin-reg-y-hat:
 
@@ -887,12 +888,42 @@ $$
 \end{align} 
 $$ {#eq-lin-reg-min-distance}
 
+There is one more point worth noting here.  Suppose $\dot{X}_{\bullet, \bullet}$ consisted of just a single column, say $\dot{m}_\bullet$.
+
+$$
+\begin{align} 
+  \dot{X}_{\bullet, \bullet} &= \dot{m}_\bullet \\ \\ 
+  \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet} 
+  &= \dot{m}_\bullet^\top \dot{m}_\bullet \\ 
+  &= \lVert \dot{m}_\bullet \rVert^2
+\end{align} 
+$$ {#eq-1D-cov-mat}
+
+Then we would have: 
+
+$$
+\begin{align} 
+  P
+  &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\ 
+  &= \dot{m}_\bullet 
+    \frac{1}{\lVert \dot{m}_\bullet \rVert^2} \; \dot{m}_\bullet^\top \\ 
+  &= \left ( \frac{\dot{m}_\bullet}{\lVert \dot{m}_\bullet \rVert} \right ) 
+     \left ( \frac{\dot{m}_\bullet}{\lVert \dot{m}_\bullet \rVert} \right )^\top \\ 
+  &= u_\bullet \; u_\bullet^\top \\ \\ 
+  \text{where} \\ \\
+  u_\bullet &= \frac{\dot{m}_\bullet}{\lVert \dot{m}_\bullet \rVert} \\ \\ 
+  \text{so that} \\ \\
+  \lVert u_\bullet \rVert &= 1
+\end{align} 
+$$ {#eq-1D-projection-mat}
+
 To summarize, 
 
   - The parental centered heights $(\dot{m}_\bullet, \dot{f}_\bullet)$ constitute a basis of the 2-dimensional subspace (the "parental" subspace) that they span within $n-$space.
   - Matrix $P$ sends the vector $\dot{y}_\bullet$ of sons' centered heights to prediction vector $\hat{\dot{y}_\bullet}$.
   - $P$ is the orthogonal projection of $n-$space onto the parental subspace.
   - Moreover, $(\hat{\beta}_1, \hat{\beta}_2)$ are the coordinates of the prediction vector in this subspace with respect to the parental basis.
+  - The formula for $P$ generalizes the 1-dimensional projection $u_\bullet \; u_\bullet^\top$ where $\lVert u_\bullet \rVert = 1$
   - Of all the vectors in the parental subspace, the prediction vector $\hat{\dot{y}_\bullet} = P \; \dot{y}_\bullet$ is the closest (in Euclidean distance) to the given vector $\dot{y}_\bullet$.
 
 @fig-plotly-10-22a illustrates these points.
