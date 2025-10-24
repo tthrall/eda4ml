@@ -1177,6 +1177,104 @@ legend("topright",
 
 ```
 
+```{r}
+#| label: mfs-coordinate-system
+
+# Construct a non-orthogonal 3D grid in which 
+# the (mother, father, son) axes of centered heights 
+# are at angles whose cosines match the 
+# (mother, father, son) correlations 
+
+# Compute correlations
+# cor_mf <- cor(mother, father)  # angle between mother and father
+# cor_ms <- cor(mother, son)     # angle between mother and son  
+# cor_fs <- cor(father, son)     # angle between father and son
+
+# calculate covariance and correlation matrices
+smf_smpl_ctr_cov <- smf_smpl_ctr |> 
+  dplyr::select(mother, father, son) |> 
+  cov()
+smf_smpl_ctr_cor <- smf_smpl_ctr |> 
+  dplyr::select(mother, father, son) |> 
+  cor()
+cor_mf <- smf_smpl_ctr_cor ["mother", "father"]
+cor_ms <- smf_smpl_ctr_cor ["mother", "son"]
+cor_fs <- smf_smpl_ctr_cor ["father", "son"]
+
+# Place mother along x-axis
+mother_axis <- c(1, 0, 0)
+
+# Place father in xy-plane at correct angle from mother
+theta_mf    <- acos(cor_mf)
+father_axis <- c(cos(theta_mf), sin(theta_mf), 0)
+
+# Place son to satisfy all three pairwise angles
+# son · mother = cor_ms implies: x = cor_ms
+# son · father = cor_fs implies: x*cos(theta_mf) + y*sin(theta_mf) = cor_fs
+# ||son|| = 1 implies: x^2 + y^2 + z^2 = 1
+
+x <- cor_ms
+y <- (cor_fs - x * cos(theta_mf)) / sin(theta_mf)
+z_squared <- 1 - x^2 - y^2
+
+# Check if z^2 is positive (it should be if vectors are not coplanar)
+if(z_squared < 0) {
+  warning("Vectors are nearly coplanar")
+  z <- 0
+} else {
+  z <- sqrt(z_squared)
+}
+
+son_axis <- c(x, y, z)
+
+# record the 3 axes as a tibble
+mfs_smpl_ctr_axes <- tibble::tibble(
+  m = mother_axis, 
+  f = father_axis, 
+  s = son_axis
+)
+```
+
+```{r}
+#| label: fig-s3d-10-23b
+#| fig-cap: "s3d-10-23b"
+
+# Load and prepare data
+# data(GaltonFamilies)
+# galton_sons <- GaltonFamilies %>%
+#   filter(gender == "male") %>%
+#   group_by(family) %>%
+#   slice(1) %>%
+#   ungroup()
+
+# Center the variables
+# mother <- scale(galton_sons$mother, scale = FALSE)[,1]
+# father <- scale(galton_sons$father, scale = FALSE)[,1]
+# son <- scale(galton_sons$childHeight, scale = FALSE)[,1]
+
+# Normalize to unit vectors for clean geometry
+# mother <- mother / sqrt(sum(mother^2))
+# father <- father / sqrt(sum(father^2))
+# son <- son / sqrt(sum(son^2))
+
+# create unit, centered vectors in new tibble
+smf_smpl_unit <- smf_smpl_ctr |> 
+  dplyr::select(- c(s_hat, resid)) |> 
+  dplyr::mutate(across(
+    .cols = c(mother, father, son), 
+    .fns  = ~ .x / sqrt(sum(.x^2))
+  ))
+mother <- smf_smpl_unit$ mother
+father <- smf_smpl_unit$ father
+son    <- smf_smpl_unit$ son
+
+# Fit regression (no intercept since centered)
+model <- lm(son ~ mother + father - 1)
+beta <- coef(model)
+
+
+
+```
 
 ### Least Squares: Two Perspectives
 
