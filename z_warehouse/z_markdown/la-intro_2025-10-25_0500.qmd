@@ -931,202 +931,385 @@ To summarize,
   - The formula for $P$ generalizes the 1-dimensional projection $u_\bullet \; u_\bullet^\top$ where $u_\bullet$ is a _unit vector_, that is where $\lVert u_\bullet \rVert = 1$
   - Of all the vectors in the parental subspace, the prediction vector $\hat{\dot{y}_\bullet} = P \; \dot{y}_\bullet$ is the closest (in Euclidean distance) to the given vector $\dot{y}_\bullet$.
 
-[TT: Try oblique axes in 2D to prepare for 3D case.]
+@fig-plotly-10-22a illustrates these points.
 
 ```{r}
-#| label: smf-smpl-cor
+#| label: fig-plotly-10-22a
+#| fig-cap: "plotly-10-22a"
 
-smf_smpl_cor <- smf_smpl_ctr |> 
-  dplyr::select(mother, father, son) |> 
-  stats::cor()
+# After computing your centered vectors and projection
+# Visualize in the 3D subspace spanned by m_dot, f_dot, and y_dot
+
+# map xxx_dot variables below to smf_smpl_ctr columns
+m_dot     <- smf_smpl_ctr$ mother
+f_dot     <- smf_smpl_ctr$ father
+y_dot     <- smf_smpl_ctr$ son
+y_hat_dot <- smf_smpl_ctr$ s_hat
+
+# Create basis vectors for visualization
+basis1 <- m_dot / norm(m_dot, "2")  # normalized mother heights
+basis2 <- f_dot - sum(basis1 * f_dot) * basis1  # Gram-Schmidt
+basis2 <- basis2 / norm(basis2, "2")
+
+# Project all relevant vectors onto these 2D + perpendicular direction
+coords_m <- c(sum(m_dot * basis1), sum(m_dot * basis2), 0)
+coords_f <- c(sum(f_dot * basis1), sum(f_dot * basis2), 0)
+coords_y <- c(sum(y_dot * basis1), sum(y_dot * basis2), 
+              norm(y_dot - y_hat_dot, "2"))
+coords_yhat <- c(sum(y_hat_dot * basis1), sum(y_hat_dot * basis2), 0)
+
+# Create 3D plot with plotly
+g_ply_10_22a <- plot_ly() %>%
+  # Add vectors
+  add_trace(x = c(0, coords_m[1]), y = c(0, coords_m[2]), 
+            z = c(0, coords_m[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "red", width = 4), name = "m̃",
+            marker = list(size = 4)) %>%
+  add_trace(x = c(0, coords_f[1]), y = c(0, coords_f[2]), 
+            z = c(0, coords_f[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "blue", width = 4), name = "f̃",
+            marker = list(size = 4)) %>%
+  add_trace(x = c(0, coords_y[1]), y = c(0, coords_y[2]), 
+            z = c(0, coords_y[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "green", width = 4), name = "ỹ",
+            marker = list(size = 4)) %>%
+  add_trace(x = c(0, coords_yhat[1]), y = c(0, coords_yhat[2]), 
+            z = c(0, coords_yhat[3]), type = "scatter3d", mode = "lines+markers",
+            line = list(color = "purple", width = 4), name = "ŷ̃",
+            marker = list(size = 4)) %>%
+  # Add residual (perpendicular line)
+  add_trace(x = c(coords_yhat[1], coords_y[1]), 
+            y = c(coords_yhat[2], coords_y[2]),
+            z = c(coords_yhat[3], coords_y[3]), 
+            type = "scatter3d", mode = "lines",
+            line = list(color = "orange", width = 3, dash = "dash"), 
+            name = "residual",
+            marker = list(size = 4)) %>%
+  layout(scene = list(
+    xaxis = list(title = "Basis 1 (m̃ direction)"),
+    yaxis = list(title = "Basis 2 (f̃ direction)"),
+    zaxis = list(title = "Perpendicular to plane"),
+    aspectmode = "cube"
+  ))
+
+g_ply_10_22a
 ```
 
+@fig-plotly-10-23a illustrates these points.
+
 ```{r}
-#| label: smf-smpl-ctr-axis-breaks
+#| label: fig-plotly-10-23a
+#| fig-cap: "plotly-10-23a"
 
-# Determine break-points for (mother, father, son) axes
+# Using same centered data as above
+# (mother, father, son vectors)
 
-m_hist_lst <- smf_smpl_ctr$ mother |> get_hist_lst()
-m_breaks   <- m_hist_lst$ breaks
+# Create vectors for visualization (using first 3 obs as schematic)
+# mother_vec <- mother[1:3]
+# father_vec <- father[1:3]
+# y_vec <- son[1:3]
+# y_hat_vec <- y_hat[1:3]
 
-f_hist_lst <- smf_smpl_ctr$ father |> get_hist_lst()
-f_breaks   <- f_hist_lst$ breaks
+# use smf_smpl_ctr$yyy to define xxx_vec
+mother_vec <- smf_smpl_ctr$ mother
+father_vec <- smf_smpl_ctr$ father
+y_vec      <- smf_smpl_ctr$ son
+y_hat_vec  <- smf_smpl_ctr$ s_hat
 
-s_hist_lst <- smf_smpl_ctr$ son |>    get_hist_lst()
-s_breaks   <- m_hist_lst$ breaks
+# use smf_smpl_ctr_lm$coefficients to define beta
+beta <- smf_smpl_ctr_lm$coefficients
 
-smf_smpl_ctr_axis_breaks <- tibble::tibble(
-  m_breaks = m_breaks, 
-  f_breaks = f_breaks, 
-  s_breaks = s_breaks
+# Create plane mesh
+alpha_seq <- seq(-1.5, 1.5, length.out = 20)
+beta_seq  <- seq(-1.5, 1.5, length.out = 20)
+
+plane_x <- outer(alpha_seq, mother_vec [1], "*") + 
+           outer(beta_seq,  father_vec [1], "*")
+
+plane_y <- outer(alpha_seq, mother_vec [2], "*") + 
+           outer(beta_seq,  father_vec [2], "*")
+
+plane_z <- outer(alpha_seq, mother_vec[3], "*") + 
+           outer(beta_seq,  father_vec[3], "*")
+
+# Create the plot
+g_ply_10_23a <- plot_ly() %>%
+  # Add the plane (column space)
+  add_surface(x = ~plane_x, y = ~plane_y, z = ~plane_z,
+              colorscale = list(c(0, "lightblue"), c(1, "lightblue")),
+              opacity = 0.3,
+              showscale = FALSE,
+              name = "C(X)") %>%
+  
+  # Mother basis vector
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, mother_vec[1] * 1.5), 
+            y = c(0, mother_vec[2] * 1.5),
+            z = c(0, mother_vec[3] * 1.5),
+            line = list(color = "blue", width = 6),
+            marker = list(size = 6, color = "blue"),
+            name = "mother",
+            showlegend = TRUE) %>%
+  
+  # Father basis vector
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, father_vec[1] * 1.5), 
+            y = c(0, father_vec[2] * 1.5),
+            z = c(0, father_vec[3] * 1.5),
+            line = list(color = "darkgreen", width = 6),
+            marker = list(size = 6, color = "darkgreen"),
+            name = "father",
+            showlegend = TRUE) %>%
+  
+  # y vector
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, y_vec[1]), 
+            y = c(0, y_vec[2]),
+            z = c(0, y_vec[3]),
+            line = list(color = "red", width = 8),
+            marker = list(size = 8, color = "red"),
+            name = "y",
+            showlegend = TRUE) %>%
+  
+  # y_hat vector (projection)
+  add_trace(type = "scatter3d", mode = "lines+markers",
+            x = c(0, y_hat_vec[1]), 
+            y = c(0, y_hat_vec[2]),
+            z = c(0, y_hat_vec[3]),
+            line = list(color = "purple", width = 8, dash = "dash"),
+            marker = list(size = 8, color = "purple"),
+            name = "ŷ",
+            showlegend = TRUE) %>%
+  
+  # Residual vector
+  add_trace(type = "scatter3d", mode = "lines",
+            x = c(y_hat_vec[1], y_vec[1]), 
+            y = c(y_hat_vec[2], y_vec[2]),
+            z = c(y_hat_vec[3], y_vec[3]),
+            line = list(color = "gray", width = 4, dash = "dot"),
+            name = "residual e",
+            showlegend = TRUE) %>%
+  
+  layout(
+    title = list(
+      text = paste0("OLS Geometric Interpretation<br>",
+                   "<sub>ŷ = ", round(beta[1], 2), "·mother + ", 
+                   round(beta[2], 2), "·father</sub>"),
+      x = 0.5
+    ),
+    scene = list(
+      xaxis = list(title = ""),
+      yaxis = list(title = ""),
+      zaxis = list(title = ""),
+      camera = list(
+        eye = list(x = 1.5, y = 1.5, z = 1.3)
+      ),
+      aspectmode = "cube"
+    )
+  )
+
+g_ply_10_23a
+
+```
+
+@fig-s3d-10-23a illustrates these points.
+
+```{r}
+#| label: fig-s3d-10-23a
+#| fig-cap: "s3d-10-23a"
+
+# Using same centered data
+# mother_vec <- mother[1:3]
+# father_vec <- father[1:3]
+# y_vec <- son[1:3]
+# y_hat_vec <- y_hat[1:3]
+
+# use smf_smpl_ctr$yyy to define xxx_vec
+mother_vec <- smf_smpl_ctr$ mother
+father_vec <- smf_smpl_ctr$ father
+y_vec      <- smf_smpl_ctr$ son
+y_hat_vec  <- smf_smpl_ctr$ s_hat
+
+# use smf_smpl_ctr_lm$coefficients to define beta
+beta <- smf_smpl_ctr_lm$coefficients
+
+# Create the base plot
+s3d <- scatterplot3d(
+  x = c(0), y = c(0), z = c(0),
+  xlim = range(c(0, mother_vec[1]*2, father_vec[1]*2, y_vec[1])),
+  ylim = range(c(0, mother_vec[2]*2, father_vec[2]*2, y_vec[2])),
+  zlim = range(c(0, mother_vec[3]*2, father_vec[3]*2, y_vec[3])),
+  type = "n",
+  xlab = "", ylab = "", zlab = "",
+  main = "OLS: Orthogonal Projection onto C(X)",
+  sub = paste0("ŷ = ", round(beta[1], 2), "·mother + ", 
+               round(beta[2], 2), "·father"),
+  angle = 55,
+  box = FALSE
 )
 
-rm(m_breaks, f_breaks, s_breaks)
+# Draw plane as a grid
+alpha_seq <- seq(-1, 1, length.out = 10)
+beta_seq <- seq(-1, 1, length.out = 10)
+
+for(a in alpha_seq) {
+  for(b in beta_seq) {
+    p1 <- a * mother_vec * 1.5 + b * father_vec * 1.5
+    p2 <- a * mother_vec * 1.5 + (b + 0.2) * father_vec * 1.5
+    s3d$points3d(c(p1[1], p2[1]), c(p1[2], p2[2]), c(p1[3], p2[3]),
+                 type = "l", col = "lightblue", lwd = 0.5)
+    
+    p3 <- (a + 0.2) * mother_vec * 1.5 + b * father_vec * 1.5
+    s3d$points3d(c(p1[1], p3[1]), c(p1[2], p3[2]), c(p1[3], p3[3]),
+                 type = "l", col = "lightblue", lwd = 0.5)
+  }
+}
+
+# Draw basis vectors
+s3d$points3d(c(0, mother_vec[1]*1.5), c(0, mother_vec[2]*1.5), 
+             c(0, mother_vec[3]*1.5), type = "l", col = "blue", lwd = 3)
+s3d$points3d(c(0, father_vec[1]*1.5), c(0, father_vec[2]*1.5), 
+             c(0, father_vec[3]*1.5), type = "l", col = "darkgreen", lwd = 3)
+
+# Draw y vector
+s3d$points3d(c(0, y_vec[1]), c(0, y_vec[2]), c(0, y_vec[3]), 
+             type = "l", col = "red", lwd = 3)
+
+# Draw y_hat vector
+s3d$points3d(c(0, y_hat_vec[1]), c(0, y_hat_vec[2]), c(0, y_hat_vec[3]), 
+             type = "l", col = "purple", lwd = 3, lty = 2)
+
+# Draw residual
+s3d$points3d(c(y_hat_vec[1], y_vec[1]), c(y_hat_vec[2], y_vec[2]), 
+             c(y_hat_vec[3], y_vec[3]), type = "l", col = "gray40", lwd = 2)
+
+# Add arrow endpoints
+s3d$points3d(mother_vec[1]*1.5, mother_vec[2]*1.5, mother_vec[3]*1.5, 
+             col = "blue", pch = 19, cex = 2)
+s3d$points3d(father_vec[1]*1.5, father_vec[2]*1.5, father_vec[3]*1.5, 
+             col = "darkgreen", pch = 19, cex = 2)
+s3d$points3d(y_vec[1], y_vec[2], y_vec[3], 
+             col = "red", pch = 19, cex = 2)
+s3d$points3d(y_hat_vec[1], y_hat_vec[2], y_hat_vec[3], 
+             col = "purple", pch = 19, cex = 2)
+
+# Add labels
+text(s3d$xyz.convert(mother_vec[1]*1.7, mother_vec[2]*1.7, mother_vec[3]*1.7), 
+     "mother", col = "blue", cex = 1.2, font = 2)
+text(s3d$xyz.convert(father_vec[1]*1.7, father_vec[2]*1.7, father_vec[3]*1.7), 
+     "father", col = "darkgreen", cex = 1.2, font = 2)
+text(s3d$xyz.convert(y_vec[1]*1.15, y_vec[2]*1.15, y_vec[3]*1.15), 
+     "y", col = "red", cex = 1.5, font = 2)
+text(s3d$xyz.convert(y_hat_vec[1]*1.15, y_hat_vec[2]*1.15, y_hat_vec[3]*1.15), 
+     "ŷ", col = "purple", cex = 1.5, font = 2)
+
+# Add legend
+legend("topright", 
+       legend = c("mother", "father", "y", "ŷ (projection)", "residual e"),
+       col = c("blue", "darkgreen", "red", "purple", "gray40"),
+       lwd = c(3, 3, 3, 3, 2),
+       lty = c(1, 1, 1, 2, 1),
+       cex = 0.8)
+
 ```
 
 ```{r}
-#| label: fig-gg-2025-10-25a
-#| fig-cap: "gg-2025-10-25a"
+#| label: mfs-coordinate-system
 
-# Try oblique axes in 2D to prepare for 3D case.
-# Refine code that Claude outlined.
+# Construct a non-orthogonal 3D grid in which 
+# the (mother, father, son) axes of centered heights 
+# are at angles whose cosines match the 
+# (mother, father, son) correlations 
 
-# library(ggplot2)
-# library(HistData)
+# Compute correlations
+# cor_mf <- cor(mother, father)  # angle between mother and father
+# cor_ms <- cor(mother, son)     # angle between mother and son  
+# cor_fs <- cor(father, son)     # angle between father and son
+
+# calculate covariance and correlation matrices
+smf_smpl_ctr_cov <- smf_smpl_ctr |> 
+  dplyr::select(mother, father, son) |> 
+  cov()
+smf_smpl_ctr_cor <- smf_smpl_ctr |> 
+  dplyr::select(mother, father, son) |> 
+  cor()
+cor_mf <- smf_smpl_ctr_cor ["mother", "father"]
+cor_ms <- smf_smpl_ctr_cor ["mother", "son"]
+cor_fs <- smf_smpl_ctr_cor ["father", "son"]
+
+# Place mother along x-axis
+mother_axis <- c(1, 0, 0)
+
+# Place father in xy-plane at correct angle from mother
+theta_mf    <- acos(cor_mf)
+father_axis <- c(cos(theta_mf), sin(theta_mf), 0)
+
+# Place son to satisfy all three pairwise angles
+# son · mother = cor_ms implies: x = cor_ms
+# son · father = cor_fs implies: x*cos(theta_mf) + y*sin(theta_mf) = cor_fs
+# ||son|| = 1 implies: x^2 + y^2 + z^2 = 1
+
+x <- cor_ms
+y <- (cor_fs - x * cos(theta_mf)) / sin(theta_mf)
+z_squared <- 1 - x^2 - y^2
+
+# Check if z^2 is positive (it should be if vectors are not coplanar)
+if(z_squared < 0) {
+  warning("Vectors are nearly coplanar")
+  z <- 0
+} else {
+  z <- sqrt(z_squared)
+}
+
+son_axis <- c(x, y, z)
+
+# record the 3 axes as a tibble
+mfs_smpl_ctr_axes <- tibble::tibble(
+  m = mother_axis, 
+  f = father_axis, 
+  s = son_axis
+)
+```
+
+```{r}
+#| label: fig-s3d-10-23b
+#| fig-cap: "s3d-10-23b"
 
 # Load and prepare data
 # data(GaltonFamilies)
-# son_data <- GaltonFamilies[GaltonFamilies$gender == "male", ]
+# galton_sons <- GaltonFamilies %>%
+#   filter(gender == "male") %>%
+#   group_by(family) %>%
+#   slice(1) %>%
+#   ungroup()
 
-# Center the heights
-# mother_centered <- son_data$mother - mean(son_data$mother)
-# son_centered <- son_data$childHeight - mean(son_data$childHeight)
+# Center the variables
+# mother <- scale(galton_sons$mother, scale = FALSE)[,1]
+# father <- scale(galton_sons$father, scale = FALSE)[,1]
+# son <- scale(galton_sons$childHeight, scale = FALSE)[,1]
 
-# Calculate correlation and angle
-# r <- cor(mother_centered, son_centered)
-# theta <- acos(r)  # angle in radians
-cor_ms   <- smf_smpl_cor [["mother", "son"]]
-theta_ms <- acos(cor_ms)
+# Normalize to unit vectors for clean geometry
+# mother <- mother / sqrt(sum(mother^2))
+# father <- father / sqrt(sum(father^2))
+# son <- son / sqrt(sum(son^2))
 
-cat(sprintf("Correlation: %.3f\n", cor_ms))
-cat(sprintf("Angle between axes: %.1f degrees\n", theta_ms * 180 / pi))
+# create unit, centered vectors in new tibble
+smf_smpl_unit <- smf_smpl_ctr |> 
+  dplyr::select(- c(s_hat, resid)) |> 
+  dplyr::mutate(across(
+    .cols = c(mother, father, son), 
+    .fns  = ~ .x / sqrt(sum(.x^2))
+  ))
+mother <- smf_smpl_unit$ mother
+father <- smf_smpl_unit$ father
+son    <- smf_smpl_unit$ son
 
-# Transform to oblique coordinates for plotting
-# In oblique system: mother along x-axis, son at angle theta
-# Cartesian coords: x = mother + son*cos(theta), y = son*sin(theta)
-# df <- data.frame(
-#   x = mother_centered + son_centered * cos(theta),
-#   y = son_centered * sin(theta),
-#   mother_coord = mother_centered,  # for reference
-#   son_coord = son_centered          # for reference
-# )
+# Fit regression (no intercept since centered)
+model <- lm(son ~ mother + father - 1)
+beta <- coef(model)
 
-# create oblique coordinates for plotting, with 
-# mother along x-axis, son at angle theta_ms
-smf_smpl_ctr_axes <- smf_smpl_ctr |> 
-  dplyr::mutate(
-    x = son * cos(theta_ms) + mother,
-    y = son * sin(theta_ms),
-    # for reference
-    m_coord = mother, 
-    s_coord = son 
-  )
 
-# Set up the plot
-gg_10_25a <- smf_smpl_ctr_axes |> 
-  ggplot(aes(x = x, y = y)) +
-  theme_void() +
-  coord_fixed()
 
-# Create grid lines
-# Lines of constant mother value (parallel to son axis)
-# mother_vals <- seq(-8, 8, by = 2)
-# for (m in mother_vals) {
-#   # Line starts at (m, 0) in oblique coords -> (m, 0) in Cartesian
-#   # Line is parallel to son axis: direction (cos(theta), sin(theta))
-#   x_start <- m - 15 * cos(theta)
-#   y_start <- -15 * sin(theta)
-#   x_end <- m + 15 * cos(theta)
-#   y_end <- 15 * sin(theta)
-
-dm       <- 15
-m_breaks <- smf_smpl_ctr_axis_breaks$ m_breaks
-for (m in m_breaks) {
-  # Line starts at (m, 0) in oblique coords -> (m, 0) in Cartesian
-  # Line is parallel to son axis: direction (cos(theta), sin(theta))
-  x_start <- m - 15 * cos(theta_ms)
-  x_end   <- m + 15 * cos(theta_ms)
-  y_start <- -15 * sin(theta_ms)
-  y_end   <-  15 * sin(theta_ms)
-  
-  gg_10_25a <- gg_10_25a + 
-    geom_segment(
-      aes(
-        x = x_start, xend = x_end, 
-        y = y_start, yend = y_end), 
-      color = "gray85", linewidth = 0.3)
-}
-
-# Lines of constant son value (parallel to mother axis = horizontal)
-ds       <- 15
-s_breaks <- smf_smpl_ctr_axis_breaks$ s_breaks
-for (s in s_breaks) {
-  # These are horizontal lines at y = s*sin(theta)
-  y_val <- s * sin(theta_ms)
-  gg_10_25a <- gg_10_25a + 
-    geom_segment(
-      aes(
-        x = -15,   xend = 15, 
-        y = y_val, yend = y_val), 
-      color = "gray85", linewidth = 0.3)
-}
-
-# Add data points
-gg_10_25a <- gg_10_25a + 
-  geom_point(alpha = 0.3, size = 1.5, color = "darkblue")
-
-# Add axes
-axis_len  <- 10
-gg_10_25a <- gg_10_25a + 
-  # Mother axis (horizontal)
-  geom_segment(
-    aes(
-      x = -axis_len, xend = axis_len, 
-      y = 0,         yend = 0), 
-    arrow = arrow(length = unit(0.3, "cm"), ends = "both"), 
-    linewidth = 0.8, color = "blue") +
-  annotate(
-    "text", x = axis_len + 0.5, y = -0.5, 
-    label = "Mother\n(centered)", hjust = 0, color = "blue", 
-    fontface = "bold", size = 3.5) +
-  
-  # Son axis (at angle theta_ms)
-  geom_segment(
-    aes(
-      x    = -axis_len * cos(theta_ms), 
-      xend = axis_len * cos(theta_ms), 
-      
-      y    = -axis_len * sin(theta_ms),
-      yend = axis_len * sin(theta_ms)), 
-    arrow = arrow(length = unit(0.3, "cm"), ends = "both"), 
-    linewidth = 0.8, color = "red") +
-  annotate(
-    "text", x = axis_len * cos(theta_ms) + 0.5, 
-    y = axis_len * sin(theta_ms) + 0.5,
-    label = "Son\n(centered)", hjust = 0, color = "red", 
-    fontface = "bold", size = 3.5
-  )
-
-# Add title with correlation and angle
-gg_10_25a <- gg_10_25a +
-  labs(title = sprintf(
-    "Son vs Mother Heights: Non-orthogonal Axes\nCorrelation cor_ms = %.3f, Angle between axes = %.1f°", 
-    cor_ms, theta_ms * 180 / pi)) + 
-  theme(
-    plot.title = element_text(
-      hjust = 0.5, size = 12, face = "bold"))
-
-print(gg_10_25a)
-
-# Optional: Add a regression line in the oblique coordinate system
-# The regression of son on mother in the original space
-lm_model  <- smf_smpl_ctr_lm
-slope     <- coef(lm_model)[2]
-intercept <- coef(lm_model)[1]
-
-# Convert regression line to oblique coordinates
-mother_seq <- seq(-10, 10, length = 100)
-son_pred <- intercept + slope * mother_seq
-x_line <- mother_seq + son_pred * cos(theta_ms)
-y_line <- son_pred * sin(theta_ms)
-
-gg_10_25a <- gg_10_25a + 
-  geom_path(
-    data = data.frame(x = x_line, y = y_line), 
-    aes(x = x, y = y), 
-    color = "darkgreen", linewidth = 1)
-
-print(gg_10_25a)
 ```
 
 ### Least Squares: Two Perspectives
