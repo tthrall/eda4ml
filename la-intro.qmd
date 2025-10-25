@@ -38,6 +38,7 @@ library(UsingR)
 ```{r}
 #| label: local-source
 
+source(here("code", "galton_ht_data.R"))
 source(here("code", "mnist_file_mgmt.R"))
 source(here("code", "oecd_bli.R"))
 source(here("code", "pgram_grid.R"))
@@ -57,20 +58,22 @@ Vectors and matrices are the central objects of linear algebra.  And central to 
 ```{r}
 #| label: galton_3d
 
-data(HistData::GaltonFamilies)
-galton_3d <- GaltonFamilies |> 
-  tibble::as_tibble() |> 
-  dplyr::group_by(family) |> 
-  dplyr::filter(childNum == 1) |>  # Oldest child
-  dplyr::select(father, mother, childHeight, gender) |> 
-  dplyr::rename(child = childHeight) |> 
-  dplyr::ungroup()
+galton_3d_lst <- get_galton_3d()
+
+# tibble(father, mother, child, gender)
+# (child, gender) refers to oldest child
+galton_3d <- galton_3d_lst$ galton_3d
 
 # cite the following values in the narrative
-n_children_all      <- nrow(GaltonFamilies)
-n_families          <- nrow(galton_3d)
-n_child_1_daughters <- sum(galton_3d$ gender == "female")
-n_child_1_sons      <- sum(galton_3d$ gender == "male")
+n_children_all      <- 
+  galton_3d_lst$ counts_lst$ n_children_all
+n_families          <- 
+  galton_3d_lst$ counts_lst$ n_families
+n_child_1_daughters <- 
+  galton_3d_lst$ counts_lst$ n_child_1_daughters
+n_child_1_sons      <- 
+  galton_3d_lst$ counts_lst$ n_child_1_sons
+
 ```
 
 In 1885 Sir Francis Galton examined the heights (in inches) of parents and their adult children to determine the strength of evidence to support height as a hereditary trait.  The corresponding `R` data set `HistData::GaltonFamilies` consists of `r n_children_all` adult children from a total of `r n_families` families.  Restricting attention to the oldest child in each family, there were `r n_child_1_daughters` daughters and `r n_child_1_sons` sons.
@@ -129,7 +132,7 @@ $$ {#eq-s-per-mf-2}
 
 Each set of coefficient values determines some plane in the 3-dimensional space of (mother, father, son) heights.  The coefficients $(\hat{\beta}_0, \hat{\beta}_m, \hat{\beta}_f)$ obtained by linear regression determine the _regression plane_ (@fig-mfs-scat3d) that gives the best linear approximation $(\hat{s})$ to the son's height for a given pair of parent heights $(m, f)$. [^least-squares-approximation]
 
-[^least-squares-approximation]: "Best" in the sense of minimizing the squared residuals of actual minus predicted sons' heights.
+[^least-squares-approximation]: "Best" in the sense of minimizing the sum of squared residuals of actual minus predicted sons' heights.
 
 ```{r}
 #| label: s-mf-lm
@@ -622,7 +625,7 @@ To gain more insight into linear regression we'll first reduce the regression pr
 
 ### Centering Data Vectors
 
-The regression plane that we glimpse in @fig-smf-smpl actually spans all the $(m, f)$ combinations that are mathematically possible.  If we imagine infinitesimally short parents with $(m, f) = (0, 0)$, the predicted height of their son would be $\hat{\beta}_0$, which is not zero.  That is, the plane does not pass through the origin $(0, 0, 0)$ and therefore does not qualify as a subspace of $(m, f, s)$ space. [^lin-manifold] But the regression plane determines a parallel subspace (that passes through the origin).
+The regression plane that we glimpse in @fig-smf-smpl actually spans all the $(m, f)$ combinations that are mathematically possible.  If we imagine infinitesimally short parents with $(m, f) = (0, 0)$, the predicted height of their son would be $\hat{\beta}_0$, which is not zero.  That is, the plane does not pass through the origin $(0, 0, 0)$ and therefore does not qualify as a subspace of $(m, f, s)$ space. [^lin-manifold] But the regression plane determines a parallel subspace (that _does_ pass through the origin).
 
 [^lin-manifold]:  The regression plane qualifies as a linear manifold, mathematically speaking.
 
@@ -775,7 +778,7 @@ $$ {#eq-lin-reg-y-hat}
 
 ### Orthogonal Projections
 
-Now whatever the value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to the linear combination $\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet$, which belongs to a 2-dimensional subspace of $n-$space [^n-space], where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace (let's say the "parental" subspace) is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
+For any value of the coefficient vector $\beta_\bullet$, the mapping $\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet$ sends $\beta_\bullet$ to the linear combination $\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet$, which belongs to a 2-dimensional subspace of $n-$space [^n-space], where $n$ denotes the number of data cases, i.e., the row dimension of $\dot{X}_{\bullet, \bullet}$.  This 2-dimensional subspace (let's say the "parental" subspace) is spanned by the two $n-$vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$, the centered vectors of (mother, father) heights.
 
 [^n-space]: The terms $n-$dimensional space and $n-$space are shorthand for "an $n-$dimensional vector space $\mathcal{V}$ over the field $\mathbb{R}$ of real numbers".  Similarly, the term $n-$vector means a vector $v \in \mathcal{V}$.  Once a set of basis vectors is identified in $\mathcal{V}$, any $v \in \mathcal{V}$ can be identified by its coordinates with respect to the given basis.  An identified basis of $n$ vectors gives an isomorphism from $\mathcal{V}$ to $\mathbb{R}^n$.  Data are often collected and presented in the form of a data matrix, where a column of numeric values in $n$ successive rows provides an automatic representation as a vector in $\mathbb{R}^n$.  In the data set of family heights, for example, each row of data corresponds to a distinct family, and a column vector, the mother's height for example, is represented as $m_\bullet = (m_1, \ldots, m_n) \in \mathbb{R}^n$, where $m_i$ refers to the height in inches of the mother in family $i$.
 
@@ -807,7 +810,8 @@ $$
   &= P \\ \\ 
   P^\top
   &= \left \{ \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \right \}^\top \\ 
-  &=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top
+  &=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\ 
+  &= P 
 \end{align} 
 $$ {#eq-projection-properties}
 
@@ -856,6 +860,7 @@ $$
 \begin{align} 
   P \; p_\bullet &= P \; (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
   &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \;  (\dot{X}_{\bullet, \bullet} \gamma_\bullet) \\ 
+  &= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \left ( \dot{X}_{\bullet, \bullet}^\top \;  \dot{X}_{\bullet, \bullet} \right ) \gamma_\bullet \\ 
   &= \dot{X}_{\bullet, \bullet} \gamma_\bullet \\ 
   &= p_\bullet
 \end{align} 
@@ -923,7 +928,7 @@ To summarize,
   - Matrix $P$ sends the vector $\dot{y}_\bullet$ of sons' centered heights to prediction vector $\hat{\dot{y}_\bullet}$.
   - $P$ is the orthogonal projection of $n-$space onto the parental subspace.
   - Moreover, $(\hat{\beta}_1, \hat{\beta}_2)$ are the coordinates of the prediction vector in this subspace with respect to the parental basis.
-  - The formula for $P$ generalizes the 1-dimensional projection $u_\bullet \; u_\bullet^\top$ where $\lVert u_\bullet \rVert = 1$
+  - The formula for $P$ generalizes the 1-dimensional projection $u_\bullet \; u_\bullet^\top$ where $u_\bullet$ is a _unit vector_, that is where $\lVert u_\bullet \rVert = 1$
   - Of all the vectors in the parental subspace, the prediction vector $\hat{\dot{y}_\bullet} = P \; \dot{y}_\bullet$ is the closest (in Euclidean distance) to the given vector $\dot{y}_\bullet$.
 
 @fig-plotly-10-22a illustrates these points.
