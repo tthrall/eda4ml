@@ -363,13 +363,16 @@ window.Quarto = {
   <li><a href="#centering-data-vectors" id="toc-centering-data-vectors" class="nav-link" data-scroll-target="#centering-data-vectors"><span class="header-section-number">6.3.2</span> Centering Data Vectors</a></li>
   <li><a href="#least-squares-solutions" id="toc-least-squares-solutions" class="nav-link" data-scroll-target="#least-squares-solutions"><span class="header-section-number">6.3.3</span> Least Squares Solutions</a></li>
   <li><a href="#orthogonal-projections" id="toc-orthogonal-projections" class="nav-link" data-scroll-target="#orthogonal-projections"><span class="header-section-number">6.3.4</span> Orthogonal Projections</a></li>
-  <li><a href="#least-squares-two-perspectives" id="toc-least-squares-two-perspectives" class="nav-link" data-scroll-target="#least-squares-two-perspectives"><span class="header-section-number">6.3.5</span> Least Squares: Two Perspectives</a></li>
-  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">6.3.6</span> Data Visualization</a></li>
-  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space"><span class="header-section-number">6.3.7</span> Sample Space</a></li>
-  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">6.3.8</span> Column Space</a></li>
-  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">6.3.9</span> Orthogonal Projection</a></li>
-  <li><a href="#reconciling-perspectives" id="toc-reconciling-perspectives" class="nav-link" data-scroll-target="#reconciling-perspectives"><span class="header-section-number">6.3.10</span> Reconciling Perspectives</a></li>
-  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">6.3.11</span> Why This Matters</a></li>
+  </ul></li>
+  <li><a href="#column-versus-row-visualization" id="toc-column-versus-row-visualization" class="nav-link" data-scroll-target="#column-versus-row-visualization"><span class="header-section-number">6.4</span> Column versus Row Visualization</a>
+  <ul class="collapse">
+  <li><a href="#least-squares-two-perspectives" id="toc-least-squares-two-perspectives" class="nav-link" data-scroll-target="#least-squares-two-perspectives"><span class="header-section-number">6.4.1</span> Least Squares: Two Perspectives</a></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">6.4.2</span> Data Visualization</a></li>
+  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space"><span class="header-section-number">6.4.3</span> Sample Space</a></li>
+  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">6.4.4</span> Column Space</a></li>
+  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">6.4.5</span> Orthogonal Projection</a></li>
+  <li><a href="#reconciling-perspectives" id="toc-reconciling-perspectives" class="nav-link" data-scroll-target="#reconciling-perspectives"><span class="header-section-number">6.4.6</span> Reconciling Perspectives</a></li>
+  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">6.4.7</span> Why This Matters</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/la-intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -396,7 +399,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">07:54 Sat 25-Oct-2025</p>
+      <p class="date">00:48 Sun 26-Oct-2025</p>
     </div>
   </div>
   
@@ -1296,45 +1299,17 @@ Figure&nbsp;6.5: Centered family heights
 <li>The formula for <span class="math inline">\(P\)</span> generalizes the 1-dimensional projection <span class="math inline">\(u_\bullet \; u_\bullet^\top\)</span> where <span class="math inline">\(u_\bullet\)</span> is a <em>unit vector</em>, that is where <span class="math inline">\(\lVert u_\bullet \rVert = 1\)</span></li>
 <li>Of all the vectors in the parental subspace, the prediction vector <span class="math inline">\(\hat{\dot{y}_\bullet} = P \; \dot{y}_\bullet\)</span> is the closest (in Euclidean distance) to the given vector <span class="math inline">\(\dot{y}_\bullet\)</span>.</li>
 </ul>
+<p><a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> above shows the result of projecting the centered sons’ heights to their predicted values in the parental plane. Each point in that figure represents an individual family, which corresponds to a single row of the centered feature matrix <span class="math inline">\(\dot{X}_{\bullet, \bullet}\)</span>. In the next section we introduce a different perspective on linear regression, namely a column-based view.</p>
+</section>
+</section>
+<section id="column-versus-row-visualization" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="column-versus-row-visualization"><span class="header-section-number">6.4</span> Column versus Row Visualization</h2>
 <p>[TT: Try oblique axes in 2D to prepare for 3D case.]</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Correlation: 0.097</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Angle between axes: 84.4 degrees</code></pre>
-</div>
-<div class="cell-output-display">
-<div id="fig-gg-2025-10-25a-1" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-gg-2025-10-25a-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-gg-2025-10-25a-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gg-2025-10-25a-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.6: gg-2025-10-25a
-</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-gg-2025-10-25a-2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-gg-2025-10-25a-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-gg-2025-10-25a-2.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gg-2025-10-25a-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.7: gg-2025-10-25a
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
+<section id="least-squares-two-perspectives" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.4.1</span> Least Squares: Two Perspectives</h3>
 </section>
-<section id="least-squares-two-perspectives" class="level3" data-number="6.3.5">
-<h3 data-number="6.3.5" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.3.5</span> Least Squares: Two Perspectives</h3>
-</section>
-<section id="data-visualization" class="level3" data-number="6.3.6">
-<h3 data-number="6.3.6" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">6.3.6</span> Data Visualization</h3>
+<section id="data-visualization" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">6.4.2</span> Data Visualization</h3>
 <ul>
 <li>The 3D scatterplot view: each point is (mother_height, father_height, son_height)</li>
 <li>The fitted regression plane: ŷ = β₀ + β₁·mother + β₂·father</li>
@@ -1342,8 +1317,8 @@ Figure&nbsp;6.7: gg-2025-10-25a
 <li>Dimension: p = 3 (number of features including intercept)</li>
 </ul>
 </section>
-<section id="sample-space" class="level3" data-number="6.3.7">
-<h3 data-number="6.3.7" class="anchored" data-anchor-id="sample-space"><span class="header-section-number">6.3.7</span> Sample Space</h3>
+<section id="sample-space" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="sample-space"><span class="header-section-number">6.4.3</span> Sample Space</h3>
 <ul>
 <li>Each observation is a vector in ℝⁿ (n = 179)</li>
 <li>The response vector y ∈ ℝ¹⁷⁹ has components [y₁, y₂, …, y₁₇₉]ᵀ</li>
@@ -1351,8 +1326,8 @@ Figure&nbsp;6.7: gg-2025-10-25a
 <li>Example: the “mother_heights” column is one vector in 179-dimensional space</li>
 </ul>
 </section>
-<section id="column-space" class="level3" data-number="6.3.8">
-<h3 data-number="6.3.8" class="anchored" data-anchor-id="column-space"><span class="header-section-number">6.3.8</span> Column Space</h3>
+<section id="column-space" class="level3" data-number="6.4.4">
+<h3 data-number="6.4.4" class="anchored" data-anchor-id="column-space"><span class="header-section-number">6.4.4</span> Column Space</h3>
 <ul>
 <li>C(X) is the 3-dimensional subspace of ℝ¹⁷⁹ spanned by the columns of X</li>
 <li>All possible linear combinations: Xβ for any β ∈ ℝ³</li>
@@ -1360,8 +1335,8 @@ Figure&nbsp;6.7: gg-2025-10-25a
 <li>Dimension: rank(X) ≤ min(n,p) = 3 (assuming full column rank)</li>
 </ul>
 </section>
-<section id="orthogonal-projection" class="level3" data-number="6.3.9">
-<h3 data-number="6.3.9" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">6.3.9</span> Orthogonal Projection</h3>
+<section id="orthogonal-projection" class="level3" data-number="6.4.5">
+<h3 data-number="6.4.5" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">6.4.5</span> Orthogonal Projection</h3>
 <ul>
 <li>ŷ = Xβ̂ is the orthogonal projection of y onto C(X)</li>
 <li>The residual vector e = y - ŷ is orthogonal to C(X)</li>
@@ -1370,8 +1345,8 @@ Figure&nbsp;6.7: gg-2025-10-25a
 <li>Include a 2D schematic diagram: y, C(X) as a plane, ŷ as projection, e perpendicular</li>
 </ul>
 </section>
-<section id="reconciling-perspectives" class="level3" data-number="6.3.10">
-<h3 data-number="6.3.10" class="anchored" data-anchor-id="reconciling-perspectives"><span class="header-section-number">6.3.10</span> Reconciling Perspectives</h3>
+<section id="reconciling-perspectives" class="level3" data-number="6.4.6">
+<h3 data-number="6.4.6" class="anchored" data-anchor-id="reconciling-perspectives"><span class="header-section-number">6.4.6</span> Reconciling Perspectives</h3>
 <ul>
 <li>The 3D scatterplot shows relationships between variables (p-dimensional)</li>
 <li>The projection happens in observation space (n-dimensional)</li>
@@ -1379,8 +1354,8 @@ Figure&nbsp;6.7: gg-2025-10-25a
 <li>The regression coefficients β connect the two views</li>
 </ul>
 </section>
-<section id="why-this-matters" class="level3" data-number="6.3.11">
-<h3 data-number="6.3.11" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">6.3.11</span> Why This Matters</h3>
+<section id="why-this-matters" class="level3" data-number="6.4.7">
+<h3 data-number="6.4.7" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">6.4.7</span> Why This Matters</h3>
 <ul>
 <li>Degrees of freedom: n - p (observations minus parameters)</li>
 <li>Overfitting: what happens when p approaches n?</li>
