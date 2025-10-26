@@ -1268,13 +1268,17 @@ if (run_code) {
 ```{r}
 #| label: ms-smpl-ctr-segs
 
-ms_smpl_ctr_segs <- ob_segs_2d(
-  u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
-  v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
-  n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
-  u_name = "m",    # <chr> desired name for vector u
-  v_name = "s"     # <chr> desired name for vector v
-)
+# code no longer needed but retain for now
+run_code <- FALSE
+if (run_code) {
+  ms_smpl_ctr_segs <- ob_2d_segs(
+    u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+    v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+    n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+    u_name = "m",    # <chr> desired name for vector u
+    v_name = "s"     # <chr> desired name for vector v
+  )
+}
 
 # str(ms_smpl_ctr_segs)
 # 
@@ -1312,28 +1316,60 @@ ms_smpl_ctr_segs <- ob_segs_2d(
 # a*m + b*s.  The plotting limits must accommodate all convex 
 # combinations Oms(t, 1-t), for 0 <= t <= 1.
 
-# temporarily shorten the name of the segments tibble
-segs_tbl <- ms_smpl_ctr_segs
+## 
+#  prep
+## 
 
-# prepare to set limits for Cartesian coordinates
-x_01_min <- min(c(segs_tbl$ x_0, segs_tbl$ x_1))
-x_01_max <- max(c(segs_tbl$ x_0, segs_tbl$ x_1))
+grob_prep_lst <- ob_2d_grob_prep(
+  u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+  v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+  n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+  u_name = "m",    # <chr> desired name for vector u
+  v_name = "s"     # <chr> desired name for vector v
+)
 
-y_01_min <- min(c(segs_tbl$ y_0, segs_tbl$ y_1))
-y_01_max <- max(c(segs_tbl$ y_0, segs_tbl$ y_1))
+# basis vectors
+m_base <- grob_prep_lst$ uv_base_lst$ u_base
+s_base <- grob_prep_lst$ uv_base_lst$ v_base
 
-# initialize gg_2025_10_26a
-gg_2025_10_26a <- segs_tbl |> 
+# segments defining oblique grid
+seg_tbl <- grob_prep_lst$ seg_tbl
+
+# plotting limits
+x_min_plt <- grob_prep_lst$ xy_lim_lst$ x_min_plt
+x_max_plt <- grob_prep_lst$ xy_lim_lst$ x_max_plt
+
+y_min_plt <- grob_prep_lst$ xy_lim_lst$ y_min_plt
+y_max_plt <- grob_prep_lst$ xy_lim_lst$ y_max_plt
+
+# color choices
+grid_color <- "gray25"
+m_color    <- "purple"
+s_color    <- "steelblue"
+
+# annotation settings
+# position axis label at (1 +- eps) * basis vector
+eps_axis_label <- 0.05
+
+## 
+#  initialize plot
+## 
+
+gg_2025_10_26a <- seg_tbl |> 
+  # (x, y) coordinates along (m_axis, s_axis)
   ggplot2::ggplot(mapping = aes(x = x_0, y = y_0)) + 
+  # bounding box
   coord_cartesian(
-    xlim = c( x_01_min, x_01_max ), 
-    ylim = c( y_01_min, y_01_max )
+    xlim = c( x_min_plt, x_max_plt ), 
+    ylim = c( y_min_plt, y_max_plt )
   ) + 
+  # remove standard ggplot() grid-lines, etc.
   theme_void() +
+  # retain aspect ratio
   coord_fixed()
 
 ## 
-#  grid-lines
+#  oblique grid-lines
 ## 
 
 gg_2025_10_26a <- gg_2025_10_26a + 
@@ -1341,8 +1377,72 @@ gg_2025_10_26a <- gg_2025_10_26a +
     x = x_0, xend = x_1, 
     y = y_0, yend = y_1
   ), 
-  color = "gray85", linewidth = 0.3
+  color = "gray25", linewidth = 0.3
   )
+
+## 
+#  oblique axes
+## 
+
+# m_axis
+gg_2025_10_26a <- gg_2025_10_26a + 
+  geom_segment(
+    mapping = aes(
+      x = 0, xend = m_base [["x"]], 
+      y = 0, yend = m_base [["y"]]
+    ), 
+    arrow = arrow(length = unit(0.3, "cm"), ends = "last"), 
+    linewidth = 0.8, color = "purple"
+  ) +
+  annotate(
+    geom = "text", 
+    x = (1 - eps_axis_label) * m_base [["x"]], 
+    y = - eps_axis_label, 
+    label = "m_axis", 
+    hjust = 0, color = "purple", 
+    fontface = "bold", size = 3.5)
+
+# s_axis
+gg_2025_10_26a <- gg_2025_10_26a + 
+  geom_segment(
+    mapping = aes(
+      x = 0, xend = s_base [["x"]], 
+      y = 0, yend = s_base [["y"]]
+    ), 
+    arrow = arrow(length = unit(0.3, "cm"), ends = "last"), 
+    linewidth = 0.8, color = "steelblue"
+  ) +
+  annotate(
+    geom = "text", 
+    x = (1 + eps_axis_label) * s_base [["x"]], 
+    y = (1 + eps_axis_label) * s_base [["y"]], 
+    label = "s_axis", 
+    hjust = 0, color = "steelblue", 
+    fontface = "bold", size = 3.5)
+
+## 
+#  project s_axis to m_axis
+## 
+
+# TODO: debug this attempted projection
+gg_2025_10_26a <- gg_2025_10_26a +
+  geom_segment(
+    mapping = aes(
+      x = s_base [["x"]], xend = s_base [["x"]],
+      y = s_base [["y"]], yend = 0
+    ),
+    arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
+    linetype = 3, linewidth = 0.8, color = "purple"
+  ) +
+  annotate(
+    geom = "text",
+    x = (1 - eps_axis_label) * s_base [["x"]],
+    y = - eps_axis_label,
+    label = "beta",
+    hjust = 0, color = "purple",
+    fontface = "bold", size = 3)
+
+gg_2025_10_26a
 
 ```
 
