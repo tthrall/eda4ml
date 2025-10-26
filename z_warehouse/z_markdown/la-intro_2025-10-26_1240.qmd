@@ -941,6 +941,8 @@ To summarize,
 
 ## Column versus Row Visualization
 
+[TT: Try oblique axes in 2D to prepare for 3D case.]
+
 Continuing with the example of centered heights, let's now take a step back from two explanatory variables to just one, namely the mother's centered height $\dot{m}_\bullet$ as a predictor of the son's centered height $\dot{s}_\bullet$.  From @eq-1D-projection-mat we have 
 
 $$
@@ -960,7 +962,7 @@ $$
 \end{align} 
 $$ {#eq-1D-ctr-lin-reg-soln}
 
-@fig-gg-sm-smpl-ctr shows this projection from $\dot{y}_\bullet$ (that is, $\dot{s}_\bullet$) to the one-dimensional space spanned by $\dot{m}_\bullet$.
+Figure XXX shows this projection from $y$ to $m$.
 
 ```{r}
 #| label: smf-smpl-cor
@@ -972,6 +974,207 @@ smf_smpl_cor <- smf_smpl_ctr |>
 ```
 
 ```{r}
+#| label: smf-smpl-ctr-axis
+
+# Oops, these break-points are not needed for the next plot.
+# I'll just bypass the code for now.
+
+build_axes <- FALSE
+if (build_axes) {
+  # Determine break-points etc. for (mother, father, son) axes
+  
+  m_axis <- smf_smpl_ctr$ mother |> get_hist_numbers()
+  f_axis <- smf_smpl_ctr$ father |> get_hist_numbers()
+  s_axis <- smf_smpl_ctr$ son    |> get_hist_numbers()
+  
+  smf_smpl_ctr_axis <- dplyr::bind_rows(
+    m_axis |> dplyr::mutate(prefix = "m", who = "mother"), 
+    f_axis |> dplyr::mutate(prefix = "f", who = "father"), 
+    s_axis |> dplyr::mutate(prefix = "s", who = "son")
+  ) |> 
+    dplyr::select(who, prefix, everything())
+  
+  # remove temp tibbles to reduce confusion
+  rm(m_axis, f_axis, s_axis)
+}
+```
+
+```{r}
+#| label: fig-gg-2025-10-25a
+#| fig-cap: "gg-2025-10-25a"
+
+# I'll bypass this code for now.
+
+build_plot <- FALSE
+if (build_plot) {
+  
+  # Try oblique axes in 2D to prepare for 3D case.
+  # Refine code that Claude outlined.
+  
+  # library(ggplot2)
+  # library(HistData)
+  
+  # Load and prepare data
+  # data(GaltonFamilies)
+  # son_data <- GaltonFamilies[GaltonFamilies$gender == "male", ]
+  
+  # Center the heights
+  # mother_centered <- son_data$mother - mean(son_data$mother)
+  # son_centered <- son_data$childHeight - mean(son_data$childHeight)
+  
+  # Calculate correlation and angle
+  # r <- cor(mother_centered, son_centered)
+  # theta <- acos(r)  # angle in radians
+  cor_ms   <- smf_smpl_cor [["mother", "son"]]
+  theta_ms <- acos(cor_ms)
+  
+  cat(sprintf("Correlation: %.3f\n", cor_ms))
+  cat(sprintf("Angle between axes: %.1f degrees\n", theta_ms * 180 / pi))
+  
+  # Transform to oblique coordinates for plotting
+  # In oblique system: mother along x-axis, son at angle theta
+  # Cartesian coords: x = mother + son*cos(theta), y = son*sin(theta)
+  # df <- data.frame(
+  #   x = mother_centered + son_centered * cos(theta),
+  #   y = son_centered * sin(theta),
+  #   mother_coord = mother_centered,  # for reference
+  #   son_coord = son_centered          # for reference
+  # )
+  
+  # create oblique coordinates for plotting, with 
+  # mother along x-axis, son at angle theta_ms
+  smf_smpl_ctr_axes <- smf_smpl_ctr |> 
+    dplyr::mutate(
+      x = son * cos(theta_ms) + mother,
+      y = son * sin(theta_ms),
+      # for reference
+      m_coord = mother, 
+      s_coord = son 
+    )
+  
+  # Set up the plot
+  gg_10_25a <- smf_smpl_ctr_axes |> 
+    ggplot(aes(x = x, y = y)) +
+    theme_void() +
+    coord_fixed()
+  
+  # Create grid lines
+  # Lines of constant mother value (parallel to son axis)
+  # mother_vals <- seq(-8, 8, by = 2)
+  # for (m in mother_vals) {
+  #   # Line starts at (m, 0) in oblique coords -> (m, 0) in Cartesian
+  #   # Line is parallel to son axis: direction (cos(theta), sin(theta))
+  #   x_start <- m - 15 * cos(theta)
+  #   y_start <- -15 * sin(theta)
+  #   x_end <- m + 15 * cos(theta)
+  #   y_end <- 15 * sin(theta)
+  
+  dm       <- 20 # spacing between vertical lines
+  m_breaks <- smf_smpl_ctr_axis |> 
+    dplyr::filter(who == "mother") |> 
+    dplyr::pull(breaks)
+  for (m in m_breaks) {
+    # Line starts at (m, 0) in oblique coords -> (m, 0) in Cartesian
+    # Line is parallel to son axis: direction (cos(theta), sin(theta))
+    x_start <- m - dm * cos(theta_ms)
+    x_end   <- m + dm * cos(theta_ms)
+    y_start <- -dm * sin(theta_ms)
+    y_end   <-  dm * sin(theta_ms)
+    
+    gg_10_25a <- gg_10_25a + 
+      geom_segment(
+        aes(
+          x = x_start, xend = x_end, 
+          y = y_start, yend = y_end), 
+        color = "gray85", linewidth = 0.3)
+  }
+  
+  # Lines of constant son value (parallel to mother axis = horizontal)
+  ds       <- 20 # spacing between horizontal lines
+  s_breaks <- smf_smpl_ctr_axis |> 
+    dplyr::filter(who == "son") |> 
+    dplyr::pull(breaks)
+  for (s in s_breaks) {
+    # These are horizontal lines at y = s*sin(theta)
+    y_val <- s * sin(theta_ms)
+    gg_10_25a <- gg_10_25a + 
+      geom_segment(
+        aes(
+          x = -ds,   xend = ds, 
+          y = y_val, yend = y_val), 
+        color = "gray85", linewidth = 0.3)
+  }
+  
+  # Add data points
+  gg_10_25a <- gg_10_25a + 
+    geom_point(alpha = 0.3, size = 1.5, color = "darkblue")
+  
+  # Add axes
+  axis_len  <- 10
+  gg_10_25a <- gg_10_25a + 
+    # Mother axis (horizontal)
+    geom_segment(
+      aes(
+        x = -axis_len, xend = axis_len, 
+        y = 0,         yend = 0), 
+      arrow = arrow(length = unit(0.3, "cm"), ends = "both"), 
+      linewidth = 0.8, color = "blue") +
+    annotate(
+      "text", x = axis_len + 0.5, y = -0.5, 
+      label = "Mother\n(centered)", hjust = 0, color = "blue", 
+      fontface = "bold", size = 3.5) +
+    
+    # Son axis (at angle theta_ms)
+    geom_segment(
+      aes(
+        x    = -axis_len * cos(theta_ms), 
+        xend = axis_len * cos(theta_ms), 
+        
+        y    = -axis_len * sin(theta_ms),
+        yend = axis_len * sin(theta_ms)), 
+      arrow = arrow(length = unit(0.3, "cm"), ends = "both"), 
+      linewidth = 0.8, color = "red") +
+    annotate(
+      "text", x = axis_len * cos(theta_ms) + 0.5, 
+      y = axis_len * sin(theta_ms) + 0.5,
+      label = "Son\n(centered)", hjust = 0, color = "red", 
+      fontface = "bold", size = 3.5
+    )
+  
+  # Add title with correlation and angle
+  gg_10_25a <- gg_10_25a +
+    labs(title = sprintf(
+      "Son vs Mother Heights: Non-orthogonal Axes\nCorrelation cor_ms = %.3f, Angle between axes = %.1f°", 
+      cor_ms, theta_ms * 180 / pi)) + 
+    theme(
+      plot.title = element_text(
+        hjust = 0.5, size = 12, face = "bold"))
+  
+  print(gg_10_25a)
+  
+  # Optional: Add a regression line in the oblique coordinate system
+  # The regression of son on mother in the original space
+  lm_model  <- smf_smpl_ctr_lm
+  slope     <- coef(lm_model)[2]
+  intercept <- coef(lm_model)[1]
+  
+  # Convert regression line to oblique coordinates
+  mother_seq <- seq(-10, 10, length = 100)
+  son_pred <- intercept + slope * mother_seq
+  x_line <- mother_seq + son_pred * cos(theta_ms)
+  y_line <- son_pred * sin(theta_ms)
+  
+  gg_10_25a <- gg_10_25a + 
+    geom_path(
+      data = data.frame(x = x_line, y = y_line), 
+      aes(x = x, y = y), 
+      color = "darkgreen", linewidth = 1)
+  
+  print(gg_10_25a)
+}
+```
+
+```{r}
 #| label: theta-ms
 
 cor_ms   <- smf_smpl_cor [["mother", "son"]]
@@ -980,7 +1183,140 @@ theta_ms <- acos(cor_ms)
 ```
 
 ```{r}
-#| label: gg-2025-10-26a-notes
+#| label: ms-smpl-basis
+
+# code no longer needed but retain for now
+run_code <- FALSE
+if (run_code) {
+  
+  ms_smpl_basis_lst <- ob_2d_basis(
+    u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+    v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+    u_name = "m",    # <chr> desired name for vector u
+    v_name = "s"     # <chr> desired name for vector v
+  )
+  
+  ms_smpl_basis_vec <- ms_smpl_basis_lst$ uv_xy_vec
+}
+
+# > ms_smpl_basis_vec
+#        m_x        m_y        s_x        s_y 
+# 1.00000000 0.00000000 0.09714531 0.99527021
+
+```
+
+```{r}
+#| label: ms-smpl-xy-try
+
+# code no longer needed but retain for now
+run_code <- FALSE
+if (run_code) {
+  ms_smpl_axes_lst <- ob_grid_2d(
+    u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+    v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+    n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+    u_name = "m",    # <chr> desired name for vector u
+    v_name = "s"     # <chr> desired name for vector v
+  )
+  
+  # TODO: debug this failed attempt
+  ms_smpl_xy_try <- ms_smpl_axes_lst$uv_xy
+}
+
+# > str(ms_smpl_xy_try)
+# tibble [10 × 2] (S3: tbl_df/tbl/data.frame)
+#  $ uv   : chr [1:10] "m" "m" "m" "m" ...
+#  $ c_idx: int [1:10] 1 2 3 4 5 1 2 3 4 5
+
+```
+
+```{r}
+#| label: ms-smpl-xy-long
+
+# code no longer needed but retain for now
+run_code <- FALSE
+if (run_code) {
+  ms_smpl_axes_lst <- ob_grid_2d(
+    u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+    v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+    n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+    u_name = "m",    # <chr> desired name for vector u
+    v_name = "s"     # <chr> desired name for vector v
+  )
+  
+  ms_smpl_axes_long <- ms_smpl_axes_lst$ uv_long
+}
+
+# > str(ms_smpl_axes_long)
+# tibble [20 × 4] (S3: tbl_df/tbl/data.frame)
+#  $ uv   : chr [1:20] "m" "m" "m" "m" ...
+#  $ xy   : chr [1:20] "x" "x" "x" "x" ...
+#  $ c_idx: int [1:20] 1 2 3 4 5 1 2 3 4 5 ...
+#  $ coord: num [1:20] 0 0.25 0.5 0.75 1 0 0 0 0 0 ...
+
+```
+
+```{r}
+#| label: ms-smpl-xy-coords
+
+# code no longer needed but retain for now
+run_code <- FALSE
+if (run_code) {
+  ms_smpl_xy_coords <- dplyr::inner_join(
+    # x <- c(m_x, s_x)
+    x = ms_smpl_axes_long |> 
+      dplyr::filter(xy == "x") |> 
+      dplyr::rename(x = coord) |> 
+      dplyr:: select(- xy), 
+    # y <- c(m_y, s_y)
+    y = ms_smpl_axes_long |> 
+      dplyr::filter(xy == "y") |> 
+      dplyr::rename(y = coord) |> 
+      dplyr:: select(- xy), 
+    by = c("uv", "c_idx")
+  )
+}
+
+# > str(ms_smpl_xy_coords)
+# tibble [10 × 4] (S3: tbl_df/tbl/data.frame)
+#  $ uv   : chr [1:10] "m" "m" "m" "m" ...
+#  $ c_idx: int [1:10] 1 2 3 4 5 1 2 3 4 5
+#  $ x    : num [1:10] 0 0.25 0.5 0.75 1 ...
+#  $ y    : num [1:10] 0 0 0 0 0 ...
+
+```
+
+```{r}
+#| label: ms-smpl-ctr-segs
+
+# code no longer needed but retain for now
+run_code <- FALSE
+if (run_code) {
+  ms_smpl_ctr_segs <- ob_2d_segs(
+    u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+    v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+    n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+    u_name = "m",    # <chr> desired name for vector u
+    v_name = "s"     # <chr> desired name for vector v
+  )
+}
+
+# str(ms_smpl_ctr_segs)
+# 
+# tibble [10 × 7] (S3: tbl_df/tbl/data.frame)
+#  $ anchor   : chr [1:10] "m" "m" "m" "m" ...
+#  $ direction: chr [1:10] "s" "s" "s" "s" ...
+#  $ mu_idx   : int [1:10] 1 2 3 4 5 1 2 3 4 5
+#  $ x_0      : num [1:10] 0 0.25 0.5 0.75 1 ...
+#  $ y_0      : num [1:10] 0 0 0 0 0 ...
+#  $ x_1      : num [1:10] 0.0971 0.3471 0.5971 0.8471 1.0971 ...
+#  $ y_1      : num [1:10] 0.995 0.995 0.995 0.995 0.995 ...
+
+```
+
+```{r}
+#| label: fig-gg-2025-10-26a
+#| fig-cap: "gg-2025-10-26a"
 
 # 2D representation of centered linear regression.
 
@@ -1000,12 +1336,6 @@ theta_ms <- acos(cor_ms)
 # Oms(a, b) represents the vector given by the linear combination
 # a*m + b*s.  The plotting limits must accommodate all convex 
 # combinations Oms(t, 1-t), for 0 <= t <= 1.
-
-```
-
-```{r}
-#| label: fig-gg-sm-smpl-ctr
-#| fig-cap: "Projection of centered heights, son (s) to mother (m)"
 
 ## 
 #  prep
@@ -1046,7 +1376,7 @@ eps_axis_label <- 0.05
 #  initialize plot
 ## 
 
-gg_sm_smpl_ctr <- seg_tbl |> 
+gg_2025_10_26a <- seg_tbl |> 
   # (x, y) coordinates along (m_axis, s_axis)
   ggplot2::ggplot(mapping = aes(x = x_0, y = y_0)) + 
   # bounding box
@@ -1063,7 +1393,7 @@ gg_sm_smpl_ctr <- seg_tbl |>
 #  oblique grid-lines
 ## 
 
-gg_sm_smpl_ctr <- gg_sm_smpl_ctr + 
+gg_2025_10_26a <- gg_2025_10_26a + 
   geom_segment(mapping = aes(
     x = x_0, xend = x_1, 
     y = y_0, yend = y_1
@@ -1076,7 +1406,7 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
 ## 
 
 # m_axis
-gg_sm_smpl_ctr <- gg_sm_smpl_ctr + 
+gg_2025_10_26a <- gg_2025_10_26a + 
   geom_segment(
     mapping = aes(
       x = 0, xend = m_base [["x"]], 
@@ -1094,7 +1424,7 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
     fontface = "bold", size = 3.5)
 
 # s_axis
-gg_sm_smpl_ctr <- gg_sm_smpl_ctr + 
+gg_2025_10_26a <- gg_2025_10_26a + 
   geom_segment(
     mapping = aes(
       x = 0, xend = s_base [["x"]], 
@@ -1116,7 +1446,7 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
 ## 
 
 # TODO: debug this attempted projection
-gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
+gg_2025_10_26a <- gg_2025_10_26a +
   geom_segment(
     mapping = aes(
       x = s_base [["x"]], xend = s_base [["x"]],
@@ -1133,27 +1463,10 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
     hjust = 0, color = "purple",
     fontface = "bold", size = 3)
 
-gg_sm_smpl_ctr
+gg_2025_10_26a
 
 ```
 
-The coordinate system of this figure refers to the pair of basis vectors $( \dot{m}_\bullet, \dot{s}_\bullet )$.  If $v$ is a vector in this two-dimensional space then $v$ is some linear combination of the basis vectors.
-
-$$
-\begin{align} 
-  v &= \sigma \; \dot{s}_\bullet \; + \; \mu \; \dot{m}_\bullet
-\end{align} 
-$$ {#eq-v-in-ms-ctr-space}
-
-Then $v$ has coordinates  $(\sigma, \mu)$ with respect to the $( \dot{m}_\bullet, \dot{s}_\bullet )$ basis.
-
-Consequently the coordinates of vectors $\dot{m}_\bullet$, $\dot{s}_\bullet$, and $\hat{\dot{y}}_\bullet$ are respectively $(1, 0)$, $(0, 1)$, and $(\hat{\beta}_1, 0)$.
-
-Note that the $\dot{s}_\bullet$ axis is not quite perpendicular to the $\dot{m}_\bullet$ axis.  The two axes have been drawn so that the angle between them, say $\theta_{m, s}$, has a cosine equal to the correlation coefficient, say $r_{m, s}$, between the two data vectors.  That is, $\cos(\theta_{m, s}) = r_{m, s}$.  Since the correlation coefficient is positive rather than zero, the cosine is also positive, so that $\theta_{m, s} < \pi / 2$.
-
-@fig-gg-sm-smpl-ctr is a column based view of the linear regression of the centered heights of the sons $(\dot{s}_\bullet)$ on the centered heights  of their mothers $(\dot{m}_\bullet)$ as an illustration of the simplicity of linear least-squares regression as an orthogonal projection.
-
-Figure XXX below gives the more commonly used row-based illustration of the same linear regression.
 
 ### Least Squares: Two Perspectives
 
