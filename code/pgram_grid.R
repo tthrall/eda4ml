@@ -164,19 +164,24 @@ ob_2d_basis <- function(
     u_name = "u",    # <chr> desired name for vector u
     v_name = "v"     # <chr> desired name for vector v
 ) {
-  # Cartesian coordinates of (u, v) basis vectors
-  u_base <- c(cos(u_theta), sin(u_theta))
-  v_base <- c(cos(v_theta), sin(v_theta))
+  # basis vectors in Cartesian (x, y) coordinates
+  u_base <- c( x = cos(u_theta), y = sin(u_theta) )
+  v_base <- c( x = cos(v_theta), y = sin(v_theta) )
   
-  # vector c(u_x, u_y, u_x, v_y)
-  uv_xy_vec <- c(u_base, v_base)
-  names(uv_xy_vec) <- paste0(
+  # list the two basis vectors separately
+  uv_base_lst <- list(
+    u_base = u_base, 
+    v_base = v_base)
+  
+  # single 4-vector: c(u_x, u_y, u_x, v_y)
+  uv_xy_b_vec <- c(u_base, v_base)
+  names(uv_xy_b_vec) <- paste0(
     c(u_name, u_name, v_name, v_name), 
     c("_x", "_y")
   )
   
   # matrix: row = (u, v), col = (x, y)
-  uv_xy_mat <- uv_xy_vec |> 
+  uv_xy_b_mat <- uv_xy_b_vec |> 
     matrix(
       nrow = 2, ncol = 2, byrow = TRUE, 
       dimnames = list(
@@ -184,14 +189,16 @@ ob_2d_basis <- function(
         xy = c("x", "y"))
     )
   
-  return(list(
-    uv_xy_vec = uv_xy_vec, 
-    uv_xy_mat = uv_xy_mat
-  ))
+  basis_lst <- list(
+    uv_base_lst = uv_base_lst, 
+    uv_xy_b_vec = uv_xy_b_vec, 
+    uv_xy_b_mat = uv_xy_b_mat)
+  
+  return(basis_lst)
 }
 
 ##
-#  ob_segs_2d()
+#  ob_2d_segs()
 #
 #    Construct an oblique grid composed of two sets 
 #    of line segments parallel to two respective 
@@ -203,7 +210,7 @@ ob_2d_basis <- function(
 #    its initial and terminal points, from (x_0, y_0)
 #    to (x_1, y_1), in Cartesian coordinates.
 ##
-ob_segs_2d <- function(
+ob_2d_segs <- function(
     u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
     v_theta  = pi/2, # <dbl> v_base = (cos, sin)(v_theta)
     n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
@@ -248,6 +255,59 @@ ob_segs_2d <- function(
       v_axis_y + u_base [["y"]])
   )
   return(seg_tbl)
+}
+
+##
+#  ob_2d_grob_prep()
+#
+#    Given: two linearly independent unit vectors 
+#    (u, v) defined by their respective angles on the 
+#    unit circle.
+#
+#    Return the following list of objects: 
+#      - basis vectors (u_base, v_base)
+#      - segment endpoints defining an oblique grid
+#      - plotting bounds (x_min, y_min), (x_max, y_max)
+##
+ob_2d_grob_prep <- function(
+    u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+    v_theta  = pi/2, # <dbl> v_base = (cos, sin)(v_theta)
+    n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+    u_name = "u",    # <chr> desired name for vector u
+    v_name = "v"     # <chr> desired name for vector v
+) {
+  # basis vectors in Cartesian (x, y) coordinates
+  u_base <- c( x = cos(u_theta), y = sin(u_theta) )
+  v_base <- c( x = cos(v_theta), y = sin(v_theta) )
+  
+  # list the two basis vectors separately
+  uv_base_lst <- list(
+    u_base = u_base, 
+    v_base = v_base)
+  
+  # tibble of segment endpoints (oblique grid-lines)
+  seg_tbl <- ob_2d_segs(
+    u_theta = u_theta, 
+    v_theta = v_theta, 
+    n_pts   = n_pts, 
+    u_name  = u_name, 
+    v_name  = v_name)
+  
+  # (x, y) plotting limits (bounding box)
+  xy_lim_lst <- list(
+    x_min_plt = min(c( seg_tbl$ x_0, seg_tbl$ x_1 )), 
+    x_max_plt = max(c( seg_tbl$ x_0, seg_tbl$ x_1 )), 
+    
+    y_min_plt = min(c( seg_tbl$ y_0, seg_tbl$ y_1 )), 
+    y_max_plt = max(c( seg_tbl$ y_0, seg_tbl$ y_1 ))
+  )
+  
+  grob_prep_lst <- list(
+    uv_base_lst = uv_base_lst, 
+    seg_tbl     = seg_tbl, 
+    xy_lim_lst  = xy_lim_lst)
+  
+  return(grob_prep_lst)
 }
 
 ##
