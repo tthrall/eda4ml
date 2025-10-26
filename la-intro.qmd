@@ -1004,12 +1004,9 @@ theta_ms <- acos(cor_ms)
 ```
 
 ```{r}
-#| label: fig-gg-sm-smpl-ctr
-#| fig-cap: "Projection of centered heights, son (s) to mother (m)"
+#| label: sm-grob-prep
 
-## 
-#  prep
-## 
+# define data and parameters to create next figure
 
 grob_prep_lst <- ob_2d_grob_prep(
   u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
@@ -1042,6 +1039,12 @@ s_color    <- "steelblue"
 # position axis label at (1 +- eps) * basis vector
 eps_axis_label <- 0.05
 
+```
+
+```{r}
+#| label: fig-gg-sm-smpl-ctr
+#| fig-cap: "Projection of centered heights, son (s) to mother (m)"
+
 ## 
 #  initialize plot
 ## 
@@ -1057,7 +1060,9 @@ gg_sm_smpl_ctr <- seg_tbl |>
   # remove standard ggplot() grid-lines, etc.
   theme_void() +
   # retain aspect ratio
-  coord_fixed()
+  coord_fixed() +
+  # main title
+  labs(title = "Projection of centered heights, son (s) to mother (m)")
 
 ## 
 #  oblique grid-lines
@@ -1112,28 +1117,58 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
     fontface = "bold", size = 3.5)
 
 ## 
-#  project s_axis to m_axis
+#  project s to m_axis
 ## 
 
-# TODO: debug this attempted projection
 gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
   geom_segment(
     mapping = aes(
       x = s_base [["x"]], xend = s_base [["x"]],
       y = s_base [["y"]], yend = 0
     ),
-    arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
+    arrow = arrow(
+      length = unit(0.3, "cm"), 
+      ends = "last", type = "closed"
+    ),
     linetype = 3, linewidth = 0.8, color = "purple"
   ) +
   annotate(
     geom = "text",
-    x = (1 - eps_axis_label) * s_base [["x"]],
+    x = s_base [["x"]] / 2,
     y = - eps_axis_label,
-    label = "beta",
+    label = "paste('(', beta[1], ', 0)')", 
+    parse = TRUE, 
     hjust = 0, color = "purple",
     fontface = "bold", size = 3)
 
 gg_sm_smpl_ctr
+
+```
+
+```{r}
+#| label: sm-grob-cleanup
+
+# garbage collection: 
+# move temporary objects from most recent figure
+# from the Global Environment to the following list
+
+sm_grob_prep_lst <- list(
+  grob_prep_lst, 
+  m_base, s_base, 
+  seg_tbl, 
+  x_min_plt, x_max_plt, 
+  y_min_plt, y_max_plt, 
+  grid_color, m_color, s_color, 
+  eps_axis_label
+)
+
+rm(grob_prep_lst, 
+  m_base, s_base, 
+  seg_tbl, 
+  x_min_plt, x_max_plt, 
+  y_min_plt, y_max_plt, 
+  grid_color, m_color, s_color, 
+  eps_axis_label)
 
 ```
 
@@ -1149,11 +1184,275 @@ Then $v$ has coordinates  $(\sigma, \mu)$ with respect to the $( \dot{m}_\bullet
 
 Consequently the coordinates of vectors $\dot{m}_\bullet$, $\dot{s}_\bullet$, and $\hat{\dot{y}}_\bullet$ are respectively $(1, 0)$, $(0, 1)$, and $(\hat{\beta}_1, 0)$.
 
-Note that the $\dot{s}_\bullet$ axis is not quite perpendicular to the $\dot{m}_\bullet$ axis.  The two axes have been drawn so that the angle between them, say $\theta_{m, s}$, has a cosine equal to the correlation coefficient, say $r_{m, s}$, between the two data vectors.  That is, $\cos(\theta_{m, s}) = r_{m, s}$.  Since the correlation coefficient is positive rather than zero, the cosine is also positive, so that $\theta_{m, s} < \pi / 2$.
+Note that the $\dot{s}_\bullet$ axis is not quite perpendicular to the $\dot{m}_\bullet$ axis.  That is because the two vectors are not orthogonal:
+
+$$
+\begin{align} 
+  \left < \dot{m}_\bullet, \; \dot{s}_\bullet \right > &= \dot{m}_\bullet^\top \; \dot{s}_\bullet \\ 
+  &\ne 0
+\end{align} 
+$$ {#eq-m-s-inner-product}
+
+Instead we have the following non-zero correlation coefficient, denoted here as $r_{m, s}$. [^r-ms-smpl]
+
+[^r-ms-smpl]: The cited value of the correlation coefficient $r_{m, s}$ pertains to the random sample of size 20 created to facilitate a detailed view of regression residuals.  Among all 179 families whose oldest child was a son, we have $r_{m, s} \approx 0.3$.
+
+$$
+\begin{align} 
+  r_{m, s} &= \left ( \frac{\dot{m}_\bullet}{\lVert \dot{m}_\bullet \rVert} \right )^\top \; 
+  \left ( \frac{\dot{s}_\bullet}{\lVert \dot{s}_\bullet \rVert} \right ) \\ 
+  &\approx 0.1
+\end{align} 
+$$ {#eq-m-s-cor}
+
+In linear algebra the expression for $r_{m, s}$ is defined to be the cosine of the angle between vectors $\dot{m}_\bullet$ and $\dot{s}_\bullet$.
+
+Therefore the two axes have been drawn so that the angle between them, say $\theta_{m, s}$, has a cosine equal to the correlation coefficient, $r_{m, s}$.  That is, $\cos(\theta_{m, s}) = r_{m, s}$.  Since the correlation coefficient is positive rather than zero, the cosine is also positive, so that $\theta_{m, s} < \pi / 2$.
 
 @fig-gg-sm-smpl-ctr is a column based view of the linear regression of the centered heights of the sons $(\dot{s}_\bullet)$ on the centered heights  of their mothers $(\dot{m}_\bullet)$ as an illustration of the simplicity of linear least-squares regression as an orthogonal projection.
 
-Figure XXX below gives the more commonly used row-based illustration of the same linear regression.
+```{r}
+#| label: sm-smpl-ctr-lm
+
+sm_smpl_ctr_lm <- lm(
+  data = smf_smpl_ctr, 
+  formula = son ~ 0 + mother)
+```
+
+```{r}
+#| label: sm-smpl-ctr
+
+sm_smpl_ctr <- smf_smpl_ctr |> 
+  dplyr::select(- c(s_hat, resid)) |> 
+  dplyr::mutate(
+    s_hat = sm_smpl_ctr_lm$ fitted.values, 
+    resid = sm_smpl_ctr_lm$ residuals
+  )
+```
+
+@fig-sm-smpl-ctr below gives the more commonly used (row-based) illustration of the same linear regression.
+
+```{r}
+#| label: fig-sm-smpl-ctr
+#| fig-cap: "Centered heights: son ~ mother regression line"
+
+g_sm_smpl_ctr <- sm_smpl_ctr |> 
+  ggplot2::ggplot(mapping = aes(
+    x = mother, y = son
+  )) + 
+  geom_point() + 
+  geom_smooth(method=lm , color="purple", se=FALSE) + 
+  labs(
+    title = "Centered heights: son ~ mother regression Line")
+
+g_sm_smpl_ctr
+
+```
+
+The two perspectives on linear regression are complementary.  @fig-sm-smpl-ctr portrays individual rows of data (families here).  This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models.  This view of the regression problem shows model _results_.  To understand the model itself, the column-based perspective, illustrated by @fig-gg-sm-smpl-ctr, can be helpful.
+
+```{r}
+#| label: fig-s3d-2025-10-26a
+#| fig-cap: "fig-s3d-2025-10-26a"
+
+# retain code but do not run it for now
+run_code <- FALSE
+if (run_code) {
+  ## Step 1: Compute correlations (angles between basis vectors)
+  ## Assuming you have centered height vectors: m_ctr, f_ctr, s_ctr
+  
+  # Normalize to get correlations (cosines of angles)
+  cos_mf <- cor(m_ctr, f_ctr)  # angle between m and f
+  cos_ms <- cor(m_ctr, s_ctr)  # angle between m and s  
+  cos_fs <- cor(f_ctr, s_ctr)  # angle between f and s
+  
+  # Convert to angles
+  theta_mf <- acos(cos_mf)
+  theta_ms <- acos(cos_ms)
+  theta_fs <- acos(cos_fs)
+  
+  ## Step 2: Position basis vectors in XYZ Cartesian space
+  ## to achieve the correct angles
+  
+  # m_base along x-axis
+  m_base <- c(1, 0, 0)
+  
+  # f_base in xy-plane at angle theta_mf from m
+  f_base <- c(cos(theta_mf), sin(theta_mf), 0)
+  
+  # s_base positioned to satisfy angle constraints
+  sx <- cos(theta_ms)
+  sy <- (cos(theta_fs) - cos(theta_ms) * cos(theta_mf)) / sin(theta_mf)
+  sz <- sqrt(1 - sx^2 - sy^2)  # assumes valid configuration
+  s_base <- c(sx, sy, sz)
+  
+  ## Step 3: Get regression coefficients
+  ## Assuming you've run: lm(s_ctr ~ m_ctr + f_ctr - 1)
+  # beta_1 and beta_2 should be available
+  
+  # Projection of s onto (m, f) plane in XYZ coordinates
+  s_proj <- beta_1 * m_base + beta_2 * f_base
+  
+  ## Step 4: Create grid lines in (m, f) plane
+  ## Grid lines parallel to m and f axes
+  
+  # Grid parameters
+  grid_range <- seq(-0.5, 1.5, by = 0.25)
+  
+  # Lines parallel to m_axis (varying f coordinate)
+  lines_parallel_m <- list()
+  for (i in seq_along(grid_range)) {
+    f_coord <- grid_range[i]
+    lines_parallel_m[[i]] <- rbind(
+      -0.5 * m_base + f_coord * f_base,
+      1.5 * m_base + f_coord * f_base
+    )
+  }
+  
+  # Lines parallel to f_axis (varying m coordinate)
+  lines_parallel_f <- list()
+  for (i in seq_along(grid_range)) {
+    m_coord <- grid_range[i]
+    lines_parallel_f[[i]] <- rbind(
+      m_coord * m_base - 0.5 * f_base,
+      m_coord * m_base + 1.5 * f_base
+    )
+  }
+  
+  ## Step 5: Create the 3D plot
+  
+  # Determine plot limits
+  all_pts <- rbind(
+    1.5 * m_base, 1.5 * f_base, 1.2 * s_base,
+    -0.5 * m_base, -0.5 * f_base
+  )
+  x_range <- range(all_pts[, 1]) * 1.1
+  y_range <- range(all_pts[, 2]) * 1.1
+  z_range <- c(min(all_pts[, 3]) - 0.1, max(all_pts[, 3]) + 0.1)
+  
+  # Initialize plot
+  s3d <- scatterplot3d(
+    x = 0, y = 0, z = 0,
+    xlim = x_range, ylim = y_range, zlim = z_range,
+    type = "n",
+    grid = FALSE,
+    box = FALSE,
+    angle = 55,
+    pch = "",
+    xlab = "", ylab = "", zlab = ""
+  )
+  
+  ## Step 6: Draw grid lines in (m, f) plane
+  # Lines parallel to m
+  for (line in lines_parallel_m) {
+    s3d$points3d(
+      x = line[, 1], y = line[, 2], z = line[, 3],
+      type = "l", col = "gray85", lwd = 0.5
+    )
+  }
+  
+  # Lines parallel to f
+  for (line in lines_parallel_f) {
+    s3d$points3d(
+      x = line[, 1], y = line[, 2], z = line[, 3],
+      type = "l", col = "gray85", lwd = 0.5
+    )
+  }
+  
+  ## Step 7: Draw basis vectors (axes)
+  
+  # m_axis (purple)
+  s3d$points3d(
+    x = c(0, m_base[1]), y = c(0, m_base[2]), z = c(0, m_base[3]),
+    type = "l", col = "purple", lwd = 2
+  )
+  
+  # f_axis (darkorange)
+  s3d$points3d(
+    x = c(0, f_base[1]), y = c(0, f_base[2]), z = c(0, f_base[3]),
+    type = "l", col = "darkorange", lwd = 2
+  )
+  
+  # s_axis (steelblue)
+  s3d$points3d(
+    x = c(0, s_base[1]), y = c(0, s_base[2]), z = c(0, s_base[3]),
+    type = "l", col = "steelblue", lwd = 2
+  )
+  
+  ## Step 8: Draw projection
+  
+  # Projection vector (fitted values) in red dashed
+  s3d$points3d(
+    x = c(0, s_proj[1]), y = c(0, s_proj[2]), z = c(0, s_proj[3]),
+    type = "l", col = "red", lwd = 2, lty = 2
+  )
+  
+  # Residual vector (orthogonal to plane)
+  s3d$points3d(
+    x = c(s_proj[1], s_base[1]), 
+    y = c(s_proj[2], s_base[2]), 
+    z = c(s_proj[3], s_base[3]),
+    type = "l", col = "gray40", lwd = 1.5, lty = 3
+  )
+  
+  ## Step 9: Add labels (using xyz.convert for positioning)
+  # You can add text labels for axes using s3d$xyz.convert()
+}
+
+```
+
+```{r}
+#| label: smf-grob-prep
+
+# define data and parameters to create next figure
+
+grob_prep_lst <- ob_2d_grob_prep(
+  u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
+  v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
+  n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+  u_name = "m",    # <chr> desired name for vector u
+  v_name = "s"     # <chr> desired name for vector v
+)
+
+# basis vectors
+m_base <- grob_prep_lst$ uv_base_lst$ u_base
+s_base <- grob_prep_lst$ uv_base_lst$ v_base
+
+# segments defining oblique grid
+seg_tbl <- grob_prep_lst$ seg_tbl
+
+# plotting limits
+x_min_plt <- grob_prep_lst$ xy_lim_lst$ x_min_plt
+x_max_plt <- grob_prep_lst$ xy_lim_lst$ x_max_plt
+
+y_min_plt <- grob_prep_lst$ xy_lim_lst$ y_min_plt
+y_max_plt <- grob_prep_lst$ xy_lim_lst$ y_max_plt
+
+# color choices
+grid_color <- "gray25"
+m_color    <- "purple"
+s_color    <- "steelblue"
+
+# annotation settings
+# position axis label at (1 +- eps) * basis vector
+eps_axis_label <- 0.05
+
+```
+
+```{r}
+#| label: fig-s3d-2025-10-27a
+#| fig-cap: "fig-s3d-2025-10-27a"
+
+# Save following caption for row-view of smf:
+# "Centered heights: son ~ (mother, father) regression plane"
+
+# retain code but do not run it for now
+run_code <- FALSE
+if (run_code) {
+  
+}
+
+```
 
 ### Least Squares: Two Perspectives
 
