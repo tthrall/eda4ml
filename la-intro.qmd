@@ -1180,7 +1180,7 @@ $$
 \end{align} 
 $$ {#eq-v-in-ms-ctr-space}
 
-Then $v$ has coordinates  $(\sigma, \mu)$ with respect to the $( \dot{m}_\bullet, \dot{s}_\bullet )$ basis.
+Then $v$ has coordinates $(\sigma, \mu)$ with respect to the $( \dot{m}_\bullet, \dot{s}_\bullet )$ basis.
 
 Consequently the coordinates of vectors $\dot{m}_\bullet$, $\dot{s}_\bullet$, and $\hat{\dot{y}}_\bullet$ are respectively $(1, 0)$, $(0, 1)$, and $(\hat{\beta}_1, 0)$.
 
@@ -1207,9 +1207,9 @@ $$ {#eq-m-s-cor}
 
 In linear algebra the expression for $r_{m, s}$ is defined to be the cosine of the angle between vectors $\dot{m}_\bullet$ and $\dot{s}_\bullet$.
 
-Therefore the two axes have been drawn so that the angle between them, say $\theta_{m, s}$, has a cosine equal to the correlation coefficient, $r_{m, s}$.  That is, $\cos(\theta_{m, s}) = r_{m, s}$.  Since the correlation coefficient is positive rather than zero, the cosine is also positive, so that $\theta_{m, s} < \pi / 2$.
+Therefore the two axes are shown with the angle, say $\theta_{m, s}$, between the two _drawn_ axes equal to the angle between the two _actual_ vectors, $\dot{m}_\bullet$ and $\dot{s}_\bullet$.  Thus $\cos(\theta_{m, s}) = r_{m, s}$.  Since the correlation coefficient is positive rather than zero, the cosine is also positive, which implies that $\theta_{m, s} < \pi / 2$.
 
-@fig-gg-sm-smpl-ctr is a column based view of the linear regression of the centered heights of the sons $(\dot{s}_\bullet)$ on the centered heights  of their mothers $(\dot{m}_\bullet)$ as an illustration of the simplicity of linear least-squares regression as an orthogonal projection.
+@fig-gg-sm-smpl-ctr is a column-based view of the linear regression of the centered heights of the sons $(\dot{s}_\bullet)$ on the centered heights of their mothers $(\dot{m}_\bullet)$.  The figure illustrates the simplicity of linear least-squares regression as, in essence, an orthogonal projection.
 
 ```{r}
 #| label: sm-smpl-ctr-lm
@@ -1243,13 +1243,13 @@ g_sm_smpl_ctr <- sm_smpl_ctr |>
   geom_point() + 
   geom_smooth(method=lm , color="purple", se=FALSE) + 
   labs(
-    title = "Centered heights: son ~ mother regression Line")
+    title = "Centered heights: son ~ mother regression line")
 
 g_sm_smpl_ctr
 
 ```
 
-The two perspectives on linear regression are complementary.  @fig-sm-smpl-ctr portrays individual rows of data (families here).  This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models.  This view of the regression problem shows model _results_.  To understand the model itself, the column-based perspective, illustrated by @fig-gg-sm-smpl-ctr, can be helpful.
+The two perspectives on linear regression are complementary.  @fig-sm-smpl-ctr portrays individual rows of data (families here).  This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models.  This view of the regression problem shows model _results_.  On the other hand, the column-based perspective, illustrated by @fig-gg-sm-smpl-ctr, can help one to understand the model-fitting _process_.
 
 ```{r}
 #| label: fig-s3d-2025-10-26a
@@ -1406,36 +1406,41 @@ if (run_code) {
 
 # define data and parameters to create next figure
 
-grob_prep_lst <- ob_2d_grob_prep(
-  u_theta  = 0,    # <dbl> u_base = (cos, sin)(u_theta)
-  v_theta  = theta_ms, # <dbl> v_base = (cos, sin)(v_theta)
-  n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
-  u_name = "m",    # <chr> desired name for vector u
-  v_name = "s"     # <chr> desired name for vector v
-)
+# TODO: construct function ob_3d_grob_prep()
+# the following code is just a stub for now
 
-# basis vectors
-m_base <- grob_prep_lst$ uv_base_lst$ u_base
-s_base <- grob_prep_lst$ uv_base_lst$ v_base
+run_code <- FALSE
+if (run_code) {
+  grob_prep_lst <- ob_3d_grob_prep()
+  
+  # basis vectors
+  m_base <- grob_prep_lst$ uvw_base_lst$ u_base
+  f_base <- grob_prep_lst$ uvw_base_lst$ v_base
+  s_base <- grob_prep_lst$ uvw_base_lst$ w_base
+  
+  # segments defining oblique grid
+  seg_tbl <- grob_prep_lst$ seg_tbl
+  
+  # plotting limits
+  x_min_plt <- grob_prep_lst$ xyz_lim_lst$ x_min_plt
+  x_max_plt <- grob_prep_lst$ xyz_lim_lst$ x_max_plt
 
-# segments defining oblique grid
-seg_tbl <- grob_prep_lst$ seg_tbl
+  y_min_plt <- grob_prep_lst$ xyz_lim_lst$ y_min_plt
+  y_max_plt <- grob_prep_lst$ xyz_lim_lst$ y_max_plt
 
-# plotting limits
-x_min_plt <- grob_prep_lst$ xy_lim_lst$ x_min_plt
-x_max_plt <- grob_prep_lst$ xy_lim_lst$ x_max_plt
-
-y_min_plt <- grob_prep_lst$ xy_lim_lst$ y_min_plt
-y_max_plt <- grob_prep_lst$ xy_lim_lst$ y_max_plt
-
-# color choices
-grid_color <- "gray25"
-m_color    <- "purple"
-s_color    <- "steelblue"
-
-# annotation settings
-# position axis label at (1 +- eps) * basis vector
-eps_axis_label <- 0.05
+  z_min_plt <- grob_prep_lst$ xyz_lim_lst$ z_min_plt
+  z_max_plt <- grob_prep_lst$ xyz_lim_lst$ z_max_plt
+  
+  # color choices
+  grid_color <- "gray25"
+  m_color    <- "purple"
+  f_color    <- "darkgreen"
+  s_color    <- "steelblue"
+  
+  # annotation settings
+  # position axis label at (1 +- eps) * basis vector
+  eps_axis_label <- 0.05
+}
 
 ```
 
@@ -1446,7 +1451,7 @@ eps_axis_label <- 0.05
 # Save following caption for row-view of smf:
 # "Centered heights: son ~ (mother, father) regression plane"
 
-# retain code but do not run it for now
+# retain but do not run code for now
 run_code <- FALSE
 if (run_code) {
   
