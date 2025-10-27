@@ -1043,7 +1043,7 @@ eps_axis_label <- 0.05
 
 ```{r}
 #| label: fig-gg-sm-smpl-ctr
-#| fig-cap: "Projection of centered heights, son (s) to mother (m)"
+#| fig-cap: "Centered heights: project s-vector (son) to m-axis (mother)"
 
 ## 
 #  initialize plot
@@ -1062,7 +1062,7 @@ gg_sm_smpl_ctr <- seg_tbl |>
   # retain aspect ratio
   coord_fixed() +
   # main title
-  labs(title = "Projection of centered heights, son (s) to mother (m)")
+  labs(title = "Centered heights: project s (son) to m-axis (mother)")
 
 ## 
 #  oblique grid-lines
@@ -1094,7 +1094,7 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
     geom = "text", 
     x = (1 - eps_axis_label) * m_base [["x"]], 
     y = - eps_axis_label, 
-    label = "m_axis", 
+    label = "m-axis", 
     hjust = 0, color = "purple", 
     fontface = "bold", size = 3.5)
 
@@ -1112,7 +1112,7 @@ gg_sm_smpl_ctr <- gg_sm_smpl_ctr +
     geom = "text", 
     x = (1 + eps_axis_label) * s_base [["x"]], 
     y = (1 + eps_axis_label) * s_base [["y"]], 
-    label = "s_axis", 
+    label = "s-axis", 
     hjust = 0, color = "steelblue", 
     fontface = "bold", size = 3.5)
 
@@ -1402,7 +1402,7 @@ if (run_code) {
 ```
 
 ```{r}
-#| label: smf-grob-prep
+#| label: smf-gprep
 
 # define data and parameters to create next figure
 
@@ -1411,25 +1411,39 @@ if (run_code) {
 
 run_code <- FALSE
 if (run_code) {
-  grob_prep_lst <- ob_3d_grob_prep()
+  # (m, f, s) correlation matrix
+  cor_mf <- smf_smpl_cor [["mother", "father"]]
+  cor_ms <- smf_smpl_cor [["mother", "son"]]
+  cor_fs <- smf_smpl_cor [["father", "son"]]
+  
+  # (theta, phi) coordinates of (m, f, s)
+  m_theta = 0
+  m_phi   = pi/2
+  
+  f_theta = acos( cor_mf )
+  f_phi   = pi/2
+  
+  s_theta = acos( cor_ms )
+  
+  smf_gprep_lst <- ob_3d_grob_prep()
   
   # basis vectors
-  m_base <- grob_prep_lst$ uvw_base_lst$ u_base
-  f_base <- grob_prep_lst$ uvw_base_lst$ v_base
-  s_base <- grob_prep_lst$ uvw_base_lst$ w_base
+  m_base <- smf_gprep_lst$ uvw_base_lst$ u_base
+  f_base <- smf_gprep_lst$ uvw_base_lst$ v_base
+  s_base <- smf_gprep_lst$ uvw_base_lst$ w_base
   
   # segments defining oblique grid
-  seg_tbl <- grob_prep_lst$ seg_tbl
+  seg_tbl <- smf_gprep_lst$ seg_tbl
   
   # plotting limits
-  x_min_plt <- grob_prep_lst$ xyz_lim_lst$ x_min_plt
-  x_max_plt <- grob_prep_lst$ xyz_lim_lst$ x_max_plt
+  x_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_min"]] 
+  x_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_max"]] 
 
-  y_min_plt <- grob_prep_lst$ xyz_lim_lst$ y_min_plt
-  y_max_plt <- grob_prep_lst$ xyz_lim_lst$ y_max_plt
+  y_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_min"]] 
+  y_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_max"]] 
 
-  z_min_plt <- grob_prep_lst$ xyz_lim_lst$ z_min_plt
-  z_max_plt <- grob_prep_lst$ xyz_lim_lst$ z_max_plt
+  z_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_min"]] 
+  z_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_max"]] 
   
   # color choices
   grid_color <- "gray25"
