@@ -77,6 +77,8 @@ get_hist_numbers <- function(
   mid_0    <- 2 * mid_tail [[1]] - mid_tail [[2]]
   
   hist_num_tbl <- tibble::tibble(
+    # 0:n
+    idx     = 0:length (hist_lst$ counts), 
     # b_0, b_1, ..., b_n
     breaks = hist_lst$ breaks, 
     # map c_k etc to b_k for k = 1:n
@@ -284,6 +286,151 @@ ob_2d_grob_prep <- function(
   uv_base_lst <- list(
     u_base = u_base, 
     v_base = v_base)
+  
+  # tibble of segment endpoints (oblique grid-lines)
+  seg_tbl <- ob_2d_segs(
+    u_theta = u_theta, 
+    v_theta = v_theta, 
+    n_pts   = n_pts, 
+    u_name  = u_name, 
+    v_name  = v_name)
+  
+  # (x, y) plotting limits (bounding box)
+  xy_lim_lst <- list(
+    x_min_plt = min(c( seg_tbl$ x_0, seg_tbl$ x_1 )), 
+    x_max_plt = max(c( seg_tbl$ x_0, seg_tbl$ x_1 )), 
+    
+    y_min_plt = min(c( seg_tbl$ y_0, seg_tbl$ y_1 )), 
+    y_max_plt = max(c( seg_tbl$ y_0, seg_tbl$ y_1 ))
+  )
+  
+  grob_prep_lst <- list(
+    uv_base_lst = uv_base_lst, 
+    seg_tbl     = seg_tbl, 
+    xy_lim_lst  = xy_lim_lst)
+  
+  return(grob_prep_lst)
+}
+
+## 
+#  sc2xyz
+#
+#    Given spherical coordinates (theta, phi) 
+#    return a tibble of (x, y, z) coordinates
+#    
+#      x = cos(theta) * sin(phi)
+#      y = sin(theta) * sin(phi)
+#      z = cos(phi)
+## 
+sc2xyz <- function(
+    # (theta, phi) default values yield (1, 0, 0)
+  theta = 0,   # <dbl> atan2(y, x)
+  phi   = pi/2 # <dbl> acos(z)
+) {
+  assertthat::assert_that(
+    is.vector(theta), 
+    is.vector(phi), 
+    length(phi) > 0, 
+    length(phi) == length(theta) 
+  )
+  
+  coord_tbl <- tibble::tibble(
+    theta = theta, 
+    phi   = phi, 
+    x     = cos(theta) * sin(phi), 
+    y     = sin(theta) * sin(phi), 
+    z     = cos(phi))
+  
+  return(coord_tbl)
+}
+
+##
+#  ob_3d_segs()
+#
+#    Construct an oblique grid composed of three sets 
+#    of line segments parallel to three respective 
+#    linearly independent unit vectors (u, v, w) 
+#    defined by their respective spherical coordinates.
+#
+#    Return a tibble that represents each segment by 
+#    its initial and terminal points, from (x_0, y_0, z_0)
+#    to (x_1, y_1, z_1), in Cartesian coordinates.
+##
+ob_3d_segs <- function(
+    # (theta, phi) default values yield Euclidean basis
+  u_theta  = 0,    # <dbl> u_base: (u_theta, u_phi)
+  u_phi    = pi/2, # <dbl> u_base: (u_theta, u_phi)
+  v_theta  = pi/2, # <dbl> v_base: (v_theta, v_phi)
+  v_phi    = pi/2, # <dbl> v_base: (v_theta, u_phi)
+  w_theta  = pi/2, # <dbl> w_base: (w_theta, w_phi)
+  w_phi    = 0,    # <dbl> w_base: (w_theta, w_phi)
+  n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+  u_name = "u",    # <chr> desired name for vector u
+  v_name = "v",    # <chr> desired name for vector v
+  w_name = "w"     # <chr> desired name for vector w
+) {
+  # TODO: expand 2d version
+  return(NULL)
+}
+
+##
+#  ob_3d_grob_prep()
+#
+#    Given: three linearly independent unit vectors 
+#    (u, v, w) defined by their respective angles 
+#    (theta, phi)  on the unit sphere, whose 
+#    (x, y, z) coordinates are: 
+#    
+#      x = cos(theta) * sin(phi)
+#      y = sin(theta) * sin(phi)
+#      z = cos(phi)
+# 
+#    Return the following list of objects: 
+#      - basis vectors (u_base, v_base, w_base)
+#      - segment endpoints defining an oblique grid
+#      - xyz (min, max) plotting bounds
+##
+ob_3d_grob_prep <- function(
+    # (theta, phi) default values yield Euclidean basis
+  u_theta  = 0,    # <dbl> u_base: (u_theta, u_phi)
+  u_phi    = pi/2, # <dbl> u_base: (u_theta, u_phi)
+  v_theta  = pi/2, # <dbl> v_base: (v_theta, v_phi)
+  v_phi    = pi/2, # <dbl> v_base: (v_theta, u_phi)
+  w_theta  = pi/2, # <dbl> w_base: (w_theta, w_phi)
+  w_phi    = 0,    # <dbl> w_base: (w_theta, w_phi)
+  n_pts    = 5L,   # <int> generates ((1:n_pts) - 1) / (n_pts - 1)
+  u_name = "u",    # <chr> desired name for vector u
+  v_name = "v",    # <chr> desired name for vector v
+  w_name = "w"     # <chr> desired name for vector w
+) {
+  # calculate (x, y, z) coordinates
+  u_coord_tbl <- sc2xyz( u_theta, u_phi )
+  v_coord_tbl <- sc2xyz( v_theta, v_phi )
+  w_coord_tbl <- sc2xyz( w_theta, w_phi )
+  
+  # basis vectors: (x, y, z) coordinates
+  u_base <- u_coord_tbl [1, ] |> 
+    dplyr::select(x, y, z) |> 
+    as.vector() |> 
+    purrr::list_simplify()
+  v_base <- v_coord_tbl [1, ] |> 
+    dplyr::select(x, y, z) |> 
+    as.vector() |> 
+    purrr::list_simplify()
+  w_base <- w_coord_tbl [1, ] |> 
+    dplyr::select(x, y, z) |> 
+    as.vector() |> 
+    purrr::list_simplify()
+  
+  # list the three basis vectors separately
+  uvw_base_lst <- list(
+    u_base = u_base, 
+    v_base = v_base, 
+    w_base = w_base)
+  
+  ## 
+  #   TODO: expand the remaining code from 2D to 3D
+  ## 
   
   # tibble of segment endpoints (oblique grid-lines)
   seg_tbl <- ob_2d_segs(
