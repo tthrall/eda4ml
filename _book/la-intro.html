@@ -399,7 +399,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">00:50 Mon 27-Oct-2025</p>
+      <p class="date">23:42 Tue 28-Oct-2025</p>
     </div>
   </div>
   
@@ -1330,7 +1330,7 @@ Figure&nbsp;6.5: Centered family heights
 <img src="la-intro_files/figure-html/fig-gg-sm-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gg-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.6: Projection of centered heights, son (s) to mother (m)
+Figure&nbsp;6.6: Centered heights: project s-vector (son) to m-axis (mother)
 </figcaption>
 </figure>
 </div>
@@ -1378,6 +1378,22 @@ Figure&nbsp;6.7: Centered heights: son ~ mother regression line
 </div>
 </div>
 <p>The two perspectives on linear regression are complementary. <a href="#fig-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.7</span></a> portrays individual rows of data (families here). This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models. This view of the regression problem shows model <em>results</em>. On the other hand, the column-based perspective, illustrated by <a href="#fig-gg-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a>, can help one to understand the model-fitting <em>process</em>.</p>
+<p>Now let’s see how these ideas carry over from 2D to 3D: we now regress <span class="math inline">\(\dot{s}\)</span> on <span class="math inline">\((\dot{m}, \dot{f})\)</span>. <a href="#fig-s3d-2025-10-28a" class="quarto-xref">Figure&nbsp;<span>6.8</span></a> below shows this regression as an orthogonal projection of the <span class="math inline">\(\dot{s}_\bullet\)</span> basis vector to the plane defined by the <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> basis vectors. In this <span class="math inline">\((\dot{m}, \dot{f}, \dot{s})\)</span> coordinate system, the coordinates of the predicted (that is, projected) vector <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> are <span class="math inline">\((\hat{\beta}_1, \hat{\beta}_2, 0)\)</span>. The vector of residuals, <span class="math inline">\(\dot{s}_\bullet - \hat{\dot{s}}_\bullet\)</span>, is represented by the dotted line orthogonal to the <span class="math inline">\((\dot{m}, \dot{f})\)</span> plane.</p>
+<p>Each of these vectors represents the 20 families in the sample, but those 20 vector elements are not visible from this column-based perspective. The details of those 20 families, or more generally of individual data cases, are shown in row-based perspectives, like <a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a>. Such details are important and of interest, of course. But the column-based perspective illustrates the geometry of the model-fitting process, and also merits our attention.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-s3d-2025-10-28a" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-s3d-2025-10-28a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-s3d-2025-10-28a-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s3d-2025-10-28a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.8: Projection of centered heights: son to (mother, father) plane
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <section id="least-squares-two-perspectives" class="level3" data-number="6.4.1">
 <h3 data-number="6.4.1" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.4.1</span> Least Squares: Two Perspectives</h3>
 </section>

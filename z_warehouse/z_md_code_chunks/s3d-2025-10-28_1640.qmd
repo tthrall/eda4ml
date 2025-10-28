@@ -1,0 +1,136 @@
+---
+title: "s3d-2025-10-28_1640"
+format: html
+---
+
+```{r}
+#| label: s3d-2025-10-28_1640
+
+# Claude's suggested changes on 2025-10-28_1640
+
+run_code <- FALSE
+if (run_code) {
+  
+  ## 
+  # Calculate tighter limits based on your vectors (ADJUST AS NEEDED)
+  ## 
+  plot_limit <- max(abs(c(m_xyz[["x"]], m_xyz[["y"]], m_xyz[["z"]],
+                          f_xyz[["x"]], f_xyz[["y"]], f_xyz[["z"]],
+                          s_xyz[["x"]], s_xyz[["y"]], s_xyz[["z"]]))) * 1.2
+  x_range <- c(-plot_limit, plot_limit)
+  y_range <- c(-plot_limit, plot_limit)
+  z_range <- c(-plot_limit, plot_limit)
+  
+  ## 
+  # Initialize plot
+  ## 
+  s3d <- scatterplot3d(
+    main = "Projected heights: son to (mother, father) plane",
+    x = 0, y = 0, z = 0,
+    xlim = x_range, ylim = y_range, zlim = z_range,
+    type = "n",
+    grid = FALSE,
+    box = FALSE,
+    angle = 55, 
+    axis = FALSE,
+    pch = "",
+    xlab = "", ylab = "", zlab = ""
+  )
+  
+  ## 
+  # Draw grid segments
+  ## 
+  #  parallel to m along f within (m, f) plane
+  for (seg in m_f_0_lst) {
+    s3d$points3d(
+      x = seg[, 1], y = seg[, 2], z = seg[, 3],
+      type = "l", col = "gray25", lwd = 0.5)
+  }
+  #  parallel to f along m within (m, f) plane
+  for (seg in f_m_0_lst) {
+    s3d$points3d(
+      x = seg[, 1], y = seg[, 2], z = seg[, 3],
+      type = "l", col = "gray25", lwd = 0.5)
+  }
+  
+  ## 
+  # Draw basis vectors (axes) with arrows
+  ## 
+  arrow_scale <- 0.92  # Arrow starts at 92% of vector length
+  
+  # m_axis (purple)
+  s3d$points3d(
+    x = c(0, m_xyz[["x"]]), 
+    y = c(0, m_xyz[["y"]]), 
+    z = c(0, m_xyz[["z"]]),
+    type = "l", col = "purple", lwd = 2)
+  # Arrow head for m
+  s3d$points3d(
+    x = m_xyz[["x"]], y = m_xyz[["y"]], z = m_xyz[["z"]],
+    type = "h", col = "purple", pch = 17, cex = 1.2)
+  # Label for m
+  s3d$points3d(
+    x = m_xyz[["x"]] * 1.15, y = m_xyz[["y"]] * 1.15, z = m_xyz[["z"]] * 1.15,
+    type = "p", col = "purple", pch = "m", cex = 1.5)
+  
+  # f_axis (darkorange)
+  s3d$points3d(
+    x = c(0, f_xyz[["x"]]), 
+    y = c(0, f_xyz[["y"]]), 
+    z = c(0, f_xyz[["z"]]),
+    type = "l", col = "darkorange", lwd = 2)
+  # Arrow head for f
+  s3d$points3d(
+    x = f_xyz[["x"]], y = f_xyz[["y"]], z = f_xyz[["z"]],
+    type = "h", col = "darkorange", pch = 17, cex = 1.2)
+  # Label for f
+  s3d$points3d(
+    x = f_xyz[["x"]] * 1.15, y = f_xyz[["y"]] * 1.15, z = f_xyz[["z"]] * 1.15,
+    type = "p", col = "darkorange", pch = "f", cex = 1.5)
+  
+  # s_axis (steelblue)
+  s3d$points3d(
+    x = c(0, s_xyz[["x"]]), 
+    y = c(0, s_xyz[["y"]]), 
+    z = c(0, s_xyz[["z"]]),
+    type = "l", col = "steelblue", lwd = 2)
+  # Arrow head for s
+  s3d$points3d(
+    x = s_xyz[["x"]], y = s_xyz[["y"]], z = s_xyz[["z"]],
+    type = "h", col = "steelblue", pch = 17, cex = 1.2)
+  # Label for s
+  s3d$points3d(
+    x = s_xyz[["x"]] * 1.15, y = s_xyz[["y"]] * 1.15, z = s_xyz[["z"]] * 1.15,
+    type = "p", col = "steelblue", pch = "s", cex = 1.5)
+  
+  ## 
+  # Project the s basis vector onto (m, f) plane
+  ## 
+  # s_proj, projected point as SOLID point
+  s3d$points3d(
+    x = s_proj_xyz[["x"]], 
+    y = s_proj_xyz[["y"]], 
+    z = s_proj_xyz[["z"]],
+    type = "h", col = "black", pch = 16, cex = 1.5)
+  
+  # Label s_proj as (β₁, β₂)
+  s3d$points3d(
+    x = s_proj_xyz[["x"]] * 1.2, 
+    y = s_proj_xyz[["y"]] * 1.2, 
+    z = s_proj_xyz[["z"]] * 1.2,
+    type = "p", col = "black", pch = "", cex = 0)
+  text(s3d$xyz.convert(s_proj_xyz[["x"]] * 1.2, 
+                       s_proj_xyz[["y"]] * 1.2, 
+                       s_proj_xyz[["z"]] * 1.2),
+       labels = expression(paste("(", beta[1], ", ", beta[2], ")")),
+       cex = 1.2, pos = 4)
+  
+  # residual vector orthogonal to (m, f) plane
+  s3d$points3d(
+    x = c(s_proj_xyz[["x"]], s_xyz[["x"]]), 
+    y = c(s_proj_xyz[["y"]], s_xyz[["y"]]), 
+    z = c(s_proj_xyz[["z"]], s_xyz[["z"]]),
+    type = "l", col = "gray10", lwd = 1.5, lty = 3)
+}
+
+```

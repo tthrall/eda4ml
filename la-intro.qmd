@@ -969,6 +969,7 @@ $$ {#eq-1D-ctr-lin-reg-soln}
 smf_smpl_cor <- smf_smpl_ctr |> 
   dplyr::select(mother, father, son) |> 
   stats::cor()
+
 ```
 
 ```{r}
@@ -1228,150 +1229,17 @@ g_sm_smpl_ctr
 The two perspectives on linear regression are complementary.  @fig-sm-smpl-ctr portrays individual rows of data (families here).  This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models.  This view of the regression problem shows model _results_.  On the other hand, the column-based perspective, illustrated by @fig-gg-sm-smpl-ctr, can help one to understand the model-fitting _process_.
 
 ```{r}
-#| label: s3d-2025-10-28_1640
-
-# Claude's suggested changes on 2025-10-28_1640
-
-run_code <- FALSE
-if (run_code) {
-  
-  ## 
-  # Calculate tighter limits based on your vectors (ADJUST AS NEEDED)
-  ## 
-  plot_limit <- max(abs(c(m_xyz[["x"]], m_xyz[["y"]], m_xyz[["z"]],
-                          f_xyz[["x"]], f_xyz[["y"]], f_xyz[["z"]],
-                          s_xyz[["x"]], s_xyz[["y"]], s_xyz[["z"]]))) * 1.2
-  x_range <- c(-plot_limit, plot_limit)
-  y_range <- c(-plot_limit, plot_limit)
-  z_range <- c(-plot_limit, plot_limit)
-  
-  ## 
-  # Initialize plot
-  ## 
-  s3d <- scatterplot3d(
-    main = "Projected heights: son to (mother, father) plane",
-    x = 0, y = 0, z = 0,
-    xlim = x_range, ylim = y_range, zlim = z_range,
-    type = "n",
-    grid = FALSE,
-    box = FALSE,
-    angle = 55, 
-    axis = FALSE,
-    pch = "",
-    xlab = "", ylab = "", zlab = ""
-  )
-  
-  ## 
-  # Draw grid segments
-  ## 
-  #  parallel to m along f within (m, f) plane
-  for (seg in m_f_0_lst) {
-    s3d$points3d(
-      x = seg[, 1], y = seg[, 2], z = seg[, 3],
-      type = "l", col = "gray25", lwd = 0.5)
-  }
-  #  parallel to f along m within (m, f) plane
-  for (seg in f_m_0_lst) {
-    s3d$points3d(
-      x = seg[, 1], y = seg[, 2], z = seg[, 3],
-      type = "l", col = "gray25", lwd = 0.5)
-  }
-  
-  ## 
-  # Draw basis vectors (axes) with arrows
-  ## 
-  arrow_scale <- 0.92  # Arrow starts at 92% of vector length
-  
-  # m_axis (purple)
-  s3d$points3d(
-    x = c(0, m_xyz[["x"]]), 
-    y = c(0, m_xyz[["y"]]), 
-    z = c(0, m_xyz[["z"]]),
-    type = "l", col = "purple", lwd = 2)
-  # Arrow head for m
-  s3d$points3d(
-    x = m_xyz[["x"]], y = m_xyz[["y"]], z = m_xyz[["z"]],
-    type = "h", col = "purple", pch = 17, cex = 1.2)
-  # Label for m
-  s3d$points3d(
-    x = m_xyz[["x"]] * 1.15, y = m_xyz[["y"]] * 1.15, z = m_xyz[["z"]] * 1.15,
-    type = "p", col = "purple", pch = "m", cex = 1.5)
-  
-  # f_axis (darkorange)
-  s3d$points3d(
-    x = c(0, f_xyz[["x"]]), 
-    y = c(0, f_xyz[["y"]]), 
-    z = c(0, f_xyz[["z"]]),
-    type = "l", col = "darkorange", lwd = 2)
-  # Arrow head for f
-  s3d$points3d(
-    x = f_xyz[["x"]], y = f_xyz[["y"]], z = f_xyz[["z"]],
-    type = "h", col = "darkorange", pch = 17, cex = 1.2)
-  # Label for f
-  s3d$points3d(
-    x = f_xyz[["x"]] * 1.15, y = f_xyz[["y"]] * 1.15, z = f_xyz[["z"]] * 1.15,
-    type = "p", col = "darkorange", pch = "f", cex = 1.5)
-  
-  # s_axis (steelblue)
-  s3d$points3d(
-    x = c(0, s_xyz[["x"]]), 
-    y = c(0, s_xyz[["y"]]), 
-    z = c(0, s_xyz[["z"]]),
-    type = "l", col = "steelblue", lwd = 2)
-  # Arrow head for s
-  s3d$points3d(
-    x = s_xyz[["x"]], y = s_xyz[["y"]], z = s_xyz[["z"]],
-    type = "h", col = "steelblue", pch = 17, cex = 1.2)
-  # Label for s
-  s3d$points3d(
-    x = s_xyz[["x"]] * 1.15, y = s_xyz[["y"]] * 1.15, z = s_xyz[["z"]] * 1.15,
-    type = "p", col = "steelblue", pch = "s", cex = 1.5)
-  
-  ## 
-  # Project the s basis vector onto (m, f) plane
-  ## 
-  # s_proj, projected point as SOLID point
-  s3d$points3d(
-    x = s_proj_xyz[["x"]], 
-    y = s_proj_xyz[["y"]], 
-    z = s_proj_xyz[["z"]],
-    type = "h", col = "black", pch = 16, cex = 1.5)
-  
-  # Label s_proj as (β₁, β₂)
-  s3d$points3d(
-    x = s_proj_xyz[["x"]] * 1.2, 
-    y = s_proj_xyz[["y"]] * 1.2, 
-    z = s_proj_xyz[["z"]] * 1.2,
-    type = "p", col = "black", pch = "", cex = 0)
-  text(s3d$xyz.convert(s_proj_xyz[["x"]] * 1.2, 
-                       s_proj_xyz[["y"]] * 1.2, 
-                       s_proj_xyz[["z"]] * 1.2),
-       labels = expression(paste("(", beta[1], ", ", beta[2], ")")),
-       cex = 1.2, pos = 4)
-  
-  # residual vector orthogonal to (m, f) plane
-  s3d$points3d(
-    x = c(s_proj_xyz[["x"]], s_xyz[["x"]]), 
-    y = c(s_proj_xyz[["y"]], s_xyz[["y"]]), 
-    z = c(s_proj_xyz[["z"]], s_xyz[["z"]]),
-    type = "l", col = "gray10", lwd = 1.5, lty = 3)
-}
-
-```
-
-```{r}
-#| label: smf-gprep-2025-10-28-1700
-
-# define data and parameters to create next figure
-
-# (m, f, s) correlation matrix
-cor_mf <- smf_smpl_cor [["mother", "father"]]
-cor_ms <- smf_smpl_cor [["mother", "son"]]
-cor_fs <- smf_smpl_cor [["father", "son"]]
+#| label: smf-smpl-ctr-basis
 
 ## 
 # basis unit vectors
 ## 
+
+# (m, f, s) correlation matrix
+#   extract non-diagonal elements
+cor_mf <- smf_smpl_cor [["mother", "father"]]
+cor_ms <- smf_smpl_cor [["mother", "son"]]
+cor_fs <- smf_smpl_cor [["father", "son"]]
 
 # 3-by-6 tibble with rows = (u, v, w)
 smf_smpl_uvw_tbl <- cor_xyz_sc(
@@ -1402,14 +1270,20 @@ f_sc <- smf_smpl_sc_mat ["v", ]
 s_sc <- smf_smpl_sc_mat ["w", ]
 
 ## 
-# project s basis vector onto (m, f) = (x,y) plane
+# s_proj
 ## 
 
+# project basis vector s onto (m, f) = (x,y) plane
 s_proj_xyz <- s_xyz
 s_proj_xyz [["z"]] <- 0
 
 s_proj_sc <- s_sc
 s_proj_sc [["phi"]] <- pi/2
+
+```
+
+```{r}
+#| label: smf-smpl-ctr-grob-prep
 
 ## 
 # grob prep
@@ -1433,16 +1307,6 @@ smf_gprep_lst <- ob_3d_grob_prep(
 # segments defining oblique grid
 ## 
 seg_tbl <- smf_gprep_lst$ seg_tbl
-
-# segment min-max
-x_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_min"]] 
-x_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_max"]] 
-
-y_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_min"]] 
-y_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_max"]] 
-
-z_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_min"]] 
-z_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_max"]] 
 
 # extract segments within (m, f) plane
 
@@ -1470,20 +1334,32 @@ for (i in 1:(nrow(f_m_0_seg_tbl) %/% 2L)) {
     as.matrix()
 }
 
-## 
-# plotting limits
-## 
+```
 
-mu_plot_limit <- 1.2
-plot_limit <- max(abs(c(
-  m_xyz[["x"]], m_xyz[["y"]], m_xyz[["z"]], 
-  f_xyz[["x"]], f_xyz[["y"]], f_xyz[["z"]], 
-  s_xyz[["x"]], s_xyz[["y"]], s_xyz[["z"]])
-)) * mu_plot_limit
+```{r}
+#| label: smf-smpl-ctr-plot-limits
 
-x_range <- c(-plot_limit, plot_limit)
-y_range <- c(-plot_limit, plot_limit)
-z_range <- c(-plot_limit, plot_limit)
+# segment min-max
+x_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_min"]] 
+x_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_max"]] 
+
+y_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_min"]] 
+y_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_max"]] 
+
+z_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_min"]] 
+z_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_max"]] 
+
+# xyz_range
+eps_plot_limit <- 0.1
+
+x_range <- c(x_seg_min, x_seg_max) * (1 + eps_plot_limit)
+y_range <- c(y_seg_min, y_seg_max) * (1 + eps_plot_limit)
+z_range <- c(z_seg_min, z_seg_max) * (1 + eps_plot_limit)
+
+```
+
+```{r}
+#| label: smf-smpl-ctr-plot-annotation
 
 ## 
 # annotation settings
@@ -1495,14 +1371,15 @@ m_color    <- "purple"
 f_color    <- "darkorange"
 s_color    <- "steelblue"
 
-# position axis label at (1 +- eps) * basis vector
-eps_axis_label <- 0.05
-
 ```
+
+Now let's see how these ideas carry over from 2D to 3D: we now regress $\dot{s}$ on $(\dot{m}, \dot{f})$.  @fig-s3d-2025-10-28a below shows this regression as an orthogonal projection of the $\dot{s}_\bullet$ basis vector to the plane defined by the $(\dot{m}_\bullet, \dot{f}_\bullet)$ basis vectors.  In this $(\dot{m}, \dot{f}, \dot{s})$ coordinate system, the coordinates of the predicted (that is, projected) vector $\hat{\dot{s}}_\bullet$ are $(\hat{\beta}_1, \hat{\beta}_2, 0)$.  The vector of residuals, $\dot{s}_\bullet - \hat{\dot{s}}_\bullet$, is represented by the dotted line orthogonal to the $(\dot{m}, \dot{f})$ plane.
+
+Each of these vectors represents the 20 families in the sample, but those 20 vector elements are not visible from this column-based perspective.  The details of those 20 families, or more generally of individual data cases, are shown in row-based perspectives, like @fig-smf-smpl-ctr.  Such details are important and of interest, of course.  But the column-based perspective illustrates the geometry of the model-fitting process, and also merits our attention. 
 
 ```{r}
 #| label: fig-s3d-2025-10-28a
-#| fig-cap: "Projected heights: son to (mother, father) plane"
+#| fig-cap: "Projection of centered heights: son to (mother, father) plane"
 
 ## 
 # Initialize plot
@@ -1522,11 +1399,6 @@ s3d <- scatterplot3d(
 
 ## 
 # Draw grid segments
-# 
-#   Note s3d format for drawing segments: 
-#     x = c(from, to), 
-#     y = c(from, to), 
-#     z = c(from, to)
 ## 
 
 #  parallel to m along f within (m, f) plane
@@ -1544,7 +1416,7 @@ for (seg in f_m_0_lst) {
 }
 
 ## 
-# Draw basis vectors (axes)
+# draw axes (basis vectors)
 ## 
 
 # m_axis (purple)
@@ -1569,17 +1441,71 @@ s3d$points3d(
   type = "l", col = "steelblue", lwd = 2)
 
 ## 
-# Project the s basis vector onto (m, f) plane
+#  axis labels
+## 
+
+# position axis label at (1 +- eps) * basis vector
+eps_axis_label <- 0.15
+
+m_lbl_xyz <- m_xyz * (1 + eps_axis_label)
+f_lbl_xyz <- f_xyz * (1 + eps_axis_label)
+s_lbl_xyz <- s_xyz * (1 + eps_axis_label)
+
+# "m" label
+s3d$points3d(
+  x = m_lbl_xyz[["x"]], 
+  y = m_lbl_xyz[["y"]], 
+  z = m_lbl_xyz[["z"]],
+  type = "p", col = "purple", 
+  pch = "m", cex = 1.5)
+
+# "f" label
+s3d$points3d(
+  x = f_lbl_xyz[["x"]], 
+  y = f_lbl_xyz[["y"]], 
+  z = f_lbl_xyz[["z"]],
+  type = "p", col = "darkorange", 
+  pch = "f", cex = 1.5)
+
+# "s" label
+s3d$points3d(
+  x = s_lbl_xyz[["x"]], 
+  y = s_lbl_xyz[["y"]], 
+  z = s_lbl_xyz[["z"]],
+  type = "p", col = "steelblue", 
+  pch = "s", cex = 1.5)
+
+## 
+# Project basis vector s onto the (m, f) plane
 ## 
 
 # s_proj, projected point in the (m, f) plane
 s3d$points3d(
-  x = s_proj_xyz [["x"]], 
-  y = s_proj_xyz [["y"]], 
-  z = s_proj_xyz [["z"]],
-  type = "p", col = "black", size = 2)
+  x = s_proj_xyz[["x"]], 
+  y = s_proj_xyz[["y"]], 
+  z = s_proj_xyz[["z"]],
+  type = "h", col = "black", 
+  pch = 16, cex = 1.2)
+
+# s_proj coefficients label
+
+s3d$points3d(
+  x = s_proj_xyz[["x"]] * 1.2, 
+  y = s_proj_xyz[["y"]] * 1.2, 
+  z = s_proj_xyz[["z"]] * 1.2,
+  type = "p", col = "black", pch = "", cex = 0)
+text(
+  s3d$xyz.convert(
+    s_proj_xyz[["x"]] * 1.2, 
+    s_proj_xyz[["y"]] * 1.2, 
+    s_proj_xyz[["z"]] * 1.2),
+  labels = expression(paste(
+    "(", beta[1], ", ", beta[2], ")"
+  )),
+  cex = 1.2, pos = 4)
 
 # residual vector orthogonal to (m, f) plane
+
 s3d$points3d(
   x = c(s_proj_xyz [["x"]], s_xyz [["x"]] ), 
   y = c(s_proj_xyz [["y"]], s_xyz [["y"]] ), 
