@@ -1,0 +1,144 @@
+---
+title: "smf-gprep-2025-10-28-1500"
+format: html
+---
+
+
+```{r}
+#| label: smf-gprep-2025-10-28-1500
+
+run_code <- FALSE
+if (run_code) {
+# define data and parameters to create next figure
+
+# (m, f, s) correlation matrix
+cor_mf <- smf_smpl_cor [["mother", "father"]]
+cor_ms <- smf_smpl_cor [["mother", "son"]]
+cor_fs <- smf_smpl_cor [["father", "son"]]
+
+## 
+# basis unit vectors
+## 
+
+# 3-by-6 tibble with rows = (u, v, w)
+smf_smpl_uvw_tbl <- cor_xyz_sc(
+  cor_12 = cor_mf, 
+  cor_13 = cor_ms, 
+  cor_23 = cor_fs)
+
+# (x, y, z) columns
+#   as matrix: (u, v, w) by (x, y, z)
+smf_smpl_xyz_mat <- smf_smpl_uvw_tbl |> 
+  dplyr::select(x, y, z) |> 
+  as.matrix()
+rownames(smf_smpl_xyz_mat) <- smf_smpl_uvw_tbl$ vec
+#   vec_xyz from (u, v, w) rows
+m_xyz <- smf_smpl_xyz_mat ["u", ]
+f_xyz <- smf_smpl_xyz_mat ["v", ]
+s_xyz <- smf_smpl_xyz_mat ["w", ]
+
+# (theta, phi) columns
+#   as matrix: (u, v, w) by (theta, phi)
+smf_smpl_sc_mat <- smf_smpl_uvw_tbl |> 
+  dplyr::select(theta, phi) |> 
+  as.matrix()
+rownames(smf_smpl_sc_mat) <- smf_smpl_uvw_tbl$ vec
+#   vec_sc from (u, v, w) rows
+m_sc <- smf_smpl_sc_mat ["u", ]
+f_sc <- smf_smpl_sc_mat ["v", ]
+s_sc <- smf_smpl_sc_mat ["w", ]
+
+## 
+# project s basis vector onto (m, f) = (x,y) plane
+## 
+
+s_proj_xyz <- s_xyz
+s_proj_xyz [["z"]] <- 0
+
+s_proj_sc <- s_sc
+s_proj_sc [["phi"]] <- pi/2
+
+## 
+# grob prep
+## 
+smf_gprep_lst <- ob_3d_grob_prep(
+  u_theta  = m_sc [["theta"]], 
+  u_phi    = m_sc [["phi"]], 
+  
+  v_theta  = f_sc [["theta"]], 
+  v_phi    = f_sc [["phi"]], 
+  
+  w_theta  = s_sc [["theta"]], 
+  w_phi    = s_sc [["phi"]], 
+  
+  n_pts    = 5L, 
+  u_name = "m", 
+  v_name = "f", 
+  w_name = "s")
+
+## 
+# segments defining oblique grid
+## 
+seg_tbl <- smf_gprep_lst$ seg_tbl
+
+# segment min-max
+x_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_min"]] 
+x_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_max"]] 
+
+y_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_min"]] 
+y_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_max"]] 
+
+z_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_min"]] 
+z_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_max"]] 
+
+# extract segments within (m, f) plane
+
+#   parallel to m_xyz along f (v_idx)
+m_f_0_seg_tbl <- seg_tbl |> 
+  dplyr::filter(p_nm == "m", w_idx == 1L) |> 
+  dplyr::select(v_idx, p_bin, x, y, z)
+m_f_0_lst <- list()
+for (i in 1:(nrow(m_f_0_seg_tbl) %/% 2L)) {
+  m_f_0_lst [[i]] <- m_f_0_seg_tbl |> 
+    dplyr::filter(v_idx == i) |> 
+    dplyr::select(x, y, z) |> 
+    as.matrix()
+}
+
+#   parallel to f_xyz along m (u_idx)
+f_m_0_seg_tbl <- seg_tbl |> 
+  dplyr::filter(p_nm == "f", w_idx == 1L) |> 
+  dplyr::select(u_idx, p_bin, x, y, z)
+f_m_0_lst <- list()
+for (i in 1:(nrow(f_m_0_seg_tbl) %/% 2L)) {
+  f_m_0_lst [[i]] <- f_m_0_seg_tbl |> 
+    dplyr::filter(u_idx == i) |> 
+    dplyr::select(x, y, z) |> 
+    as.matrix()
+}
+
+## 
+# plotting limits
+## 
+
+x_range <- c(x_seg_min, x_seg_max) * 0.9
+y_range <- c(y_seg_min, y_seg_max) * 0.9
+z_range <- c(z_seg_min, z_seg_max)
+
+## 
+# annotation settings
+## 
+
+# color choices
+grid_color <- "gray25"
+m_color    <- "purple"
+f_color    <- "darkorange"
+s_color    <- "steelblue"
+
+# position axis label at (1 +- eps) * basis vector
+eps_axis_label <- 0.05
+
+}
+
+```
+

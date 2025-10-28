@@ -1,0 +1,155 @@
+---
+title: "fig-s3d-2025-10-26a"
+format: html
+---
+
+
+```{r}
+#| label: fig-s3d-2025-10-26a
+#| fig-cap: "fig-s3d-2025-10-26a"
+
+# retain code but do not run it for now
+run_code <- FALSE
+if (run_code) {
+  ## Step 1: Compute correlations (angles between basis vectors)
+  ## Assuming you have centered height vectors: m_ctr, f_ctr, s_ctr
+  
+  # Normalize to get correlations (cosines of angles)
+  cos_mf <- cor(m_ctr, f_ctr)  # angle between m and f
+  cos_ms <- cor(m_ctr, s_ctr)  # angle between m and s  
+  cos_fs <- cor(f_ctr, s_ctr)  # angle between f and s
+  
+  # Convert to angles
+  theta_mf <- acos(cos_mf)
+  theta_ms <- acos(cos_ms)
+  theta_fs <- acos(cos_fs)
+  
+  ## Step 2: Position basis vectors in XYZ Cartesian space
+  ## to achieve the correct angles
+  
+  # m_base along x-axis
+  m_base <- c(1, 0, 0)
+  
+  # f_base in xy-plane at angle theta_mf from m
+  f_base <- c(cos(theta_mf), sin(theta_mf), 0)
+  
+  # s_base positioned to satisfy angle constraints
+  sx <- cos(theta_ms)
+  sy <- (cos(theta_fs) - cos(theta_ms) * cos(theta_mf)) / sin(theta_mf)
+  sz <- sqrt(1 - sx^2 - sy^2)  # assumes valid configuration
+  s_base <- c(sx, sy, sz)
+  
+  ## Step 3: Get regression coefficients
+  ## Assuming you've run: lm(s_ctr ~ m_ctr + f_ctr - 1)
+  # beta_1 and beta_2 should be available
+  
+  # Projection of s onto (m, f) plane in XYZ coordinates
+  s_proj <- beta_1 * m_base + beta_2 * f_base
+  
+  ## Step 4: Create grid lines in (m, f) plane
+  ## Grid lines parallel to m and f axes
+  
+  # Grid parameters
+  grid_range <- seq(-0.5, 1.5, by = 0.25)
+  
+  # Lines parallel to m_axis (varying f coordinate)
+  lines_parallel_m <- list()
+  for (i in seq_along(grid_range)) {
+    f_coord <- grid_range[i]
+    lines_parallel_m[[i]] <- rbind(
+      -0.5 * m_base + f_coord * f_base,
+      1.5 * m_base + f_coord * f_base
+    )
+  }
+  
+  # Lines parallel to f_axis (varying m coordinate)
+  lines_parallel_f <- list()
+  for (i in seq_along(grid_range)) {
+    m_coord <- grid_range[i]
+    lines_parallel_f[[i]] <- rbind(
+      m_coord * m_base - 0.5 * f_base,
+      m_coord * m_base + 1.5 * f_base
+    )
+  }
+  
+  ## Step 5: Create the 3D plot
+  
+  # Determine plot limits
+  all_pts <- rbind(
+    1.5 * m_base, 1.5 * f_base, 1.2 * s_base,
+    -0.5 * m_base, -0.5 * f_base
+  )
+  x_range <- range(all_pts[, 1]) * 1.1
+  y_range <- range(all_pts[, 2]) * 1.1
+  z_range <- c(min(all_pts[, 3]) - 0.1, max(all_pts[, 3]) + 0.1)
+  
+  # Initialize plot
+  s3d <- scatterplot3d(
+    x = 0, y = 0, z = 0,
+    xlim = x_range, ylim = y_range, zlim = z_range,
+    type = "n",
+    grid = FALSE,
+    box = FALSE,
+    angle = 55,
+    pch = "",
+    xlab = "", ylab = "", zlab = ""
+  )
+  
+  ## Step 6: Draw grid lines in (m, f) plane
+  # Lines parallel to m
+  for (line in lines_parallel_m) {
+    s3d$points3d(
+      x = line[, 1], y = line[, 2], z = line[, 3],
+      type = "l", col = "gray85", lwd = 0.5
+    )
+  }
+  
+  # Lines parallel to f
+  for (line in lines_parallel_f) {
+    s3d$points3d(
+      x = line[, 1], y = line[, 2], z = line[, 3],
+      type = "l", col = "gray85", lwd = 0.5
+    )
+  }
+  
+  ## Step 7: Draw basis vectors (axes)
+  
+  # m_axis (purple)
+  s3d$points3d(
+    x = c(0, m_base[1]), y = c(0, m_base[2]), z = c(0, m_base[3]),
+    type = "l", col = "purple", lwd = 2
+  )
+  
+  # f_axis (darkorange)
+  s3d$points3d(
+    x = c(0, f_base[1]), y = c(0, f_base[2]), z = c(0, f_base[3]),
+    type = "l", col = "darkorange", lwd = 2
+  )
+  
+  # s_axis (steelblue)
+  s3d$points3d(
+    x = c(0, s_base[1]), y = c(0, s_base[2]), z = c(0, s_base[3]),
+    type = "l", col = "steelblue", lwd = 2
+  )
+  
+  ## Step 8: Draw projection
+  
+  # Projection vector (fitted values) in red dashed
+  s3d$points3d(
+    x = c(0, s_proj[1]), y = c(0, s_proj[2]), z = c(0, s_proj[3]),
+    type = "l", col = "red", lwd = 2, lty = 2
+  )
+  
+  # Residual vector (orthogonal to plane)
+  s3d$points3d(
+    x = c(s_proj[1], s_base[1]), 
+    y = c(s_proj[2], s_base[2]), 
+    z = c(s_proj[3], s_base[3]),
+    type = "l", col = "gray40", lwd = 1.5, lty = 3
+  )
+  
+  ## Step 9: Add labels (using xyz.convert for positioning)
+  # You can add text labels for axes using s3d$xyz.convert()
+}
+
+```

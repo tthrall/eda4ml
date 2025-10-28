@@ -1,0 +1,30 @@
+---
+title: "gg-2025-10-26a-notes"
+format: html
+---
+
+
+```{r}
+#| label: gg-2025-10-26a-notes
+
+# 2D representation of centered linear regression.
+
+# Draw oblique (mother, son) axes at angle theta_ms, 
+# where cos(theta_ms) = cor(m, s.)
+# Draw grid-lines parallel to the axes.
+
+# "Oms": the oblique coordinate system
+# "Xms": the Cartesian coordinate system 
+
+# Represent the column vector of mothers' heights as a
+# _unit_ vector: Oms(1, 0) = Xms(1, 0).
+
+# Represent the column vector of sons' heights as a
+# _unit_ vector: Oms(0, 1) = Xms(cos(theta_ms), sin(theta_ms)).
+
+# Oms(a, b) represents the vector given by the linear combination
+# a*m + b*s.  The plotting limits must accommodate all convex 
+# combinations Oms(t, 1-t), for 0 <= t <= 1.
+
+```
+

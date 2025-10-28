@@ -1,0 +1,17 @@
+---
+title: "md_code_chunk_template"
+format: html
+---
+
+
+
+```{r}
+#| label: do-not-run
+
+# retain but do not run code
+run_code <- FALSE
+if (run_code) {
+  
+}
+
+```
