@@ -980,30 +980,6 @@ theta_ms <- acos(cor_ms)
 ```
 
 ```{r}
-#| label: gg-2025-10-26a-notes
-
-# 2D representation of centered linear regression.
-
-# Draw oblique (mother, son) axes at angle theta_ms, 
-# where cos(theta_ms) = cor(m, s.)
-# Draw grid-lines parallel to the axes.
-
-# "Oms": the oblique coordinate system
-# "Xms": the Cartesian coordinate system 
-
-# Represent the column vector of mothers' heights as a
-# _unit_ vector: Oms(1, 0) = Xms(1, 0).
-
-# Represent the column vector of sons' heights as a
-# _unit_ vector: Oms(0, 1) = Xms(cos(theta_ms), sin(theta_ms)).
-
-# Oms(a, b) represents the vector given by the linear combination
-# a*m + b*s.  The plotting limits must accommodate all convex 
-# combinations Oms(t, 1-t), for 0 <= t <= 1.
-
-```
-
-```{r}
 #| label: sm-grob-prep
 
 # define data and parameters to create next figure
@@ -1252,224 +1228,364 @@ g_sm_smpl_ctr
 The two perspectives on linear regression are complementary.  @fig-sm-smpl-ctr portrays individual rows of data (families here).  This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models.  This view of the regression problem shows model _results_.  On the other hand, the column-based perspective, illustrated by @fig-gg-sm-smpl-ctr, can help one to understand the model-fitting _process_.
 
 ```{r}
-#| label: fig-s3d-2025-10-26a
-#| fig-cap: "fig-s3d-2025-10-26a"
+#| label: s3d-2025-10-28_1640
 
-# retain code but do not run it for now
+# Claude's suggested changes on 2025-10-28_1640
+
 run_code <- FALSE
 if (run_code) {
-  ## Step 1: Compute correlations (angles between basis vectors)
-  ## Assuming you have centered height vectors: m_ctr, f_ctr, s_ctr
   
-  # Normalize to get correlations (cosines of angles)
-  cos_mf <- cor(m_ctr, f_ctr)  # angle between m and f
-  cos_ms <- cor(m_ctr, s_ctr)  # angle between m and s  
-  cos_fs <- cor(f_ctr, s_ctr)  # angle between f and s
+  ## 
+  # Calculate tighter limits based on your vectors (ADJUST AS NEEDED)
+  ## 
+  plot_limit <- max(abs(c(m_xyz[["x"]], m_xyz[["y"]], m_xyz[["z"]],
+                          f_xyz[["x"]], f_xyz[["y"]], f_xyz[["z"]],
+                          s_xyz[["x"]], s_xyz[["y"]], s_xyz[["z"]]))) * 1.2
+  x_range <- c(-plot_limit, plot_limit)
+  y_range <- c(-plot_limit, plot_limit)
+  z_range <- c(-plot_limit, plot_limit)
   
-  # Convert to angles
-  theta_mf <- acos(cos_mf)
-  theta_ms <- acos(cos_ms)
-  theta_fs <- acos(cos_fs)
-  
-  ## Step 2: Position basis vectors in XYZ Cartesian space
-  ## to achieve the correct angles
-  
-  # m_base along x-axis
-  m_base <- c(1, 0, 0)
-  
-  # f_base in xy-plane at angle theta_mf from m
-  f_base <- c(cos(theta_mf), sin(theta_mf), 0)
-  
-  # s_base positioned to satisfy angle constraints
-  sx <- cos(theta_ms)
-  sy <- (cos(theta_fs) - cos(theta_ms) * cos(theta_mf)) / sin(theta_mf)
-  sz <- sqrt(1 - sx^2 - sy^2)  # assumes valid configuration
-  s_base <- c(sx, sy, sz)
-  
-  ## Step 3: Get regression coefficients
-  ## Assuming you've run: lm(s_ctr ~ m_ctr + f_ctr - 1)
-  # beta_1 and beta_2 should be available
-  
-  # Projection of s onto (m, f) plane in XYZ coordinates
-  s_proj <- beta_1 * m_base + beta_2 * f_base
-  
-  ## Step 4: Create grid lines in (m, f) plane
-  ## Grid lines parallel to m and f axes
-  
-  # Grid parameters
-  grid_range <- seq(-0.5, 1.5, by = 0.25)
-  
-  # Lines parallel to m_axis (varying f coordinate)
-  lines_parallel_m <- list()
-  for (i in seq_along(grid_range)) {
-    f_coord <- grid_range[i]
-    lines_parallel_m[[i]] <- rbind(
-      -0.5 * m_base + f_coord * f_base,
-      1.5 * m_base + f_coord * f_base
-    )
-  }
-  
-  # Lines parallel to f_axis (varying m coordinate)
-  lines_parallel_f <- list()
-  for (i in seq_along(grid_range)) {
-    m_coord <- grid_range[i]
-    lines_parallel_f[[i]] <- rbind(
-      m_coord * m_base - 0.5 * f_base,
-      m_coord * m_base + 1.5 * f_base
-    )
-  }
-  
-  ## Step 5: Create the 3D plot
-  
-  # Determine plot limits
-  all_pts <- rbind(
-    1.5 * m_base, 1.5 * f_base, 1.2 * s_base,
-    -0.5 * m_base, -0.5 * f_base
-  )
-  x_range <- range(all_pts[, 1]) * 1.1
-  y_range <- range(all_pts[, 2]) * 1.1
-  z_range <- c(min(all_pts[, 3]) - 0.1, max(all_pts[, 3]) + 0.1)
-  
+  ## 
   # Initialize plot
+  ## 
   s3d <- scatterplot3d(
+    main = "Projected heights: son to (mother, father) plane",
     x = 0, y = 0, z = 0,
     xlim = x_range, ylim = y_range, zlim = z_range,
     type = "n",
     grid = FALSE,
     box = FALSE,
-    angle = 55,
+    angle = 55, 
+    axis = FALSE,
     pch = "",
     xlab = "", ylab = "", zlab = ""
   )
   
-  ## Step 6: Draw grid lines in (m, f) plane
-  # Lines parallel to m
-  for (line in lines_parallel_m) {
+  ## 
+  # Draw grid segments
+  ## 
+  #  parallel to m along f within (m, f) plane
+  for (seg in m_f_0_lst) {
     s3d$points3d(
-      x = line[, 1], y = line[, 2], z = line[, 3],
-      type = "l", col = "gray85", lwd = 0.5
-    )
+      x = seg[, 1], y = seg[, 2], z = seg[, 3],
+      type = "l", col = "gray25", lwd = 0.5)
+  }
+  #  parallel to f along m within (m, f) plane
+  for (seg in f_m_0_lst) {
+    s3d$points3d(
+      x = seg[, 1], y = seg[, 2], z = seg[, 3],
+      type = "l", col = "gray25", lwd = 0.5)
   }
   
-  # Lines parallel to f
-  for (line in lines_parallel_f) {
-    s3d$points3d(
-      x = line[, 1], y = line[, 2], z = line[, 3],
-      type = "l", col = "gray85", lwd = 0.5
-    )
-  }
-  
-  ## Step 7: Draw basis vectors (axes)
+  ## 
+  # Draw basis vectors (axes) with arrows
+  ## 
+  arrow_scale <- 0.92  # Arrow starts at 92% of vector length
   
   # m_axis (purple)
   s3d$points3d(
-    x = c(0, m_base[1]), y = c(0, m_base[2]), z = c(0, m_base[3]),
-    type = "l", col = "purple", lwd = 2
-  )
+    x = c(0, m_xyz[["x"]]), 
+    y = c(0, m_xyz[["y"]]), 
+    z = c(0, m_xyz[["z"]]),
+    type = "l", col = "purple", lwd = 2)
+  # Arrow head for m
+  s3d$points3d(
+    x = m_xyz[["x"]], y = m_xyz[["y"]], z = m_xyz[["z"]],
+    type = "h", col = "purple", pch = 17, cex = 1.2)
+  # Label for m
+  s3d$points3d(
+    x = m_xyz[["x"]] * 1.15, y = m_xyz[["y"]] * 1.15, z = m_xyz[["z"]] * 1.15,
+    type = "p", col = "purple", pch = "m", cex = 1.5)
   
   # f_axis (darkorange)
   s3d$points3d(
-    x = c(0, f_base[1]), y = c(0, f_base[2]), z = c(0, f_base[3]),
-    type = "l", col = "darkorange", lwd = 2
-  )
+    x = c(0, f_xyz[["x"]]), 
+    y = c(0, f_xyz[["y"]]), 
+    z = c(0, f_xyz[["z"]]),
+    type = "l", col = "darkorange", lwd = 2)
+  # Arrow head for f
+  s3d$points3d(
+    x = f_xyz[["x"]], y = f_xyz[["y"]], z = f_xyz[["z"]],
+    type = "h", col = "darkorange", pch = 17, cex = 1.2)
+  # Label for f
+  s3d$points3d(
+    x = f_xyz[["x"]] * 1.15, y = f_xyz[["y"]] * 1.15, z = f_xyz[["z"]] * 1.15,
+    type = "p", col = "darkorange", pch = "f", cex = 1.5)
   
   # s_axis (steelblue)
   s3d$points3d(
-    x = c(0, s_base[1]), y = c(0, s_base[2]), z = c(0, s_base[3]),
-    type = "l", col = "steelblue", lwd = 2
-  )
-  
-  ## Step 8: Draw projection
-  
-  # Projection vector (fitted values) in red dashed
+    x = c(0, s_xyz[["x"]]), 
+    y = c(0, s_xyz[["y"]]), 
+    z = c(0, s_xyz[["z"]]),
+    type = "l", col = "steelblue", lwd = 2)
+  # Arrow head for s
   s3d$points3d(
-    x = c(0, s_proj[1]), y = c(0, s_proj[2]), z = c(0, s_proj[3]),
-    type = "l", col = "red", lwd = 2, lty = 2
-  )
-  
-  # Residual vector (orthogonal to plane)
+    x = s_xyz[["x"]], y = s_xyz[["y"]], z = s_xyz[["z"]],
+    type = "h", col = "steelblue", pch = 17, cex = 1.2)
+  # Label for s
   s3d$points3d(
-    x = c(s_proj[1], s_base[1]), 
-    y = c(s_proj[2], s_base[2]), 
-    z = c(s_proj[3], s_base[3]),
-    type = "l", col = "gray40", lwd = 1.5, lty = 3
-  )
+    x = s_xyz[["x"]] * 1.15, y = s_xyz[["y"]] * 1.15, z = s_xyz[["z"]] * 1.15,
+    type = "p", col = "steelblue", pch = "s", cex = 1.5)
   
-  ## Step 9: Add labels (using xyz.convert for positioning)
-  # You can add text labels for axes using s3d$xyz.convert()
+  ## 
+  # Project the s basis vector onto (m, f) plane
+  ## 
+  # s_proj, projected point as SOLID point
+  s3d$points3d(
+    x = s_proj_xyz[["x"]], 
+    y = s_proj_xyz[["y"]], 
+    z = s_proj_xyz[["z"]],
+    type = "h", col = "black", pch = 16, cex = 1.5)
+  
+  # Label s_proj as (β₁, β₂)
+  s3d$points3d(
+    x = s_proj_xyz[["x"]] * 1.2, 
+    y = s_proj_xyz[["y"]] * 1.2, 
+    z = s_proj_xyz[["z"]] * 1.2,
+    type = "p", col = "black", pch = "", cex = 0)
+  text(s3d$xyz.convert(s_proj_xyz[["x"]] * 1.2, 
+                       s_proj_xyz[["y"]] * 1.2, 
+                       s_proj_xyz[["z"]] * 1.2),
+       labels = expression(paste("(", beta[1], ", ", beta[2], ")")),
+       cex = 1.2, pos = 4)
+  
+  # residual vector orthogonal to (m, f) plane
+  s3d$points3d(
+    x = c(s_proj_xyz[["x"]], s_xyz[["x"]]), 
+    y = c(s_proj_xyz[["y"]], s_xyz[["y"]]), 
+    z = c(s_proj_xyz[["z"]], s_xyz[["z"]]),
+    type = "l", col = "gray10", lwd = 1.5, lty = 3)
 }
 
 ```
 
 ```{r}
-#| label: smf-gprep
+#| label: smf-gprep-2025-10-28-1700
 
 # define data and parameters to create next figure
 
-# TODO: construct function ob_3d_grob_prep()
-# the following code is just a stub for now
+# (m, f, s) correlation matrix
+cor_mf <- smf_smpl_cor [["mother", "father"]]
+cor_ms <- smf_smpl_cor [["mother", "son"]]
+cor_fs <- smf_smpl_cor [["father", "son"]]
 
-run_code <- FALSE
-if (run_code) {
-  # (m, f, s) correlation matrix
-  cor_mf <- smf_smpl_cor [["mother", "father"]]
-  cor_ms <- smf_smpl_cor [["mother", "son"]]
-  cor_fs <- smf_smpl_cor [["father", "son"]]
-  
-  # (theta, phi) coordinates of (m, f, s)
-  m_theta = 0
-  m_phi   = pi/2
-  
-  f_theta = acos( cor_mf )
-  f_phi   = pi/2
-  
-  s_theta = acos( cor_ms )
-  
-  smf_gprep_lst <- ob_3d_grob_prep()
-  
-  # basis vectors
-  m_base <- smf_gprep_lst$ uvw_base_lst$ u_base
-  f_base <- smf_gprep_lst$ uvw_base_lst$ v_base
-  s_base <- smf_gprep_lst$ uvw_base_lst$ w_base
-  
-  # segments defining oblique grid
-  seg_tbl <- smf_gprep_lst$ seg_tbl
-  
-  # plotting limits
-  x_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_min"]] 
-  x_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_max"]] 
+## 
+# basis unit vectors
+## 
 
-  y_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_min"]] 
-  y_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_max"]] 
+# 3-by-6 tibble with rows = (u, v, w)
+smf_smpl_uvw_tbl <- cor_xyz_sc(
+  cor_12 = cor_mf, 
+  cor_13 = cor_ms, 
+  cor_23 = cor_fs)
 
-  z_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_min"]] 
-  z_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_max"]] 
+# (x, y, z) columns
+#   as matrix: (u, v, w) by (x, y, z)
+smf_smpl_xyz_mat <- smf_smpl_uvw_tbl |> 
+  dplyr::select(x, y, z) |> 
+  as.matrix()
+rownames(smf_smpl_xyz_mat) <- smf_smpl_uvw_tbl$ vec
+#   vec_xyz from (u, v, w) rows
+m_xyz <- smf_smpl_xyz_mat ["u", ]
+f_xyz <- smf_smpl_xyz_mat ["v", ]
+s_xyz <- smf_smpl_xyz_mat ["w", ]
+
+# (theta, phi) columns
+#   as matrix: (u, v, w) by (theta, phi)
+smf_smpl_sc_mat <- smf_smpl_uvw_tbl |> 
+  dplyr::select(theta, phi) |> 
+  as.matrix()
+rownames(smf_smpl_sc_mat) <- smf_smpl_uvw_tbl$ vec
+#   vec_sc from (u, v, w) rows
+m_sc <- smf_smpl_sc_mat ["u", ]
+f_sc <- smf_smpl_sc_mat ["v", ]
+s_sc <- smf_smpl_sc_mat ["w", ]
+
+## 
+# project s basis vector onto (m, f) = (x,y) plane
+## 
+
+s_proj_xyz <- s_xyz
+s_proj_xyz [["z"]] <- 0
+
+s_proj_sc <- s_sc
+s_proj_sc [["phi"]] <- pi/2
+
+## 
+# grob prep
+## 
+smf_gprep_lst <- ob_3d_grob_prep(
+  u_theta  = m_sc [["theta"]], 
+  u_phi    = m_sc [["phi"]], 
   
-  # color choices
-  grid_color <- "gray25"
-  m_color    <- "purple"
-  f_color    <- "darkgreen"
-  s_color    <- "steelblue"
+  v_theta  = f_sc [["theta"]], 
+  v_phi    = f_sc [["phi"]], 
   
-  # annotation settings
-  # position axis label at (1 +- eps) * basis vector
-  eps_axis_label <- 0.05
+  w_theta  = s_sc [["theta"]], 
+  w_phi    = s_sc [["phi"]], 
+  
+  n_pts    = 5L, 
+  u_name = "m", 
+  v_name = "f", 
+  w_name = "s")
+
+## 
+# segments defining oblique grid
+## 
+seg_tbl <- smf_gprep_lst$ seg_tbl
+
+# segment min-max
+x_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_min"]] 
+x_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["x_seg_max"]] 
+
+y_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_min"]] 
+y_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["y_seg_max"]] 
+
+z_seg_min <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_min"]] 
+z_seg_max <- smf_gprep_lst$ xyz_minmax_vec [["z_seg_max"]] 
+
+# extract segments within (m, f) plane
+
+#   parallel to m_xyz along f (v_idx)
+m_f_0_seg_tbl <- seg_tbl |> 
+  dplyr::filter(p_nm == "m", w_idx == 1L) |> 
+  dplyr::select(v_idx, p_bin, x, y, z)
+m_f_0_lst <- list()
+for (i in 1:(nrow(m_f_0_seg_tbl) %/% 2L)) {
+  m_f_0_lst [[i]] <- m_f_0_seg_tbl |> 
+    dplyr::filter(v_idx == i) |> 
+    dplyr::select(x, y, z) |> 
+    as.matrix()
 }
+
+#   parallel to f_xyz along m (u_idx)
+f_m_0_seg_tbl <- seg_tbl |> 
+  dplyr::filter(p_nm == "f", w_idx == 1L) |> 
+  dplyr::select(u_idx, p_bin, x, y, z)
+f_m_0_lst <- list()
+for (i in 1:(nrow(f_m_0_seg_tbl) %/% 2L)) {
+  f_m_0_lst [[i]] <- f_m_0_seg_tbl |> 
+    dplyr::filter(u_idx == i) |> 
+    dplyr::select(x, y, z) |> 
+    as.matrix()
+}
+
+## 
+# plotting limits
+## 
+
+mu_plot_limit <- 1.2
+plot_limit <- max(abs(c(
+  m_xyz[["x"]], m_xyz[["y"]], m_xyz[["z"]], 
+  f_xyz[["x"]], f_xyz[["y"]], f_xyz[["z"]], 
+  s_xyz[["x"]], s_xyz[["y"]], s_xyz[["z"]])
+)) * mu_plot_limit
+
+x_range <- c(-plot_limit, plot_limit)
+y_range <- c(-plot_limit, plot_limit)
+z_range <- c(-plot_limit, plot_limit)
+
+## 
+# annotation settings
+## 
+
+# color choices
+grid_color <- "gray25"
+m_color    <- "purple"
+f_color    <- "darkorange"
+s_color    <- "steelblue"
+
+# position axis label at (1 +- eps) * basis vector
+eps_axis_label <- 0.05
 
 ```
 
 ```{r}
-#| label: fig-s3d-2025-10-27a
-#| fig-cap: "fig-s3d-2025-10-27a"
+#| label: fig-s3d-2025-10-28a
+#| fig-cap: "Projected heights: son to (mother, father) plane"
 
-# Save following caption for row-view of smf:
-# "Centered heights: son ~ (mother, father) regression plane"
+## 
+# Initialize plot
+## 
+s3d <- scatterplot3d(
+  main = "Projected heights: son to (mother, father) plane",
+  x = 0, y = 0, z = 0,
+  xlim = x_range, ylim = y_range, zlim = z_range,
+  type = "n",
+  grid = FALSE,
+  box = FALSE,
+  angle = 55, 
+  axis = FALSE,
+  pch = "",
+  xlab = "", ylab = "", zlab = ""
+)
 
-# retain but do not run code for now
-run_code <- FALSE
-if (run_code) {
-  
+## 
+# Draw grid segments
+# 
+#   Note s3d format for drawing segments: 
+#     x = c(from, to), 
+#     y = c(from, to), 
+#     z = c(from, to)
+## 
+
+#  parallel to m along f within (m, f) plane
+for (seg in m_f_0_lst) {
+  s3d$points3d(
+    x = seg[, 1], y = seg[, 2], z = seg[, 3],
+    type = "l", col = "gray25", lwd = 0.5)
 }
+
+#  parallel to f along m within (m, f) plane
+for (seg in f_m_0_lst) {
+  s3d$points3d(
+    x = seg[, 1], y = seg[, 2], z = seg[, 3],
+    type = "l", col = "gray25", lwd = 0.5)
+}
+
+## 
+# Draw basis vectors (axes)
+## 
+
+# m_axis (purple)
+s3d$points3d(
+  x = c(0, m_xyz [["x"]] ), 
+  y = c(0, m_xyz [["y"]] ), 
+  z = c(0, m_xyz [["z"]] ),
+  type = "l", col = "purple", lwd = 2)
+
+# f_axis (darkorange)
+s3d$points3d(
+  x = c(0, f_xyz [["x"]] ), 
+  y = c(0, f_xyz [["y"]] ), 
+  z = c(0, f_xyz [["z"]] ),
+  type = "l", col = "darkorange", lwd = 2)
+
+# s_axis (steelblue)
+s3d$points3d(
+  x = c(0, s_xyz [["x"]] ), 
+  y = c(0, s_xyz [["y"]] ), 
+  z = c(0, s_xyz [["z"]] ),
+  type = "l", col = "steelblue", lwd = 2)
+
+## 
+# Project the s basis vector onto (m, f) plane
+## 
+
+# s_proj, projected point in the (m, f) plane
+s3d$points3d(
+  x = s_proj_xyz [["x"]], 
+  y = s_proj_xyz [["y"]], 
+  z = s_proj_xyz [["z"]],
+  type = "p", col = "black", size = 2)
+
+# residual vector orthogonal to (m, f) plane
+s3d$points3d(
+  x = c(s_proj_xyz [["x"]], s_xyz [["x"]] ), 
+  y = c(s_proj_xyz [["y"]], s_xyz [["y"]] ), 
+  z = c(s_proj_xyz [["z"]], s_xyz [["z"]] ),
+  type = "l", col = "gray10", lwd = 1.5, lty = 3
+)
 
 ```
 
