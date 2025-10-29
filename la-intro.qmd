@@ -1515,6 +1515,68 @@ s3d$points3d(
 
 ```
 
+## Re-Centering
+
+Recall that we centered the family heights data in order to present least-squares linear regression as an orthogonal projection $P$ of the vector $\dot{s}_\bullet$ of sons' centered heights onto the subspace spanned by $(\dot{m}_\bullet, \dot{f}_\bullet)$, the vectors of (mother, father) centered heights.  Here are some points to keep in mind:
+
+  1.  Orthogonal projection applies to the original uncentered data, so long as the feature matrix $X_{\bullet, \bullet}$ includes the constant vector $1_\bullet$.
+
+  2.  The coefficient values $(\hat{\beta}_1, \hat{\beta}_2)$ fitted to the centered model $\dot{s} \approx \beta_1 \dot{m} \; + \; \beta_2 \dot{f}$ are equal to the fitted coefficients appearing in the uncentered model $s \approx \beta_0 \; + \; \beta_1 m \; + \; \beta_1 f$.
+
+To elaborate, consider the original data along with a linear regression model that includes the constant coefficient $\beta_0$.
+
+$$
+\begin{align} 
+  s & \approx \mathcal{l}_{\beta_\bullet} (m, f)  \\ 
+  &= \beta_0 \; + \; \beta_1 m \; + \; \beta_2 f 
+\end{align} 
+$$ {#eq-s-per-mf-lr-model-abstract}
+
+Each set of coefficient values $\beta_\bullet = (\beta_0, \beta_1, \beta_2)$ generates a 2D regression plane, say $\mathcal{L}_{\beta_\bullet}$, within the 3D subspace spanned by the three $n-$vectors $(m_\bullet, f_\bullet, s_\bullet)$.
+
+$$
+\begin{align} 
+  \mathcal{L}_{\beta_\bullet} &= \mathcal{L}_{\beta_\bullet} (m, f, s) \\ 
+  &= \left \{ (m, f, s): s = \mathcal{l}_{\beta_\bullet} (m, f) \right \} 
+\end{align} 
+$$ {#eq-mf-regresion-plane}
+
+Excluding coefficient $\beta_0$ from the model is equivalent to the constraint, $\beta_0 = 0$.  This constraint restricts the regression plane to pass through the origin.  The role of $\beta_0$ is to account for differences in the average heights of mothers, fathers, and sons, respectively, which we denote as $(\bar{m}, \bar{f}, \bar{s})$.  That is, the inclusion of $\beta_0$ enables us to set 
+
+$$
+\begin{align} 
+  \tilde{\beta}_0 &= \bar{s} - (\beta_1 \bar{m} \; + \; \beta_2 \bar{f}) \\ \\ 
+  &\text{to ensure} \\ \\
+  \mathcal{l}_{\beta_\bullet} (\bar{m}, \bar{f}) &= \tilde{\beta}_0 \; + \; \beta_1 \bar{m} \; + \; \beta_2 \bar{f} \\ 
+  &= \bar{s}
+\end{align} 
+$$ {#eq-smf-tilde-beta-0}
+
+That is, this formula for $\tilde{\beta}_0$ ensures that the model maps parents of average height to a son of average height.  A model of this form can be re-expressed as a model of centered heights.
+
+$$
+\begin{align} 
+  & \text{If} & \tilde{\beta}_0 &= \bar{s} - (\beta_1 \bar{m} \; + \; \beta_2 \bar{f}) \\ 
+  & \text{and} & s & \approx \tilde{\beta}_0 \; + \; \beta_1 m \; + \; \beta_2 f  \\ 
+  & \text{then} & s - \bar{s} & \approx \beta_1 (m - \bar{m}) \; + \; \beta_2 (f - \bar{f})
+\end{align} 
+$$ {#eq-s-per-mf-lr-centered}
+
+Now let's return to the representation of the model using the feature matrix $X_{\bullet, \bullet}$, the coefficient vector $\beta_\bullet$, and the vector of recorded heights of mothers, fathers, and sons $(m_\bullet, f_\bullet, s_\bullet)$.  Then we have 
+
+$$
+\begin{align} 
+  s_\bullet & \approx \mathcal{l}_{\beta_\bullet} (m_\bullet, f_\bullet)  \\ 
+  &= \beta_0 1_\bullet \; + \; \beta_1 m_\bullet \; + \; \beta_2 f_\bullet \\ 
+  &= (1_\bullet, m_\bullet, f_\bullet) \; \beta_\bullet \\ 
+  &= X_{\bullet, \bullet} \; \beta_\bullet
+\end{align} 
+$$ {#eq-s-per-mf-lr-model-vector}
+
+## Summary
+
+## Exercises
+
 ### Least Squares: Two Perspectives
 
 ### Data Visualization
