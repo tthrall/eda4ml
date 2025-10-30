@@ -530,7 +530,9 @@ $$
 \end{align} 
 $$ {#eq-eps-ss}
 
-This expression defines the following _norm_ on $n-$dimensional Euclidean space.  For any vector $v_\bullet = (v_1, \ldots, v_n) \in \mathbb{R}^n$ we define $\Vert v_\bullet \rVert_2$ as follows.
+#### Vector norms
+
+@eq-eps-ss defines the following _norm_ on $n-$dimensional Euclidean space.  For any vector $v_\bullet = (v_1, \ldots, v_n) \in \mathbb{R}^n$ we define $\Vert v_\bullet \rVert_2$ as follows.
 
 $$
 \begin{align} 
@@ -579,7 +581,23 @@ $$
 \end{align} 
 $$ {#eq-norm-properties}
 
-A norm $\Vert \cdot \rVert$ defines a corresponding distance measure $\delta_{\Vert \cdot \rVert}$
+#### Matrix norms
+
+If $\lVert v_\bullet \rVert$ denotes some defined norm for vectors $v_\bullet \in \mathbb{R}^n$ and if $M_{\bullet, \bullet}$ is an $n \times n$ numeric matrix, then the vector norm defines a corresponding matrix norm $\lVert M_{\bullet, \bullet} \rVert$ as follows.
+
+$$
+\begin{align} 
+  \lVert M_{\bullet, \bullet} \rVert &= 
+  \sup_{ \lVert v_\bullet \rVert = 1 } 
+  \left \{ \lVert  M_{\bullet, \bullet} \; v_\bullet \rVert \right \}
+\end{align} 
+$$ {#eq-m-norm-from-v-norm}
+
+Note that some matrix norms are defined otherwise.  For example, the Frobenius norm, $\lVert M_{\bullet, \bullet} \rVert_F$, is defined as $\lVert vec(M_{\bullet, \bullet}) \rVert_2$, where $vec(M_{\bullet, \bullet})$ converts an $n \times n$ matrix into a vector of length $n^2$ by concatenating matrix columns.
+
+#### Metric spaces
+
+A vector norm $\Vert \cdot \rVert$ defines a corresponding distance measure $\delta_{\Vert \cdot \rVert}$
 
 $$
 \begin{align} 
@@ -592,8 +610,9 @@ A general distance measure or metric, $\delta (\cdot, \cdot)$, together with the
 
 $$
 \begin{align} 
-  \delta (m_1, m_2) &\ge 0 \\ 
-  \delta (m_1, m_2) &= 0 & \text{ if and only if } m_1 = m_2 \\ 
+  \delta (m_1, m_1) &= 0 \\ 
+  \delta (m_1, m_2) &> 0 & \text{ whenever } m_1 \ne m_2 \\ 
+  \delta (m_1, m_2) &= \delta (m_2, m_1) \\ 
   \delta (m_1, m_3) &\le \delta (m_1, m_2) \; + \; \delta (m_2, m_3) 
 \end{align} 
 $$ {#eq-metric-properties}
@@ -719,15 +738,95 @@ The regression plane that we glimpse in @fig-smf-smpl actually spans all the $(m
 
 The concept of a subspace is central to linear algebra.  Therefore determining the subspace parallel to the regression plane will enable us to apply linear algebra methods to better understand linear regression.
 
-One way to generate this subspace is to center each of the $(m_i, f_i, s_i)$ data values, that is, to replace data value $v_i$ with its centered version $\dot{v}_i = v_i - \bar{v}$, where $\bar{v}$ denotes the average value (arithmetic mean) of vector $v_\bullet$. [^centering-matrix]
+One way to generate this subspace is to center each of the $(m_i, f_i, s_i)$ data values, that is, to replace data value $v_i$ with its centered version $\dot{v}_i = v_i - \bar{v}$, where $\bar{v}$ denotes the average value (arithmetic mean) of vector $v_\bullet$.
 
-[^centering-matrix]: Centering is a linear operation, which means that it can be represented by a matrix $C = I - \frac{1}{n} \; 1_\bullet \; 1_\bullet^\top$.
-
-Now it turns out that the regression plane passes through the theoretical _point of averages_, $(\bar{m}, \bar{f}, \bar{s})$.  If we were to center the $(m_\bullet, f_\bullet, s_\bullet)$ vectors, and regress the centered son's height against centered versions of the (mother, father) heights, the new regression plane would pass through the origin and thus qualify as a subspace.  That is, the fitted intercept coefficient of the centered regression problem must be zero.  Therefore we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector $1_\bullet$ from the feature matrix $X_{_\bullet, _\bullet}$. Then we have the following centered linear model.
+In vector-matrix notation we have 
 
 $$
 \begin{align} 
-  \dot{y}_\bullet &= \dot{X}_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
+  \bar{v} &= \frac{1}{n} \sum_{\nu = 1}^n v_\nu \\ 
+  &= \frac{1}{n} \;  1_\bullet^\top \; v_\bullet \\ \\ 
+  & \text{so that} \\ \\ 
+  \dot{v}_\bullet &= v_\bullet - ( \bar{v} \; 1_\bullet ) \\ 
+  &= v_\bullet - \frac{1}{n} \;  1_\bullet \;  1_\bullet^\top \; v_\bullet \\ 
+  &= \left ( I - \frac{1}{n} \;  1_\bullet \;  1_\bullet^\top \right ) \; v_\bullet
+\end{align} 
+$$ {#eq-avg-via-inner-product}
+
+Let $C_{\bullet, \bullet}$ denote the matrix factor on the right side of the last equality, and define vector $\tilde{1}_\bullet$ as follows.
+
+$$
+\begin{align} 
+  \tilde{1}_\bullet &= \frac{1}{\sqrt{n}} \;  1_\bullet \\ \\ 
+  & \text{so that} \\ \\ 
+  \lVert \tilde{1}_\bullet \rVert &= 1 \\ \\ 
+  & \text{and} \\ \\ 
+  C_{\bullet, \bullet} &= I \; - \; \tilde{1}_\bullet \; \tilde{1}_\bullet^\top
+\end{align} 
+$$ {#eq-centering-matrix}
+
+Then we have 
+
+$$
+\begin{align} 
+  \tilde{1}_\bullet \; \tilde{1}_\bullet^\top \;  v_\bullet 
+  &= \bar{v} \; 1_\bullet \\ \\ 
+  C_{\bullet, \bullet} \; v_\bullet &= v_\bullet \; - \; \bar{v} \; 1_\bullet \\ 
+  &= \dot{v}_\bullet 
+\end{align} 
+$$ {#eq-centering-projection}
+
+Setting $v_\bullet = 1_\bullet$ gives 
+
+$$
+\begin{align} 
+  \left ( \tilde{1}_\bullet \; \tilde{1}_\bullet^\top \right ) \;  1_\bullet 
+  &= 1_\bullet \\ \\ 
+  C_{\bullet, \bullet} \; 1_\bullet &= 0_\bullet 
+\end{align} 
+$$ {#eq-centering-eigenvector}
+
+We now multiply both sides of @eq-generic-lm-mat, the regression equation, by matrix $C_{\bullet, \bullet}$ to obtain 
+
+$$
+\begin{align} 
+  C_{\bullet, \bullet} \; y_\bullet 
+  &= C_{\bullet, \bullet} \; X_{\bullet, \bullet} \; \beta_\bullet 
+  \; + \; C_{\bullet, \bullet} \; \epsilon_\bullet 
+\end{align} 
+$$ {#eq-centering-generic-lm}
+
+Now 
+
+$$
+\begin{align} 
+  C_{\bullet, \bullet} \; X_{\bullet, \bullet} \; \beta_\bullet 
+  &= C_{\bullet, \bullet} \; (1_\bullet, m_\bullet, f_\bullet) \; 
+  \begin{pmatrix}
+    \beta_0 \\ 
+    \beta_1 \\ 
+    \beta_2
+  \end{pmatrix} \\ 
+  &= (0_\bullet, \dot{m}_\bullet, \dot{f}_\bullet) \; 
+  \begin{pmatrix}
+    \beta_0 \\ 
+    \beta_1 \\ 
+    \beta_2
+  \end{pmatrix} \\ 
+  &= \beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet \\ 
+  &= (\dot{m}_\bullet, \dot{f}_\bullet) \; 
+  \begin{pmatrix}
+    \beta_1 \\ 
+    \beta_2
+  \end{pmatrix} 
+\end{align} 
+$$ {#eq-centering-sfm-lm}
+
+Then the centered version of @eq-generic-lm-mat is 
+
+$$
+\begin{align} 
+  \dot{y}_\bullet &= \dot{X}_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \dot{\epsilon}_\bullet
 \end{align} 
 $$ {#eq-generic-lm-ctr}
 
@@ -740,9 +839,11 @@ $$
   \dot{f}_\bullet &= \text{centered heights of fathers } \\ 
   \dot{X}_{_\bullet, _\bullet} &= \text{centered feature matrix} = (\dot{m}_\bullet, \dot{f}_\bullet) \\ 
   \beta_\bullet &= \text{coefficient vector} = (\beta_1, \beta_2)^\top \\ 
-  \epsilon_\bullet &= \text{residual vector}
+  \dot{\epsilon}_\bullet &= \text{centered residual vector}
 \end{align} 
 $$ {#eq-generic-lm-ctr-2}
+
+That is, we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector $1_\bullet$ from the feature matrix $X_{_\bullet, _\bullet}$.  @fig-smf-smpl-ctr is a version of @fig-smf-smpl corresponding to @eq-generic-lm-ctr.  Geometrically it's the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.
 
 ```{r}
 #| label: smf-smpl-ctr
@@ -780,8 +881,6 @@ smf_smpl_ctr <- smf_smpl_ctr |>
     resid = smf_smpl_ctr_lm$ residuals
   )
 ```
-
-@fig-smf-smpl-ctr is a version of @fig-smf-smpl corresponding to @eq-generic-lm-ctr.  Geometrically it's the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.
 
 ```{r}
 #| label: fig-smf-smpl-ctr

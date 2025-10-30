@@ -403,7 +403,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:32 Thu 30-Oct-2025</p>
+      <p class="date">17:32 Thu 30-Oct-2025</p>
     </div>
   </div>
   
@@ -1075,7 +1075,9 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   \sum_{\nu = 1}^n | \epsilon_\nu |^2
 \end{align}
 \qquad(6.21)\]</span></span></p>
-<p>This expression defines the following <em>norm</em> on <span class="math inline">\(n-\)</span>dimensional Euclidean space. For any vector <span class="math inline">\(v_\bullet = (v_1, \ldots, v_n) \in \mathbb{R}^n\)</span> we define <span class="math inline">\(\Vert v_\bullet \rVert_2\)</span> as follows.</p>
+<section id="vector-norms" class="level4" data-number="6.3.1.1">
+<h4 data-number="6.3.1.1" class="anchored" data-anchor-id="vector-norms"><span class="header-section-number">6.3.1.1</span> Vector norms</h4>
+<p><a href="#eq-eps-ss" class="quarto-xref">Equation&nbsp;<span>6.21</span></a> defines the following <em>norm</em> on <span class="math inline">\(n-\)</span>dimensional Euclidean space. For any vector <span class="math inline">\(v_\bullet = (v_1, \ldots, v_n) \in \mathbb{R}^n\)</span> we define <span class="math inline">\(\Vert v_\bullet \rVert_2\)</span> as follows.</p>
 <p><span id="eq-l2-norm-n"><span class="math display">\[
 \begin{align}
   \Vert v_\bullet \rVert_2
@@ -1114,22 +1116,39 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   \Vert \lambda \; v \rVert &amp;= | \lambda | \; \Vert v \rVert &amp; \text{ for any scalar } \lambda
 \end{align}
 \qquad(6.26)\]</span></span></p>
-<p>A norm <span class="math inline">\(\Vert \cdot \rVert\)</span> defines a corresponding distance measure <span class="math inline">\(\delta_{\Vert \cdot \rVert}\)</span></p>
+</section>
+<section id="matrix-norms" class="level4" data-number="6.3.1.2">
+<h4 data-number="6.3.1.2" class="anchored" data-anchor-id="matrix-norms"><span class="header-section-number">6.3.1.2</span> Matrix norms</h4>
+<p>If <span class="math inline">\(\lVert v_\bullet \rVert\)</span> denotes some defined norm for vectors <span class="math inline">\(v_\bullet \in \mathbb{R}^n\)</span> and if <span class="math inline">\(M_{\bullet, \bullet}\)</span> is an <span class="math inline">\(n \times n\)</span> numeric matrix, then the vector norm defines a corresponding matrix norm <span class="math inline">\(\lVert M_{\bullet, \bullet} \rVert\)</span> as follows.</p>
+<p><span id="eq-m-norm-from-v-norm"><span class="math display">\[
+\begin{align}
+  \lVert M_{\bullet, \bullet} \rVert &amp;=
+  \sup_{ \lVert v_\bullet \rVert = 1 }
+  \left \{ \lVert  M_{\bullet, \bullet} \; v_\bullet \rVert \right \}
+\end{align}
+\qquad(6.27)\]</span></span></p>
+<p>Note that some matrix norms are defined otherwise. For example, the Frobenius norm, <span class="math inline">\(\lVert M_{\bullet, \bullet} \rVert_F\)</span>, is defined as <span class="math inline">\(\lVert vec(M_{\bullet, \bullet}) \rVert_2\)</span>, where <span class="math inline">\(vec(M_{\bullet, \bullet})\)</span> converts an <span class="math inline">\(n \times n\)</span> matrix into a vector of length <span class="math inline">\(n^2\)</span> by concatenating matrix columns.</p>
+</section>
+<section id="metric-spaces" class="level4" data-number="6.3.1.3">
+<h4 data-number="6.3.1.3" class="anchored" data-anchor-id="metric-spaces"><span class="header-section-number">6.3.1.3</span> Metric spaces</h4>
+<p>A vector norm <span class="math inline">\(\Vert \cdot \rVert\)</span> defines a corresponding distance measure <span class="math inline">\(\delta_{\Vert \cdot \rVert}\)</span></p>
 <p><span id="eq-norm-metric"><span class="math display">\[
 \begin{align}
   \delta_{\Vert \cdot \rVert} (v_\bullet, w_\bullet)
   &amp;= \lVert v_\bullet - w_\bullet \rVert
 \end{align}
-\qquad(6.27)\]</span></span></p>
+\qquad(6.28)\]</span></span></p>
 <p>A general distance measure or metric, <span class="math inline">\(\delta (\cdot, \cdot)\)</span>, together with the set of points <span class="math inline">\(\mathcal{M}\)</span> over which it is defined constitutes a <em>metric space</em> with the following properties, for any <span class="math inline">\(m_1, m_2, m_3 \in \mathcal{M}\)</span>.</p>
 <p><span id="eq-metric-properties"><span class="math display">\[
 \begin{align}
-  \delta (m_1, m_2) &amp;\ge 0 \\
-  \delta (m_1, m_2) &amp;= 0 &amp; \text{ if and only if } m_1 = m_2 \\
+  \delta (m_1, m_1) &amp;= 0 \\
+  \delta (m_1, m_2) &amp;&gt; 0 &amp; \text{ whenever } m_1 \ne m_2 \\
+  \delta (m_1, m_2) &amp;= \delta (m_2, m_1) \\
   \delta (m_1, m_3) &amp;\le \delta (m_1, m_2) \; + \; \delta (m_2, m_3)
 \end{align}
-\qquad(6.28)\]</span></span></p>
+\qquad(6.29)\]</span></span></p>
 <p>Hamming distance and Levenshtein distance are important examples of metrics used in natural language processing (NLP) that are not based on a vector norm. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p>
+</section>
 </section>
 <section id="family-heights" class="level3" data-number="6.3.2">
 <h3 data-number="6.3.2" class="anchored" data-anchor-id="family-heights"><span class="header-section-number">6.3.2</span> Family heights</h3>
@@ -1138,7 +1157,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 \begin{align}
   y_\bullet &amp;= X_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
 \end{align}
-\qquad(6.29)\]</span></span></p>
+\qquad(6.30)\]</span></span></p>
 <p>where</p>
 <p><span id="eq-generic-lm-2"><span class="math display">\[
 \begin{align}
@@ -1149,7 +1168,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   \beta_\bullet &amp;= \text{coefficient vector} = (\beta_0, \beta_1, \beta_2)^\top \\
   \epsilon_\bullet &amp;= \text{residual vector}
 \end{align}
-\qquad(6.30)\]</span></span></p>
+\qquad(6.31)\]</span></span></p>
 <p>Consider the least-squares estimate <span class="math inline">\(\hat{\beta}_\bullet\)</span> and the consequent predicted height <span class="math inline">\(\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet\)</span> of the son. <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> is based on a random sample of 20 families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the <em>regression plane</em>. <a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
@@ -1172,13 +1191,83 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 <h3 data-number="6.3.3" class="anchored" data-anchor-id="centering-data-vectors"><span class="header-section-number">6.3.3</span> Centering Data Vectors</h3>
 <p>The regression plane that we glimpse in <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> actually spans all the <span class="math inline">\((m, f)\)</span> combinations that are mathematically possible. If we imagine infinitesimally short parents with <span class="math inline">\((m, f) = (0, 0)\)</span>, the predicted height of their son would be <span class="math inline">\(\hat{\beta}_0\)</span>, which is not zero. That is, the plane does not pass through the origin <span class="math inline">\((0, 0, 0)\)</span> and therefore does not qualify as a subspace of <span class="math inline">\((m, f, s)\)</span> space. <a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> But the regression plane determines a parallel subspace (that <em>does</em> pass through the origin).</p>
 <p>The concept of a subspace is central to linear algebra. Therefore determining the subspace parallel to the regression plane will enable us to apply linear algebra methods to better understand linear regression.</p>
-<p>One way to generate this subspace is to center each of the <span class="math inline">\((m_i, f_i, s_i)\)</span> data values, that is, to replace data value <span class="math inline">\(v_i\)</span> with its centered version <span class="math inline">\(\dot{v}_i = v_i - \bar{v}\)</span>, where <span class="math inline">\(\bar{v}\)</span> denotes the average value (arithmetic mean) of vector <span class="math inline">\(v_\bullet\)</span>. <a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
-<p>Now it turns out that the regression plane passes through the theoretical <em>point of averages</em>, <span class="math inline">\((\bar{m}, \bar{f}, \bar{s})\)</span>. If we were to center the <span class="math inline">\((m_\bullet, f_\bullet, s_\bullet)\)</span> vectors, and regress the centered son’s height against centered versions of the (mother, father) heights, the new regression plane would pass through the origin and thus qualify as a subspace. That is, the fitted intercept coefficient of the centered regression problem must be zero. Therefore we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector <span class="math inline">\(1_\bullet\)</span> from the feature matrix <span class="math inline">\(X_{_\bullet, _\bullet}\)</span>. Then we have the following centered linear model.</p>
+<p>One way to generate this subspace is to center each of the <span class="math inline">\((m_i, f_i, s_i)\)</span> data values, that is, to replace data value <span class="math inline">\(v_i\)</span> with its centered version <span class="math inline">\(\dot{v}_i = v_i - \bar{v}\)</span>, where <span class="math inline">\(\bar{v}\)</span> denotes the average value (arithmetic mean) of vector <span class="math inline">\(v_\bullet\)</span>.</p>
+<p>In vector-matrix notation we have</p>
+<p><span id="eq-avg-via-inner-product"><span class="math display">\[
+\begin{align}
+  \bar{v} &amp;= \frac{1}{n} \sum_{\nu = 1}^n v_\nu \\
+  &amp;= \frac{1}{n} \;  1_\bullet^\top \; v_\bullet \\ \\
+  &amp; \text{so that} \\ \\
+  \dot{v}_\bullet &amp;= v_\bullet - ( \bar{v} \; 1_\bullet ) \\
+  &amp;= v_\bullet - \frac{1}{n} \;  1_\bullet \;  1_\bullet^\top \; v_\bullet \\
+  &amp;= \left ( I - \frac{1}{n} \;  1_\bullet \;  1_\bullet^\top \right ) \; v_\bullet
+\end{align}
+\qquad(6.32)\]</span></span></p>
+<p>Let <span class="math inline">\(C_{\bullet, \bullet}\)</span> denote the matrix factor on the right side of the last equality, and define vector <span class="math inline">\(\tilde{1}_\bullet\)</span> as follows.</p>
+<p><span id="eq-centering-matrix"><span class="math display">\[
+\begin{align}
+  \tilde{1}_\bullet &amp;= \frac{1}{\sqrt{n}} \;  1_\bullet \\ \\
+  &amp; \text{so that} \\ \\
+  \lVert \tilde{1}_\bullet \rVert &amp;= 1 \\ \\
+  &amp; \text{and} \\ \\
+  C_{\bullet, \bullet} &amp;= I \; - \; \tilde{1}_\bullet \; \tilde{1}_\bullet^\top
+\end{align}
+\qquad(6.33)\]</span></span></p>
+<p>Then we have</p>
+<p><span id="eq-centering-projection"><span class="math display">\[
+\begin{align}
+  \tilde{1}_\bullet \; \tilde{1}_\bullet^\top \;  v_\bullet
+  &amp;= \bar{v} \; 1_\bullet \\ \\
+  C_{\bullet, \bullet} \; v_\bullet &amp;= v_\bullet \; - \; \bar{v} \; 1_\bullet \\
+  &amp;= \dot{v}_\bullet
+\end{align}
+\qquad(6.34)\]</span></span></p>
+<p>Setting <span class="math inline">\(v_\bullet = 1_\bullet\)</span> gives</p>
+<p><span id="eq-centering-eigenvector"><span class="math display">\[
+\begin{align}
+  \left ( \tilde{1}_\bullet \; \tilde{1}_\bullet^\top \right ) \;  1_\bullet
+  &amp;= 1_\bullet \\ \\
+  C_{\bullet, \bullet} \; 1_\bullet &amp;= 0_\bullet
+\end{align}
+\qquad(6.35)\]</span></span></p>
+<p>We now multiply both sides of <a href="#eq-generic-lm-mat" class="quarto-xref">Equation&nbsp;<span>6.30</span></a>, the regression equation, by matrix <span class="math inline">\(C_{\bullet, \bullet}\)</span> to obtain</p>
+<p><span id="eq-centering-generic-lm"><span class="math display">\[
+\begin{align}
+  C_{\bullet, \bullet} \; y_\bullet
+  &amp;= C_{\bullet, \bullet} \; X_{\bullet, \bullet} \; \beta_\bullet
+  \; + \; C_{\bullet, \bullet} \; \epsilon_\bullet
+\end{align}
+\qquad(6.36)\]</span></span></p>
+<p>Now</p>
+<p><span id="eq-centering-sfm-lm"><span class="math display">\[
+\begin{align}
+  C_{\bullet, \bullet} \; X_{\bullet, \bullet} \; \beta_\bullet
+  &amp;= C_{\bullet, \bullet} \; (1_\bullet, m_\bullet, f_\bullet) \;
+  \begin{pmatrix}
+    \beta_0 \\
+    \beta_1 \\
+    \beta_2
+  \end{pmatrix} \\
+  &amp;= (0_\bullet, \dot{m}_\bullet, \dot{f}_\bullet) \;
+  \begin{pmatrix}
+    \beta_0 \\
+    \beta_1 \\
+    \beta_2
+  \end{pmatrix} \\
+  &amp;= \beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet \\
+  &amp;= (\dot{m}_\bullet, \dot{f}_\bullet) \;
+  \begin{pmatrix}
+    \beta_1 \\
+    \beta_2
+  \end{pmatrix}
+\end{align}
+\qquad(6.37)\]</span></span></p>
+<p>Then the centered version of <a href="#eq-generic-lm-mat" class="quarto-xref">Equation&nbsp;<span>6.30</span></a> is</p>
 <p><span id="eq-generic-lm-ctr"><span class="math display">\[
 \begin{align}
-  \dot{y}_\bullet &amp;= \dot{X}_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \epsilon_\bullet
+  \dot{y}_\bullet &amp;= \dot{X}_{_\bullet, _\bullet} \; \beta_\bullet \; + \; \dot{\epsilon}_\bullet
 \end{align}
-\qquad(6.31)\]</span></span></p>
+\qquad(6.38)\]</span></span></p>
 <p>where</p>
 <p><span id="eq-generic-lm-ctr-2"><span class="math display">\[
 \begin{align}
@@ -1187,10 +1276,10 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
   \dot{f}_\bullet &amp;= \text{centered heights of fathers } \\
   \dot{X}_{_\bullet, _\bullet} &amp;= \text{centered feature matrix} = (\dot{m}_\bullet, \dot{f}_\bullet) \\
   \beta_\bullet &amp;= \text{coefficient vector} = (\beta_1, \beta_2)^\top \\
-  \epsilon_\bullet &amp;= \text{residual vector}
+  \dot{\epsilon}_\bullet &amp;= \text{centered residual vector}
 \end{align}
-\qquad(6.32)\]</span></span></p>
-<p><a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> is a version of <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> corresponding to <a href="#eq-generic-lm-ctr" class="quarto-xref">Equation&nbsp;<span>6.31</span></a>. Geometrically it’s the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.</p>
+\qquad(6.39)\]</span></span></p>
+<p>That is, we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector <span class="math inline">\(1_\bullet\)</span> from the feature matrix <span class="math inline">\(X_{_\bullet, _\bullet}\)</span>. <a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> is a version of <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> corresponding to <a href="#eq-generic-lm-ctr" class="quarto-xref">Equation&nbsp;<span>6.38</span></a>. Geometrically it’s the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1215,21 +1304,21 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \epsilon_\bullet^\top\epsilon_\bullet \\
   &amp;= (\dot{y}_\bullet - \dot{X}_{\bullet, \bullet} \beta_\bullet)^\top (\dot{y}_\bullet - \dot{X}_{\bullet, \bullet} \beta_\bullet)
 \end{align}
-\qquad(6.33)\]</span></span></p>
+\qquad(6.40)\]</span></span></p>
 <p>To find coefficient values that minimize this sum of squares, one can take derivatives of the above expression with respect to <span class="math inline">\(\beta_\bullet\)</span> and set that result to zero, which yields the following <em>normal equations</em>:</p>
 <p><span id="eq-lin-reg-nrml"><span class="math display">\[
 \begin{align}
   \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet} \hat{\beta}_\bullet
   &amp;= \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
 \end{align}
-\qquad(6.34)\]</span></span></p>
+\qquad(6.41)\]</span></span></p>
 <p>On the left side of the normal equations we have the matrix factor <span class="math inline">\(\left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )\)</span>, which in our case is a multiple of the (mother, father) covariance matrix, a <span class="math inline">\(2 \times 2\)</span> non-negative-definite matrix. In fact the matrix is positive-definite, and thus invertible, provided only that parental heights are not perfectly correlated (which they are not). Then we can invert this matrix to solve for <span class="math inline">\(\hat{\beta}_\bullet\)</span>.</p>
 <p><span id="eq-lin-reg-beta-hat"><span class="math display">\[
 \begin{align}
   \hat{\beta}_\bullet
   &amp;= \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
 \end{align}
-\qquad(6.35)\]</span></span></p>
+\qquad(6.42)\]</span></span></p>
 <p>The predicted vector <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span> is thus:</p>
 <p><span id="eq-lin-reg-y-hat"><span class="math display">\[
 \begin{align}
@@ -1237,24 +1326,24 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \dot{X}_{\bullet, \bullet} \hat{\beta}_\bullet \\
   &amp;= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \dot{y}_\bullet
 \end{align}
-\qquad(6.36)\]</span></span></p>
+\qquad(6.43)\]</span></span></p>
 </section>
 <section id="orthogonal-projections" class="level3" data-number="6.3.5">
 <h3 data-number="6.3.5" class="anchored" data-anchor-id="orthogonal-projections"><span class="header-section-number">6.3.5</span> Orthogonal Projections</h3>
-<p>For any value of the coefficient vector <span class="math inline">\(\beta_\bullet\)</span>, the mapping <span class="math inline">\(\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet\)</span> sends <span class="math inline">\(\beta_\bullet\)</span> to the linear combination <span class="math inline">\(\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet\)</span>, which belongs to a 2-dimensional subspace of <span class="math inline">\(n-\)</span>space <a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a>, where <span class="math inline">\(n\)</span> denotes the number of data cases, i.e., the row dimension of <span class="math inline">\(\dot{X}_{\bullet, \bullet}\)</span>. This 2-dimensional subspace (let’s say the “parental” subspace) is spanned by the two <span class="math inline">\(n-\)</span>vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>, the centered vectors of (mother, father) heights.</p>
-<p>The particular coefficient vector <span class="math inline">\(\hat{\beta}_\bullet\)</span> obtained by least squares linear regression produces the linear mapping of <a href="#eq-lin-reg-y-hat" class="quarto-xref">Equation&nbsp;<span>6.36</span></a>:</p>
+<p>For any value of the coefficient vector <span class="math inline">\(\beta_\bullet\)</span>, the mapping <span class="math inline">\(\beta_\bullet \mapsto \dot{X}_{\bullet, \bullet} \beta_\bullet\)</span> sends <span class="math inline">\(\beta_\bullet\)</span> to the linear combination <span class="math inline">\(\beta_1 \; \dot{m}_\bullet \; + \; \beta_2 \; \dot{f}_\bullet\)</span>, which belongs to a 2-dimensional subspace of <span class="math inline">\(n-\)</span>space <a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a>, where <span class="math inline">\(n\)</span> denotes the number of data cases, i.e., the row dimension of <span class="math inline">\(\dot{X}_{\bullet, \bullet}\)</span>. This 2-dimensional subspace (let’s say the “parental” subspace) is spanned by the two <span class="math inline">\(n-\)</span>vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>, the centered vectors of (mother, father) heights.</p>
+<p>The particular coefficient vector <span class="math inline">\(\hat{\beta}_\bullet\)</span> obtained by least squares linear regression produces the linear mapping of <a href="#eq-lin-reg-y-hat" class="quarto-xref">Equation&nbsp;<span>6.43</span></a>:</p>
 <p><span id="eq-lin-reg-projection"><span class="math display">\[
 \begin{align}
   \hat{\dot{y}}_\bullet &amp;= P \; \dot{y}_\bullet
 \end{align}
-\qquad(6.37)\]</span></span></p>
+\qquad(6.44)\]</span></span></p>
 <p>This mapping sends the centered heights of sons <span class="math inline">\(\dot{y}_\bullet\)</span> to their corresponding linear prediction <span class="math inline">\(\hat{\dot{y}}_\bullet = P \; \dot{y}_\bullet\)</span>, where <span class="math inline">\(P\)</span> is the following matrix.</p>
 <p><span id="eq-lin-reg-projection-mat"><span class="math display">\[
 \begin{align}
   P
   &amp;= \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top
 \end{align}
-\qquad(6.38)\]</span></span></p>
+\qquad(6.45)\]</span></span></p>
 <p>Matrix <span class="math inline">\(P\)</span> is idempotent and symmetric, that is, both the square <span class="math inline">\(P^2\)</span> and the transpose <span class="math inline">\(P^\top\)</span> equal <span class="math inline">\(P\)</span>.</p>
 <p><span id="eq-projection-properties"><span class="math display">\[
 \begin{align}
@@ -1268,7 +1357,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;=  \dot{X}_{\bullet, \bullet} \left ( \dot{X}_{\bullet, \bullet}^\top \dot{X}_{\bullet, \bullet}  \right )^{-1} \dot{X}_{\bullet, \bullet}^\top \\
   &amp;= P
 \end{align}
-\qquad(6.39)\]</span></span></p>
+\qquad(6.46)\]</span></span></p>
 <p>If matrix <span class="math inline">\(M\)</span> is idempotent, that is, if <span class="math inline">\(M^2 = M\)</span>, then <span class="math inline">\(M\)</span> represents a <em>projection</em>. Repeated applications of <span class="math inline">\(M\)</span> to vector <span class="math inline">\(v\)</span> return the initial application, i.e., <span class="math inline">\(M^k v = Mv\)</span> for any positive integer <span class="math inline">\(k\)</span>.</p>
 <p>If in addition matrix <span class="math inline">\(M\)</span> is symmetric, that is, if <span class="math inline">\(M^\top = M\)</span>, then <span class="math inline">\(M\)</span> represents an <em>orthogonal projection</em>. In this case the complement of <span class="math inline">\(M\)</span>, <span class="math inline">\(I - M\)</span>, also qualifies as an orthogonal projection and the product of the two matrices is the zero matrix.</p>
 <p>Consequently, any vector <span class="math inline">\(v\)</span> can be expressed as the sum of two vectors <span class="math inline">\(v = x + y\)</span>, with <span class="math inline">\(x = M v\)</span> and <span class="math inline">\(y = (I-M) v\)</span>. Vector <span class="math inline">\(x\)</span> belongs to the subspace generated by <span class="math inline">\(M\)</span>, which is called the <em>range</em> of <span class="math inline">\(M\)</span>, denoted as <span class="math inline">\(\mathcal{R} (M)\)</span>. Similarly <span class="math inline">\(y \in \mathcal{R} (I - M)\)</span>. Moreover, these two vectors are orthogonal: <span class="math inline">\((x^\top y = y^\top x = 0)\)</span>. That is, subspace <span class="math inline">\(\mathcal{R} (I - M)\)</span> is the orthogonal complement of subspace <span class="math inline">\(\mathcal{R} (M)\)</span>.</p>
@@ -1285,7 +1374,7 @@ Figure&nbsp;6.5: Centered family heights
   \right \} \\
   &amp;= \dot{X}_{\bullet, \bullet} \; \gamma_\bullet (v_\bullet)
 \end{align}
-\qquad(6.40)\]</span></span></p>
+\qquad(6.47)\]</span></span></p>
 <p>That is, for any vector <span class="math inline">\(v_\bullet\)</span> in <span class="math inline">\(n-\)</span>space, <span class="math inline">\(P\)</span> sends <span class="math inline">\(v_\bullet\)</span> to an <span class="math inline">\(n-\)</span>vector of the form <span class="math inline">\(\dot{X}_{\bullet, \bullet} \; \gamma_\bullet\)</span>, which is a linear combination of <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> and thus belongs to the parental subspace.</p>
 <p>In our example, this means that the respective vectors of predicted centered heights <span class="math inline">\(\hat{\dot{y}_\bullet}\)</span> and their residuals <span class="math inline">\(\hat{\epsilon}_\bullet\)</span> are mutually orthogonal.</p>
 <p><span id="eq-resid-predicted-ortho"><span class="math display">\[
@@ -1299,7 +1388,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \dot{y}_\bullet^\top \; 0_{\bullet, \bullet} \; \dot{y}_\bullet \\
   &amp;= 0
 \end{align}
-\qquad(6.41)\]</span></span></p>
+\qquad(6.48)\]</span></span></p>
 <p>Now let <span class="math inline">\(p_\bullet\)</span> be any vector in the parental space. Then <span class="math inline">\(p_\bullet\)</span> is some linear combination of the parental vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> and therefore can be represented as <span class="math inline">\(p_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet\)</span> for some coefficient vector <span class="math inline">\(\gamma_\bullet = (\gamma_1, \gamma_2)^\top\)</span>. It now follows the <span class="math inline">\(P \; p_\bullet = p_\bullet\)</span>:</p>
 <p><span id="eq-subspace-invariance"><span class="math display">\[
 \begin{align}
@@ -1309,7 +1398,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \dot{X}_{\bullet, \bullet} \gamma_\bullet \\
   &amp;= p_\bullet
 \end{align}
-\qquad(6.42)\]</span></span></p>
+\qquad(6.49)\]</span></span></p>
 <p>Consequently, the residual vector <span class="math inline">\(\hat{\epsilon}_\bullet\)</span> is orthogonal to any vector <span class="math inline">\(p_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet\)</span> in the parental subspace:</p>
 <p><span id="eq-resid-mf-ortho"><span class="math display">\[
 \begin{align}
@@ -1318,7 +1407,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \dot{y}_\bullet^\top \; 0_\bullet \\
   &amp;= 0
 \end{align}
-\qquad(6.43)\]</span></span></p>
+\qquad(6.50)\]</span></span></p>
 <p>It now follows that of all vectors <span class="math inline">\(p_\bullet = \dot{X}_{\bullet, \bullet} \gamma_\bullet\)</span> in the parental subspace, the predicted vector <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span> is closest to the given vector <span class="math inline">\(\dot{y}_\bullet\)</span>:</p>
 <p><span id="eq-lin-reg-min-distance"><span class="math display">\[
 \begin{align}
@@ -1332,7 +1421,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;\ge \lVert \hat{\epsilon}_\bullet \rVert^2 \\
   &amp;= \lVert \dot{y_\bullet} - \hat{\dot{y}}_\bullet \rVert^2
 \end{align}
-\qquad(6.44)\]</span></span></p>
+\qquad(6.51)\]</span></span></p>
 <p>There is one more point worth noting here. Suppose <span class="math inline">\(\dot{X}_{\bullet, \bullet}\)</span> consisted of just a single column, say <span class="math inline">\(\dot{m}_\bullet\)</span>.</p>
 <p><span id="eq-1D-cov-mat"><span class="math display">\[
 \begin{align}
@@ -1341,7 +1430,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \dot{m}_\bullet^\top \dot{m}_\bullet \\
   &amp;= \lVert \dot{m}_\bullet \rVert^2
 \end{align}
-\qquad(6.45)\]</span></span></p>
+\qquad(6.52)\]</span></span></p>
 <p>Then we would have:</p>
 <p><span id="eq-1D-projection-mat"><span class="math display">\[
 \begin{align}
@@ -1357,7 +1446,7 @@ Figure&nbsp;6.5: Centered family heights
   \text{so that} \\ \\
   \lVert u_\bullet \rVert &amp;= 1
 \end{align}
-\qquad(6.46)\]</span></span></p>
+\qquad(6.53)\]</span></span></p>
 <p>To summarize,</p>
 <ul>
 <li>The parental centered heights <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> constitute a basis of the 2-dimensional subspace (the “parental” subspace) that they span within <span class="math inline">\(n-\)</span>space.</li>
@@ -1372,7 +1461,7 @@ Figure&nbsp;6.5: Centered family heights
 </section>
 <section id="column-versus-row-visualization" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="column-versus-row-visualization"><span class="header-section-number">6.4</span> Column versus Row Visualization</h2>
-<p>Continuing with the example of centered heights, let’s now take a step back from two explanatory variables to just one, namely the mother’s centered height <span class="math inline">\(\dot{m}_\bullet\)</span> as a predictor of the son’s centered height <span class="math inline">\(\dot{s}_\bullet\)</span>. From <a href="#eq-1D-projection-mat" class="quarto-xref">Equation&nbsp;<span>6.46</span></a> we have</p>
+<p>Continuing with the example of centered heights, let’s now take a step back from two explanatory variables to just one, namely the mother’s centered height <span class="math inline">\(\dot{m}_\bullet\)</span> as a predictor of the son’s centered height <span class="math inline">\(\dot{s}_\bullet\)</span>. From <a href="#eq-1D-projection-mat" class="quarto-xref">Equation&nbsp;<span>6.53</span></a> we have</p>
 <p><span id="eq-1D-ctr-lin-reg-soln"><span class="math display">\[
 \begin{align}
   P
@@ -1388,7 +1477,7 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \frac{\dot{m}_\bullet^\top \; \dot{y}}{\lVert \dot{m}_\bullet \rVert^2} \; \dot{m}_\bullet \\
   &amp;= \hat{\beta}_1 \; \dot{m}_\bullet
 \end{align}
-\qquad(6.47)\]</span></span></p>
+\qquad(6.54)\]</span></span></p>
 <p><a href="#fig-gg-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> shows this projection from <span class="math inline">\(\dot{y}_\bullet\)</span> (that is, <span class="math inline">\(\dot{s}_\bullet\)</span>) to the one-dimensional space spanned by <span class="math inline">\(\dot{m}_\bullet\)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -1409,7 +1498,7 @@ Figure&nbsp;6.6: Centered heights: project s-vector (son) to m-axis (mother)
 \begin{align}
   v &amp;= \sigma \; \dot{s}_\bullet \; + \; \mu \; \dot{m}_\bullet
 \end{align}
-\qquad(6.48)\]</span></span></p>
+\qquad(6.55)\]</span></span></p>
 <p>Then <span class="math inline">\(v\)</span> has coordinates <span class="math inline">\((\sigma, \mu)\)</span> with respect to the <span class="math inline">\(( \dot{m}_\bullet, \dot{s}_\bullet )\)</span> basis.</p>
 <p>Consequently the coordinates of vectors <span class="math inline">\(\dot{m}_\bullet\)</span>, <span class="math inline">\(\dot{s}_\bullet\)</span>, and <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span> are respectively <span class="math inline">\((1, 0)\)</span>, <span class="math inline">\((0, 1)\)</span>, and <span class="math inline">\((\hat{\beta}_1, 0)\)</span>.</p>
 <p>Note that the <span class="math inline">\(\dot{s}_\bullet\)</span> axis is not quite perpendicular to the <span class="math inline">\(\dot{m}_\bullet\)</span> axis. That is because the two vectors are not orthogonal:</p>
@@ -1418,15 +1507,15 @@ Figure&nbsp;6.6: Centered heights: project s-vector (son) to m-axis (mother)
   \left &lt; \dot{m}_\bullet, \; \dot{s}_\bullet \right &gt; &amp;= \dot{m}_\bullet^\top \; \dot{s}_\bullet \\
   &amp;\ne 0
 \end{align}
-\qquad(6.49)\]</span></span></p>
-<p>Instead we have the following non-zero correlation coefficient, denoted here as <span class="math inline">\(r_{m, s}\)</span>. <a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p>
+\qquad(6.56)\]</span></span></p>
+<p>Instead we have the following non-zero correlation coefficient, denoted here as <span class="math inline">\(r_{m, s}\)</span>. <a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
 <p><span id="eq-m-s-cor"><span class="math display">\[
 \begin{align}
   r_{m, s} &amp;= \left ( \frac{\dot{m}_\bullet}{\lVert \dot{m}_\bullet \rVert} \right )^\top \;
   \left ( \frac{\dot{s}_\bullet}{\lVert \dot{s}_\bullet \rVert} \right ) \\
   &amp;\approx 0.1
 \end{align}
-\qquad(6.50)\]</span></span></p>
+\qquad(6.57)\]</span></span></p>
 <p>In linear algebra the expression for <span class="math inline">\(r_{m, s}\)</span> is defined to be the cosine of the angle between vectors <span class="math inline">\(\dot{m}_\bullet\)</span> and <span class="math inline">\(\dot{s}_\bullet\)</span>.</p>
 <p>Therefore the two axes are shown with the angle, say <span class="math inline">\(\theta_{m, s}\)</span>, between the two <em>drawn</em> axes equal to the angle between the two <em>actual</em> vectors, <span class="math inline">\(\dot{m}_\bullet\)</span> and <span class="math inline">\(\dot{s}_\bullet\)</span>. Thus <span class="math inline">\(\cos(\theta_{m, s}) = r_{m, s}\)</span>. Since the correlation coefficient is positive rather than zero, the cosine is also positive, which implies that <span class="math inline">\(\theta_{m, s} &lt; \pi / 2\)</span>.</p>
 <p><a href="#fig-gg-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> is a column-based view of the linear regression of the centered heights of the sons <span class="math inline">\((\dot{s}_\bullet)\)</span> on the centered heights of their mothers <span class="math inline">\((\dot{m}_\bullet)\)</span>. The figure illustrates the simplicity of linear least-squares regression as, in essence, an orthogonal projection.</p>
@@ -1476,14 +1565,14 @@ Figure&nbsp;6.8: Projection of centered heights: son to (mother, father) plane
   s &amp; \approx \mathcal{l}_{\beta_\bullet} (m, f)  \\
   &amp;= \beta_0 \; + \; \beta_1 m \; + \; \beta_2 f
 \end{align}
-\qquad(6.51)\]</span></span></p>
+\qquad(6.58)\]</span></span></p>
 <p>Each set of coefficient values <span class="math inline">\(\beta_\bullet = (\beta_0, \beta_1, \beta_2)\)</span> generates a 2D regression plane, say <span class="math inline">\(\mathcal{L}_{\beta_\bullet}\)</span>, within the 3D subspace spanned by the three <span class="math inline">\(n-\)</span>vectors <span class="math inline">\((m_\bullet, f_\bullet, s_\bullet)\)</span>.</p>
 <p><span id="eq-mf-regresion-plane"><span class="math display">\[
 \begin{align}
   \mathcal{L}_{\beta_\bullet} &amp;= \mathcal{L}_{\beta_\bullet} (m, f, s) \\
   &amp;= \left \{ (m, f, s): s = \mathcal{l}_{\beta_\bullet} (m, f) \right \}
 \end{align}
-\qquad(6.52)\]</span></span></p>
+\qquad(6.59)\]</span></span></p>
 <p>Excluding coefficient <span class="math inline">\(\beta_0\)</span> from the model is equivalent to the constraint, <span class="math inline">\(\beta_0 = 0\)</span>. This constraint restricts the regression plane to pass through the origin. The role of <span class="math inline">\(\beta_0\)</span> is to account for differences in the average heights of mothers, fathers, and sons, respectively, which we denote as <span class="math inline">\((\bar{m}, \bar{f}, \bar{s})\)</span>. That is, the inclusion of <span class="math inline">\(\beta_0\)</span> enables us to set</p>
 <p><span id="eq-smf-tilde-beta-0"><span class="math display">\[
 \begin{align}
@@ -1492,7 +1581,7 @@ Figure&nbsp;6.8: Projection of centered heights: son to (mother, father) plane
   \mathcal{l}_{\beta_\bullet} (\bar{m}, \bar{f}) &amp;= \tilde{\beta}_0 \; + \; \beta_1 \bar{m} \; + \; \beta_2 \bar{f} \\
   &amp;= \bar{s}
 \end{align}
-\qquad(6.53)\]</span></span></p>
+\qquad(6.60)\]</span></span></p>
 <p>That is, this formula for <span class="math inline">\(\tilde{\beta}_0\)</span> ensures that the model maps parents of average height to a son of average height. A model of this form can be re-expressed as a model of centered heights.</p>
 <p><span id="eq-s-per-mf-lr-centered"><span class="math display">\[
 \begin{align}
@@ -1500,7 +1589,7 @@ Figure&nbsp;6.8: Projection of centered heights: son to (mother, father) plane
   &amp; \text{and} &amp; s &amp; \approx \tilde{\beta}_0 \; + \; \beta_1 m \; + \; \beta_2 f  \\
   &amp; \text{then} &amp; s - \bar{s} &amp; \approx \beta_1 (m - \bar{m}) \; + \; \beta_2 (f - \bar{f})
 \end{align}
-\qquad(6.54)\]</span></span></p>
+\qquad(6.61)\]</span></span></p>
 <p>Now let’s return to the representation of the model using the feature matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span>, the coefficient vector <span class="math inline">\(\beta_\bullet\)</span>, and the vector of recorded heights of mothers, fathers, and sons <span class="math inline">\((m_\bullet, f_\bullet, s_\bullet)\)</span>. Then we have</p>
 <p><span id="eq-s-per-mf-lr-model-vector"><span class="math display">\[
 \begin{align}
@@ -1509,7 +1598,7 @@ Figure&nbsp;6.8: Projection of centered heights: son to (mother, father) plane
   &amp;= (1_\bullet, m_\bullet, f_\bullet) \; \beta_\bullet \\
   &amp;= X_{\bullet, \bullet} \; \beta_\bullet
 \end{align}
-\qquad(6.55)\]</span></span></p>
+\qquad(6.62)\]</span></span></p>
 </section>
 <section id="summary" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">6.6</span> Summary</h2>
@@ -1617,9 +1706,8 @@ LeCun, Yann, Corinna Cortes, and Christopher J. C. Burges. 2005. <span>“The MN
 <li id="fn10"><p>See <span class="citation" data-cites="wiki_Hamming_distance"><span>“Hamming Distance | Wikipedia”</span> (<a href="references.html#ref-wiki_Hamming_distance" role="doc-biblioref">2025</a>)</span> and <span class="citation" data-cites="wiki_Levenshtein_distance"><span>“Levenshtein Distance | Wikipedia”</span> (<a href="references.html#ref-wiki_Levenshtein_distance" role="doc-biblioref">2025</a>)</span>.<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn11"><p>The residual son’s height is the error term in the regression formula. In the figure, residuals are color-coded according to their sign: black if positive and red otherwise.<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn12"><p>The regression plane qualifies as a linear manifold, mathematically speaking.<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn13"><p>Centering is a linear operation, which means that it can be represented by a matrix <span class="math inline">\(C = I - \frac{1}{n} \; 1_\bullet \; 1_\bullet^\top\)</span>.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn14"><p>The terms <span class="math inline">\(n-\)</span>dimensional space and <span class="math inline">\(n-\)</span>space are shorthand for “an <span class="math inline">\(n-\)</span>dimensional vector space <span class="math inline">\(\mathcal{V}\)</span> over the field <span class="math inline">\(\mathbb{R}\)</span> of real numbers”. Similarly, the term <span class="math inline">\(n-\)</span>vector means a vector <span class="math inline">\(v \in \mathcal{V}\)</span>. Once a set of basis vectors is identified in <span class="math inline">\(\mathcal{V}\)</span>, any <span class="math inline">\(v \in \mathcal{V}\)</span> can be identified by its coordinates with respect to the given basis. An identified basis of <span class="math inline">\(n\)</span> vectors gives an isomorphism from <span class="math inline">\(\mathcal{V}\)</span> to <span class="math inline">\(\mathbb{R}^n\)</span>. Data are often collected and presented in the form of a data matrix, where a column of numeric values in <span class="math inline">\(n\)</span> successive rows provides an automatic representation as a vector in <span class="math inline">\(\mathbb{R}^n\)</span>. In the data set of family heights, for example, each row of data corresponds to a distinct family, and a column vector, the mother’s height for example, is represented as <span class="math inline">\(m_\bullet = (m_1, \ldots, m_n) \in \mathbb{R}^n\)</span>, where <span class="math inline">\(m_i\)</span> refers to the height in inches of the mother in family <span class="math inline">\(i\)</span>.<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn15"><p>The cited value of the correlation coefficient <span class="math inline">\(r_{m, s}\)</span> pertains to the random sample of size 20 created to facilitate a detailed view of regression residuals. Among all 179 families whose oldest child was a son, we have <span class="math inline">\(r_{m, s} \approx 0.3\)</span>.<a href="#fnref15" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn13"><p>The terms <span class="math inline">\(n-\)</span>dimensional space and <span class="math inline">\(n-\)</span>space are shorthand for “an <span class="math inline">\(n-\)</span>dimensional vector space <span class="math inline">\(\mathcal{V}\)</span> over the field <span class="math inline">\(\mathbb{R}\)</span> of real numbers”. Similarly, the term <span class="math inline">\(n-\)</span>vector means a vector <span class="math inline">\(v \in \mathcal{V}\)</span>. Once a set of basis vectors is identified in <span class="math inline">\(\mathcal{V}\)</span>, any <span class="math inline">\(v \in \mathcal{V}\)</span> can be identified by its coordinates with respect to the given basis. An identified basis of <span class="math inline">\(n\)</span> vectors gives an isomorphism from <span class="math inline">\(\mathcal{V}\)</span> to <span class="math inline">\(\mathbb{R}^n\)</span>. Data are often collected and presented in the form of a data matrix, where a column of numeric values in <span class="math inline">\(n\)</span> successive rows provides an automatic representation as a vector in <span class="math inline">\(\mathbb{R}^n\)</span>. In the data set of family heights, for example, each row of data corresponds to a distinct family, and a column vector, the mother’s height for example, is represented as <span class="math inline">\(m_\bullet = (m_1, \ldots, m_n) \in \mathbb{R}^n\)</span>, where <span class="math inline">\(m_i\)</span> refers to the height in inches of the mother in family <span class="math inline">\(i\)</span>.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn14"><p>The cited value of the correlation coefficient <span class="math inline">\(r_{m, s}\)</span> pertains to the random sample of size 20 created to facilitate a detailed view of regression residuals. Among all 179 families whose oldest child was a son, we have <span class="math inline">\(r_{m, s} \approx 0.3\)</span>.<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
