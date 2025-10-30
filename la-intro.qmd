@@ -514,11 +514,93 @@ The MNIST example illustrates a _vector-valued_ rather than _scalar-valued_ resp
 
 If the data include a labeling or response variable, $y$, then the problem is said to be _supervised_.  In _unsupervised_ problems (that lack a $y$ variable), we may need to find patterns in the given data.  For example we may seek those feature variables (columns of the feature matrix $X$), or linear combinations of feature variables, that account for most of the variability in the entire set of feature variables.  Or we may need to find observations (rows of the feature matrix $X$) that are similar and thereby form groups (or _clusters_) of observations.  In these unsupervised situations we may model the feature matrix (or its covariance matrix) as the product of other matrices of special form (to be discussed later in this chapter).
 
-In the remainder of this chapter we will focus on ideas and methods that help us to solve @eq-generic-lm, or rather, that help us to determine the value of $\beta$ that minimizes (in some sense) the residual term $\epsilon$.
+In the remainder of this chapter we will focus on ideas and methods that help us to solve @eq-generic-lm, or rather, that help us to determine the value of $\beta$ that minimizes (in some sense) the residual term $\epsilon$.  We refer to this minimization as the _linear regression problem_, which is made precise once we specify the measure of $\epsilon$ to be minimized.
 
 ## Geometry
 
-In this section we'll discuss the example of family heights, in particular the linear regression of the son's height on the heights of the mother and father.  We'll discuss the geometry of the least-squares solution as a reference point for the remainder of this chapter.
+We now consider the geometry of the _least-squares_ solution of the linear regression problem, using the example of family heights.  We begin by defining this measure of the residual term $\epsilon$.
+
+### Distance Measures
+
+The sum-of-squares measure of the residual vector $\epsilon_\bullet = (\epsilon_1, \ldots, \epsilon_n)$ is simply the sum of the squares of the components $\epsilon_\nu$.
+
+$$
+\begin{align} 
+  \sum_{\nu = 1}^n | \epsilon_\nu |^2
+\end{align} 
+$$ {#eq-eps-ss}
+
+This expression defines the following _norm_ on $n-$dimensional Euclidean space.  For any vector $v_\bullet = (v_1, \ldots, v_n) \in \mathbb{R}^n$ we define $\Vert v_\bullet \rVert_2$ as follows.
+
+$$
+\begin{align} 
+  \Vert v_\bullet \rVert_2 
+  &= \left ( \sum_{\nu = 1}^n | v_\nu |^2 \right )^{\frac{1}{2}}
+\end{align} 
+$$ {#eq-l2-norm-n}
+
+This norm can be derived from (or used to define) the _inner-product_ of a pair of vectors $v_\bullet, w_\bullet \in \mathbb{R}^n$, defined as follows with the following alternative notations.
+
+$$
+\begin{align} 
+  \left <  v_\bullet, w_\bullet \right >
+  &= v_\bullet \boldsymbol\cdot w_\bullet \\ 
+  &= v_\bullet^\top w_\bullet \\ 
+  &= \sum_{\nu = 1}^n v_\nu \; w_\nu 
+\end{align} 
+$$ {#eq-inner-product-R-n}
+
+More generally, for any real number $p \ge 1$, the so-called $p-$norm (or Minkowski norm of order $p$) is defined as 
+
+$$
+\begin{align} 
+  \Vert v_\bullet \rVert_p 
+  &= \left ( \sum_{\nu = 1}^n | v_\nu |^p \right )^{\frac{1}{p}} & \text{ for } 1 \le p < \infty
+\end{align} 
+$$ {#eq-lp-norm-n}
+
+This definition can be extended to the case $p = \infty$ as follows.
+
+$$
+\begin{align} 
+  \Vert v_\bullet \rVert_\infty 
+  &= \max \left \{ |v_\nu | \right \}_{\nu = 1}^n
+\end{align} 
+$$ {#eq-max-norm-n}
+
+More generally, for $v, w \in \mathcal{V}$, a real-valued or complex-valued vector space, a norm $\Vert \cdot \rVert$ is defined to have the following properties.
+
+$$
+\begin{align} 
+  \Vert v \rVert &\ge 0 \\ 
+  \Vert v \rVert &= 0 & \text{ if and only if } v = 0 \\ 
+  \Vert v + w \rVert &\le \Vert v \rVert + \Vert w \rVert \\ 
+  \Vert \lambda \; v \rVert &= | \lambda | \; \Vert v \rVert & \text{ for any scalar } \lambda
+\end{align} 
+$$ {#eq-norm-properties}
+
+A norm $\Vert \cdot \rVert$ defines a corresponding distance measure $\delta_{\Vert \cdot \rVert}$
+
+$$
+\begin{align} 
+  \delta_{\Vert \cdot \rVert} (v_\bullet, w_\bullet) 
+  &= \lVert v_\bullet - w_\bullet \rVert
+\end{align} 
+$$ {#eq-norm-metric}
+
+A general distance measure or metric, $\delta (\cdot, \cdot)$, together with the set of points $\mathcal{M}$ over which it is defined constitutes a _metric space_ with the following properties, for any $m_1, m_2, m_3 \in \mathcal{M}$.
+
+$$
+\begin{align} 
+  \delta (m_1, m_2) &\ge 0 \\ 
+  \delta (m_1, m_2) &= 0 & \text{ if and only if } m_1 = m_2 \\ 
+  \delta (m_1, m_3) &\le \delta (m_1, m_2) \; + \; \delta (m_2, m_3) 
+\end{align} 
+$$ {#eq-metric-properties}
+
+Hamming distance and Levenshtein distance are important examples of metrics used in natural language processing (NLP) that are not based on a vector norm. [^NLP-metrics]
+
+[^NLP-metrics]: See @wiki_Hamming_distance and @wiki_Levenshtein_distance.
 
 ### Family heights
 
