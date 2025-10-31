@@ -1007,7 +1007,7 @@ $$ {#eq-sfm-lm-ctr-3}
 
 In words, the centered model, having only two free coefficients $(\beta_1, \beta_2)$, is equivalent to an uncentered model subject to the following constraints: 
 
-  - the constant coefficient $\tilde{\beta}_0$ is a certain linear combination of the average heights of (mother, father son) that uses coefficients $(\beta_1, \beta_2)$; and 
+  - the constant coefficient $\tilde{\beta}_0$ is a certain linear combination of the average heights of (mother, father son) that uses coefficients $(\beta_1, \beta_2)$ and thereby forces the regression plane to pass through the (mathematical) _point of averages_ $(\bar{m}, \bar{f}, \bar{s})$; and 
   - the residual vector is constrained to have an average value of zero.
 
 ### Least Squares Solutions
