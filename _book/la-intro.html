@@ -367,16 +367,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#column-versus-row-visualization" id="toc-column-versus-row-visualization" class="nav-link" data-scroll-target="#column-versus-row-visualization"><span class="header-section-number">6.4</span> Column versus Row Visualization</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">6.5</span> Summary</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6.6</span> Exercises</a>
-  <ul class="collapse">
-  <li><a href="#least-squares-two-perspectives" id="toc-least-squares-two-perspectives" class="nav-link" data-scroll-target="#least-squares-two-perspectives"><span class="header-section-number">6.6.1</span> Least Squares: Two Perspectives</a></li>
-  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">6.6.2</span> Data Visualization</a></li>
-  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space"><span class="header-section-number">6.6.3</span> Sample Space</a></li>
-  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">6.6.4</span> Column Space</a></li>
-  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">6.6.5</span> Orthogonal Projection</a></li>
-  <li><a href="#reconciling-perspectives" id="toc-reconciling-perspectives" class="nav-link" data-scroll-target="#reconciling-perspectives"><span class="header-section-number">6.6.6</span> Reconciling Perspectives</a></li>
-  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">6.6.7</span> Why This Matters</a></li>
-  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6.6</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/la-intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -402,7 +393,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">17:54 Fri 31-Oct-2025</p>
+      <p class="date">10:31 Sat 1-Nov-2025</p>
     </div>
   </div>
   
@@ -1314,22 +1305,22 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
   \dot{\epsilon}_\bullet &amp;= \text{centered residual vector}
 \end{align}
 \qquad(6.43)\]</span></span></p>
-<p>That is, we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector <span class="math inline">\(1_\bullet\)</span> from the feature matrix <span class="math inline">\(X_{_\bullet, _\bullet}\)</span>. <a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> is a version of <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> corresponding to <a href="#eq-sfm-lm-ctr" class="quarto-xref">Equation&nbsp;<span>6.42</span></a>. Geometrically it’s the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.</p>
+<p>That is, we can eliminate the intercept coefficient from the centered linear model, and we can also eliminate the constant vector <span class="math inline">\(1_\bullet\)</span> from the feature matrix <span class="math inline">\(X_{_\bullet, _\bullet}\)</span>. <a href="#fig-row-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> is a version of <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> corresponding to <a href="#eq-sfm-lm-ctr" class="quarto-xref">Equation&nbsp;<span>6.42</span></a>. Geometrically it’s the same figure, the difference being that each of the three axes has been shifted, now with 0 as the central value.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-row-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-smf-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-row-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-row-smf-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-row-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6.5: Centered family heights
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>The advantage of centering the family heights data is that <a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> above represents all the dimensions of the centered linear model: the vector of responses <span class="math inline">\(\dot{s}_\bullet\)</span> along with the feature vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. The disadvantage is that we have replaced heights with deviations from average heights, and those average heights can no longer be discerned from the scatter diagram.</p>
+<p>The advantage of centering the family heights data is that <a href="#fig-row-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> above represents all the dimensions of the centered linear model: the vector of responses <span class="math inline">\(\dot{s}_\bullet\)</span> along with the feature vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. The disadvantage is that we have replaced heights with deviations from average heights, and those average heights can no longer be discerned from the scatter diagram.</p>
 <p>On the other hand, prior to data-centering our feature matrix included the constant vector <span class="math inline">\(1_\bullet\)</span> (a vector neither interesting nor visible in our scatter diagrams) so that the model could include a constant coefficient <span class="math inline">\(\beta_0\)</span> that accounted for the distinct average heights of (mother, father, son).</p>
 <p>These are two representations of essentially the same linear model, as can be seen by reconstructing the original variables from their centered versions:</p>
 <p><span id="eq-sfm-lm-ctr-3"><span class="math display">\[
@@ -1361,7 +1352,7 @@ Figure&nbsp;6.5: Centered family heights
 \qquad(6.44)\]</span></span></p>
 <p>In words, the centered model, having only two free coefficients <span class="math inline">\((\beta_1, \beta_2)\)</span>, is equivalent to an uncentered model subject to the following constraints:</p>
 <ul>
-<li>the constant coefficient <span class="math inline">\(\tilde{\beta}_0\)</span> is a certain linear combination of the average heights of (mother, father son) that uses coefficients <span class="math inline">\((\beta_1, \beta_2)\)</span>; and</li>
+<li>the constant coefficient <span class="math inline">\(\tilde{\beta}_0\)</span> is a certain linear combination of the average heights of (mother, father, son) that uses coefficients <span class="math inline">\((\beta_1, \beta_2)\)</span> and thereby forces the regression plane to pass through the (mathematical) <em>point of averages</em> <span class="math inline">\((\bar{m}, \bar{f}, \bar{s})\)</span>; and</li>
 <li>the residual vector is constrained to have an average value of zero.</li>
 </ul>
 </section>
@@ -1517,7 +1508,7 @@ Figure&nbsp;6.5: Centered family heights
 \end{align}
 \qquad(6.58)\]</span></span></p>
 <p>That is, projection matrix <span class="math inline">\(P\)</span> can take the form of a 1-dimensional projection <span class="math inline">\(u \; u^\top\)</span> onto multiples of unit vector <span class="math inline">\(u\)</span>, and generalizes such 1-dimensional projections when the feature space is of a higher dimension.</p>
-<p><a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> above shows the result of projecting the centered sons’ heights to their predicted values in the parental plane (feature space). Each point in that figure represents an individual family, which corresponds to a single row of the centered feature matrix <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. In the next section we introduce a different perspective on linear regression, namely a column-based view.</p>
+<p><a href="#fig-row-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> above shows the result of projecting the centered sons’ heights to their predicted values in the parental plane (feature space). Each point in that figure represents an individual family, which corresponds to a single row of the centered feature matrix <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. In the next section we introduce a different perspective on linear regression, namely a column-based view.</p>
 </section>
 </section>
 <section id="column-versus-row-visualization" class="level2" data-number="6.4">
@@ -1539,15 +1530,15 @@ Figure&nbsp;6.5: Centered family heights
   &amp;= \hat{\beta}_1 \; \dot{m}_\bullet
 \end{align}
 \qquad(6.59)\]</span></span></p>
-<p><a href="#fig-gg-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> shows this projection from <span class="math inline">\(\dot{s}_\bullet\)</span>) to the one-dimensional space spanned by <span class="math inline">\(\dot{m}_\bullet\)</span>.</p>
+<p><a href="#fig-col-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> shows this projection from <span class="math inline">\(\dot{s}_\bullet\)</span>) to the one-dimensional space spanned by <span class="math inline">\(\dot{m}_\bullet\)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-gg-sm-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-col-sm-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-gg-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-gg-sm-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-col-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-col-sm-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gg-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-col-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6.6: Centered heights: s-vector (sons) projected to to m-axis (mothers)
 </figcaption>
 </figure>
@@ -1579,101 +1570,106 @@ Figure&nbsp;6.6: Centered heights: s-vector (sons) projected to to m-axis (mothe
 \qquad(6.62)\]</span></span></p>
 <p>In linear algebra the expression for <span class="math inline">\(r_{m, s}\)</span> is defined to be the cosine of the angle between vectors <span class="math inline">\(\dot{m}_\bullet\)</span> and <span class="math inline">\(\dot{s}_\bullet\)</span>.</p>
 <p>Therefore the two axes are shown with the angle, say <span class="math inline">\(\theta_{m, s}\)</span>, between the two <em>drawn</em> axes equal to the angle between the two <em>actual</em> vectors, <span class="math inline">\(\dot{m}_\bullet\)</span> and <span class="math inline">\(\dot{s}_\bullet\)</span>. Thus <span class="math inline">\(\cos(\theta_{m, s}) = r_{m, s}\)</span>. Since the correlation coefficient is positive rather than zero, the cosine is also positive, which implies that <span class="math inline">\(\theta_{m, s} &lt; \pi / 2\)</span>.</p>
-<p><a href="#fig-gg-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> is a column-based view of the linear regression of the centered heights of the sons <span class="math inline">\((\dot{s}_\bullet)\)</span> on the centered heights of their mothers <span class="math inline">\((\dot{m}_\bullet)\)</span>. The figure illustrates the simplicity of linear least-squares regression as, in essence, an orthogonal projection.</p>
-<p><a href="#fig-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.7</span></a> below gives the more commonly used (row-based) illustration of the same linear regression.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-sm-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p><a href="#fig-col-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a> is a column-based view of the linear regression of the centered heights of the sons <span class="math inline">\((\dot{s}_\bullet)\)</span> on the centered heights of their mothers <span class="math inline">\((\dot{m}_\bullet)\)</span>. The figure illustrates the simplicity of linear least-squares regression as, in essence, an orthogonal projection.</p>
+<p><a href="#fig-rc-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.7</span></a> below compares the more commonly used (row-based) illustration of the same linear regression.</p>
+<div id="fig-rc-sm-smpl-ctr" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-sm-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-rc-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-rc-sm-smpl-ctr" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-Row-sm-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-Row-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/g_row_sm_smpl_ctr.png" class="img-fluid figure-img" data-ref-parent="fig-rc-sm-smpl-ctr">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.7: Centered heights: son ~ mother regression line
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-Row-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Row
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-rc-sm-smpl-ctr" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-Col-sm-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-Col-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/g_col_sm_smpl_ctr.png" class="img-fluid figure-img" data-ref-parent="fig-rc-sm-smpl-ctr">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-Col-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Col
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>The two perspectives on linear regression are complementary. <a href="#fig-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.7</span></a> portrays individual rows of data (families here). This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models. This view of the regression problem shows model <em>results</em>. On the other hand, the column-based perspective, illustrated by <a href="#fig-gg-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.6</span></a>, can help one to understand the model-fitting <em>process</em>.</p>
-<p>Now let’s see how these ideas carry over from 2D to 3D: we now regress <span class="math inline">\(\dot{s}\)</span> on <span class="math inline">\((\dot{m}, \dot{f})\)</span>. <a href="#fig-s3d-2025-10-28a" class="quarto-xref">Figure&nbsp;<span>6.8</span></a> below shows this regression as an orthogonal projection of the <span class="math inline">\(\dot{s}_\bullet\)</span> basis vector to the plane defined by the <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> basis vectors. In this <span class="math inline">\((\dot{m}, \dot{f}, \dot{s})\)</span> coordinate system, the coordinates of the predicted (that is, projected) vector <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> are <span class="math inline">\((\hat{\beta}_1, \hat{\beta}_2, 0)\)</span>. The vector of residuals, <span class="math inline">\(\dot{s}_\bullet - \hat{\dot{s}}_\bullet\)</span>, is represented by the dotted line orthogonal to the <span class="math inline">\((\dot{m}, \dot{f})\)</span> plane.</p>
-<p>Each of these vectors represents the 20 families in the sample, but those 20 vector elements are not visible from this column-based perspective. The details of those 20 families, or more generally of individual data cases, are shown in row-based perspectives, like <a href="#fig-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a>. Such details are important and of interest, of course. But the column-based perspective illustrates the geometry of the model-fitting process, and also merits our attention.</p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rc-sm-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.7: Centered heights (son ~ mother): Row and Column Views
+</figcaption>
+</figure>
+</div>
+<p>The two perspectives on linear regression are complementary. <a href="#fig-Row-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.7 (a)</span></a> portrays individual rows of data (families here). This is the most common means of visualizing data in two dimensions, and with good reason: it can be very thought-provoking and thus useful for refining models. This view of the regression problem shows model <em>results</em>. On the other hand, the column-based perspective shown in <a href="#fig-Col-sm-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.7 (b)</span></a> can help one to understand the model-fitting <em>process</em>.</p>
+<p>Now let’s see how these ideas carry over from 2D to 3D: we now regress <span class="math inline">\(\dot{s}\)</span> on <span class="math inline">\((\dot{m}, \dot{f})\)</span>. <a href="#fig-col-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.8</span></a> below shows this regression as an orthogonal projection of the <span class="math inline">\(\dot{s}_\bullet\)</span> basis vector to the plane defined by the <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span> basis vectors. In this <span class="math inline">\((\dot{m}, \dot{f}, \dot{s})\)</span> coordinate system, the coordinates of the predicted (that is, projected) vector <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> are <span class="math inline">\((\hat{\beta}_1, \hat{\beta}_2, 0)\)</span>. The vector of residuals, <span class="math inline">\(\dot{s}_\bullet - \hat{\dot{s}}_\bullet\)</span>, is represented by the dotted line orthogonal to the <span class="math inline">\((\dot{m}, \dot{f})\)</span> plane.</p>
+<p>Each of these vectors represents the 20 families in the sample, but those 20 vector elements are not visible from this column-based perspective. The details of those 20 families, or more generally of individual data cases, are shown in row-based perspectives, like <a href="#fig-row-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a>. Such details are important and of interest, of course. But the column-based perspective also merits our attention. It illustrates the geometry of the model-fitting process, and the angle <span class="math inline">\(\theta\)</span> between two axes corresponds to the correlation <span class="math inline">\(r\)</span> between the two variables <span class="math inline">\((\cos \theta = r)\)</span>. <a href="#fig-rc-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.9</span></a> compares the two perspectives.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-s3d-2025-10-28a" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-col-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-s3d-2025-10-28a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="la-intro_files/figure-html/fig-s3d-2025-10-28a-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-col-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="la-intro_files/figure-html/fig-col-smf-smpl-ctr-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s3d-2025-10-28a-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-col-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6.8: Projection of centered heights: son to (mother, father) plane
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
+<div id="fig-rc-smf-smpl-ctr" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rc-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-rc-smf-smpl-ctr" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-Row-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-Row-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/g_row_smf_smpl_ctr.png" class="img-fluid figure-img" data-ref-parent="fig-rc-smf-smpl-ctr">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-Row-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Row
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-rc-smf-smpl-ctr" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-Col-smf-smpl-ctr" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-Col-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./images/g_col_smf_smpl_ctr.png" class="img-fluid figure-img" data-ref-parent="fig-rc-smf-smpl-ctr">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-Col-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Col
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rc-smf-smpl-ctr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.9: Centered heights (son ~ mother + father): Row and Column Views
+</figcaption>
+</figure>
+</div>
 </section>
 <section id="summary" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="summary"><span class="header-section-number">6.5</span> Summary</h2>
+<p>This chapter treats linear regression from the perspective of linear algebra. The key points are:</p>
+<ul>
+<li><p><em>Row versus Column Views of the Data</em>: Viewing the data is good practice, and is usually done by representing individual cases of data, that is, rows of <span class="math inline">\((X, y)\)</span>, where <span class="math inline">\(X\)</span> is the feature matrix and <span class="math inline">\(y\)</span> is the response variable (target or labeling vector). A complementary perspective is to examine the relationship between <span class="math inline">\(y\)</span> and the columns of <span class="math inline">\(X\)</span>, the features, as <em>vectors</em>. Feature space is the subspace of <span class="math inline">\(n-\)</span>dimensional vector space that is spanned by the columns of <span class="math inline">\(X\)</span>, and is denoted <span class="math inline">\(col(X)\)</span>. Linear models are typically formulated from the column perspective, but the results of model-fitting are usually presented in a row perspective.</p></li>
+<li><p><em>Least-Squares Linear Regression is an Orthogonal Projection</em>: The mapping of the response variable <span class="math inline">\(y\)</span> to its value <span class="math inline">\(\hat{y}\)</span> predicted by a fitted linear model is the orthogonal projection of vector <span class="math inline">\(y\)</span> to feature space, <span class="math inline">\(col(X)\)</span>.</p></li>
+</ul>
 </section>
 <section id="exercises" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">6.6</span> Exercises</h2>
-<section id="least-squares-two-perspectives" class="level3" data-number="6.6.1">
-<h3 data-number="6.6.1" class="anchored" data-anchor-id="least-squares-two-perspectives"><span class="header-section-number">6.6.1</span> Least Squares: Two Perspectives</h3>
-</section>
-<section id="data-visualization" class="level3" data-number="6.6.2">
-<h3 data-number="6.6.2" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">6.6.2</span> Data Visualization</h3>
-<ul>
-<li>The 3D scatterplot view: each point is (mother_height, father_height, son_height)</li>
-<li>The fitted regression plane: ŷ = β₀ + β₁·mother + β₂·father</li>
-<li>This is how we visualize and interpret, but NOT where the projection occurs</li>
-<li>Dimension: p = 3 (number of features including intercept)</li>
-</ul>
-</section>
-<section id="sample-space" class="level3" data-number="6.6.3">
-<h3 data-number="6.6.3" class="anchored" data-anchor-id="sample-space"><span class="header-section-number">6.6.3</span> Sample Space</h3>
-<ul>
-<li>Each observation is a vector in ℝⁿ (n = 179)</li>
-<li>The response vector y ∈ ℝ¹⁷⁹ has components [y₁, y₂, …, y₁₇₉]ᵀ</li>
-<li>Each column of X is also a vector in ℝ¹⁷⁹</li>
-<li>Example: the “mother_heights” column is one vector in 179-dimensional space</li>
-</ul>
-</section>
-<section id="column-space" class="level3" data-number="6.6.4">
-<h3 data-number="6.6.4" class="anchored" data-anchor-id="column-space"><span class="header-section-number">6.6.4</span> Column Space</h3>
-<ul>
-<li>C(X) is the 3-dimensional subspace of ℝ¹⁷⁹ spanned by the columns of X</li>
-<li>All possible linear combinations: Xβ for any β ∈ ℝ³</li>
-<li>Key insight: C(X) contains all predictions our model can make</li>
-<li>Dimension: rank(X) ≤ min(n,p) = 3 (assuming full column rank)</li>
-</ul>
-</section>
-<section id="orthogonal-projection" class="level3" data-number="6.6.5">
-<h3 data-number="6.6.5" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">6.6.5</span> Orthogonal Projection</h3>
-<ul>
-<li>ŷ = Xβ̂ is the orthogonal projection of y onto C(X)</li>
-<li>The residual vector e = y - ŷ is orthogonal to C(X)</li>
-<li>Geometric interpretation: ŷ is the point in C(X) closest to y (in L₂ distance)</li>
-<li>The normal equations: XᵀX β̂ = Xᵀy arise from orthogonality condition Xᵀe = 0</li>
-<li>Include a 2D schematic diagram: y, C(X) as a plane, ŷ as projection, e perpendicular</li>
-</ul>
-</section>
-<section id="reconciling-perspectives" class="level3" data-number="6.6.6">
-<h3 data-number="6.6.6" class="anchored" data-anchor-id="reconciling-perspectives"><span class="header-section-number">6.6.6</span> Reconciling Perspectives</h3>
-<ul>
-<li>The 3D scatterplot shows relationships between variables (p-dimensional)</li>
-<li>The projection happens in observation space (n-dimensional)</li>
-<li>Both are valid and useful for different purposes</li>
-<li>The regression coefficients β connect the two views</li>
-</ul>
-</section>
-<section id="why-this-matters" class="level3" data-number="6.6.7">
-<h3 data-number="6.6.7" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">6.6.7</span> Why This Matters</h3>
-<ul>
-<li>Degrees of freedom: n - p (observations minus parameters)</li>
-<li>Overfitting: what happens when p approaches n?</li>
-<li>Preview: other norms (L₁) change the geometry but still live in ℝⁿ</li>
-</ul>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
@@ -1702,7 +1698,6 @@ LeCun, Yann, Corinna Cortes, and Christopher J. C. Burges. 2005. <span>“The MN
 <span>“Raster Graphics | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Raster_graphics">https://en.wikipedia.org/wiki/Raster_graphics</a>.
 </div>
 </div>
-</section>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
