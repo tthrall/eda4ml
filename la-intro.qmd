@@ -1842,3 +1842,129 @@ This chapter treats linear regression from the perspective of linear algebra.  T
 
 ## Exercises
 
+### Concepts
+
+#### Row vs Column Perspective
+
+Consider a dataset with $n = 5$ observations and $d = 2$ features plus a response variable.
+
+  (a) Describe what "row space" means in the context of visualizing this data. What dimension is it?
+  (b) Describe what "column space" or "feature space" means. What dimension is it?
+  (c) In which space does the orthogonal projection for least-squares regression actually occur?
+
+#### $col(X_{\bullet, \bullet})$
+
+Explain in your own words why the fitted values $\hat{y}_\bullet$ must lie in $col(X_{\bullet, \bullet})$, the column space of the feature matrix.
+
+#### Orthogonality
+
+  (a) Explain why the residual vector $\epsilon_\bullet = y_\bullet - \hat{y}_\bullet$ is orthogonal to $col(X_{\bullet, \bullet})$.
+  (b) What does this orthogonality imply about the relationship between $\epsilon_\bullet$ and each column of $X_{\bullet, \bullet}$?
+
+#### Centering Data
+
+Explain why centering the feature vectors (subtracting the mean from each column of $X_{\bullet, \bullet}$ eliminates the need for an intercept term in linear regression. What happens geometrically when data is centered?
+
+### Calculations
+
+#### 1D Projection
+
+Let: 
+
+$$
+\begin{align}
+y_\bullet &= 
+  \begin{pmatrix}
+    3 \\ 1 \\ 2
+  \end{pmatrix} \\ \\ 
+  & \text{ and } \\ \\ 
+X_{\bullet, \bullet} &= (x_{\bullet, 1}) = 
+  \begin{pmatrix}
+    1 \\ 2 \\ 2
+  \end{pmatrix}
+\end{align}
+$$ {#eq-x-1D-projection}
+
+  (a) Find the orthogonal projection $\hat{y}_\bullet$ of $y_\bullet$ onto feature space $col(X_{\bullet, \bullet})$.
+
+  (b) Calculate the residual vector $\epsilon_\bullet = y_\bullet - \hat{y}_\bullet$.
+
+  (c) Verify that the residual vector is orthogonal to $col(X_{\bullet, \bullet})$, that is, that $\epsilon_\bullet \perp x_{\bullet, 1}$, by computing their inner product.
+
+  (d) Sketch vectors $(y_\bullet, \hat{y}_\bullet, \epsilon_\bullet)$ in 3D space.
+
+#### Distance Measures
+
+For the vectors $u_\bullet = (1,2,3)$ and $v_\bullet = (4, 1, 2)$:
+
+  (a) Compute the Euclidean $(\mathcal{l}_2)$ distance between $u_\bullet$ and $v_\bullet$.
+  (b) Compute the Manhattan $(\mathcal{l}_1)$ distance.
+  (c) Which distance measure is affected more by outliers? Why?
+
+#### 2D Projection
+
+Let: 
+
+$$
+\begin{align}
+y_\bullet &= 
+  \begin{pmatrix}
+    5 \\ 2 \\ 3 \\ 4
+  \end{pmatrix} \\ \\ 
+  & \text{ and } \\ \\ 
+X_{\bullet, \bullet} &= 
+  \begin{pmatrix}
+    1 & 0 \\ 
+    0 & 1 \\ 
+    1 & 1 \\ 
+    1 & 0
+  \end{pmatrix}
+\end{align}
+$$ {#eq-x-2D-projection}
+
+  (a) Find the linear least-squares vector $\hat{\beta}_\bullet$ of regression coefficients by solving the set of normal equations $X_{\bullet, \bullet}^\top X_{\bullet, \bullet} \; \hat{\beta}_\bullet = X_{\bullet, \bullet}^\top \; y_\bullet$.
+
+  (b) Calculate $\hat{y} = X_{\bullet, \bullet} \; \hat{\beta}_\bullet$.
+
+  (c) Verify that $\hat{y}$ is in $col(X_{\bullet, \bullet})$ by expressing it as a linear combination of the columns of $X_{\bullet, \bullet}$.
+
+  (d) Calculate $\lVert \epsilon_\bullet \rVert^2$, where $\epsilon_\bullet = y_\bullet - \hat{y}_\bullet$.
+
+### Programming
+
+#### Centering Heights
+
+Using the Galton family heights data (`HistData::Galton`):
+
+  (a) Center the mother, father, and son height vectors by subtracting their means.
+  (b) Fit a linear model predicting centered son height from centered mother and father heights (without an intercept term).
+  (c) Compare the coefficients from part (b) to those from an uncentered model with intercept. What changed and what stayed the same?
+  (d) Verify that the predictions from both models are identical.
+
+#### Visualizing Residuals
+
+For the simple regression of son's height on father's height in the Galton data:
+
+  (a) Create a scatter plot with the regression line.
+  (b) Add vertical line segments showing the residuals for each observation.
+  (c) Compute the sum of squared residuals.
+  (d) Pick a different slope coefficient (not the least-squares value) and verify that it gives a larger sum of squared residuals.
+
+#### Visualizing Feature Space
+
+#### Better Life Index
+
+#### MNIST Projection
+
+### Advanced
+
+#### Correlation Geometry
+
+#### Correlated Features
+
+#### Sum of Squares Decomposition
+
+#### Projection Matrix
+
+#### Feature Basis Vectors
+
