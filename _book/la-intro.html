@@ -8,7 +8,7 @@
 
 <meta name="author" content="Send comments to: Tony T (tthrall)">
 
-<title>6&nbsp; Linear Algebra for Fitting Models to Data – EDA for Machine Learning</title>
+<title>6&nbsp; Linear Regression – EDA for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -132,7 +132,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./la-intro.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./la-intro.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./la-intro.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./la-intro.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -225,7 +225,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -374,9 +374,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./la-intro.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./la-intro.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./la-intro.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./la-intro.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-la-intro" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Algebra for Fitting Models to Data</span></span></h1>
+<h1 class="title"><span id="sec-la-intro" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></h1>
 </div>
 
 
@@ -393,7 +393,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:31 Sat 1-Nov-2025</p>
+      <p class="date">18:52 Sat 1-Nov-2025</p>
     </div>
   </div>
   
@@ -406,7 +406,8 @@ window.Quarto = {
 
 
 <hr>
-<p>Vectors and matrices are the central objects of linear algebra. And central to data science and machine learning is the notion of a <em>data matrix</em>, in which each row is composed of different types of values that represent a single case of data. For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study. In contrast, each column (known as a <em>feature vector</em> or <em>data variable</em>) represents multiple instances of just one of these prescribed types of value. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Let’s consider some examples.</p>
+<p>Vectors and matrices are the central objects of linear algebra. And central to data science and machine learning is the notion of a <em>data matrix</em>, in which each row is composed of different types of values that represent a single case of data. For example, a single row of a data matrix might represent the recorded characteristics of an individual participant, item, or unit in some study. In contrast, each column (known as a <em>feature vector</em> or <em>data variable</em>) represents multiple instances of just one of these prescribed types of value. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>This chapter presents linear regression from the perspective of linear algebra. A response variable <span class="math inline">\(y\)</span> is modeled as some linear combination of feature vectors plus a residual error term. We begin with some examples.</p>
 <section id="data-examples" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="data-examples"><span class="header-section-number">6.1</span> Data Examples</h2>
 <section id="heights-of-parents-and-oldest-child" class="level3" data-number="6.1.1">
@@ -1013,7 +1014,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 \end{pmatrix}  \\ \\
 &amp;=
 \begin{pmatrix}
-  X_{1, \bullet} \\
+  x_{\bullet, 1} \\
   \vdots \\
   X_{n, \bullet}
 \end{pmatrix}
@@ -1052,14 +1053,14 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 <p>Let the dimensions of <span class="math inline">\(X_{\bullet, \bullet}\)</span> be given as <span class="math inline">\(n\)</span> rows by <span class="math inline">\(d\)</span> columns. Then the column vectors <span class="math inline">\((y_\bullet, \epsilon_\bullet)\)</span> are each of length <span class="math inline">\(n\)</span>, and the number of rows in column-vector <span class="math inline">\(\beta_\bullet\)</span> is <span class="math inline">\(d\)</span>. Let us also delineate the columns of <span class="math inline">\(X_{\bullet, \bullet}\)</span>, the “feature vectors”, as follows.</p>
 <p><span id="eq-generic-feature-cols"><span class="math display">\[
 \begin{align}
-  X_{\bullet, \bullet} &amp;= \left ( f_{1, \bullet}, \ldots, f_{d, \bullet} \right )
+  X_{\bullet, \bullet} &amp;= \left ( x_{\bullet, 1}, \ldots, x_{\bullet, d} \right )
 \end{align}
 \qquad(6.22)\]</span></span></p>
-<p>The <span class="math inline">\(n-\)</span>dimensional feature vectors <span class="math inline">\(\{ f_{k, \bullet} \}_{k = 1}^d\)</span> span a subspace, “feature space”, within <span class="math inline">\(n-\)</span>space, denoted <span class="math inline">\(span(f_{1, \bullet}, \ldots, f_{d, \bullet})\)</span>. Since this is the subspace generated by the columns of matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span>, the subspace is also denoted as <span class="math inline">\(col(X_{\bullet, \bullet})\)</span>. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p>
+<p>The <span class="math inline">\(n-\)</span>dimensional feature vectors <span class="math inline">\(\{ x_{\bullet, k} \}_{k = 1}^d\)</span> span a subspace, “feature space”, within <span class="math inline">\(n-\)</span>space, denoted <span class="math inline">\(span(x_{\bullet, 1}, \ldots, x_{\bullet, d})\)</span>. Since this is the subspace generated by the columns of matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span>, the subspace is also denoted as <span class="math inline">\(col(X_{\bullet, \bullet})\)</span>. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p>
 <p>The mapping <span class="math inline">\(\beta_\bullet \mapsto X_{\bullet, \bullet} \; \beta_\bullet\)</span> sends a vector of coefficients <span class="math inline">\(\beta_\bullet\)</span> to the following linear combination within the feature subspace.</p>
 <p><span id="eq-generic-feature-lin-combo"><span class="math display">\[
 \begin{align}
-  X_{\bullet, \bullet} \; \beta_\bullet &amp;=\beta_1 \; f_{1, \bullet} \; + \; \cdots \; + \; \beta_d \; f_{d, \bullet}
+  X_{\bullet, \bullet} \; \beta_\bullet &amp;=\beta_1 \; x_{\bullet, 1} \; + \; \cdots \; + \; \beta_d \; x_{\bullet, d}
 \end{align}
 \qquad(6.23)\]</span></span></p>
 <p>The dimension of the feature subspace is called the <em>rank</em> of <span class="math inline">\(X_{\bullet, \bullet}\)</span>, denoted <span class="math inline">\(rank(X_{\bullet, \bullet})\)</span>. The rank can be no greater than <span class="math inline">\(n\)</span>, the dimension of the space containing each feature vector, nor can it be greater than <span class="math inline">\(d\)</span>, the number of feature vectors. If the feature vectors are linearly independent then this subspace is of dimension <span class="math inline">\(d\)</span>. If the feature vectors are not linearly independent (for example, if <span class="math inline">\(d &gt; n\)</span>) then the feature subspace is of some smaller dimension.</p>
