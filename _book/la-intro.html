@@ -399,7 +399,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">03:52 Sun 2-Nov-2025</p>
+      <p class="date">06:41 Sun 2-Nov-2025</p>
     </div>
   </div>
   
@@ -1786,17 +1786,39 @@ X_{\bullet, \bullet} &amp;=
 </section>
 <section id="advanced" class="level3" data-number="6.6.4">
 <h3 data-number="6.6.4" class="anchored" data-anchor-id="advanced"><span class="header-section-number">6.6.4</span> Advanced</h3>
-<section id="correlation-geometry" class="level4" data-number="6.6.4.1">
-<h4 data-number="6.6.4.1" class="anchored" data-anchor-id="correlation-geometry"><span class="header-section-number">6.6.4.1</span> Correlation Geometry</h4>
-<p>When <span class="math inline">\(n-\)</span>dimensional feature vectors <span class="math inline">\(v_\bullet, w_\bullet\)</span> are centered <span class="math inline">\((v_\bullet \mapsto \dot{v}_\bullet)\)</span> and normalized to unit length <span class="math inline">\((\tilde{v}_\bullet = \dot{v}_\bullet / \Vert \dot{v}_\bullet \rVert)\)</span>, show that:</p>
+<section id="covariance-and-inner-product" class="level4" data-number="6.6.4.1">
+<h4 data-number="6.6.4.1" class="anchored" data-anchor-id="covariance-and-inner-product"><span class="header-section-number">6.6.4.1</span> Covariance and Inner Product</h4>
+<p>Consider the pair of <span class="math inline">\(n-\)</span>dimensional vectors <span class="math inline">\((v_\bullet, w_\bullet)\)</span> as a numeric data matrix of dimension <span class="math inline">\(n \times 2\)</span>. Recall the notation <span class="math inline">\(\bar{v}\)</span> for the arithmetic mean of <span class="math inline">\(v_\bullet\)</span>, and <span class="math inline">\(\dot{v}_\bullet = v_\bullet - \bar{v} \; 1_\bullet\)</span> for the centered version of <span class="math inline">\(v_\bullet\)</span>, so that <span class="math inline">\(\dot{v}_i = v_i - \bar{v}\)</span> for each element <span class="math inline">\(v_i\)</span> of <span class="math inline">\(v_\bullet\)</span>. Now the <em>sample covariance</em> <span class="math inline">\(cov(v_\bullet, w_\bullet)\)</span> is defined as follows:</p>
+<p><span id="eq-sample-cov-defn"><span class="math display">\[
+\begin{align}
+  cov(v_\bullet, w_\bullet)
+  &amp;= \frac{1}{n-1} \sum_{i = 1}^n (v_i - \bar{v}) \; (w_i - \bar{w})
+\end{align}
+\qquad(6.64)\]</span></span></p>
+<ol type="a">
+<li>Express the sample covariance using inner-product notation.</li>
+<li>The <em>sample variance</em> is defined as <span class="math inline">\(var(v_\bullet) = cov(v_\bullet, v_\bullet)\)</span>. Express <span class="math inline">\(var(v_\bullet)\)</span> using norm notation.</li>
+<li>The <em>sample standard</em> deviation is defined as <span class="math inline">\(sd(v_\bullet) = \sqrt{var(v_\bullet)}\)</span>. Express <span class="math inline">\(sd(v_\bullet)\)</span> using norm notation.</li>
+<li>Use inner-product notation to express the <em>sample correlation</em> <span class="math inline">\(cor(v_\bullet, w_\bullet)\)</span>, defined as follows.</li>
+</ol>
+<p><span id="eq-sample-cor-defn"><span class="math display">\[
+\begin{align}
+  cor(v_\bullet, w_\bullet)
+  &amp;= \frac{1}{n-1} \sum_{i = 1}^n \frac{v_i - \bar{v}}{sd(v_\bullet)} \; \frac{w_i - \bar{w}}{sd(w_\bullet)}
+\end{align}
+\qquad(6.65)\]</span></span></p>
+</section>
+<section id="correlation-geometry" class="level4" data-number="6.6.4.2">
+<h4 data-number="6.6.4.2" class="anchored" data-anchor-id="correlation-geometry"><span class="header-section-number">6.6.4.2</span> Correlation Geometry</h4>
+<p>When <span class="math inline">\(n-\)</span>dimensional vectors <span class="math inline">\(v_\bullet, w_\bullet\)</span> are centered <span class="math inline">\((v_\bullet \mapsto \dot{v}_\bullet)\)</span> and normalized to unit length <span class="math inline">\((\tilde{v}_\bullet = \dot{v}_\bullet / \Vert \dot{v}_\bullet \rVert)\)</span>, show that:</p>
 <ol type="a">
 <li><p>The inner product <span class="math inline">\(\tilde{v}_\bullet^\top \tilde{w}_\bullet\)</span> is equal to the correlation <span class="math inline">\(r\)</span> between features <span class="math inline">\(v_\bullet, w_\bullet\)</span> times <span class="math inline">\((n - 1)\)</span>.</p></li>
 <li><p>The angle <span class="math inline">\(\theta\)</span> between <span class="math inline">\(v_\bullet, w_\bullet\)</span> satisfies <span class="math inline">\(\cos(\theta) = r\)</span>.</p></li>
 <li><p>Apply this to the Galton height data: compute the angles between mother, father, and son height vectors.</p></li>
 </ol>
 </section>
-<section id="correlated-features" class="level4" data-number="6.6.4.2">
-<h4 data-number="6.6.4.2" class="anchored" data-anchor-id="correlated-features"><span class="header-section-number">6.6.4.2</span> Correlated Features</h4>
+<section id="correlated-features" class="level4" data-number="6.6.4.3">
+<h4 data-number="6.6.4.3" class="anchored" data-anchor-id="correlated-features"><span class="header-section-number">6.6.4.3</span> Correlated Features</h4>
 <ol type="a">
 <li>Generate synthetic data <span class="math inline">\((y_\bullet, x_{\bullet, 1}, x_{\bullet, 2})\)</span> such that the two features <span class="math inline">\((x_{\bullet, 1}, x_{\bullet, 2})\)</span> are orthogonal (correlation = 0). Then fit a regression model.</li>
 <li>Now generate similar data, but this time with the two features highly correlated (correlation &gt; 0.9). Once again, fit a regression model.</li>
@@ -1804,8 +1826,8 @@ X_{\bullet, \bullet} &amp;=
 <li>Visualize the column spaces in both cases. How does the geometry explain the difference in precision?</li>
 </ol>
 </section>
-<section id="sum-of-squares-decomposition" class="level4" data-number="6.6.4.3">
-<h4 data-number="6.6.4.3" class="anchored" data-anchor-id="sum-of-squares-decomposition"><span class="header-section-number">6.6.4.3</span> Sum of Squares Decomposition</h4>
+<section id="sum-of-squares-decomposition" class="level4" data-number="6.6.4.4">
+<h4 data-number="6.6.4.4" class="anchored" data-anchor-id="sum-of-squares-decomposition"><span class="header-section-number">6.6.4.4</span> Sum of Squares Decomposition</h4>
 <p>For any linear regression:</p>
 <ol type="a">
 <li>Show algebraically that for centered data <span class="math inline">\(\lVert \dot{y}_\bullet \rVert^2 = \lVert \hat{\dot{y}}_\bullet \rVert^2 + \lVert \dot{\epsilon}_\bullet \rVert^2\)</span>.</li>
@@ -1814,8 +1836,8 @@ X_{\bullet, \bullet} &amp;=
 <li>Comment on the following characterization: (total variation) = (explained variation) + (unexplained variation).</li>
 </ol>
 </section>
-<section id="projection-matrix" class="level4" data-number="6.6.4.4">
-<h4 data-number="6.6.4.4" class="anchored" data-anchor-id="projection-matrix"><span class="header-section-number">6.6.4.4</span> Projection Matrix</h4>
+<section id="projection-matrix" class="level4" data-number="6.6.4.5">
+<h4 data-number="6.6.4.5" class="anchored" data-anchor-id="projection-matrix"><span class="header-section-number">6.6.4.5</span> Projection Matrix</h4>
 <p>The projection matrix <span class="math inline">\(P\)</span> is defined by <a href="#eq-lin-reg-projection-mat" class="quarto-xref">Equation&nbsp;<span>6.50</span></a>.</p>
 <ol type="a">
 <li>Show that <span class="math inline">\(P\)</span> is symmetric: <span class="math inline">\(P^\top = P\)</span>.</li>
@@ -1824,8 +1846,8 @@ X_{\bullet, \bullet} &amp;=
 <li>Compute <span class="math inline">\(P\)</span> for a small <span class="math inline">\((n = 5)\)</span> subset of the Galton heights data and verify these properties numerically.</li>
 </ol>
 </section>
-<section id="feature-basis-vectors" class="level4" data-number="6.6.4.5">
-<h4 data-number="6.6.4.5" class="anchored" data-anchor-id="feature-basis-vectors"><span class="header-section-number">6.6.4.5</span> Feature Basis Vectors</h4>
+<section id="feature-basis-vectors" class="level4" data-number="6.6.4.6">
+<h4 data-number="6.6.4.6" class="anchored" data-anchor-id="feature-basis-vectors"><span class="header-section-number">6.6.4.6</span> Feature Basis Vectors</h4>
 <p>Using the Galton heights centered data:</p>
 <ol type="a">
 <li>The regression coefficients <span class="math inline">\((\hat{\beta}_m, \hat{\beta}_f)\)</span> represent coordinates in the non-orthogonal basis defined by the mother and father vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. Express the fitted values <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> in this basis.</li>

@@ -1950,9 +1950,32 @@ Using centered Galton height data with two predictors (mother and father):
 
 ### Advanced
 
+#### Covariance and Inner Product
+
+Consider the pair of $n-$dimensional vectors $(v_\bullet, w_\bullet)$ as a numeric data matrix of dimension $n \times 2$.  Recall the notation $\bar{v}$ for the arithmetic mean of $v_\bullet$, and $\dot{v}_\bullet = v_\bullet - \bar{v} \; 1_\bullet$ for the centered version of $v_\bullet$, so that $\dot{v}_i = v_i - \bar{v}$ for each element $v_i$ of $v_\bullet$.  Now the _sample covariance_ $cov(v_\bullet, w_\bullet)$ is defined as follows:
+
+$$
+\begin{align}
+  cov(v_\bullet, w_\bullet) 
+  &= \frac{1}{n-1} \sum_{i = 1}^n (v_i - \bar{v}) \; (w_i - \bar{w})
+\end{align}
+$$ {#eq-sample-cov-defn}
+
+  (a) Express the sample covariance using inner-product notation.
+  (b) The _sample variance_ is defined as $var(v_\bullet) = cov(v_\bullet, v_\bullet)$.  Express $var(v_\bullet)$ using norm notation.
+  (c) The _sample standard_ deviation is defined as $sd(v_\bullet) = \sqrt{var(v_\bullet)}$.  Express $sd(v_\bullet)$ using norm notation.
+  (d) Use inner-product notation to express the _sample correlation_ $cor(v_\bullet, w_\bullet)$, defined as follows.
+
+$$
+\begin{align}
+  cor(v_\bullet, w_\bullet) 
+  &= \frac{1}{n-1} \sum_{i = 1}^n \frac{v_i - \bar{v}}{sd(v_\bullet)} \; \frac{w_i - \bar{w}}{sd(w_\bullet)}
+\end{align}
+$$ {#eq-sample-cor-defn}
+
 #### Correlation Geometry
 
-When $n-$dimensional feature vectors $v_\bullet, w_\bullet$ are centered $(v_\bullet \mapsto \dot{v}_\bullet)$ and normalized to unit length $(\tilde{v}_\bullet = \dot{v}_\bullet / \Vert \dot{v}_\bullet \rVert)$, show that:
+When $n-$dimensional vectors $v_\bullet, w_\bullet$ are centered $(v_\bullet \mapsto \dot{v}_\bullet)$ and normalized to unit length $(\tilde{v}_\bullet = \dot{v}_\bullet / \Vert \dot{v}_\bullet \rVert)$, show that:
 
 (a) The inner product $\tilde{v}_\bullet^\top \tilde{w}_\bullet$ is equal to the correlation $r$ between features $v_\bullet, w_\bullet$ times $(n - 1)$.
 
