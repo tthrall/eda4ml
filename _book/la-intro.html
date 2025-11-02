@@ -399,7 +399,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">22:04 Sat 1-Nov-2025</p>
+      <p class="date">01:48 Sun 2-Nov-2025</p>
     </div>
   </div>
   
@@ -904,7 +904,7 @@ Table&nbsp;6.4: BLI Component Indicators
 <p>We now turn to a statistical and algebraic treatment of the BLI data matrix of <a href="#tbl-bli-wide" class="quarto-xref">Table&nbsp;<span>6.2</span></a>. Consider the indicator component <code>SW_LIFS</code> (Life Satisfaction) as a response variable, with the remaining 23 indicator components serving as explanatory variables. As with the previous data example, we want to approximate or predict the response variable by a constant <span class="math inline">\(\beta_0\)</span> plus a linear combination of the explantory variables, as follows.</p>
 <p><span id="eq-L-per-C"><span class="math display">\[
 \begin{align}
-  L_\bullet &amp;\approx (1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet}) \times
+  L_\bullet &amp;\approx (1_\bullet, C_{\bullet, 1}, \ldots, C_{\bullet, d}) \times
     \begin{pmatrix}
       \hat{\beta}_0 \\ \hat{\beta}_1 \\ \vdots \\ \hat{\beta}_d
     \end{pmatrix}
@@ -915,12 +915,12 @@ Table&nbsp;6.4: BLI Component Indicators
 \begin{align}
   L_\bullet &amp;= \text{life satisfaction indicator per country} \\
   1_\bullet &amp;= \text{column vector } (1, \ldots, 1) \\
-  C_{k, \bullet} &amp;= k^{th} \text{ indicator component per country} \\
+  C_{\bullet, k} &amp;= k^{th} \text{ indicator component per country} \\
   d &amp;= \text{number of explanatory indicators}
 \end{align}
 \qquad(6.8)\]</span></span></p>
 <p>We now have more explanatory variables than in the previous example, a fact that merits some comment.</p>
-<p>On the one hand, the approach to determining least-squares regression coefficients <span class="math inline">\(\hat{\beta}_0, \ldots, \hat{\beta}_d\)</span> is unchanged. We project the response vector, now <span class="math inline">\(L_\bullet\)</span>, onto the space spanned by the constant vector <span class="math inline">\(1_\bullet\)</span> along with the explanatory variables, that is onto the space spanned by <span class="math inline">\((1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})\)</span>. The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension 23 that passes through a cloud of data points, <span class="math inline">\((C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)\)</span>, in a space of dimension 24.</p>
+<p>On the one hand, the approach to determining least-squares regression coefficients <span class="math inline">\(\hat{\beta}_0, \ldots, \hat{\beta}_d\)</span> is unchanged. We project the response vector, now <span class="math inline">\(L_\bullet\)</span>, onto the space spanned by the constant vector <span class="math inline">\(1_\bullet\)</span> along with the explanatory variables, that is onto the space spanned by <span class="math inline">\((1_\bullet, C_{\bullet, 1}, \ldots, C_{\bullet, d})\)</span>. The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension 23 that passes through a cloud of data points, <span class="math inline">\((C_{\bullet, 1}, \ldots, C_{\bullet, d}, L_\bullet)\)</span>, in a space of dimension 24.</p>
 <p>On the other hand, we are now estimating 24 regression coefficients based on observations from just 42 countries. From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients. From the perspective of numerical linear algebra, the vector of fitted coefficients <span class="math inline">\((\hat{\beta}_0, \ldots, \hat{\beta}_d)\)</span> is less stable (more sensitive to error in the data) than it was in the previous example.</p>
 </section>
 <section id="mnist-images-of-handwritten-digits" class="level3" data-number="6.1.3">
@@ -1020,7 +1020,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 \end{pmatrix}  \\ \\
 &amp;=
 \begin{pmatrix}
-  x_{\bullet, 1} \\
+  X_{1, \bullet} \\
   \vdots \\
   X_{n, \bullet}
 \end{pmatrix}
@@ -1035,13 +1035,13 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
 </section>
 <section id="notation" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="notation"><span class="header-section-number">6.2</span> Notation</h2>
-<p>The preceding section introduced example data sets along with corresponding linear regression models of the following form (the <em>generic linear model</em>).</p>
+<p>The preceding section introduced example data sets along with corresponding linear regression models of the following form (the <em>generic linear model</em>). <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
 <p><span id="eq-generic-lm"><span class="math display">\[
 \begin{align}
   y &amp;= X \; \beta \; + \; \epsilon
 \end{align}
 \qquad(6.19)\]</span></span></p>
-<p>Each of the elements of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> has alternative names, including the following. <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
+<p>Each of the elements of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> has alternative names, including the following. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p>
 <p><span id="eq-generic-lm-terms"><span class="math display">\[
 \begin{align}
   y &amp;= \text{a } \textit{response, target,} \text{ or } \textit{labeling}  \text{ variable} \\
@@ -1062,7 +1062,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   X_{\bullet, \bullet} &amp;= \left ( x_{\bullet, 1}, \ldots, x_{\bullet, d} \right )
 \end{align}
 \qquad(6.22)\]</span></span></p>
-<p>The <span class="math inline">\(n-\)</span>dimensional feature vectors <span class="math inline">\(\{ x_{\bullet, k} \}_{k = 1}^d\)</span> span a subspace, “feature space”, within <span class="math inline">\(n-\)</span>space, denoted <span class="math inline">\(span(x_{\bullet, 1}, \ldots, x_{\bullet, d})\)</span>. Since this is the subspace generated by the columns of matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span>, the subspace is also denoted as <span class="math inline">\(col(X_{\bullet, \bullet})\)</span>. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p>
+<p>The <span class="math inline">\(n-\)</span>dimensional feature vectors <span class="math inline">\(\{ x_{\bullet, k} \}_{k = 1}^d\)</span> span a subspace, “feature space”, within <span class="math inline">\(n-\)</span>space, denoted <span class="math inline">\(span(x_{\bullet, 1}, \ldots, x_{\bullet, d})\)</span>. Since this is the subspace generated by the columns of matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span>, the subspace is also denoted as <span class="math inline">\(col(X_{\bullet, \bullet})\)</span>. <a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
 <p>The mapping <span class="math inline">\(\beta_\bullet \mapsto X_{\bullet, \bullet} \; \beta_\bullet\)</span> sends a vector of coefficients <span class="math inline">\(\beta_\bullet\)</span> to the following linear combination within the feature subspace.</p>
 <p><span id="eq-generic-feature-lin-combo"><span class="math display">\[
 \begin{align}
@@ -1171,7 +1171,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   \delta (m_1, m_3) &amp;\le \delta (m_1, m_2) \; + \; \delta (m_2, m_3)
 \end{align}
 \qquad(6.33)\]</span></span></p>
-<p>Hamming distance and Levenshtein distance are important examples of metrics used in natural language processing (NLP) that are not based on a vector norm. <a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
+<p>Hamming distance and Levenshtein distance are important examples of metrics used in natural language processing (NLP) that are not based on a vector norm. <a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
 </section>
 </section>
 <section id="family-heights" class="level3" data-number="6.3.2">
@@ -1198,7 +1198,7 @@ Figure&nbsp;6.3: Example images of handwritten digits from the MNIST dataset
   \epsilon_\bullet &amp;= \text{residual vector}
 \end{align}
 \qquad(6.35)\]</span></span></p>
-<p>Consider the least-squares estimate <span class="math inline">\(\hat{\beta}_\bullet\)</span> and the consequent predicted height <span class="math inline">\(\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet\)</span> of the son. <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> is based on a random sample of 20 families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the <em>regression plane</em>. <a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
+<p>Consider the least-squares estimate <span class="math inline">\(\hat{\beta}_\bullet\)</span> and the consequent predicted height <span class="math inline">\(\hat{y}_\bullet = X_{_\bullet, _\bullet} \hat{\beta}_\bullet\)</span> of the son. <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> is based on a random sample of 20 families and shows the heights of sons on the vertical axis, along with their vertical displacement (residual) from the predicted value lying on the <em>regression plane</em>. <a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-smf-smpl" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1218,7 +1218,7 @@ Figure&nbsp;6.4: Sampled son heights: residual = observed - predicted
 </section>
 <section id="centering-data-vectors" class="level3" data-number="6.3.3">
 <h3 data-number="6.3.3" class="anchored" data-anchor-id="centering-data-vectors"><span class="header-section-number">6.3.3</span> Centering Data Vectors</h3>
-<p>The regression plane that we glimpse in <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> actually spans all the <span class="math inline">\((m, f)\)</span> combinations that are mathematically possible. If we imagine infinitesimally short parents with <span class="math inline">\((m, f) = (0, 0)\)</span>, the predicted height of their son would be <span class="math inline">\(\hat{\beta}_0\)</span>, which is not zero. That is, the plane does not pass through the origin <span class="math inline">\((0, 0, 0)\)</span> and therefore does not qualify as a subspace of <span class="math inline">\((m, f, s)\)</span> space. <a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a> But the regression plane determines a parallel subspace (that <em>does</em> pass through the origin).</p>
+<p>The regression plane that we glimpse in <a href="#fig-smf-smpl" class="quarto-xref">Figure&nbsp;<span>6.4</span></a> actually spans all the <span class="math inline">\((m, f)\)</span> combinations that are mathematically possible. If we imagine infinitesimally short parents with <span class="math inline">\((m, f) = (0, 0)\)</span>, the predicted height of their son would be <span class="math inline">\(\hat{\beta}_0\)</span>, which is not zero. That is, the plane does not pass through the origin <span class="math inline">\((0, 0, 0)\)</span> and therefore does not qualify as a subspace of <span class="math inline">\((m, f, s)\)</span> space. <a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a> But the regression plane determines a parallel subspace (that <em>does</em> pass through the origin).</p>
 <p>The concept of a subspace is central to linear algebra. Therefore determining the subspace parallel to the regression plane will enable us to apply linear algebra methods to better understand linear regression.</p>
 <p>One way to generate this subspace is to center each of the <span class="math inline">\((m_i, f_i, s_i)\)</span> data values, that is, to replace data value <span class="math inline">\(v_i\)</span> with its centered version <span class="math inline">\(\dot{v}_i = v_i - \bar{v}\)</span>, where <span class="math inline">\(\bar{v}\)</span> denotes the average value (arithmetic mean) of vector <span class="math inline">\(v_\bullet\)</span>.</p>
 <p>In vector-matrix notation we have</p>
@@ -1328,7 +1328,7 @@ Figure&nbsp;6.5: Centered family heights
 </div>
 </div>
 <p>The advantage of centering the family heights data is that <a href="#fig-row-smf-smpl-ctr" class="quarto-xref">Figure&nbsp;<span>6.5</span></a> above represents all the dimensions of the centered linear model: the vector of responses <span class="math inline">\(\dot{s}_\bullet\)</span> along with the feature vectors <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. The disadvantage is that we have replaced heights with deviations from average heights, and those average heights can no longer be discerned from the scatter diagram.</p>
-<p>On the other hand, prior to data-centering our feature matrix included the constant vector <span class="math inline">\(1_\bullet\)</span> (a vector neither interesting nor visible in our scatter diagrams) so that the model could include a constant coefficient <span class="math inline">\(\beta_0\)</span> that accounted for the distinct average heights of (mother, father, son).</p>
+<p>On the other hand, prior to data-centering our feature matrix included the constant vector <span class="math inline">\(1_\bullet\)</span> (a vector neither interesting nor visible in our scatter diagrams) in order for the model to include a constant coefficient <span class="math inline">\(\beta_0\)</span> that accounted for the distinct average heights of (mother, father, son).</p>
 <p>These are two representations of essentially the same linear model, as can be seen by reconstructing the original variables from their centered versions:</p>
 <p><span id="eq-sfm-lm-ctr-3"><span class="math display">\[
 \begin{align}
@@ -1567,7 +1567,7 @@ Figure&nbsp;6.6: Centered heights: s-vector (sons) projected to to m-axis (mothe
   &amp;\ne 0
 \end{align}
 \qquad(6.61)\]</span></span></p>
-<p>Instead we have the following non-zero correlation coefficient, denoted here as <span class="math inline">\(r_{m, s}\)</span>. <a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
+<p>Instead we have the following non-zero correlation coefficient, denoted here as <span class="math inline">\(r_{m, s}\)</span>. <a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p>
 <p><span id="eq-m-s-cor"><span class="math display">\[
 \begin{align}
   r_{m, s} &amp;= \left ( \frac{\dot{m}_\bullet}{\lVert \dot{m}_\bullet \rVert} \right )^\top \;
@@ -1769,7 +1769,7 @@ X_{\bullet, \bullet} &amp;=
 <h3 data-number="6.6.3" class="anchored" data-anchor-id="programming"><span class="header-section-number">6.6.3</span> Programming</h3>
 <section id="centering-heights" class="level4" data-number="6.6.3.1">
 <h4 data-number="6.6.3.1" class="anchored" data-anchor-id="centering-heights"><span class="header-section-number">6.6.3.1</span> Centering Heights</h4>
-<p>Using the Galton family heights data (<code>HistData::Galton</code>):</p>
+<p>Using the Galton family heights data (<code>HistData::GaltonFamilies</code>):</p>
 <ol type="a">
 <li>Center the mother, father, and son height vectors by subtracting their means.</li>
 <li>Fit a linear model predicting centered son height from centered mother and father heights (without an intercept term).</li>
@@ -1855,12 +1855,13 @@ LeCun, Yann, Corinna Cortes, and Christopher J. C. Burges. 2005. <span>“The MN
 <li id="fn6"><p>The conversion of a matrix of pixels to a vector of pixels is known as raster-to-vector (R2V) conversion, usually in row-major format, whereby the elements of the vector are taken from the top row and then from each succeeding row. See <span class="citation" data-cites="wiki_raster"><span>“Raster Graphics | Wikipedia”</span> (<a href="references.html#ref-wiki_raster" role="doc-biblioref">2025</a>)</span>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn7"><p>See <span class="citation" data-cites="wiki_one-hot"><span>“One-Hot | Wikipedia”</span> (<a href="references.html#ref-wiki_one-hot" role="doc-biblioref">2025</a>)</span> and <span class="citation" data-cites="wiki_categorical_variable"><span>“Categorical Variable | Wikipedia”</span> (<a href="references.html#ref-wiki_categorical_variable" role="doc-biblioref">2025</a>)</span>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn8"><p>The inner product of vectors <span class="math inline">\(x, y \in \mathcal{V}\)</span> has alternative notations, including <span class="math inline">\(x \boldsymbol\cdot y\)</span>, <span class="math inline">\(\left &lt; x, y \right &gt;\)</span>, and <span class="math inline">\(x^\top y\)</span>.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn9"><p>Matrix <span class="math inline">\(X\)</span> on the right side of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> is called a <em>feature matrix</em> that may contain original data columns (other than the response or labeling variable) and may also contain columns that are functions of the data or of other information. A data matrix is model-agnostic, whereas a feature matrix is constructed to support a model of some form.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn10"><p>There are various notations for the subspace spanned by the columns of matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span> including <span class="math inline">\(\mathcal{C}(X_{\bullet, \bullet})\)</span>, <span class="math inline">\(\mathcal{Im}(X_{\bullet, \bullet})\)</span> (for the <em>image</em> of <span class="math inline">\(X_{\bullet, \bullet}\)</span>), and <span class="math inline">\(\mathcal{R}(X_{\bullet, \bullet})\)</span> (for the <em>range</em> of <span class="math inline">\(X_{\bullet, \bullet}\)</span>).<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn11"><p>See <span class="citation" data-cites="wiki_Hamming_distance"><span>“Hamming Distance | Wikipedia”</span> (<a href="references.html#ref-wiki_Hamming_distance" role="doc-biblioref">2025</a>)</span> and <span class="citation" data-cites="wiki_Levenshtein_distance"><span>“Levenshtein Distance | Wikipedia”</span> (<a href="references.html#ref-wiki_Levenshtein_distance" role="doc-biblioref">2025</a>)</span>.<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn12"><p>The residual son’s height is the error term in the regression formula. In the figure, residuals are color-coded according to their sign: black if positive and red otherwise.<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn13"><p>The regression plane qualifies as a linear manifold, mathematically speaking.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn14"><p>The cited value of the correlation coefficient <span class="math inline">\(r_{m, s}\)</span> pertains to the random sample of size 20 created to facilitate a detailed view of regression residuals. Among all 179 families whose oldest child was a son, we have <span class="math inline">\(r_{m, s} \approx 0.3\)</span>.<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>We assume in this chapter that feature matrix <span class="math inline">\(X\)</span> has only numeric columns, possibly as the result of selecting from and transforming a larger collection of numeric and non-numeric features.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p>Matrix <span class="math inline">\(X\)</span> on the right side of <a href="#eq-generic-lm" class="quarto-xref">Equation&nbsp;<span>6.19</span></a> is called a <em>feature matrix</em> that may contain original data columns (other than the response or labeling variable) and may also contain columns that are functions of the data or of other information. A data matrix is model-agnostic, whereas a feature matrix is constructed to support a model of some form.<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn11"><p>There are various notations for the subspace spanned by the columns of matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span> including <span class="math inline">\(\mathcal{C}(X_{\bullet, \bullet})\)</span>, <span class="math inline">\(\mathcal{Im}(X_{\bullet, \bullet})\)</span> (for the <em>image</em> of <span class="math inline">\(X_{\bullet, \bullet}\)</span>), and <span class="math inline">\(\mathcal{R}(X_{\bullet, \bullet})\)</span> (for the <em>range</em> of <span class="math inline">\(X_{\bullet, \bullet}\)</span>).<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn12"><p>See <span class="citation" data-cites="wiki_Hamming_distance"><span>“Hamming Distance | Wikipedia”</span> (<a href="references.html#ref-wiki_Hamming_distance" role="doc-biblioref">2025</a>)</span> and <span class="citation" data-cites="wiki_Levenshtein_distance"><span>“Levenshtein Distance | Wikipedia”</span> (<a href="references.html#ref-wiki_Levenshtein_distance" role="doc-biblioref">2025</a>)</span>.<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn13"><p>The residual son’s height is the error term in the regression formula. In the figure, residuals are color-coded according to their sign: black if positive and red otherwise.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn14"><p>The regression plane qualifies as a linear manifold, mathematically speaking.<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn15"><p>The cited value of the correlation coefficient <span class="math inline">\(r_{m, s}\)</span> pertains to the random sample of size 20 created to facilitate a detailed view of regression residuals. Among all 179 families whose oldest child was a son, we have <span class="math inline">\(r_{m, s} \approx 0.3\)</span>.<a href="#fnref15" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

@@ -293,7 +293,7 @@ We now turn to a statistical and algebraic treatment of the BLI data matrix of @
 
 $$
 \begin{align} 
-  L_\bullet &\approx (1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet}) \times 
+  L_\bullet &\approx (1_\bullet, C_{\bullet, 1}, \ldots, C_{\bullet, d}) \times 
     \begin{pmatrix} 
       \hat{\beta}_0 \\ \hat{\beta}_1 \\ \vdots \\ \hat{\beta}_d
     \end{pmatrix} 
@@ -306,14 +306,14 @@ $$
 \begin{align} 
   L_\bullet &= \text{life satisfaction indicator per country} \\ 
   1_\bullet &= \text{column vector } (1, \ldots, 1) \\ 
-  C_{k, \bullet} &= k^{th} \text{ indicator component per country} \\ 
+  C_{\bullet, k} &= k^{th} \text{ indicator component per country} \\ 
   d &= \text{number of explanatory indicators}
 \end{align} 
 $$ {#eq-L-per-C-2}
 
 We now have more explanatory variables than in the previous example, a fact that merits some comment.
 
-On the one hand, the approach to determining least-squares regression coefficients $\hat{\beta}_0, \ldots, \hat{\beta}_d$ is unchanged.  We project the response vector, now $L_\bullet$, onto the space spanned by the constant vector $1_\bullet$ along with the explanatory variables, that is onto the space spanned by $(1_\bullet, C_{1, \bullet}, \ldots, C_{d, \bullet})$.  The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension `r n_bli_comps - 1L` that passes through a cloud of data points, $(C_{1, \bullet}, \ldots, C_{d, \bullet}, L_\bullet)$, in a space of dimension `r n_bli_comps`.
+On the one hand, the approach to determining least-squares regression coefficients $\hat{\beta}_0, \ldots, \hat{\beta}_d$ is unchanged.  We project the response vector, now $L_\bullet$, onto the space spanned by the constant vector $1_\bullet$ along with the explanatory variables, that is onto the space spanned by $(1_\bullet, C_{\bullet, 1}, \ldots, C_{\bullet, d})$.  The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension `r n_bli_comps - 1L` that passes through a cloud of data points, $(C_{\bullet, 1}, \ldots, C_{\bullet, d}, L_\bullet)$, in a space of dimension `r n_bli_comps`.
 
 On the other hand, we are now estimating `r n_bli_comps` regression coefficients based on observations from just `r n_bli_loc` countries.  From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients.  From the perspective of numerical linear algebra, the vector of fitted coefficients $(\hat{\beta}_0, \ldots, \hat{\beta}_d)$ is less stable (more sensitive to error in the data) than it was in the previous example.
 
@@ -470,7 +470,7 @@ $$
 \end{pmatrix}  \\ \\ 
 &= 
 \begin{pmatrix} 
-  x_{\bullet, 1} \\ 
+  X_{1, \bullet} \\ 
   \vdots \\
   X_{n, \bullet}
 \end{pmatrix}
@@ -484,7 +484,9 @@ The matrix on the left side of @eq-log-ratio-per-image-10 has dimensions $n \tim
 
 ## Notation
 
-The preceding section introduced example data sets along with corresponding linear regression models of the following form (the _generic linear model_).
+The preceding section introduced example data sets along with corresponding linear regression models of the following form (the _generic linear model_). [^numeric-feature-matrix]
+
+[^numeric-feature-matrix]: We assume in this chapter that feature matrix $X$ has only numeric columns, possibly as the result of selecting from and transforming a larger collection of numeric and non-numeric features.
 
 $$
 \begin{align} 
@@ -976,7 +978,7 @@ for(i in 1:nrow(smf_smpl_ctr)) {
 
 The advantage of centering the family heights data is that @fig-row-smf-smpl-ctr above represents all the dimensions of the centered linear model: the vector of responses $\dot{s}_\bullet$ along with the feature vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$.  The disadvantage is that we have replaced heights with deviations from average heights, and those average heights can no longer be discerned from the scatter diagram.
 
-On the other hand, prior to data-centering our feature matrix included the constant vector $1_\bullet$ (a vector neither interesting nor visible in our scatter diagrams) so that the model could include a constant coefficient $\beta_0$ that accounted for the distinct average heights of (mother, father, son).
+On the other hand, prior to data-centering our feature matrix included the constant vector $1_\bullet$ (a vector neither interesting nor visible in our scatter diagrams) in order for the model to include a constant coefficient $\beta_0$ that accounted for the distinct average heights of (mother, father, son).
 
 These are two representations of essentially the same linear model, as can be seen by reconstructing the original variables from their centered versions: 
 
@@ -1934,7 +1936,7 @@ $$ {#eq-x-2D-projection}
 
 #### Centering Heights
 
-Using the Galton family heights data (`HistData::Galton`):
+Using the Galton family heights data (`HistData::GaltonFamilies`):
 
   (a) Center the mother, father, and son height vectors by subtracting their means.
   (b) Fit a linear model predicting centered son height from centered mother and father heights (without an intercept term).
