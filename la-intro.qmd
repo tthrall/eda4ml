@@ -16,24 +16,25 @@ knitr::opts_chunk$set(
 #| label: CRAN-libraries
 
 library(assertthat)
-library(dslabs)
-library(GGally)
-library(ggimg)
+# library(dslabs)
+# library(GGally)
+# library(ggimg)
 library(HistData)
 library(here)
 library(keras)
-library(latex2exp)
+library(knitr)
+# library(latex2exp)
 library(OECD)
-library(patchwork)
-library(plotly)
-library(rgl)
-library(R.utils)
+# library(patchwork)
+# library(plotly)
+# library(rgl)
+# library(R.utils)
 library(reticulate)
 library(scatterplot3d)
 library(tensorflow)
 library(tidyverse)
-library(tinytex)
-library(UsingR)
+# library(tinytex)
+# library(UsingR)
 ```
 
 ```{r}
@@ -1977,11 +1978,9 @@ $$ {#eq-sample-cor-defn}
 
 When $n-$dimensional vectors $v_\bullet, w_\bullet$ are centered $(v_\bullet \mapsto \dot{v}_\bullet)$ and normalized to unit length $(\tilde{v}_\bullet = \dot{v}_\bullet / \Vert \dot{v}_\bullet \rVert)$, show that:
 
-(a) The inner product $\tilde{v}_\bullet^\top \tilde{w}_\bullet$ is equal to the correlation $r$ between features $v_\bullet, w_\bullet$ times $(n - 1)$.
-
-(b) The angle $\theta$ between $v_\bullet, w_\bullet$ satisfies $\cos(\theta) = r$.
-
-(c) Apply this to the Galton height data: compute the angles between mother, father, and son height vectors.
+  (a) The inner product $\tilde{v}_\bullet^\top \tilde{w}_\bullet$ is equal to the correlation $r$ between features $v_\bullet, w_\bullet$ times $(n - 1)$.
+  (b) The angle $\theta$ between $v_\bullet, w_\bullet$ satisfies $\cos(\theta) = r$.
+  (c) Apply this to the Galton height data: compute the angles between mother, father, and son height vectors.
 
 #### Correlated Features
 

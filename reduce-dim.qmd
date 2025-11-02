@@ -1,2 +1,48 @@
-# Dimension Reduction
+# Dimension Reduction {#sec-reduce-dim}
 
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+# library(dslabs)
+# library(GGally)
+# library(ggimg)
+library(HistData)
+library(here)
+library(keras)
+library(knitr)
+# library(latex2exp)
+library(OECD)
+# library(patchwork)
+# library(plotly)
+# library(rgl)
+# library(R.utils)
+library(reticulate)
+library(scatterplot3d)
+library(tensorflow)
+library(tidyverse)
+# library(tinytex)
+# library(UsingR)
+```
+
+```{r}
+#| label: local-source
+
+# source(here("code", "galton_ht_data.R"))
+# source(here("code", "mnist_file_mgmt.R"))
+# source(here("code", "oecd_bli.R"))
+# source(here("code", "pgram_grid.R"))
+# source(here("code", "z_score.R"))
+```
