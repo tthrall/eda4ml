@@ -1865,27 +1865,13 @@ Explain in your own words why the fitted values $\hat{y}_\bullet$ must lie in $c
 
 #### Centering Data
 
-Explain why centering the feature vectors (subtracting the mean from each column of $X_{\bullet, \bullet}$ eliminates the need for an intercept term in linear regression. What happens geometrically when data is centered?
+Explain why centering the feature vectors (subtracting the mean from each column of $X_{\bullet, \bullet}$) eliminates the need for an intercept term in linear regression. What happens geometrically when data is centered?
 
 ### Calculations
 
 #### 1D Projection
 
-Let: 
-
-$$
-\begin{align}
-y_\bullet &= 
-  \begin{pmatrix}
-    3 \\ 1 \\ 2
-  \end{pmatrix} \\ \\ 
-  & \text{ and } \\ \\ 
-X_{\bullet, \bullet} &= (x_{\bullet, 1}) = 
-  \begin{pmatrix}
-    1 \\ 2 \\ 2
-  \end{pmatrix}
-\end{align}
-$$ {#eq-x-1D-projection}
+Let: $y_\bullet^\top = (3, 1, 2)$ and $X_{\bullet, \bullet}^\top = (x_{\bullet, 1})^\top = (1, 2, 2)$.
 
   (a) Find the orthogonal projection $\hat{y}_\bullet$ of $y_\bullet$ onto feature space $col(X_{\bullet, \bullet})$.
 
@@ -1893,7 +1879,7 @@ $$ {#eq-x-1D-projection}
 
   (c) Verify that the residual vector is orthogonal to $col(X_{\bullet, \bullet})$, that is, that $\epsilon_\bullet \perp x_{\bullet, 1}$, by computing their inner product.
 
-  (d) Sketch vectors $(y_\bullet, \hat{y}_\bullet, \epsilon_\bullet)$ in 3D space.
+  (d) Sketch vectors $(y_\bullet, x_{\bullet, 1}, \hat{y}_\bullet, \epsilon_\bullet)$ in 3D space.
 
 #### Distance Measures
 
@@ -1954,19 +1940,56 @@ For the simple regression of son's height on father's height in the Galton data:
 
 #### Visualizing Feature Space
 
-#### Better Life Index
+Using centered Galton height data with two predictors (mother and father):
 
-#### MNIST Projection
+(a) Create a 3D plot showing the mother, father, and son centered height vectors, $(\dot{m}_\bullet, \dot{f}_\bullet, \dot{s}_\bullet)$.
+
+(b) Add the vector of fitted values $\hat{\dot{s}}_\bullet$.
+
+(c) Visually verify that the vector of fitted values lies in the plane spanned by the mother and father vectors.
 
 ### Advanced
 
 #### Correlation Geometry
 
+When $n-$dimensional feature vectors $v_\bullet, w_\bullet$ are centered $(v_\bullet \mapsto \dot{v}_\bullet)$ and normalized to unit length $(\tilde{v}_\bullet = \dot{v}_\bullet / \Vert \dot{v}_\bullet \rVert)$, show that:
+
+(a) The inner product $\tilde{v}_\bullet^\top \tilde{w}_\bullet$ is equal to the correlation $r$ between features $v_\bullet, w_\bullet$ times $(n - 1)$.
+
+(b) The angle $\theta$ between $v_\bullet, w_\bullet$ satisfies $\cos(\theta) = r$.
+
+(c) Apply this to the Galton height data: compute the angles between mother, father, and son height vectors.
+
 #### Correlated Features
+
+  (a) Generate synthetic data $(y_\bullet, x_{\bullet, 1}, x_{\bullet, 2})$ such that the two features $(x_{\bullet, 1}, x_{\bullet, 2})$ are orthogonal (correlation = 0).  Then fit a regression model.
+  (b) Now generate similar data, but this time with the two features highly correlated (correlation > 0.9).  Once again, fit a regression model.
+  (c) Compare the standard errors of the coefficient estimates. Why are they different?
+  (d) Visualize the column spaces in both cases. How does the geometry explain the difference in precision?
 
 #### Sum of Squares Decomposition
 
+For any linear regression:
+
+  (a) Show algebraically that for centered data $\lVert \dot{y}_\bullet \rVert^2 = \lVert \hat{\dot{y}}_\bullet \rVert^2 + \lVert \dot{\epsilon}_\bullet \rVert^2$.
+  (b) Explain this geometrically using the Pythagorean theorem in $n-$dimensional space.
+  (c) Verify this numerically with the Galton heights data.
+  (d) Comment on the following characterization: (total variation) = (explained variation) + (unexplained variation).
+
 #### Projection Matrix
+
+The projection matrix $P$ is defined by @eq-lin-reg-projection-mat.
+
+  (a) Show that $P$ is symmetric: $P^\top = P$.
+  (b) Show that $P$ is idempotent: $P^2 = P$.
+  (c) What does the idempotent property mean geometrically?
+  (d) Compute $P$ for a small $(n = 5)$ subset of the Galton heights data and verify these properties numerically.
 
 #### Feature Basis Vectors
 
+Using the Galton heights centered data:
+
+  (a) The regression coefficients $(\hat{\beta}_m, \hat{\beta}_f)$ represent coordinates in the non-orthogonal basis defined by the mother and father vectors $(\dot{m}_\bullet, \dot{f}_\bullet)$. Express the fitted values $\hat{\dot{s}}_\bullet$ in this basis.
+  (b) Transform to an orthogonal basis using the Gram-Schmidt process.
+  (c) Express $\hat{\dot{s}}_\bullet$ in the orthogonal basis.
+  (d) Verify that the projection is the same in both coordinate systems.
