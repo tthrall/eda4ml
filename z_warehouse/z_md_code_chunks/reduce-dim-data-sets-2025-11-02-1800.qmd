@@ -50,22 +50,35 @@ library(tidyverse)
 # source(here("code", "z_score.R"))
 ```
 
-This chapter addresses the problem of finding and visualizing structure in high-dimensional data.  We begin the discussion with example data sets.
+```{r}
+#| label: data-sets
 
-## Data Examples
-
-### US Arrests
-
-
-
-### Dry Beans
-
-
-
-### Wine Quality
-
-
-
-### Cancer Genomics (NCI 60)
-
+# run only once
+run_code <- FALSE
+if (run_code) {
+  # 1. Dry beans
+  install.packages("beans")
+  library(beans)
+  data(beans)
+  ?beans  # Documentation
+  
+  # 2. Wine quality
+  # Option A: From regclass package
+  install.packages("regclass")
+  library(regclass)
+  data(WINE)
+  
+  # Option B: Direct download from UCI
+  wine_url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+  wine <- read.csv(wine_url, sep=";")
+  
+  # 3. USArrests (already in R)
+  data(USArrests)
+  
+  # 4. NCI60 (optional advanced example)
+  install.packages("ISLR")
+  library(ISLR)
+  data(NCI60)
+}
+```
 

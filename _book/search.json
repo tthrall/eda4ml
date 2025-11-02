@@ -1488,5 +1488,27 @@
       "Linear Algebra",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Linear Regression</span>"
     ]
+  },
+  {
+    "objectID": "reduce-dim.html",
+    "href": "reduce-dim.html",
+    "title": "7  Dimension Reduction",
+    "section": "",
+    "text": "7.1 Data Examples\nThis chapter addresses the problem of finding and visualizing structure in high-dimensional data. We begin the discussion with example data sets.",
+    "crumbs": [
+      "Linear Algebra",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Dimension Reduction</span>"
+    ]
+  },
+  {
+    "objectID": "reduce-dim.html#data-examples",
+    "href": "reduce-dim.html#data-examples",
+    "title": "7  Dimension Reduction",
+    "section": "",
+    "text": "7.1.1 US Arrests\n\n\n7.1.2 Dry Beans\n\n\n7.1.3 Wine Quality\n\n\n7.1.4 Cancer Genomics (NCI 60)",
+    "crumbs": [
+      "Linear Algebra",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Dimension Reduction</span>"
+    ]
   }
 ]
