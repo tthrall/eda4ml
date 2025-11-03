@@ -160,7 +160,7 @@ list_state_stats <- function() {
     
     "Population", 1975L, "1000", "estimated population", 
     "Income",     1974L, "USD",  "average income", 
-    "Illiteracy", 1970L, "PCT",  "percent of population", 
+    "Illiteracy", 1970L, "PCT",  "illiterate percent of population", 
     "Life Exp",   1969L, "YR",   "life expetency in years", 
     "Murder_76",  1976L, "100K", "murder rate per 100K population", 
     "HS Grad",    1970L, "PCT",  "percent high-school graduates", 

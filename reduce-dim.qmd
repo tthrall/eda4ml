@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 library(assertthat)
 library(beans)
 # library(dslabs)
-# library(GGally)
+library(GGally)
 # library(ggimg)
 # library(HistData)
 library(here)
@@ -28,7 +28,7 @@ library(knitr)
 # library(latex2exp)
 # library(OECD)
 # library(patchwork)
-# library(plotly)
+library(plotly)
 library(regclass)
 # library(rgl)
 # library(R.utils)
@@ -47,6 +47,7 @@ library(tidyverse)
 # source(here("code", "mnist_file_mgmt.R"))
 # source(here("code", "oecd_bli.R"))
 # source(here("code", "pgram_grid.R"))
+source(here("code", "vc_per_state.R"))
 # source(here("code", "z_score.R"))
 ```
 
@@ -56,7 +57,117 @@ This chapter addresses the problem of finding and visualizing structure in high-
 
 ### US Arrests
 
+```{r}
+#| label: stats-per-us-state-1970s
 
+state_stats_lst <- list_state_stats()
+
+# (x, y) = (lat, long)
+st_ctr_tbl <- 
+  state_stats_lst$ st_ctr_tbl
+
+# 8 state stats: Population, ..., Area
+st_77_tbl <- 
+  state_stats_lst$ st_77_tbl
+
+# UrbanPop + 3 violent crimes: Assault, Murder, Rape
+arrests_wide <- 
+  state_stats_lst$ arrests_wide
+arrests_long <- 
+  state_stats_lst$ arrests_long
+
+# compilation of the above
+st_wide <- 
+  state_stats_lst$ st_wide
+st_wide_dscr <- 
+  state_stats_lst$ st_wide_dscr
+```
+
+Data analysis often begins with an exploration, using tables and figures to learn more about the data before formulating specific questions or hypotheses.  The exploration becomes more difficult as the dimensions of the data set increase.  Here's an example.
+
+@McNeil_1977 reviewed the relationship among violent crime statistics, per US state, and the percent of the population living in urban areas.  The table below includes these variables (at the end) along with other state-level statistics from the same period (the 1970s).  The data are available from the core `R` package `datasets`.
+
+```{r}
+#| label: tbl-stats-per-us-state-1970s
+
+st_wide_dscr |> 
+  dplyr::rename(variable = var, description = dscr) |> 
+  knitr::kable(
+    caption = "Statistics per US State (1970s)")
+```
+
+@fig-arrests-violin below shows the distribution across the 50 states of each type of violent crime.  Rates are calcuated as arrests per 100,000 population.  The figure shows these rates on a $\log_{10}$ scale, since assault arrests are many times more common than rape or murder arrests.
+
+```{r}
+#| label: fig-arrests-violin
+#| fig-cap: "Violent Crime Rates per US State (1973)"
+
+g_arrests_violin <- arrests_long |> 
+  dplyr::filter(var != "UrbanPop") |> 
+  dplyr::mutate(var = forcats::as_factor(var)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = var, y = rate, color = var, fill = var
+  )) + 
+  geom_violin(show.legend = FALSE) + 
+  scale_y_log10() + 
+  labs(
+    title = "Violent Crime Rates per US State (1973)", 
+    subtitle = "arrests per 100K population"
+  )
+
+g_arrests_violin
+
+```
+
+The figure above gives a view of three data variables, that is, three columns of the data matrix.  @fig-arrests-3d-scatter below, a 3D scatterplot, gives a complementary view of each of the 50 states as a point whose coordinates are the respective arrest rates for assault, rape, and murder, with each point colored by the value of `UrbanPop` the percentage of the state's population living in an urban area.  Since individual states correspond to the rows of the data matrix, this figure is a row-based perspective on the data matrix.
+
+```{r}
+#| label: fig-arrests-3d-scatter
+#| fig-cap: "Violent Crime Rates in each US State (1973)"
+
+g_arrests_3d_scatter <- arrests_wide |> 
+  plot_ly(
+    x = ~Assault, 
+    y = ~Rape, 
+    z = ~Murder,
+    type = "scatter3d",
+    mode = "markers",
+    text = ~arrests_wide$ st_abb,  # State abbreviation for hover
+    marker = list(
+      size = 5,
+      color = ~UrbanPop,  # Optional: color by UrbanPop
+      colorscale = "Viridis",
+      showscale = TRUE,
+      colorbar = list(title = "UrbanPop"))) |> 
+  layout(scene = list(
+    xaxis = list(title = "Assault"),
+    yaxis = list(title = "Rape"),
+    zaxis = list(title = "Murder")
+  ),
+  title = "Violent Crime Rates in each US State (1973)")
+
+g_arrests_3d_scatter
+
+```
+
+@fig-arrests-2d-scatter-matrix below exemplifies a matrix of 2D scatter plots, a display method that accommodates more than 3 variables (but not many more, practically speaking). 
+
+```{r}
+#| label: fig-arrests-2d-scatter-matrix
+#| fig-cap: "Arrests Variables: Relationships and Correlations"
+
+g_arrests_2d_scatter_matrix <- arrests_wide |> 
+  GGally::ggpairs(
+    columns = c("Assault", "Rape", "Murder", "UrbanPop"),
+    upper = list(continuous = wrap("cor", size = 3)),
+    lower = list(continuous = wrap("points", alpha = 0.5, size = 0.8)),
+    title = "Arrests Variables: Relationships and Correlations")
+
+g_arrests_2d_scatter_matrix
+
+```
+
+This figure provides both column-based and row-based views of the data matrix, with the scatter diagrams for each pair of variables providing the row-based perspective.
 
 ### Dry Beans
 
