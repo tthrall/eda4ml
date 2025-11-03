@@ -35,6 +35,7 @@ library(regclass)
 # library(reticulate)
 # library(scatterplot3d)
 # library(tensorflow)
+library(tidymodels)
 library(tidyverse)
 # library(tinytex)
 # library(UsingR)
@@ -171,7 +172,11 @@ This figure provides both column-based and row-based views of the data matrix, w
 
 ### Dry Beans
 
+@Koklu_Ozkan_2020_multiclass published a data set of visual characteristics of dried beans ... 
 
+  > ... in order to obtain uniform seed classification. For the classification model, images of 13,611 grains of 7 different registered dry beans were taken with a high-resolution camera.
+
+The data are available `R` package `beans`, containing a data matrix (tibble, more precisely) of dimension $13611 \times 17$.  The last column of the data matrix is response variable `class` that assigns one of seven types of bean to each bean-image.  The remaining 16 columns of the data matrix are morphological measurements (of shape and size).  @Kuhn_Silge_tmwr train different classification models on these data, splitting the observations into three non-overlapping sets: training ($n = 10206$, nearly 75%), testing $(n = 1703)$, and validation $(n = 1702)$.
 
 ### Wine Quality
 
