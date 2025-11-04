@@ -149,14 +149,14 @@ list_state_stats <- function() {
   st_wide_dscr <- tibble::tribble(
     ~var, ~year, ~unit, ~dscr, 
     
-    "st_abb", 1963L, "chr",      "2-letter abbreviation of st_nm", 
+    "st_abb", 1963L, "chr",      "2-letter abbreviation of state name", 
     "st_nm",  1959L, "chr",      "state name", 
     
     "x",      1959L, "lat-long", "longitude of state center", 
     "y",      1959L, "lat-long", "latitude of state center", 
     
-    "division", 1959L, "fct",    "9-level geo partition", 
-    "region  ", 1959L, "fct",    "4-level geo partition", 
+    "division", 1959L, "fct",    "geo grouping into 9 groups", 
+    "region  ", 1959L, "fct",    "geo grouping into 4 groups", 
     
     "Population", 1975L, "1000", "estimated population", 
     "Income",     1974L, "USD",  "average income", 
@@ -167,7 +167,7 @@ list_state_stats <- function() {
     "Frost",      1960L, "DAY",  "avg number of days below freezing", 
     "Area",       1959L, "mi^2", "land area in square miles", 
     
-    "Assualt",   1973L, "100K",  "assault arrests per 100K population", 
+    "Assault",   1973L, "100K",  "assault arrests per 100K population", 
     "Rape",      1973L, "100K",  "rape arrests per 100K population", 
     "Murder",    1973L, "100K",  "murder arrests per 100K population", 
     "UrbanPop",  1973L, "PCT",   "percent of population in urban areas"
