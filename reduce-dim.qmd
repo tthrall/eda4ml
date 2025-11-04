@@ -90,7 +90,7 @@ st_wide_dscr <-
 
 Data analysis often begins with an exploration, using tables and figures to learn more about the data before formulating specific questions or hypotheses.  The exploration becomes more difficult as the dimensions of the data set increase.  Here's an example.
 
-@McNeil_1977 reviewed the relationship among violent crime statistics, per US state, and the percent of the population living in urban areas, variables described in @tbl-arrests-per-us-state-1973 below.
+@McNeil_1977 reviewed the relationship among violent crime statistics per US state and the percent of the population living in urban areas, variables described in @tbl-arrests-per-us-state-1973 below.  With just four variables, we can visualize the full data structure (e.g., using a scatter plot matrix as shown in @fig-arrests-2d-scatter-matrix).  However, the initial exploratory data analysis reveals strong correlations among the three crime variables (Murder, Assault, Rape), suggesting that the data may effectively lie in fewer than four dimensions.  Dimension reduction techniques can help us identify these underlying patterns, enabling us to (1) visualize state-level crime patterns in 2D or 3D, (2) identify states having similar crime profiles, and (3) understand whether crime variation is driven by one dominant factor or multiple independent factors.
 
 @tbl-stats-per-us-state-1970s below describes related state-level statistics from the same period (the 1970s).  The data from both tables are available from the core `R` package `datasets`.
 
