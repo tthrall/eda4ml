@@ -300,11 +300,13 @@ wq_n_white <- wine_quality |>
   dplyr::filter(color == "white") |> nrow()
 ```
 
-@Cortez_2009_ModelingWP model wine preference as a function of `r wq_ncol - 1L` physicochemical properties of wine, which are listed in @tbl-wq-var-dscr.  The `quality` score is the median of three expert tastings.  The data consist of `r wq_nrow` wines, `r wq_n_red` red and `r wq_n_white` white. [^wq-uci-repo] [^red-v-white-wine]
+@Cortez_2009_ModelingWP model wine preference as a function of `r wq_ncol - 1L` physicochemical properties of wine, which are listed in @tbl-wq-var-dscr. The `quality` score is the median of three expert tastings. The data consist of `r wq_nrow` wines, `r wq_n_red` red and `r wq_n_white` white. [^wq-uci-repo] [^red-v-white-wine]
 
 [^wq-uci-repo]: The authors contributed the data (now archived) to the UC Irvine Machine Learning Repository.  See @wine_quality_186.
 
 [^red-v-white-wine]: The wines in this study are all from the Minho (northwest) region of Portugal.  Medium in alcohol, it is appreciated for its freshness (especially in summer). At the time of writing the authors report that Minho wine accounts for 15% of total Portuguese wine production, of which some 10% is exported, mostly white wine.
+
+The modeling goal is to understand the chemical properties influencing wine quality ratings and to predict quality from objective laboratory measurements.  Apart from wine color (red or white), the remaining `r wq_ncol - 2L` physicochemical features include related measurements, e.g., pH, fixed acidity, and citric acid are chemically interrelated, as are free and total sulfur dioxide.  Dimension reduction can help us: (1) visualize the chemical space that wines occupy in 2D or 3D, (2) identify whether wine quality varies along a small number of chemical gradients (e.g., acidity vs. alcohol content), (3) understand the chemical differences between red and white wines, and (4) determine whether a smaller set of derived features might predict quality as well as the full set of measurements.
 
 ```{r}
 #| label: tbl-wq-var-dscr
