@@ -194,9 +194,9 @@ This figure provides both column-based and row-based views of the data matrix, w
 
 ### Dry Beans
 
-@Koklu_Ozkan_2020_multiclass published a data set of visual characteristics of dried beans ... 
+@Koklu_Ozkan_2020_multiclass published a dataset of visual characteristics of dried beans "... in order to obtain uniform seed classification. For the classification model, images of 13,611 grains of 7 different registered dry beans were taken with a high-resolution camera."  The resulting dataset contains 16 morphological features extracted from each bean image, including measures of area, perimeter, compactness, length, width, and various shape factors.
 
-  > ... in order to obtain uniform seed classification. For the classification model, images of 13,611 grains of 7 different registered dry beans were taken with a high-resolution camera.
+The classification goal is to predict bean variety from these morphological measurements.  Successful classification could have many applications, e.g., to improve sorting systems in agricultural processing.  However, many of these 16 features are inherently redundant: for example, area and perimeter are strongly correlated, as are various length and width measurements.  Dimension reduction can reveal whether bean varieties differ primarily in size, shape, or both, and whether a smaller subset of derived features might achieve comparable classification accuracy with greater interpretability and computational efficiency.
 
 The data are available `R` package `beans`, containing a data matrix (tibble, more precisely) of dimension $13611 \times 17$.  The last column of the data matrix is response variable `class` that assigns one of seven types of bean to each bean-image.  The remaining 16 columns of the data matrix are morphological measurements (of shape and size).
 
