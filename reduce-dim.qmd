@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
 
 library(assertthat)
 library(beans)
+library(Cairo)
+# library(cairoDevice)
+library(corrplot)
 # library(dslabs)
 library(GGally)
 # library(ggimg)
@@ -86,12 +89,30 @@ st_wide_dscr <-
 
 Data analysis often begins with an exploration, using tables and figures to learn more about the data before formulating specific questions or hypotheses.  The exploration becomes more difficult as the dimensions of the data set increase.  Here's an example.
 
-@McNeil_1977 reviewed the relationship among violent crime statistics, per US state, and the percent of the population living in urban areas.  The table below includes these variables (at the end) along with other state-level statistics from the same period (the 1970s).  The data are available from the core `R` package `datasets`.
+@McNeil_1977 reviewed the relationship among violent crime statistics, per US state, and the percent of the population living in urban areas, variables described in @tbl-arrests-per-us-state-1973 below.
+
+@tbl-stats-per-us-state-1970s below describes related state-level statistics from the same period (the 1970s).  The data from both tables are available from the core `R` package `datasets`.
+
+```{r}
+#| label: tbl-arrests-per-us-state-1973
+
+st_wide_dscr |> 
+  dplyr::filter(
+    var %in% c("Assault", "Rape", "Murder", "UrbanPop")
+  ) |> 
+  dplyr::rename(variable = var, description = dscr) |> 
+  knitr::kable(
+    caption = "Arrests per US State (1973)")
+
+```
 
 ```{r}
 #| label: tbl-stats-per-us-state-1970s
 
 st_wide_dscr |> 
+  dplyr::filter(
+    ! (var %in% c("Assault", "Rape", "Murder", "UrbanPop"))
+  ) |> 
   dplyr::rename(variable = var, description = dscr) |> 
   knitr::kable(
     caption = "Statistics per US State (1970s)")
@@ -176,7 +197,45 @@ This figure provides both column-based and row-based views of the data matrix, w
 
   > ... in order to obtain uniform seed classification. For the classification model, images of 13,611 grains of 7 different registered dry beans were taken with a high-resolution camera.
 
-The data are available `R` package `beans`, containing a data matrix (tibble, more precisely) of dimension $13611 \times 17$.  The last column of the data matrix is response variable `class` that assigns one of seven types of bean to each bean-image.  The remaining 16 columns of the data matrix are morphological measurements (of shape and size).  @Kuhn_Silge_tmwr train different classification models on these data, splitting the observations into three non-overlapping sets: training ($n = 10206$, nearly 75%), testing $(n = 1703)$, and validation $(n = 1702)$.
+The data are available `R` package `beans`, containing a data matrix (tibble, more precisely) of dimension $13611 \times 17$.  The last column of the data matrix is response variable `class` that assigns one of seven types of bean to each bean-image.  The remaining 16 columns of the data matrix are morphological measurements (of shape and size).
+
+@Kuhn_Silge_tmwr develop and evaluate different classification models for these data. [^beans-ttv-split]  They begin by examining the correlation coefficients for each pair of the 16 feature vectors.  @fig-beans-corrplot follows their example.
+
+[^beans-ttv-split]: To develop and evaluate the classification models, the authors split the observations into three non-overlapping sets: training ($n = 10206$, nearly 75%), testing $(n = 1703)$, and validation $(n = 1702)$.
+
+```{r}
+#| label: beans-tbl
+
+beans_tbl <- beans::beans
+
+```
+
+```{r}
+#| label: fig-beans-corrplot
+#| fig-cap: "beans: correlation among features"
+
+# tmwr_cols <- grDevices::colorRampPalette(c("#91CBD765", "#CA225E"))
+
+beans_corr_lst <- beans_tbl |> 
+  dplyr::select(-class) |> 
+  cor() |> 
+  corrplot(
+    method = "ellipse", 
+    type   = "lower", 
+    diag   = FALSE, 
+    order  = "FPC" 
+    # col = tmwr_cols(200), 
+    # tl.col = "black"
+  )
+
+# from vignette("corrplot-intro"): 
+# (method = 'square', order = 'FPC', type = 'lower', diag = FALSE)
+
+```
+
+In this figure, the absolute value of each correlation coefficient is represented by the narrowness of the drawn ellipse and the depth of its color.  The sign of the correlation coefficient is represented by both the color and direction of the ellipse.
+
+These shape features measure similar concepts. Consequently, several pairs of feature vectors are highly correlated, which offers the possibility of transforming the 16 original features into a smaller set without sacrificing classification power.
 
 ### Wine Quality
 
