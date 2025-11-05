@@ -387,4 +387,9 @@ As demonstrated by @Cortez_2009_ModelingWP, these data patterns offer the possib
 
 ### Cancer Genomics (NCI 60)
 
+**High-throughput gene expression profiling has revolutionized cancer research** by enabling simultaneous measurement of thousands of genes from tumor samples. A classic example is the colon cancer gene expression dataset [@Alon_1999_BroadPatterns], which measures expression levels of approximately 2,000 genes across 62 tissue samples—40 tumor and 22 normal colon tissues.[3](#user-content-fn-cancer-data-source)
+
+**The primary modeling goals are**: (1) classification of tissue samples as cancerous or normal based on gene expression patterns, (2) identification of genes that are differentially expressed in cancer, and (3) discovery of molecular subtypes within cancer samples that might respond differently to treatment.
+
+**This dataset exemplifies the "large p, small n" problem** common in genomics: we have far more features (genes) than observations (tissue samples), making traditional analysis methods unstable and visualization impossible. Moreover, **genes do not act independently**—they operate in coordinated pathways and regulatory networks, creating substantial redundancy in the measurements. **Dimension reduction is essential here** to: (1) identify the primary axes of variation in gene expression that distinguish cancer from normal tissue, (2) reduce thousands of correlated gene measurements to a small number of interpretable components (potentially corresponding to biological pathways), (3) visualize sample relationships in 2D or 3D to identify outliers or unexpected subgroups, and (4) mitigate overfitting in classification models by working with derived features that capture the signal while filtering out noise.
 
