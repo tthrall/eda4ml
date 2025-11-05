@@ -25,7 +25,7 @@ library(GGally)
 # library(ggimg)
 # library(HistData)
 library(here)
-library(ISLR2)
+library(ISLR)
 # library(keras)
 library(knitr)
 # library(latex2exp)
@@ -47,14 +47,23 @@ library(tidyverse)
 ```{r}
 #| label: local-source
 
+source(here("code", "colonCA_helper.R"))
 # source(here("code", "galton_ht_data.R"))
 # source(here("code", "mnist_file_mgmt.R"))
-# source(here("code", "NCI60_helper.R"))
 # source(here("code", "oecd_bli.R"))
 # source(here("code", "pgram_grid.R"))
 source(here("code", "vc_per_state.R"))
 source(here("code", "wine_quality_uci.R"))
 # source(here("code", "z_score.R"))
+```
+
+```{r}
+#| label: BioConductor-libraries
+
+if(! require(colonCA) ) {
+  install_colonCA()
+}
+
 ```
 
 This chapter addresses the problem of finding and visualizing structure in high-dimensional data.  We begin the discussion with example data sets.
@@ -386,24 +395,13 @@ We see that alcohol volume is a prominent indicator of quality for both red and 
 
 As demonstrated by @Cortez_2009_ModelingWP, these data patterns offer the possibility of developing a smaller set of features as predictors of wine quality.
 
-### Cancer Genomics (NCI60)
+### Cancer Genomics (NCI 60)
 
-```{r}
-#| label: NCI60-structure
+High-throughput gene expression profiling has revolutionized cancer research by enabling simultaneous measurement of thousands of genes from tumor samples. A classic example is the colon cancer gene expression dataset [@Alon_1999_Broad_patterns], which measures expression levels of approximately 2,000 genes across 62 tissue samples: 40 tumor and 22 normal colon tissues. [^colon-CA]
 
-nrow_NCI60       <- ISLR2::NCI60$ data |> nrow()
-ncol_NCI60       <- ISLR2::NCI60$ data |> ncol()
-lbl_NCI60        <- ISLR2::NCI60$ labs
-lbl_unique_NCI60 <- lbl_NCI60 |> 
-  unique() |> sort()
-n_u_labels_NCI60 <- length(lbl_unique_NCI60)
-```
+[^colon-CA]:  The `colonCA` package (data set) is described [here](https://www.bioconductor.org/packages/release/data/experiment/manuals/colonCA/man/colonCA.pdf) at the BioConductor web-site.
 
-The NCI60 data [^ISLR2-NCI60] consists of gene expression measurements from `r nrow_NCI60` cancer cell lines maintained by the National Cancer Institute. For each cell line, expression levels were measured for `r ncol_NCI60` genes using microarray technology. The cell lines represent `r n_u_labels_NCI60` different cancer types, including leukemia, melanoma, and cancers of the colon, breast, ovary, lung, and central nervous system. This dataset has become a benchmark in cancer genomics research and provides a canonical example of a high-dimensional data matrix where the number of features $(d)$ greatly exceeds the number $n$ of data cases: $d \gg n$.
+The primary modeling goals are: (1) classification of tissue samples as cancerous or normal based on gene expression patterns, (2) identification of genes that are differentially expressed in cancer, and (3) discovery of molecular subtypes within cancer samples that might respond differently to treatment.
 
-[^ISLR2-NCI60]: The data are available from `R` package `ISLR2`.  The data matrix is `ISLR2::NCI60$data`, and the vector of labels (cancer type per observation) is `ISLR2::NCI60$labs`.
-
-The primary scientific questions include: Can we classify cell lines by cancer type based on their gene expression profiles? Do certain cancer types cluster together, suggesting shared biological mechanisms? Can we identify a small subset of genes (or gene combinations) that capture most of the variation in cancer behavior? These questions are fundamentally about understanding structure in a 6830-dimensional feature space using only 64 observations.
-
-With $d =$ `r ncol_NCI60` and $n =$ `r nrow_NCI60`, this dataset presents several challenges that make dimension reduction essential. First, visualization is impossible: we cannot plot points in `r ncol_NCI60` dimensions to explore patterns. Second, many genes are highly correlated because they participate in common biological pathways, creating redundancy in our feature space. Third, with $d \gg n$, standard classification methods will overfit catastrophically unless we first reduce dimensionality. Dimension reduction methods can transform the `r ncol_NCI60` gene measurements into a small number of meaningful components that capture the dominant patterns of variation, making the data amenable to visualization, interpretation, and subsequent modeling.
+This dataset exemplifies the "large $d$, small $n$" problem common in genomics: we have far more features (genes) than observations (tissue samples), making traditional analysis methods unstable and visualization impossible.  Moreover, genes do not act independently; they operate in coordinated pathways and regulatory networks, creating substantial redundancy in the measurements.  Dimension reduction is essential here to: (1) identify the primary axes of variation in gene expression that distinguish cancer from normal tissue, (2) reduce thousands of correlated gene measurements to a small number of interpretable components (potentially corresponding to biological pathways), (3) visualize sample relationships in 2D or 3D to identify outliers or unexpected subgroups, and (4) mitigate overfitting in classification models by working with derived features that capture the signal while filtering out noise.
 
