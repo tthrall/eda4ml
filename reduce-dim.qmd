@@ -391,19 +391,30 @@ As demonstrated by @Cortez_2009_ModelingWP, these data patterns offer the possib
 ```{r}
 #| label: NCI60-structure
 
+# data dimensions
 nrow_NCI60       <- ISLR2::NCI60$ data |> nrow()
 ncol_NCI60       <- ISLR2::NCI60$ data |> ncol()
+
+# row labels
 lbl_NCI60        <- ISLR2::NCI60$ labs
 lbl_unique_NCI60 <- lbl_NCI60 |> 
   unique() |> sort()
 n_u_labels_NCI60 <- length(lbl_unique_NCI60)
+lbl_ct_NCI610    <- lbl_NCI60 |> 
+  tibble::as_tibble_col(column_name = "label") |> 
+  dplyr::summarise(.by = "label", ct = n()) |> 
+  dplyr::arrange(label)
+lbl_ct_vec_NCI610 <- lbl_ct_NCI610 |> 
+  dplyr::pull(name = label)
 ```
 
-The NCI60 data [^ISLR2-NCI60] consists of gene expression measurements from `r nrow_NCI60` cancer cell lines maintained by the National Cancer Institute. For each cell line, expression levels were measured for `r ncol_NCI60` genes using microarray technology. The cell lines represent `r n_u_labels_NCI60` different cancer types, including leukemia, melanoma, and cancers of the colon, breast, ovary, lung, and central nervous system. This dataset has become a benchmark in cancer genomics research and provides a canonical example of a high-dimensional data matrix where the number of features $(d)$ greatly exceeds the number $n$ of data cases: $d \gg n$.
+The NCI60 data [^ISLR2-NCI60] [^Ross-2000-citation] consists of gene expression measurements from `r nrow_NCI60` cancer cell lines. For each cell line, expression levels were measured for `r ncol_NCI60` genes using microarray technology. The cell lines represent `r n_u_labels_NCI60` different cancer types, including leukemia, melanoma, and cancers of the colon, breast, ovary, lung, and central nervous system. This data set is a canonical example of a high-dimensional data matrix where the number of features $(d)$ greatly exceeds the number $n$ of data cases: $d \gg n$.
 
-[^ISLR2-NCI60]: The data are available from `R` package `ISLR2`.  The data matrix is `ISLR2::NCI60$data`, and the vector of labels (cancer type per observation) is `ISLR2::NCI60$labs`.
+[^ISLR2-NCI60]: The data are available from `R` package `ISLR2`.  The vector of labels (cancer type per observation) can be accessed as `ISLR2::NCI60$labs`.  The data can be accessed as `ISLR2::NCI60$data` in the form of a $64 \times 6830$ matrix with column names "1", "2", ..., "6830" rather than gene identifiers.  While this simplification is adequate for illustrating dimension reduction methods, readers requiring gene-level biological interpretation should consult the `rcellminer` and `rcellminerData` Bioconductor packages (Luna et al., 2016; Reinhold et al., 2019), which provide the same data with complete gene annotations and represent the current standard for programmatic access to NCI-60 molecular profiling data.
 
-The primary scientific questions include: Can we classify cell lines by cancer type based on their gene expression profiles? Do certain cancer types cluster together, suggesting shared biological mechanisms? Can we identify a small subset of genes (or gene combinations) that capture most of the variation in cancer behavior? These questions are fundamentally about understanding structure in a 6830-dimensional feature space using only 64 observations.
+[^Ross-2000-citation]: The `ISLR2` package cites @Ross_2000_Systematic as the source of `ISLR2::NCI60`.
 
-With $d =$ `r ncol_NCI60` and $n =$ `r nrow_NCI60`, this dataset presents several challenges that make dimension reduction essential. First, visualization is impossible: we cannot plot points in `r ncol_NCI60` dimensions to explore patterns. Second, many genes are highly correlated because they participate in common biological pathways, creating redundancy in our feature space. Third, with $d \gg n$, standard classification methods will overfit catastrophically unless we first reduce dimensionality. Dimension reduction methods can transform the `r ncol_NCI60` gene measurements into a small number of meaningful components that capture the dominant patterns of variation, making the data amenable to visualization, interpretation, and subsequent modeling.
+This data set is part of the NCI-60 panel and associated datasets, which are maintained by the Frederick National Laboratory for Cancer Research (FNLCR) and the National Cancer Institute's (NCI) Developmental Therapeutics Program (DTP).  The data serve as a publicly available platform for the global cancer research community to study tumor biology, evaluate new bioinformatics approaches, and select appropriate cell models for specific research questions.
+
+With $d =$ `r ncol_NCI60` and $n =$ `r nrow_NCI60`, this data set presents several challenges that make dimension reduction essential. First, visualization is impossible: we cannot plot points in `r ncol_NCI60` dimensions to explore patterns. Second, many genes are highly correlated because they participate in common biological pathways, creating redundancy in our feature space. Third, with $d \gg n$, standard classification methods will overfit catastrophically unless we first reduce dimensionality. Dimension reduction methods can transform the `r ncol_NCI60` gene measurements into a small number of meaningful components that capture the dominant patterns of variation, making the data amenable to visualization, interpretation, and subsequent modeling.
 
