@@ -47,6 +47,7 @@ library(tidyverse)
 ```{r}
 #| label: local-source
 
+source(here("code", "d_ball.R"))
 # source(here("code", "galton_ht_data.R"))
 # source(here("code", "mnist_file_mgmt.R"))
 # source(here("code", "NCI60_helper.R"))
@@ -414,7 +415,53 @@ The NCI60 data [^ISLR2-NCI60] [^Ross-2000-citation] consists of gene expression 
 
 [^Ross-2000-citation]: The `ISLR2` package cites @Ross_2000_Systematic as the source of `ISLR2::NCI60`.
 
-This data set is part of the NCI-60 panel and associated datasets, which are maintained by the Frederick National Laboratory for Cancer Research (FNLCR) and the National Cancer Institute's (NCI) Developmental Therapeutics Program (DTP).  The data serve as a publicly available platform for the global cancer research community to study tumor biology, evaluate new bioinformatics approaches, and select appropriate cell models for specific research questions.
+The data set is part of the NCI-60 panel and associated datasets, which are maintained by the Frederick National Laboratory for Cancer Research (FNLCR) and the National Cancer Institute's (NCI) Developmental Therapeutics Program (DTP).  The data serve as a publicly available platform for the global cancer research community to study tumor biology, evaluate new bioinformatics approaches, and select appropriate cell models for specific research questions.
 
-With $d =$ `r ncol_NCI60` and $n =$ `r nrow_NCI60`, this data set presents several challenges that make dimension reduction essential. First, visualization is impossible: we cannot plot points in `r ncol_NCI60` dimensions to explore patterns. Second, many genes are highly correlated because they participate in common biological pathways, creating redundancy in our feature space. Third, with $d \gg n$, standard classification methods will overfit catastrophically unless we first reduce dimensionality. Dimension reduction methods can transform the `r ncol_NCI60` gene measurements into a small number of meaningful components that capture the dominant patterns of variation, making the data amenable to visualization, interpretation, and subsequent modeling.
+These data present challenges that require dimension reduction, that is, the transformation of the set of `r ncol_NCI60` genomic features into a smaller set that capture the dominant patterns of variation.  We proceed to describe such challenges.
+
+## Dimensionality: Curse and Blessing
+
+As just noted, the NCI60 data set, with $d =$ `r ncol_NCI60` and $n =$ `r nrow_NCI60`, presents challenges that make dimension reduction essential. Several issues arise with any "wide" data set in which $d \gg n$, and include the following.
+
+  - _Visualization_: We cannot plot points in  $d$ dimensions to explore patterns or detect outliers.
+  
+  - _Over-fitting_: With $d \gg n$, infinitely many coefficient vectors $\beta_\bullet$ produce identical predictions that replicate the response variable within the training data.  This makes model selection impossible without regularization.
+  
+  - _Computation_: Storing and manipulating a $d \times d$ covariance matrix becomes prohibitively expensive.
+
+In 1957 Richard Bellman characterized such challenges as "the curse of dimensionality". [^dim-curse]
+
+[^dim-curse]: See @Bellman_1957_dynamic, @Donoho_2000_High_Dimensional_Data_Analysis, and @wiki_curse_dimensionality.
+
+@Donoho_2000_High_Dimensional_Data_Analysis points out that: (1) many established statistical methods assume $d < n$; and (2) we can expect $d \gg n$ to occur more and more often as data-collection is increasingly automated to retrieve all potentially useful details for subsequent screening.
+
+In addition, @wiki_curse_dimensionality notes that our geometric intuition is grounded in $d \le 3$ and is overturned as $d$ increases.  To illustrate, consider a unit hypercube $[0,1]^d$ containing the largest possible inscribed ball. The ratio $r(d)$ of their volumes shrinks dramatically: $r(3) \approx 0.52$, $r(10) \approx 0.0025$, and $r(100) \approx 2 \times 10^{-70}$. In high dimensions, the preponderance of randomly generated points within the cube land far from the center!
+
+Yet @Donoho_2000_High_Dimensional_Data_Analysis also sees opportunities.   While randomly generated data in high dimensions behaves pathologically, actual data tend to be more coherent.  Consider the example data sets:
+
+- _US Arrests_: The three crime variables (assault, rape, murder) are 
+  highly correlated; they don't independently span 3D space.
+- _Dry_Beans_: The 16 shape measurements aren't independent; they reflect underlying bean geometry.  
+- _Wine quality_: The 11 chemical properties are constrained by 
+  fermentation chemistry.
+- _NCI60_: The 6,830 genes participate in shared biological pathways.
+
+In each case, the data likely occupies a much lower-dimensional structure within the high-dimensional feature space. If we can identify this structure, dimension reduction may actually _improve_ modeling by revealing the true degrees of freedom in the data.
+
+The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (Section 7.3), which finds low-dimensional approximations to high-dimensional data through eigendecomposition. We then explore how supervision (Section 7.4) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (Section 7.5) for extreme cases like NCI60 where $d \gg n$.
+
+## Principal Component Analysis
+
+## Supervised Dimension Reduction
+
+## Computational Considerations
+
+## Choosing and Evaluating Methods
+
+## Other Methods
+
+## Summary
+
+## Exercises
+
 
