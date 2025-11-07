@@ -2,7 +2,8 @@
 ###
 #     galton_ht_data.R
 #
-#       Manipulate HistData::Galton on adult heights per family.
+#       Manipulate HistData::GaltonFamilies 
+#       (adult heights per family)
 ###
 #####
 

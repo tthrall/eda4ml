@@ -368,21 +368,21 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data-examples" id="toc-data-examples" class="nav-link active" data-scroll-target="#data-examples"><span class="header-section-number">7.1</span> Data Examples</a>
+  <li><a href="#sec-dim-r-data-examples" id="toc-sec-dim-r-data-examples" class="nav-link active" data-scroll-target="#sec-dim-r-data-examples"><span class="header-section-number">7.1</span> Data Examples</a>
   <ul class="collapse">
   <li><a href="#us-arrests" id="toc-us-arrests" class="nav-link" data-scroll-target="#us-arrests"><span class="header-section-number">7.1.1</span> US Arrests</a></li>
   <li><a href="#dry-beans" id="toc-dry-beans" class="nav-link" data-scroll-target="#dry-beans"><span class="header-section-number">7.1.2</span> Dry Beans</a></li>
   <li><a href="#wine-quality" id="toc-wine-quality" class="nav-link" data-scroll-target="#wine-quality"><span class="header-section-number">7.1.3</span> Wine Quality</a></li>
   <li><a href="#cancer-genomics-nci60" id="toc-cancer-genomics-nci60" class="nav-link" data-scroll-target="#cancer-genomics-nci60"><span class="header-section-number">7.1.4</span> Cancer Genomics (NCI60)</a></li>
   </ul></li>
-  <li><a href="#dimensionality-curse-and-blessing" id="toc-dimensionality-curse-and-blessing" class="nav-link" data-scroll-target="#dimensionality-curse-and-blessing"><span class="header-section-number">7.2</span> Dimensionality: Curse and Blessing</a></li>
-  <li><a href="#principal-component-analysis" id="toc-principal-component-analysis" class="nav-link" data-scroll-target="#principal-component-analysis"><span class="header-section-number">7.3</span> Principal Component Analysis</a></li>
-  <li><a href="#supervised-dimension-reduction" id="toc-supervised-dimension-reduction" class="nav-link" data-scroll-target="#supervised-dimension-reduction"><span class="header-section-number">7.4</span> Supervised Dimension Reduction</a></li>
-  <li><a href="#computational-considerations" id="toc-computational-considerations" class="nav-link" data-scroll-target="#computational-considerations"><span class="header-section-number">7.5</span> Computational Considerations</a></li>
-  <li><a href="#choosing-and-evaluating-methods" id="toc-choosing-and-evaluating-methods" class="nav-link" data-scroll-target="#choosing-and-evaluating-methods"><span class="header-section-number">7.6</span> Choosing and Evaluating Methods</a></li>
-  <li><a href="#other-methods" id="toc-other-methods" class="nav-link" data-scroll-target="#other-methods"><span class="header-section-number">7.7</span> Other Methods</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">7.8</span> Summary</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">7.9</span> Exercises</a></li>
+  <li><a href="#sec-dim-r-curse" id="toc-sec-dim-r-curse" class="nav-link" data-scroll-target="#sec-dim-r-curse"><span class="header-section-number">7.2</span> Dimensionality: Curse and Blessing</a></li>
+  <li><a href="#sec-dim-r-pca" id="toc-sec-dim-r-pca" class="nav-link" data-scroll-target="#sec-dim-r-pca"><span class="header-section-number">7.3</span> Principal Component Analysis</a></li>
+  <li><a href="#sec-dim-r-supervised" id="toc-sec-dim-r-supervised" class="nav-link" data-scroll-target="#sec-dim-r-supervised"><span class="header-section-number">7.4</span> Supervised Dimension Reduction</a></li>
+  <li><a href="#sec-dim-r-computation" id="toc-sec-dim-r-computation" class="nav-link" data-scroll-target="#sec-dim-r-computation"><span class="header-section-number">7.5</span> Computational Considerations</a></li>
+  <li><a href="#sec-dim-r-choose-method" id="toc-sec-dim-r-choose-method" class="nav-link" data-scroll-target="#sec-dim-r-choose-method"><span class="header-section-number">7.6</span> Choosing and Evaluating Methods</a></li>
+  <li><a href="#sec-dim-r-other-methods" id="toc-sec-dim-r-other-methods" class="nav-link" data-scroll-target="#sec-dim-r-other-methods"><span class="header-section-number">7.7</span> Other Methods</a></li>
+  <li><a href="#sec-dim-r-summary" id="toc-sec-dim-r-summary" class="nav-link" data-scroll-target="#sec-dim-r-summary"><span class="header-section-number">7.8</span> Summary</a></li>
+  <li><a href="#sec-dim-r-exercises" id="toc-sec-dim-r-exercises" class="nav-link" data-scroll-target="#sec-dim-r-exercises"><span class="header-section-number">7.9</span> Exercises</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/reduce-dim.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -408,7 +408,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">01:46 Fri 7-Nov-2025</p>
+      <p class="date">10:14 Fri 7-Nov-2025</p>
     </div>
   </div>
   
@@ -421,8 +421,8 @@ window.Quarto = {
 
 
 <p>This chapter addresses the problem of finding and visualizing structure in high-dimensional data. We begin the discussion with example data sets.</p>
-<section id="data-examples" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="data-examples"><span class="header-section-number">7.1</span> Data Examples</h2>
+<section id="sec-dim-r-data-examples" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-dim-r-data-examples"><span class="header-section-number">7.1</span> Data Examples</h2>
 <section id="us-arrests" class="level3" data-number="7.1.1">
 <h3 data-number="7.1.1" class="anchored" data-anchor-id="us-arrests"><span class="header-section-number">7.1.1</span> US Arrests</h3>
 <p>Data analysis often begins with an exploration, using tables and figures to learn more about the data before formulating specific questions or hypotheses. The exploration becomes more difficult as the dimensions of the data set increase. Here’s an example.</p>
@@ -608,8 +608,8 @@ Figure&nbsp;7.1: Violent Crime Rates per US State (1973)
 <div id="fig-arrests-3d-scatter" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-342a9d94f5f78af7a73b" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-342a9d94f5f78af7a73b">{"x":{"visdat":{"1d145d7e6665":["function () ","plotlyVisDat"]},"cur_data":"1d145d7e6665","attrs":{"1d145d7e6665":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-e55529eef3d6482dbe73" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-e55529eef3d6482dbe73">{"x":{"visdat":{"17bcebd4b93":["function () ","plotlyVisDat"]},"cur_data":"17bcebd4b93","attrs":{"17bcebd4b93":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7.2: Violent Crime Rates in each US State (1973)
@@ -865,8 +865,8 @@ Table&nbsp;7.4: Feature-quality correleations among (red, white) wines
 <p>These data present challenges that require dimension reduction, that is, the transformation of the set of 6830 genomic features into a smaller set that capture the dominant patterns of variation. We proceed to describe such challenges.</p>
 </section>
 </section>
-<section id="dimensionality-curse-and-blessing" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="dimensionality-curse-and-blessing"><span class="header-section-number">7.2</span> Dimensionality: Curse and Blessing</h2>
+<section id="sec-dim-r-curse" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-dim-r-curse"><span class="header-section-number">7.2</span> Dimensionality: Curse and Blessing</h2>
 <p>As just noted, the NCI60 data set, with <span class="math inline">\(d =\)</span> 6830 and <span class="math inline">\(n =\)</span> 64, presents challenges that make dimension reduction essential. Several issues arise with any “wide” data set in which <span class="math inline">\(d \gg n\)</span>, and include the following.</p>
 <ul>
 <li><p><em>Visualization</em>: We cannot plot points in <span class="math inline">\(d\)</span> dimensions to explore patterns or detect outliers.</p></li>
@@ -878,35 +878,146 @@ Table&nbsp;7.4: Feature-quality correleations among (red, white) wines
 <p>In addition, <span class="citation" data-cites="wiki_curse_dimensionality"><span>“Curse of Dimensionality | Wikipedia”</span> (<a href="references.html#ref-wiki_curse_dimensionality" role="doc-biblioref">2025</a>)</span> notes that our geometric intuition is grounded in <span class="math inline">\(d \le 3\)</span> and is overturned as <span class="math inline">\(d\)</span> increases. To illustrate, consider a unit hypercube <span class="math inline">\([0,1]^d\)</span> containing the largest possible inscribed ball. The ratio <span class="math inline">\(r(d)\)</span> of their volumes shrinks dramatically: <span class="math inline">\(r(3) \approx 0.52\)</span>, <span class="math inline">\(r(10) \approx 0.0025\)</span>, and <span class="math inline">\(r(100) \approx 2 \times 10^{-70}\)</span>. In high dimensions, the preponderance of randomly generated points within the cube land far from the center!</p>
 <p>Yet <span class="citation" data-cites="Donoho_2000_High_Dimensional_Data_Analysis">Donoho (<a href="references.html#ref-Donoho_2000_High_Dimensional_Data_Analysis" role="doc-biblioref">2000</a>)</span> also sees opportunities. While randomly generated data in high dimensions behaves pathologically, actual data tend to be more coherent. Consider the example data sets:</p>
 <ul>
-<li><em>US Arrests</em>: The three crime variables (assault, rape, murder) are highly correlated; they don’t independently span 3D space.</li>
+<li><em>US Arrests</em>: The three crime variables (assault, rape, murder) are highly correlated; they don’t independently span 3D space (<a href="#fig-arrests-3d-scatter" class="quarto-xref">Figure&nbsp;<span>7.2</span></a>).</li>
 <li><em>Dry_Beans</em>: The 16 shape measurements aren’t independent; they reflect underlying bean geometry.<br>
 </li>
 <li><em>Wine quality</em>: The 11 chemical properties are constrained by fermentation chemistry.</li>
 <li><em>NCI60</em>: The 6,830 genes participate in shared biological pathways.</li>
 </ul>
 <p>In each case, the data likely occupies a much lower-dimensional structure within the high-dimensional feature space. If we can identify this structure, dimension reduction may actually <em>improve</em> modeling by revealing the true degrees of freedom in the data.</p>
-<p>The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (Section 7.3), which finds low-dimensional approximations to high-dimensional data through eigendecomposition. We then explore how supervision (Section 7.4) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (Section 7.5) for extreme cases like NCI60 where <span class="math inline">\(d \gg n\)</span>.</p>
+<p>The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (<a href="#sec-dim-r-pca" class="quarto-xref"><span>Section 7.3</span></a>), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition. We then explore how supervision (<a href="#sec-dim-r-supervised" class="quarto-xref"><span>Section 7.4</span></a>) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (<a href="#sec-dim-r-computation" class="quarto-xref"><span>Section 7.5</span></a>) for extreme cases like NCI60 where <span class="math inline">\(d \gg n\)</span>.</p>
 </section>
-<section id="principal-component-analysis" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="principal-component-analysis"><span class="header-section-number">7.3</span> Principal Component Analysis</h2>
+<section id="sec-dim-r-pca" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-dim-r-pca"><span class="header-section-number">7.3</span> Principal Component Analysis</h2>
+<p><a href="#fig-fs-pca" class="quarto-xref">Figure&nbsp;<span>7.6</span></a> below illustrates PCA for (father, son) centered heights from the Galton data.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-fs-pca" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="reduce-dim_files/figure-html/fig-fs-pca-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.6: Principal Components: (father, son) centered heights
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>There are two principal components represented in the figure by the red and blue lines, <span class="math inline">\((PC_1, PC_2)\)</span>. These lines are perpendicular to one another. Each component is a linear combination of the (father, son) centered heights.</p>
+<p>The orthogonal projection of each (father, son) data point to the <span class="math inline">\(PC_1\)</span> line gives the <span class="math inline">\(PC_1\)</span> coordinate of the data point. The vector of these coordinates constitutes the fist principal component, say <span class="math inline">\(c_{\bullet, 1}\)</span>. The line represents perfect, positive correlation, and corresponds to the positive correlation in the data.</p>
+<p>The orthogonal projection to the <span class="math inline">\(PC_2\)</span> line gives the <span class="math inline">\(PC_2\)</span> coordinate of the data point, which represents the deviation of the data point from perfect, positive correlation. The vector of these coordinates constitutes the second principal component, <span class="math inline">\(c_{\bullet, 2}\)</span>. That is, the <span class="math inline">\(PC_2\)</span> line represents perfect, negative correlation.</p>
+<p>In vector-matrix notation we have, for some set of coefficients <span class="math inline">\(\gamma_{\bullet, \bullet}\)</span>,</p>
+<p><span id="eq-fs-pca-1"><span class="math display">\[
+\begin{align}
+  c_{\bullet, 1} &amp;= \gamma_{1, 1} \; \dot{f}_\bullet \; + \; \gamma_{2, 1} \; \dot{s}_\bullet \\
+  c_{\bullet, 2} &amp;= \gamma_{1, 2} \; \dot{f}_\bullet \; + \; \gamma_{2, 2} \; \dot{s}_\bullet \\ \\
+  &amp;\text{so that} \\ \\
+  \begin{pmatrix}
+    c_{\bullet, 1} &amp; c_{\bullet, 2}
+  \end{pmatrix}
+   &amp;=
+  \begin{pmatrix}
+    \dot{f}_\bullet &amp; \dot{s}_\bullet
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \gamma_{1, 1} &amp; \gamma_{1, 2} \\
+    \gamma_{2, 1} &amp; \gamma_{1, 2}
+  \end{pmatrix} \\
+  &amp;=
+  \begin{pmatrix}
+    \dot{f}_\bullet &amp; \dot{s}_\bullet
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \gamma_{\bullet, 1} &amp; \gamma_{\bullet, 2}
+  \end{pmatrix}
+\end{align}
+\qquad(7.1)\]</span></span></p>
+<p>It turns out that the coefficient vectors, <span class="math inline">\((\gamma_{\bullet, 1}, \gamma_{\bullet, 2})\)</span> are eigen-vectors of the sample covariance matrix.</p>
+<p><span id="eq-fs-pca-2"><span class="math display">\[
+\begin{align}
+  &amp;
+  \left \{
+  \frac{1}{n - 1} \;
+  \begin{pmatrix}
+    \dot{f}_\bullet^\top \\
+    \dot{s}_\bullet^\top
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \dot{f}_\bullet &amp; \dot{s}_\bullet
+  \end{pmatrix}
+  \right \} \;
+  \begin{pmatrix}
+    \gamma_{\bullet, 1} &amp; \gamma_{\bullet, 2}
+  \end{pmatrix} \\ \\
+  &amp;=
+  \begin{pmatrix}
+    \gamma_{\bullet, 1} &amp; \gamma_{\bullet, 2}
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \sigma_1^2 &amp; 0 \\
+    0 &amp; \sigma_2^2
+  \end{pmatrix}
+\end{align}
+\qquad(7.2)\]</span></span></p>
+<p>Each of the coefficient vectors, <span class="math inline">\((\gamma_{\bullet, 1}, \gamma_{\bullet, 2})\)</span> is a unit vector, and the two vectors are orthogonal to one another. That is, the matrix <span class="math inline">\((\gamma_{\bullet, 1}, \gamma_{\bullet, 2})\)</span> is an orthonormal matrix. Multiplying <a href="#eq-fs-pca-2" class="quarto-xref">Equation&nbsp;<span>7.2</span></a> on the right by the transpose of <span class="math inline">\((\gamma_{\bullet, 1}, \gamma_{\bullet, 2})\)</span>, we obtain an eigen-decomposition (or polar decompositon) of the sample covariance matrix.</p>
+<p><span id="eq-fs-pca-3"><span class="math display">\[
+\begin{align}
+  &amp;
+  \frac{1}{n - 1} \;
+  \begin{pmatrix}
+    \dot{f}_\bullet^\top \\
+    \dot{s}_\bullet^\top
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \dot{f}_\bullet &amp; \dot{s}_\bullet
+  \end{pmatrix} \\ \\
+  &amp;=
+  \begin{pmatrix}
+    \gamma_{\bullet, 1} &amp; \gamma_{\bullet, 2}
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \sigma_1^2 &amp; 0 \\
+    0 &amp; \sigma_2^2
+  \end{pmatrix} \;
+  \begin{pmatrix}
+    \gamma_{\bullet, 1}^\top \\
+    \gamma_{\bullet, 2}^\top
+  \end{pmatrix}
+\end{align}
+\qquad(7.3)\]</span></span></p>
+<p>The matrix of coefficients <span class="math inline">\((\gamma_{\bullet, 1}, \gamma_{\bullet, 2})\)</span> takes the form of a 2D rotation matrix.</p>
+<p><span id="eq-fs-rot-mat"><span class="math display">\[
+\begin{align}
+  \begin{pmatrix}
+    \gamma_{1, 1} &amp; \gamma_{1, 2} \\
+    \gamma_{2, 1} &amp; \gamma_{1, 2}
+  \end{pmatrix}
+  &amp;=
+  \begin{pmatrix}
+    \cos{\theta} &amp; - \sin{\theta} \\
+    \sin{\theta} &amp; \cos{\theta}
+  \end{pmatrix}
+\end{align}
+\qquad(7.4)\]</span></span></p>
 </section>
-<section id="supervised-dimension-reduction" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="supervised-dimension-reduction"><span class="header-section-number">7.4</span> Supervised Dimension Reduction</h2>
+<section id="sec-dim-r-supervised" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec-dim-r-supervised"><span class="header-section-number">7.4</span> Supervised Dimension Reduction</h2>
 </section>
-<section id="computational-considerations" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="computational-considerations"><span class="header-section-number">7.5</span> Computational Considerations</h2>
+<section id="sec-dim-r-computation" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="sec-dim-r-computation"><span class="header-section-number">7.5</span> Computational Considerations</h2>
 </section>
-<section id="choosing-and-evaluating-methods" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="choosing-and-evaluating-methods"><span class="header-section-number">7.6</span> Choosing and Evaluating Methods</h2>
+<section id="sec-dim-r-choose-method" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="sec-dim-r-choose-method"><span class="header-section-number">7.6</span> Choosing and Evaluating Methods</h2>
 </section>
-<section id="other-methods" class="level2" data-number="7.7">
-<h2 data-number="7.7" class="anchored" data-anchor-id="other-methods"><span class="header-section-number">7.7</span> Other Methods</h2>
+<section id="sec-dim-r-other-methods" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="sec-dim-r-other-methods"><span class="header-section-number">7.7</span> Other Methods</h2>
 </section>
-<section id="summary" class="level2" data-number="7.8">
-<h2 data-number="7.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">7.8</span> Summary</h2>
+<section id="sec-dim-r-summary" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="sec-dim-r-summary"><span class="header-section-number">7.8</span> Summary</h2>
 </section>
-<section id="exercises" class="level2" data-number="7.9">
-<h2 data-number="7.9" class="anchored" data-anchor-id="exercises"><span class="header-section-number">7.9</span> Exercises</h2>
+<section id="sec-dim-r-exercises" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="sec-dim-r-exercises"><span class="header-section-number">7.9</span> Exercises</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
