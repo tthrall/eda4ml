@@ -1,0 +1,110 @@
+---
+title: "fs-pca-notation"
+format: html
+---
+
+
+
+### Definitions
+
+In vector-matrix notation we have, for some set of coefficients $\phi_{\bullet, \bullet}$, 
+
+$$
+\begin{align} 
+  z_{\bullet, 1} &= \phi_{1, 1} \; \dot{f}_\bullet \; + \; \phi_{2, 1} \; \dot{s}_\bullet \\ 
+  z_{\bullet, 2} &= \phi_{1, 2} \; \dot{f}_\bullet \; + \; \phi_{2, 2} \; \dot{s}_\bullet \\ \\ 
+  &\text{so that} \\ \\ 
+  \begin{pmatrix}
+    z_{\bullet, 1} & z_{\bullet, 2}
+  \end{pmatrix}
+   &= 
+  \begin{pmatrix}
+    \dot{f}_\bullet & \dot{s}_\bullet
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \phi_{1, 1} & \phi_{1, 2} \\
+    \phi_{2, 1} & \phi_{2, 2} 
+  \end{pmatrix} \\ 
+  &= 
+  \begin{pmatrix}
+    \dot{f}_\bullet & \dot{s}_\bullet
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \phi_{\bullet, 1} & \phi_{\bullet, 2}
+  \end{pmatrix}
+\end{align} 
+$$ {#eq-fs-pca-1}
+
+It turns out that the coefficient vectors, $(\phi_{\bullet, 1}, \phi_{\bullet, 2})$ are eigen-vectors of the sample covariance matrix.
+
+$$
+\begin{align} 
+  &
+  \left \{ 
+  \frac{1}{n - 1} \; 
+  \begin{pmatrix}
+    \dot{f}_\bullet^\top \\
+    \dot{s}_\bullet^\top 
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \dot{f}_\bullet & \dot{s}_\bullet
+  \end{pmatrix}
+  \right \} \; 
+  \begin{pmatrix}
+    \phi_{\bullet, 1} & \phi_{\bullet, 2}
+  \end{pmatrix} \\ \\ 
+  &= 
+  \begin{pmatrix}
+    \phi_{\bullet, 1} & \phi_{\bullet, 2}
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \sigma_1^2 & 0 \\
+    0 & \sigma_2^2 
+  \end{pmatrix} 
+\end{align} 
+$$ {#eq-fs-pca-2}
+
+Each of the coefficient vectors, $(\phi_{\bullet, 1}, \phi_{\bullet, 2})$ is a unit vector, and the two vectors are orthogonal to one another.  That is, the matrix $(\phi_{\bullet, 1}, \phi_{\bullet, 2})$ is an orthonormal matrix.  Multiplying @eq-fs-pca-2 on the right by the transpose of $(\phi_{\bullet, 1}, \phi_{\bullet, 2})$, we obtain an eigen-decomposition (or polar decompositon) of the sample covariance matrix.
+
+$$
+\begin{align} 
+  &
+  \frac{1}{n - 1} \; 
+  \begin{pmatrix}
+    \dot{f}_\bullet^\top \\
+    \dot{s}_\bullet^\top 
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \dot{f}_\bullet & \dot{s}_\bullet
+  \end{pmatrix} \\ \\ 
+  &= 
+  \begin{pmatrix}
+    \phi_{\bullet, 1} & \phi_{\bullet, 2}
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \sigma_1^2 & 0 \\
+    0 & \sigma_2^2 
+  \end{pmatrix} \; 
+  \begin{pmatrix}
+    \phi_{\bullet, 1}^\top \\ 
+    \phi_{\bullet, 2}^\top
+  \end{pmatrix}
+\end{align} 
+$$ {#eq-fs-pca-3}
+
+The matrix of coefficients $(\phi_{\bullet, 1}, \phi_{\bullet, 2})$ takes the form of a 2D rotation matrix.
+
+$$
+\begin{align} 
+  \begin{pmatrix}
+    \phi_{1, 1} & \phi_{1, 2} \\
+    \phi_{2, 1} & \phi_{2, 2} 
+  \end{pmatrix} 
+  &= 
+  \begin{pmatrix}
+    \cos{\theta} & - \sin{\theta} \\
+    \sin{\theta} & \cos{\theta} 
+  \end{pmatrix} 
+\end{align} 
+$$ {#eq-fs-rot-mat}
+

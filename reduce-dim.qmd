@@ -452,7 +452,11 @@ The remainder of this chapter develops methods that exploit such opportunities. 
 
 ## Principal Component Analysis {#sec-dim-r-pca}
 
-@fig-fs-pca below illustrates PCA for (father, son) centered heights from the Galton data.
+Recall the US Arrests dataset with four crime-related variables. Can we represent these 50 states in fewer than four dimensions while preserving most of the information? Principal Component Analysis (PCA) answers this by finding new variables, linear combinations of the original features, that capture maximum variance.
+
+### 2D Example
+
+To develop some geometric intuition we begin with a 2D example.  @fig-fs-pca below illustrates PCA for (father, son) centered heights from the Galton data presented in @sec-la-intro.
 
 ```{r}
 #| label: fms-galton
@@ -527,120 +531,161 @@ g_fs_pcs <- fms_ctr |>
     slope = fs_slope_2, 
     color = "blue") + 
   ggplot2::labs(
-    title = "PCA: (father, son) centered heights", 
-    subtitle = "PC_1 in red, PC_2 in blue"
+    title = "PCA: (father, son) centered heights") + 
+  ggplot2::labs(
+    subtitle = bquote(
+      z[1] * " in red, " * z[2] * " in blue"
+    )
   )
 
 g_fs_pcs
 
 ```
 
-There are two principal components represented in the figure by the red and blue lines, $(PC_1, PC_2)$.  These lines are perpendicular to one another.  Each component is a linear combination of the (father, son) centered heights.
+The figure represents two principal components, $(z_1, z_2)$, as respective red and blue lines, which are perpendicular to one another.
 
-The orthogonal projection of each (father, son) data point to the $PC_1$ line gives the $PC_1$ coordinate of the data point.  The vector of these coordinates constitutes the fist principal component, say $c_{\bullet, 1}$.  The line represents perfect, positive correlation, and corresponds to the positive correlation in the data.
+The red line $(z_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The blue line $(z_2)$ is perpendicular to $z_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
 
-The orthogonal projection to the $PC_2$ line gives the $PC_2$ coordinate of the data point, which represents the deviation of the data point from perfect, positive correlation.  The vector of these coordinates constitutes the second principal component, $c_{\bullet, 2}$.  That is, the $PC_2$ line represents perfect, negative correlation.
+### Definitions
 
-In vector-matrix notation we have, for some set of coefficients $\gamma_{\bullet, \bullet}$, 
+We now define PCA mathematically in vector-matrix notation for a centered feature matrix $X_{\bullet, \bullet}$, that is, in which the the sum (and thus the average) of the elements of each column equals zero.
 
 $$
 \begin{align} 
-  c_{\bullet, 1} &= \gamma_{1, 1} \; \dot{f}_\bullet \; + \; \gamma_{2, 1} \; \dot{s}_\bullet \\ 
-  c_{\bullet, 2} &= \gamma_{1, 2} \; \dot{f}_\bullet \; + \; \gamma_{2, 2} \; \dot{s}_\bullet \\ \\ 
-  &\text{so that} \\ \\ 
-  \begin{pmatrix}
-    c_{\bullet, 1} & c_{\bullet, 2}
-  \end{pmatrix}
-   &= 
-  \begin{pmatrix}
-    \dot{f}_\bullet & \dot{s}_\bullet
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \gamma_{1, 1} & \gamma_{1, 2} \\
-    \gamma_{2, 1} & \gamma_{2, 2} 
-  \end{pmatrix} \\ 
-  &= 
-  \begin{pmatrix}
-    \dot{f}_\bullet & \dot{s}_\bullet
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \gamma_{\bullet, 1} & \gamma_{\bullet, 2}
-  \end{pmatrix}
+  X_{\bullet, \bullet} &= (x_{\bullet, 1}, \ldots, x_{\bullet, d}) \\ \\ 
+  & \text{with} \\ \\ 
+  1_\bullet^\top \; x_{\bullet, k} &= \sum_{i = 1}^n x_{i, k} = 0 \\ \\ 
+  &\text{for } k \in \{ 1, \ldots, d \} \\ \\ 
+  & \text{so that} \\ \\ 
+  1_\bullet^\top \; X_{\bullet, \bullet} &= 0_\bullet \in \mathbb{R}^d
 \end{align} 
-$$ {#eq-fs-pca-1}
+$$ {#eq-X-ctr-cols}
 
-It turns out that the coefficient vectors, $(\gamma_{\bullet, 1}, \gamma_{\bullet, 2})$ are eigen-vectors of the sample covariance matrix.
+The first principal component of $X_{\bullet, \bullet}$ is determined by the "direction" in feature space of maximum variance.
+
+To elaborate, each vector of coefficients $\gamma_\bullet \in \mathbb{R}^d$ can be mapped to a linear combination of feature vectors, $X_{\bullet, \bullet} \gamma_\bullet$.  Such linear combinations constitute a subspace of $\mathbb{R}^n$ called "feature space".  Each non-zero coefficient vector can be expressed as the product of a scalar magnitude and a unit vector, namely: 
 
 $$
 \begin{align} 
-  &
+  \gamma_\bullet &= \lVert \gamma_\bullet \rVert \times 
+  \left ( 
+    \frac{\gamma_\bullet}{\lVert \gamma_\bullet \rVert} 
+  \right )
+    & \text{ for } \gamma_\bullet \ne 0_\bullet
+\end{align} 
+$$ {#eq-gamma-mag-direction}
+
+The above unit vector is called the direction of vector $\gamma_\bullet$.  Now the first principal component of $X_{\bullet, \bullet}$, is defined by the coefficient unit vector, say $u_{\bullet, 1}$, that maximizes the norm of $X_{\bullet, \bullet} u_\bullet$ among all unit vectors $u_\bullet \in \mathbb{R}^d$.
+
+$$
+\begin{align} 
+  u_{\bullet, 1} &= 
+  \arg \max_{\lVert u_\bullet \rVert = 1} 
+  \Vert X_{\bullet, \bullet} \; u_\bullet \rVert 
+\end{align} 
+$$ {#eq-coeff-first-pc}
+
+Then the first principal component, denoted $z_{\bullet, 1}$, is the feature space vector defined by $u_{\bullet, 1}$.
+
+$$
+\begin{align} 
+  z_{\bullet, 1} &= X_{\bullet, \bullet} \; u_{\bullet, 1}
+\end{align} 
+$$ {#eq-first-pc}
+
+Note that the elements of the first principal component $z_{\bullet, 1}$ sum to zero, since this is true of each feature vector, and $z_{\bullet, 1}$ is a linear combination of the feature vectors.
+
+$$
+\begin{align} 
+  1_\bullet^\top z_{\bullet, 1} &= 
+  1_\bullet^\top X_{\bullet, \bullet} \; u_{\bullet, 1} = 0 \\ \\ 
+  & \text{so that} \\ \\ 
+  \bar{z}_1 &= \frac{1}{n} \sum_{i = 1}^n z_{i, 1} \\ 
+  &= \frac{1}{n} \; 1_\bullet^\top \;  z_{\bullet, 1} \\ 
+  &= 0
+\end{align} 
+$$ {#eq-first-pc-ctr}
+
+Therefore, the sample variance of $z_{\bullet, 1}$ is: 
+
+$$
+\begin{align} 
+  var ( z_{\bullet, 1} ) &= 
+  \frac{1}{n - 1} \sum_{i = 1}^n (z_{i, 1} - \bar{z}_1)^2 \\ 
+  &= 
+  \frac{1}{n - 1} \sum_{i = 1}^n z_{i, 1}^2 \\ 
+  &= \frac{1}{n - 1} \; \Vert z_{\bullet, 1} \rVert^2
+\end{align} 
+$$ {#eq-first-pc-var}
+
+That is, by maximizing the norm $\Vert z_{\bullet, 1} \rVert$ the coefficient vector $u_{\bullet, 1}$ maximizes the sample variance of $z_{\bullet, 1}$, which was the intended outcome.
+
+We define the remaining principal components inductively as follows.  Suppose the we have defined principal components $z_{\bullet, 1}, \ldots, z_{\bullet, k}$, where $1 \le k \le d$.  These vectors span a subspace of feature space, a subspace of dimension $k$.  If the subspace is in fact _all_ of feature space, we seek no additional principal components.  Otherwise we define the next principal component as the linear combination $X_{\bullet, \bullet} \; u_{\bullet, k + 1}$ of maximal norm among all such linear combinations that are orthogonal to each of the preceding $k$ principal components.
+
+$$
+\begin{align} 
+  u_{\bullet, k + 1} &= 
+  \arg \max_{\lVert u_\bullet \rVert = 1} 
   \left \{ 
-  \frac{1}{n - 1} \; 
-  \begin{pmatrix}
-    \dot{f}_\bullet^\top \\
-    \dot{s}_\bullet^\top 
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \dot{f}_\bullet & \dot{s}_\bullet
-  \end{pmatrix}
-  \right \} \; 
-  \begin{pmatrix}
-    \gamma_{\bullet, 1} & \gamma_{\bullet, 2}
-  \end{pmatrix} \\ \\ 
-  &= 
-  \begin{pmatrix}
-    \gamma_{\bullet, 1} & \gamma_{\bullet, 2}
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \sigma_1^2 & 0 \\
-    0 & \sigma_2^2 
-  \end{pmatrix} 
+  \Vert X_{\bullet, \bullet} \; u_\bullet \rVert : \; 
+    X_{\bullet, \bullet} \; u_\bullet \; \perp \; z_{\bullet, \kappa}, \forall \kappa
+  \right \}
 \end{align} 
-$$ {#eq-fs-pca-2}
+$$ {#eq-coeff-next-pc}
 
-Each of the coefficient vectors, $(\gamma_{\bullet, 1}, \gamma_{\bullet, 2})$ is a unit vector, and the two vectors are orthogonal to one another.  That is, the matrix $(\gamma_{\bullet, 1}, \gamma_{\bullet, 2})$ is an orthonormal matrix.  Multiplying @eq-fs-pca-2 on the right by the transpose of $(\gamma_{\bullet, 1}, \gamma_{\bullet, 2})$, we obtain an eigen-decomposition (or polar decompositon) of the sample covariance matrix.
+Let's take a moment to describe this constraint that the new principal component be orthogonal to its predecessors.  The constraint amounts to setting to zero the following quadratic form defined for pairs of coefficient vectors:
 
 $$
 \begin{align} 
-  &
-  \frac{1}{n - 1} \; 
-  \begin{pmatrix}
-    \dot{f}_\bullet^\top \\
-    \dot{s}_\bullet^\top 
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \dot{f}_\bullet & \dot{s}_\bullet
-  \end{pmatrix} \\ \\ 
-  &= 
-  \begin{pmatrix}
-    \gamma_{\bullet, 1} & \gamma_{\bullet, 2}
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \sigma_1^2 & 0 \\
-    0 & \sigma_2^2 
-  \end{pmatrix} \; 
-  \begin{pmatrix}
-    \gamma_{\bullet, 1}^\top \\ 
-    \gamma_{\bullet, 2}^\top
-  \end{pmatrix}
+  0 &= \left < 
+  X_{\bullet, \bullet} \; u_\bullet, \; z_{\bullet, \kappa}
+  \right > \\ 
+  &= u_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; u_{\bullet, \kappa} \\ 
+  &= u_\bullet^\top \; \left ( X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \right ) \; u_{\bullet, \kappa}
 \end{align} 
-$$ {#eq-fs-pca-3}
+$$ {#eq-pc-coeff-quad-form}
 
-The matrix of coefficients $(\gamma_{\bullet, 1}, \gamma_{\bullet, 2})$ takes the form of a 2D rotation matrix.
+Because $X_{\bullet, \bullet}$ is centered, the $d \times d$ matrix defining the quadratic form above is a multiple of the sample covariance matrix among features.
 
 $$
 \begin{align} 
-  \begin{pmatrix}
-    \gamma_{1, 1} & \gamma_{1, 2} \\
-    \gamma_{2, 1} & \gamma_{2, 2} 
-  \end{pmatrix} 
-  &= 
-  \begin{pmatrix}
-    \cos{\theta} & - \sin{\theta} \\
-    \sin{\theta} & \cos{\theta} 
-  \end{pmatrix} 
+  cov \left ( X_{\bullet, \bullet} \right ) 
+  &= \frac{1}{n - 1}
+  \left ( 
+  X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
+  \right )
 \end{align} 
-$$ {#eq-fs-rot-mat}
+$$ {#eq-cov-X-mat}
+
+We use this identity in @sec-dim-r-computation to discuss algorithms for calculating principal components.
+
+This inductive process terminates with a complete set of $r$ principal components, $\{ z_{\bullet, 1}, \ldots, z_{\bullet, r} \}$, where $r$ is the dimension of feature space, or equivalently $r = rank(X_{\bullet, \bullet})$, the rank of feature matrix $X_{\bullet, \bullet}$, with $r \le \min(n, d)$.
+
+The principal components thus span feature space.  In fact they constitute an ordered orthogonal basis of decreasing norms.  Therefore each feature vector can be expressed as a linear combination of the principal components:
+
+$$
+\begin{align} 
+  x_{\bullet, j} 
+  &= 
+    \sum_{k = 1}^r 
+      \left < x_{\bullet, j}, z_{\bullet, k} \right > \times 
+      \frac{ z_{\bullet, k} } { \Vert z_{\bullet, k} \rVert^2 } \\ 
+  &= 
+    \sum_{k = 1}^r 
+      \frac{ z_{\bullet, k} } { \Vert z_{\bullet, k} \rVert^2 } \times
+      \left < z_{\bullet, k}, x_{\bullet, j} \right >  \\ 
+  &= 
+  (z_{\bullet, 1}, \ldots, z_{\bullet, r}) \; 
+  D^{-2} \; 
+  (z_{\bullet, 1}, \ldots, z_{\bullet, r})^\top \; 
+  x_{\bullet, j} \\ \\ 
+  & \text{where} \\ \\ 
+  D &= diag 
+  \left ( 
+    \lVert z_{\bullet, 1} \rVert, \ldots, \lVert z_{\bullet, r} \rVert 
+  \right )
+\end{align} 
+$$ {#eq-col-X-per-pc-basis}
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
