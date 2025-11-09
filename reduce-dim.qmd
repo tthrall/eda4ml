@@ -561,29 +561,28 @@ $$
 \end{align} 
 $$ {#eq-X-ctr-cols}
 
-Here's an outline of the reconstruction processs.  At step $j$ we define row vector $v_{j, \bullet} \in \mathbb{R}^d$ that has unit norm and is orthogonal to any row vector $v_{\eta, \bullet}$ defined in any previous step.  At the end of step $j$ we have accumulated an orthonormal set of vectors $(v_{1, \bullet}, \ldots, v_{j, \bullet})$ that span a $j-$dimensional subspace, say $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$.  This orthonormal set defines the following orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
-
+Here's an outline of the reconstruction processs.  At step $j$ we define vector $v_{\bullet, j} \in \mathbb{R}^d$ that has unit norm and is orthogonal to any vector $v_{\bullet, \eta}$ defined in any previous step.  At the end of step $j$ we have accumulated an orthonormal set of vectors $(v_{\bullet, 1}, \ldots, v_{\bullet, j})$ that span a $j-$dimensional subspace, say $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$.  This orthonormal set defines the following orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
 
 $$
 \begin{align} 
   P^{(j)} \; x_\bullet 
   &= 
     \sum_{\eta = 1}^j 
-      \left < x_\bullet, v_{\eta, \bullet} \right > 
-      \times v_{\eta, \bullet} \\ 
+      \left < x_\bullet, v_{\bullet, \eta} \right > 
+      \times v_{\bullet, \eta} \\ 
   &= 
     \sum_{\eta = 1}^j 
-      v_{\eta, \bullet} \times 
-      \left < v_{\eta, \bullet}, x_\bullet \right >  \\ 
+      v_{\bullet, \eta} \times 
+      \left < v_{\bullet, \eta}, x_\bullet \right >  \\ 
   &= 
     \sum_{\eta = 1}^j 
-      v_{\eta, \bullet} \; v_{\eta, \bullet}^\top \; x_\bullet
+      v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; x_\bullet
 \end{align} 
 $$ {#eq-row-supspace-ortho-projection}
 
-In other words, $P^{(j)}$ is the sum of orthogonal projections, $v_{\eta, \bullet} \; v_{\eta, \bullet}^\top$, to 1-dimensional subspaces that are mutually orthogonal.
+In other words, $P^{(j)}$ is the sum of orthogonal projections, $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$, to 1-dimensional subspaces that are mutually orthogonal.
 
-Here are the distinctive details of the reconstruction process.  At step 1 we seek row vector $v_{1, \bullet}$ that minimizes the following measure of reconstruction error:
+Here are the distinctive details of the reconstruction process.  At step 1 we seek vector $v_{\bullet, 1}$ that minimizes the following measure of reconstruction error:
 
 $$
 \begin{align} 
@@ -600,7 +599,7 @@ $$
 \end{align} 
 $$ {#eq-row-projection-error-dim-1a}
 
-In words, any unit row vector $v_\bullet \in \mathbb{R}^d$ defines a projection $v_\bullet \; v_\bullet^\top$ to the 1-dimensional space of scalar multiples of $v_\bullet$.  The loss function above, $\mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right )$, is the sum of squared residuals along the rows of $X_{\bullet, \bullet}$ from this projection.
+In words, any unit vector $v_\bullet \in \mathbb{R}^d$ defines a projection $v_\bullet \; v_\bullet^\top$ to the 1-dimensional space of scalar multiples of $v_\bullet$.  The loss function above, $\mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right )$, is the sum of squared residuals along the rows of $X_{\bullet, \bullet}$ from this projection.
 
 Noting that 
 
@@ -682,11 +681,11 @@ $$
 \end{align} 
 $$ {#eq-cov-X-mat}
 
-Therefore the $\mathrm{Tr}$ term in @eq-row-projection-error-dim-1b is proportional to the sum of the variance of each column of the feature matrix.  @eq-row-projection-error-dim-1b also shows that 
+Therefore the matrix-trace $\mathrm{Tr}$ term in @eq-row-projection-error-dim-1b is proportional to the sum of the variance of each column of the feature matrix.  @eq-row-projection-error-dim-1b also shows that 
 
 $$
 \begin{align} 
-  v_{1, \bullet} 
+  v_{\bullet, 1} 
   &= 
   \arg \min_{ \lVert v_\bullet \rVert = 1 } \; 
   \mathcal{L} ( v_\bullet v_\bullet^\top ) \\ 
@@ -701,7 +700,120 @@ $$
 \end{align} 
 $$ {#eq-maximize-quad-form}
 
-The solution to @eq-maximize-quad-form is well known.  The maximal value of $v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$ is the largest eigenvalue of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  And the vector $v_{1, \bullet}$ that achieves that maximal value is the eigenvector corresponding to that eigenvalue.
+The solution to @eq-maximize-quad-form is well known.  The maximal value of $v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$ is the largest eigenvalue, say $\sigma_1^2$, of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  And the vector $v_{\bullet, 1}$ that achieves that maximal value is the eigenvector corresponding to $\sigma_1^2$.
+
+Having defined $v_{\bullet, 1}$, we proceed inductively.  First, let $r = rank \left ( X_{\bullet, \bullet} \right )$, which is the dimension of the subspace of $\mathbb{R}^d$ spanned by the rows of $X_{\bullet, \bullet}$, as well as the dimension of the subspace of $\mathbb{R}^n$ spanned by the columns of $X_{\bullet, \bullet}$.
+
+Suppose the we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional subspace, denoted $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.  If $j = r$ we terminate the reconstruction.  Otherwise we define the next vector, $v_{\bullet, j + 1}$, as the unit vector that minimizes the following loss function $\mathcal{L}_{j + 1} (\cdot)$: 
+
+$$
+\begin{align} 
+  \mathcal{L}_{j + 1} \left (
+    v_{\bullet} \; v_{\bullet}^\top
+  \right ) 
+  &= 
+  \left \{ 
+    \sum_{i = 1}^n 
+    \left \lVert 
+    \left ( 
+      \mathcal{I} \; - \; 
+      Q^{(j + 1)} (v_{\bullet} \; v_\bullet^\top) \; 
+    \right ) 
+    x_{i, \bullet} 
+    \right \rVert^2 : \; 
+  \lVert v_\bullet \rVert = 1 \; \land \; v_\bullet \perp v_{\bullet, \eta} \; \forall \eta
+  \right \} \\ \\ 
+  &\text{where} \\ \\
+  Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top) &= P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top
+\end{align} 
+$$ {#eq-next-row-projection-error-a}
+
+Note that the constraints on $v_\bullet$ ensure that $Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top)$ is an orthogonal projection.  Then, abbreviating and expanding @eq-next-row-projection-error-a, we have: 
+
+$$
+\begin{align} 
+  \mathcal{L}_{j + 1} \left (
+    v_{\bullet} \; v_{\bullet}^\top
+  \right ) 
+  &= 
+    \sum_{i = 1}^n 
+    \left \lVert 
+    \left ( 
+      \mathcal{I} \; - \; 
+      Q^{(j + 1)} \; 
+    \right ) 
+    x_{i, \bullet} 
+    \right \rVert^2 \\ 
+  &= 
+    \mathrm{Tr} \left \{ 
+      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+      \right \} \; - \; 
+    \sum_{\eta = 1}^j
+    v_{\bullet, \eta}^\top \; 
+      X_{\bullet, \bullet}^\top \;
+      X_{\bullet, \bullet} \; 
+    v_{\bullet, \eta} \; - \; 
+    v_\bullet^\top \; 
+      X_{\bullet, \bullet}^\top \;
+      X_{\bullet, \bullet} \; 
+    v_\bullet
+\end{align} 
+$$ {#eq-next-row-projection-error-b}
+
+It now follows that 
+
+$$
+\begin{align} 
+  v_{\bullet, j + 1} 
+  &= 
+  \arg \max \; 
+  \left \{ 
+    v_\bullet^\top \; 
+      X_{\bullet, \bullet}^\top \;
+      X_{\bullet, \bullet} \; 
+    v_\bullet 
+  \right \} \\ \\ 
+  &\text{subject to: } \\ \\ 
+    &\lVert v_\bullet \rVert = 1 \; 
+    \text{ and } \; 
+    v_\bullet \perp v_{\bullet, \eta} \; \text{ for } \eta \le j
+\end{align} 
+$$ {#eq-maximize-quad-form-b}
+
+Again, this problem of constrained maximization of a quadratic form is well known.  The maximum value is $\sigma_{j + 1}^2$, the eigenvalue of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ of index $j + 1$ in descending order.  The vector $v_{\bullet, j + 1}$ achieving this maximum is the eigenvector corresponding to $\sigma_{j + 1}^2$.
+
+This reconstruction process terminates with an orthonormal set of $d-$dimensional vectors, $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$, whose span is that of the rows of $X_{\bullet, \bullet}$.
+
+Now let $D$ denote the $r \times r$ diagonal matrix $diag(\sigma_1, \ldots, \sigma_r)$.  Then we have 
+
+$$
+\begin{align} 
+  \sum_{\eta = 1}^r \sigma_\eta^2 &= \mathrm{Tr} \left ( D^2 \right )  \\ 
+  &= 
+  \mathrm{Tr} 
+  \left ( 
+    X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+  \right )  \\ 
+  &= 
+  (n - 1) \; 
+  \sum_{k = 1}^d var(x_{\bullet, k})  \\ \\ 
+  &\text{where} \\ \\ 
+  & D = diag(\sigma_1, \ldots, \sigma_r) 
+\end{align} 
+$$ {#eq-cov-trace-equals-eigen-sum}
+
+Moreover, we have the following eigen-decomposition of the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.
+
+$$
+\begin{align} 
+  & \left ( 
+    X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+  \right ) \; 
+    (v_{\bullet, 1}, \ldots, v_{\bullet, r}) \\ 
+  &= 
+  (v_{\bullet, 1}, \ldots, v_{\bullet, r}) \; D^2
+\end{align} 
+$$ {#eq-cov-eigen-decomp}
 
 ### Definitions [OLD]
 

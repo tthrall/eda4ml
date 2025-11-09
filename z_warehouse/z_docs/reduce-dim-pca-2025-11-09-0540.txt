@@ -1,0 +1,4 @@
+reduce-dim-pca-2025-11-09-0540
+ [^vector-transpose]
+
+[^vector-transpose]: The notation $v_{\eta, \bullet} \; v_{\eta, \bullet}^\top$ denotes a $d \times d$ matrix of rank 1, so that $v_{\eta, \bullet}$ denotes a column vector of length $d$.  Unfortunately this notation clashes with that of $X_{\bullet, \bullet} = (x_{\bullet, 1}, \ldots, x_{\bullet, d})$ in which $x_{\bullet, k}$ denotes a row vector.
