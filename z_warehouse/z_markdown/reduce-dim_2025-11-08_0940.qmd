@@ -546,9 +546,9 @@ The figure represents two principal components, $(z_1, z_2)$, as respective red 
 
 The red line $(z_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The blue line $(z_2)$ is perpendicular to $z_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
 
-### Linear Algebra Formulation
+### Definitions
 
-We now define PCA mathematically as a step-wise reconstruction of the $n \times d$ feature matrix $X_{\bullet, \bullet}$.  To simplify notation we assume $X_{\bullet, \bullet}$ to have already been centered: for each column of the original feature matrix the average value of the column elements has been calculated and subtracted.  Therefore the average (or equivalently the sum) of each column of $X_{\bullet, \bullet}$ equals zero.
+We now define PCA mathematically in vector-matrix notation for a centered feature matrix $X_{\bullet, \bullet}$, that is, in which the the sum (and thus the average) of the elements of each column equals zero.
 
 $$
 \begin{align} 
@@ -560,175 +560,6 @@ $$
   1_\bullet^\top \; X_{\bullet, \bullet} &= 0_\bullet \in \mathbb{R}^d
 \end{align} 
 $$ {#eq-X-ctr-cols}
-
-Here's an outline of the reconstruction processs.  At step $j$ we define row vector $v_{j, \bullet} \in \mathbb{R}^d$ that has unit norm and is orthogonal to any row vector $v_{\eta, \bullet}$ defined in any previous step.  At the end of step $j$ we have accumulated an orthonormal set of vectors $(v_{1, \bullet}, \ldots, v_{j, \bullet})$ that span a $j-$dimensional subspace, say $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$.  This orthonormal set defines the following orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
-
-
-$$
-\begin{align} 
-  P^{(j)} \; x_\bullet 
-  &= 
-    \sum_{\eta = 1}^j 
-      \left < x_\bullet, v_{\eta, \bullet} \right > 
-      \times v_{\eta, \bullet} \\ 
-  &= 
-    \sum_{\eta = 1}^j 
-      v_{\eta, \bullet} \times 
-      \left < v_{\eta, \bullet}, x_\bullet \right >  \\ 
-  &= 
-    \sum_{\eta = 1}^j 
-      v_{\eta, \bullet} \; v_{\eta, \bullet}^\top \; x_\bullet
-\end{align} 
-$$ {#eq-row-supspace-ortho-projection}
-
-In other words, $P^{(j)}$ is the sum of orthogonal projections, $v_{\eta, \bullet} \; v_{\eta, \bullet}^\top$, to 1-dimensional subspaces that are mutually orthogonal.
-
-Here are the distinctive details of the reconstruction process.  At step 1 we seek row vector $v_{1, \bullet}$ that minimizes the following measure of reconstruction error:
-
-$$
-\begin{align} 
-  \mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right ) 
-  &= 
-    \sum_{i = 1}^n 
-    \lVert 
-      x_{i, \bullet} \; - \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet}
-    \rVert^2 \\ \\ 
-    & \text{where} \\ \\ 
-    \lVert v_\bullet \rVert &= 1
-\end{align} 
-$$ {#eq-row-projection-error-dim-1a}
-
-In words, any unit row vector $v_\bullet \in \mathbb{R}^d$ defines a projection $v_\bullet \; v_\bullet^\top$ to the 1-dimensional space of scalar multiples of $v_\bullet$.  The loss function above, $\mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right )$, is the sum of squared residuals along the rows of $X_{\bullet, \bullet}$ from this projection.
-
-Noting that 
-
-$$
-\begin{align} 
-  x_{i, \bullet} \; - \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet} 
-  &= 
-  (I - v_\bullet \; v_\bullet^\top) \; x_{i, \bullet} 
-\end{align} 
-$$ {#eq-dim-1-row-projection-complement}
-
-and that $I - v_\bullet \; v_\bullet^\top$ is also an orthogonal projection (thus symmetric and idempotent), we can re-express $\mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right )$ as follows.
-
-$$
-\begin{align} 
-  \mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right ) &= 
-    \sum_{i = 1}^n 
-    \lVert 
-      x_{i, \bullet} \; - \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet}
-    \rVert^2 \\ 
-  &= 
-    \sum_{i = 1}^n 
-    \lVert \; 
-      \left (
-      \mathcal{I} \; - \; 
-      v_\bullet \; v_\bullet^\top
-      \right ) \; 
-      x_{i, \bullet} \;
-    \rVert^2 \\ 
-  &= 
-    \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      \left (
-      \mathcal{I} \; - \; 
-      v_\bullet \; v_\bullet^\top
-      \right ) \; 
-      x_{i, \bullet} \\ 
-  &= 
-    \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      x_{i, \bullet} \; - \; 
-    \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet} \\ 
-  &= 
-    \mathrm{Tr} \left \{ 
-      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
-      \right \} \; - \; 
-    \sum_{i = 1}^n 
-      v_\bullet^\top \; 
-      x_{i, \bullet} \;
-      x_{i, \bullet}^\top \; 
-      v_\bullet \\ 
-  &= 
-    \mathrm{Tr} \left \{ 
-      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
-      \right \} \; - \; 
-    v_\bullet^\top \; 
-      X_{\bullet, \bullet}^\top \;
-      X_{\bullet, \bullet} \; 
-    v_\bullet
-\end{align} 
-$$ {#eq-row-projection-error-dim-1b}
-
-Now because $X_{\bullet, \bullet}$ is centered, the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a multiple of the sample covariance matrix among features.
-
-$$
-\begin{align} 
-  cov \left ( X_{\bullet, \bullet} \right ) 
-  &= \frac{1}{n - 1}
-  \left ( 
-  X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
-  \right )
-\end{align} 
-$$ {#eq-cov-X-mat}
-
-Therefore the $\mathrm{Tr}$ term in @eq-row-projection-error-dim-1b is proportional to the sum of the variance of each column of the feature matrix.  @eq-row-projection-error-dim-1b also shows that 
-
-$$
-\begin{align} 
-  v_{1, \bullet} 
-  &= 
-  \arg \min_{ \lVert v_\bullet \rVert = 1 } \; 
-  \mathcal{L} ( v_\bullet v_\bullet^\top ) \\ 
-  &= 
-  \arg \max_{ \lVert v_\bullet \rVert = 1 } \; 
-  \left \{ 
-    v_\bullet^\top \; 
-      X_{\bullet, \bullet}^\top \;
-      X_{\bullet, \bullet} \; 
-    v_\bullet 
-  \right \}
-\end{align} 
-$$ {#eq-maximize-quad-form}
-
-The solution to @eq-maximize-quad-form is well known.  The maximal value of $v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$ is the largest eigenvalue of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  And the vector $v_{1, \bullet}$ that achieves that maximal value is the eigenvector corresponding to that eigenvalue.
-
-### Definitions [OLD]
-
-We now define PCA mathematically in vector-matrix notation.  For convenience of notation assume that the feature matrix $X_{\bullet, \bullet}$ has been centered, that is, for each column of the original feature matrix, the average value has been calculated and subtracted.   Therefore the average (or equivalently the sum) of each column of $X_{\bullet, \bullet}$ equals zero.
-
-$$
-\begin{align} 
-  X_{\bullet, \bullet} &= (x_{\bullet, 1}, \ldots, x_{\bullet, d}) \\ \\ 
-  & \text{with} \\ \\ 
-  1_\bullet^\top \; x_{\bullet, k} &= \sum_{i = 1}^n x_{i, k} = 0 \\ \\ 
-  &\text{for } k \in \{ 1, \ldots, d \} \\ \\ 
-  & \text{so that} \\ \\ 
-  1_\bullet^\top \; X_{\bullet, \bullet} &= 0_\bullet \in \mathbb{R}^d
-\end{align} 
-$$ {#eq-X-ctr-cols-OLD}
-
-The first step in this reconstruction is to seek a vector in feature space, say $z_\bullet = X_{\bullet, \bullet} \; \gamma_\bullet$ that minimizes the following squared error loss function, say $\mathcal{L} (\gamma_\bullet)$.
-
-$$
-\begin{align} 
-  \mathcal{L} (\gamma_\bullet) &= 
-    \sum_{i = 1}^n 
-    \lVert 
-      x_{i, \bullet} \; - \; 
-    \rVert
-\end{align} 
-$$ {#eq-pc-1-sq-error-OLD}
 
 The first principal component of $X_{\bullet, \bullet}$ is determined by the "direction" in feature space of maximum variance.
 
@@ -789,7 +620,7 @@ $$ {#eq-first-pc-var}
 
 That is, by maximizing the norm $\Vert z_{\bullet, 1} \rVert$ the coefficient vector $u_{\bullet, 1}$ maximizes the sample variance of $z_{\bullet, 1}$, which was the intended outcome.
 
-We define the remaining principal components inductively as follows.  Suppose the we have defined principal components $z_{\bullet, 1}, \ldots, z_{\bullet, k}$, where $1 \le k \le d$.  These vectors span a $k-$dimensional subspace of feature space.  If the subspace is in fact _all_ of feature space, we seek no additional principal components.  Otherwise we define the next principal component as the linear combination $X_{\bullet, \bullet} \; u_{\bullet, k + 1}$ of maximal norm among all such linear combinations that are orthogonal to each of the preceding $k$ principal components.
+We define the remaining principal components inductively as follows.  Suppose the we have defined principal components $z_{\bullet, 1}, \ldots, z_{\bullet, k}$, where $1 \le k \le d$.  These vectors span a subspace of feature space, a subspace of dimension $k$.  If the subspace is in fact _all_ of feature space, we seek no additional principal components.  Otherwise we define the next principal component as the linear combination $X_{\bullet, \bullet} \; u_{\bullet, k + 1}$ of maximal norm among all such linear combinations that are orthogonal to each of the preceding $k$ principal components.
 
 $$
 \begin{align} 
@@ -824,7 +655,7 @@ $$
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
   \right )
 \end{align} 
-$$ {#eq-cov-X-mat-OLD}
+$$ {#eq-cov-X-mat}
 
 We use this identity in @sec-dim-r-computation to discuss algorithms for calculating principal components.
 
