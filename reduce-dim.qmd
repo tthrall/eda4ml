@@ -548,7 +548,11 @@ The red line $(z_1)$ points in the direction where the data varies most. Project
 
 ### Linear Algebra Formulation
 
-We now define PCA mathematically as a step-wise reconstruction of the $n \times d$ feature matrix $X_{\bullet, \bullet}$.  To simplify notation we assume $X_{\bullet, \bullet}$ to have already been centered: for each column of the original feature matrix the average value of the column elements has been calculated and subtracted.  Therefore the average (or equivalently the sum) of each column of $X_{\bullet, \bullet}$ equals zero.
+To define principal components we will describe a step-wise reconstruction of the $n \times d$ feature matrix $X_{\bullet, \bullet}$.
+
+#### Preliminaries
+
+First, to simplify notation, we assume $X_{\bullet, \bullet}$ to have already been centered: for each column of the original feature matrix the average value of the column elements has been calculated and subtracted.  Therefore the average (or equivalently the sum) of each column of $X_{\bullet, \bullet}$ equals zero.
 
 $$
 \begin{align} 
@@ -560,6 +564,90 @@ $$
   1_\bullet^\top \; X_{\bullet, \bullet} &= 0_\bullet \in \mathbb{R}^d
 \end{align} 
 $$ {#eq-X-ctr-cols}
+
+As a consequence, the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a multiple of the sample covariance matrix among features.
+
+$$
+\begin{align} 
+  cov \left ( X_{\bullet, \bullet} \right ) 
+  &= \frac{1}{n - 1}
+  \left ( 
+  X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
+  \right )
+\end{align} 
+$$ {#eq-cov-X-mat}
+
+Although matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a square matrix having dimensions $d \times d$, its _rank_ may be less than $d$.  Let $r = rank \left ( X_{\bullet, \bullet} \right )$.  Then $r$ is also the rank of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  It is the dimension of the subspace of $\mathbb{R}^d$ spanned by the rows of $X_{\bullet, \bullet}$, as well as the dimension of the subspace of $\mathbb{R}^n$ spanned by the columns of $X_{\bullet, \bullet}$.  Consequently $r \le \min(n, d)$.
+
+Our construction of principal components also relies on the notion of an orthogonal projection $P$ from $\mathbb{R}^d$ to some subspace of $\mathbb{R}^d$.  Recall that $P$ is an orthogonal projection if and only if: it is idempotent $(P^2 = P)$; and it is symmetric  $(P^\top = P)$.  Also, if $P$ is an orthogonal projection then so is its complement $\mathcal{I} - P$.
+
+The simplest example is the $d \times d$ matrix $v_\bullet \; v_\bullet^\top$, where $v_\bullet \in \mathbb{R}^d$ is a unit vector (a vector of unit norm).  This sends $x_\bullet \in \mathbb{R}^d$ to a scalar multiple of $v_\bullet$, namely $\left < x_\bullet, v_\bullet \right > v_\bullet$.
+
+To any projection $P$ defined on $\mathbb{R}^d$ we apply the following loss function $\mathcal{L} (\cdot)$ in order to measure how well $P$ reproduces the rows of the feature matrix $X_{\bullet, \bullet}$.
+
+$$
+\begin{align} 
+  \mathcal{L} \left ( P \right ) 
+  &= 
+    \sum_{i = 1}^n 
+    \; \left \lVert 
+      x_{i, \bullet} \; - \; P \; x_{i, \bullet}
+    \right \rVert^2 \\ 
+  &= 
+    \sum_{i = 1}^n 
+    \; \left \lVert 
+    \left ( 
+      \mathcal{I} \; - \; P 
+    \right )
+      \; x_{i, \bullet}
+    \right \rVert^2 \\ 
+  &= 
+    \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      \left (
+        \mathcal{I} \; - \; P
+      \right ) \; 
+      x_{i, \bullet} \\ 
+  &= 
+    \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      x_{i, \bullet} \; - \; 
+    \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      P \; 
+      x_{i, \bullet} \\ 
+  &= 
+    \mathrm{Tr} \left \{ 
+      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+      \right \} \; - \; 
+    \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      P \; 
+      x_{i, \bullet} \\ \\ 
+    & \text{subject to the constraint:} \\ \\ 
+    & P \text{ is an orthogonal projection defined on } \mathbb{R}^d
+\end{align} 
+$$ {#eq-row-projection-squared-error}
+
+Thus $\mathcal{L} (P)$ is a sum over row index $i$ of squared errors in the approximation of $x_{i, \bullet}$ by $P \; x_{i, \bullet}$.
+
+Now let $\mathcal{P}$ be a family of projections subject to some constraints.  From @eq-row-projection-squared-error we see that: 
+
+$$
+\begin{align} 
+  &  
+  \arg \min_{ P \in \mathcal{P} } \; 
+  \mathcal{L} ( P ) \\ 
+  &= 
+  \arg \max_{ P \in \mathcal{P} } \; 
+  \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      P \; 
+      x_{i, \bullet}
+\end{align} 
+$$ {#eq-min-loss-equals-max-quad-form}
+
+#### Reconstructing the feature matrix
 
 Here's an outline of the reconstruction processs.  At step $j$ we define vector $v_{\bullet, j} \in \mathbb{R}^d$ that has unit norm and is orthogonal to any vector $v_{\bullet, \eta}$ defined in any previous step.  At the end of step $j$ we have accumulated an orthonormal set of vectors $(v_{\bullet, 1}, \ldots, v_{\bullet, j})$ that span a $j-$dimensional subspace, say $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$.  This orthonormal set defines the following orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
 
@@ -582,137 +670,56 @@ $$ {#eq-row-supspace-ortho-projection}
 
 In other words, $P^{(j)}$ is the sum of orthogonal projections, $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$, to 1-dimensional subspaces that are mutually orthogonal.
 
-Here are the distinctive details of the reconstruction process.  At step 1 we seek vector $v_{\bullet, 1}$ that minimizes the following measure of reconstruction error:
+Here are the distinctive details of the reconstruction process.  At step 1 we define vector $v_{\bullet, 1}$ as the unit vector that minimizes $\mathcal{L} (v_\bullet \; v_\bullet^\top)$ among all unit vectors $v_\bullet \in \mathbb{R}^d$: 
 
 $$
 \begin{align} 
-  \mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right ) 
+  v_{\bullet, 1}
+  &=  
+  \arg \min_{ \Vert v_\bullet \rVert = 1 } \; 
+  \mathcal{L} ( v_\bullet \; v_\bullet^\top ) \\ 
   &= 
-    \sum_{i = 1}^n 
-    \lVert 
-      x_{i, \bullet} \; - \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet}
-    \rVert^2 \\ \\ 
-    & \text{where} \\ \\ 
-    \lVert v_\bullet \rVert &= 1
-\end{align} 
-$$ {#eq-row-projection-error-dim-1a}
-
-In words, any unit vector $v_\bullet \in \mathbb{R}^d$ defines a projection $v_\bullet \; v_\bullet^\top$ to the 1-dimensional space of scalar multiples of $v_\bullet$.  The loss function above, $\mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right )$, is the sum of squared residuals along the rows of $X_{\bullet, \bullet}$ from this projection.
-
-Noting that 
-
-$$
-\begin{align} 
-  x_{i, \bullet} \; - \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet} 
-  &= 
-  (I - v_\bullet \; v_\bullet^\top) \; x_{i, \bullet} 
-\end{align} 
-$$ {#eq-dim-1-row-projection-complement}
-
-and that $I - v_\bullet \; v_\bullet^\top$ is also an orthogonal projection (thus symmetric and idempotent), we can re-express $\mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right )$ as follows.
-
-$$
-\begin{align} 
-  \mathcal{L} \left ( v_\bullet \; v_\bullet^\top \right ) &= 
-    \sum_{i = 1}^n 
-    \lVert 
-      x_{i, \bullet} \; - \; 
-      v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet}
-    \rVert^2 \\ 
-  &= 
-    \sum_{i = 1}^n 
-    \lVert \; 
-      \left (
-      \mathcal{I} \; - \; 
-      v_\bullet \; v_\bullet^\top
-      \right ) \; 
-      x_{i, \bullet} \;
-    \rVert^2 \\ 
-  &= 
-    \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      \left (
-      \mathcal{I} \; - \; 
-      v_\bullet \; v_\bullet^\top
-      \right ) \; 
-      x_{i, \bullet} \\ 
-  &= 
-    \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      x_{i, \bullet} \; - \; 
-    \sum_{i = 1}^n 
+  \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
+  \sum_{i = 1}^n 
       x_{i, \bullet}^\top \; 
       v_\bullet \; v_\bullet^\top \; 
       x_{i, \bullet} \\ 
   &= 
-    \mathrm{Tr} \left \{ 
-      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
-      \right \} \; - \; 
-    \sum_{i = 1}^n 
+  \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
+  \sum_{i = 1}^n 
       v_\bullet^\top \; 
-      x_{i, \bullet} \;
+      x_{i, \bullet} \; 
       x_{i, \bullet}^\top \; 
       v_\bullet \\ 
   &= 
-    \mathrm{Tr} \left \{ 
-      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
-      \right \} \; - \; 
-    v_\bullet^\top \; 
-      X_{\bullet, \bullet}^\top \;
-      X_{\bullet, \bullet} \; 
-    v_\bullet
-\end{align} 
-$$ {#eq-row-projection-error-dim-1b}
-
-Now because $X_{\bullet, \bullet}$ is centered, the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a multiple of the sample covariance matrix among features.
-
-$$
-\begin{align} 
-  cov \left ( X_{\bullet, \bullet} \right ) 
-  &= \frac{1}{n - 1}
+  \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
+  v_\bullet^\top \; 
   \left ( 
-  X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
-  \right )
+  \sum_{i = 1}^n 
+      x_{i, \bullet} \; 
+      x_{i, \bullet}^\top 
+  \right ) \; 
+  v_\bullet \\ 
+  &= 
+  \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
+  v_\bullet^\top \; 
+  \left ( 
+    X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+  \right ) \;
+  v_\bullet
 \end{align} 
-$$ {#eq-cov-X-mat}
+$$ {#eq-max-quad-form-step-1}
 
-Therefore the matrix-trace $\mathrm{Tr}$ term in @eq-row-projection-error-dim-1b is proportional to the sum of the variance of each column of the feature matrix.  @eq-row-projection-error-dim-1b also shows that 
+The solution to @eq-max-quad-form-step-1 is well known.  The maximal value of $v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$ is the largest eigenvalue, say $\sigma_1^2$, of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  And the vector $v_{\bullet, 1}$ that achieves that maximal value is the eigenvector corresponding to $\sigma_1^2$.
+
+Having defined $v_{\bullet, 1}$, we proceed inductively, again with $r$ defined as $r = rank \left ( X_{\bullet, \bullet} \right )$.  Suppose that we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional subspace, denoted $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
+
+If $j = r$ we terminate the reconstruction.  Otherwise we define the next vector, $v_{\bullet, j + 1}$, as the unit vector that minimizes $\mathcal{L} (Q^{(j + 1)})$, where $Q^{(j + 1)} = P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top$.
 
 $$
 \begin{align} 
-  v_{\bullet, 1} 
+  \mathcal{L} (Q^{(j + 1)})
   &= 
-  \arg \min_{ \lVert v_\bullet \rVert = 1 } \; 
-  \mathcal{L} ( v_\bullet v_\bullet^\top ) \\ 
-  &= 
-  \arg \max_{ \lVert v_\bullet \rVert = 1 } \; 
-  \left \{ 
-    v_\bullet^\top \; 
-      X_{\bullet, \bullet}^\top \;
-      X_{\bullet, \bullet} \; 
-    v_\bullet 
-  \right \}
-\end{align} 
-$$ {#eq-maximize-quad-form}
-
-The solution to @eq-maximize-quad-form is well known.  The maximal value of $v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$ is the largest eigenvalue, say $\sigma_1^2$, of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  And the vector $v_{\bullet, 1}$ that achieves that maximal value is the eigenvector corresponding to $\sigma_1^2$.
-
-Having defined $v_{\bullet, 1}$, we proceed inductively.  First, let $r = rank \left ( X_{\bullet, \bullet} \right )$, which is the dimension of the subspace of $\mathbb{R}^d$ spanned by the rows of $X_{\bullet, \bullet}$, as well as the dimension of the subspace of $\mathbb{R}^n$ spanned by the columns of $X_{\bullet, \bullet}$.
-
-Suppose the we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional subspace, denoted $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.  If $j = r$ we terminate the reconstruction.  Otherwise we define the next vector, $v_{\bullet, j + 1}$, as the unit vector that minimizes the following loss function $\mathcal{L}_{j + 1} (\cdot)$: 
-
-$$
-\begin{align} 
-  \mathcal{L}_{j + 1} \left (
-    v_{\bullet} \; v_{\bullet}^\top
-  \right ) 
-  &= 
-  \left \{ 
     \sum_{i = 1}^n 
     \left \lVert 
     \left ( 
@@ -720,11 +727,11 @@ $$
       Q^{(j + 1)} (v_{\bullet} \; v_\bullet^\top) \; 
     \right ) 
     x_{i, \bullet} 
-    \right \rVert^2 : \; 
-  \lVert v_\bullet \rVert = 1 \; \land \; v_\bullet \perp v_{\bullet, \eta} \; \forall \eta
-  \right \} \\ \\ 
+    \right \rVert^2 \\ \\ 
   &\text{where} \\ \\
-  Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top) &= P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top
+  Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top) &= P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top \\ \\ 
+  & \text{subject to the constraints: } \\ \\ 
+  & \lVert v_\bullet \rVert = 1 \; \text{ and } \; v_\bullet \perp v_{\bullet, \eta} \; \text{ for } \; \eta \le j
 \end{align} 
 $$ {#eq-next-row-projection-error-a}
 
@@ -802,7 +809,9 @@ $$
 \end{align} 
 $$ {#eq-cov-trace-equals-eigen-sum}
 
-Moreover, we have the following eigen-decomposition of the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.
+#### Matrix decompositions
+
+Note that the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is non-negative definite, so that its complete set of eigenvalues consist of the positive diagonal elements of $D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)$, along with $d - r$ zeros, if $r < d$.  The corresponding eigenvectors are $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$ along with the possibility (if $r < d$) of $d - r$ unit vectors, say $(v_{\bullet, r + 1}, \ldots, v_{\bullet, d})$ that complement the first set so that $V = (v_{\bullet, 1}, \ldots, v_{\bullet, d})$ is a complete orthonormal basis for $\mathbb{R}^d$.  Restricting attention to just the non-zero eigenvalues, we have:
 
 $$
 \begin{align} 
