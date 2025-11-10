@@ -910,7 +910,7 @@ That is, the sum of the eigenvalues $\sigma_\eta^2$ is equal to the sum of squar
 
 #### Matrix decompositions
 
-In the previous section we reconstructed rows of the feature matrix $X_{\bullet, \bullet}$ using a sequence of orthogonal projections $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$.  This development gave us an eigen-decomposition of the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, the scaled feature covariance matrix.  The $d-$dimensional vector $v_{\bullet, \eta}$ turned out to be an eigenvector of this matrix, having corresponding eigenvector $\sigma_\eta^2$, indexed in descending order.  In matrix notation we have: 
+In the previous section we reconstructed rows of the feature matrix $X_{\bullet, \bullet}$ using a sequence of orthogonal projections $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$.  This development gave us a partial eigen-decomposition of the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, the scaled feature covariance matrix.  With $r = rank(X_{\bullet, \bullet})$, and for $\eta \in \{1, \ldots, r\}$ the $d-$dimensional vector $v_{\bullet, \eta}$ is an eigenvector of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, having corresponding eigenvector $\sigma_\eta^2$, indexed in descending magnitude.  In matrix notation we have: 
 
 $$
 \begin{align} 
@@ -923,11 +923,41 @@ $$
 \end{align} 
 $$ {#eq-cov-partial-eigen-decomp}
 
-Matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is non-negative definite, which means that it has $d$ non-negative eigenvalues and corresponding eigenvectors.  The first $r$ eigenvalues, arranged in descending order are the positive diagonal elements of $D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)$.  If $r = d$ the matrix is strictly positive-definite, and its complete eigen-decomposition is given by @eq-cov-partial-eigen-decomp.
+Matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is non-negative definite, which means that it has $d$ non-negative eigenvalues and corresponding eigenvectors.  The first $r$ eigenvalues are positive.  Arranged in descending order, they are the diagonal elements of $D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)$.  If $r = d$ the matrix is strictly positive-definite, and its complete eigen-decomposition is given by @eq-cov-partial-eigen-decomp.
 
-Suppose now that $r < d$.  Then any unit vector orthogonal to $\mathcal{R}^{(r)}$, the $d-$dimensional subspace spanned by $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$, qualifies as an eigenvector (a "null" eigenvector, we'll say) having an eigenvalue of zero.  Therefore we can complement eigenvectors $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$ with an orthonormal set of null eigenvectors $(v_{\bullet, r + 1}, \ldots, v_{\bullet, d})$.  The combined set of eigenvectors is a complete orthonormal basis for $\mathbb{R}^d$. 
+Suppose now that $r < d$.  Then any unit vector orthogonal to $\mathcal{R}^{(r)}$, the $d-$dimensional subspace spanned by $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$, qualifies as an eigenvector (a "null" eigenvector, we'll say) having an eigenvalue of zero.  Therefore we can complement eigenvectors $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$ with an orthonormal set of null eigenvectors $(v_{\bullet, r + 1}, \ldots, v_{\bullet, d})$.  The combined set of eigenvectors is a complete orthonormal basis for $\mathbb{R}^d$.
 
-Whether or not $r = d$, we now have a complete orthonormal basis represented by matrix $V = (v_{\bullet, 1}, \ldots, v_{\bullet, d})$.  This enables us to re-express @eq-cov-partial-eigen-decomp as follows.
+We thus have two cases to consider: $r < d$; or $r = d$.  In either case we now have a complete orthonormal basis represented by the $d \times d$ matrix $V = (v_{\bullet, 1}, \ldots, v_{\bullet, d})$.  We delineate the two cases as follows.
+
+$$
+\begin{align} 
+  V_1 &= (v_{\bullet, 1}, \ldots, v_{\bullet, r}) \\ 
+  V_2 &= 
+    \begin{cases}
+      (v_{\bullet, r + 1}, \ldots, v_{\bullet, d}) & \text{if } r < d \\ 
+      \emptyset & \text{if } r = d
+    \end{cases} \\ 
+  V &= (V_1, V_2)
+\end{align} 
+$$ {#eq-cov-all-eigen-vectors-1}
+
+We also record the full set of eigenvalues in the $d \times d$ diagonal matrix $\Sigma$ as follows.
+
+$$
+\begin{align} 
+  \Sigma &= 
+    \begin{cases}
+      \begin{pmatrix}
+        D^2 & 0 \\
+        0   & 0
+    \end{pmatrix} 
+    & \text{if } r < d \\ 
+      D^2 & \text{if } r = d
+    \end{cases}
+\end{align} 
+$$ {#eq-cov-all-eigen-values-1}
+
+This enables us to re-express @eq-cov-partial-eigen-decomp as follows.
 
 $$
 \begin{align} 
@@ -935,29 +965,35 @@ $$
     X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
   \right ) \; 
     V 
-  &= V \; 
-    \begin{pmatrix}
-      D^2 & 0 \\
-      0   & 0
-    \end{pmatrix}
+  &= 
+    V \; \Sigma
 \end{align} 
 $$ {#eq-cov-full-eigen-decomp-1}
-
-This matrix equation is meant to include the possibility that $r = d$, in which case the right side of the equation is simply $V \; D^2$.
 
 Matrix $V$ is an orthonormal rotation of $\mathbb{R}^d$, so that $V^\top = V^{-1}$.  Multiplying @eq-cov-full-eigen-decomp-1 on the right by $V^\top$ we obtain: 
 
 $$
 \begin{align} 
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
-  &= V \; 
-    \begin{pmatrix}
-      D^2 & 0 \\
-      0   & 0
-    \end{pmatrix} \;
-    V^\top
+  &= 
+    V \; \Sigma \; V^\top 
 \end{align} 
 $$ {#eq-cov-full-eigen-decomp-2}
+
+This last equation can be re-expressed as an eigen-decomposition of the feature covariance matrix: 
+
+$$
+\begin{align} 
+  & cov(X_{\bullet, \bullet}) \\ 
+  &= 
+    \frac{1}{n-1} X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \\ 
+  &= V \; 
+    \left ( 
+      \frac{1}{n-1} \Sigma \; 
+    \right )
+    V^\top
+\end{align} 
+$$ {#eq-cov-full-eigen-decomp-3}
 
 ### Definitions [OLD]
 
