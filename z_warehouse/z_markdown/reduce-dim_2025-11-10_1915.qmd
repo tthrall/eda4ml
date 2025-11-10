@@ -1135,6 +1135,159 @@ $$ {#eq-svd-3}
 
 This factorization of the feature matrix $X_{\bullet, \bullet}$ is called a _singular value decomposition_ (SVD).
 
+### Definitions [OLD]
+
+We now define PCA mathematically in vector-matrix notation.  For convenience of notation assume that the feature matrix $X_{\bullet, \bullet}$ has been centered, that is, for each column of the original feature matrix, the average value has been calculated and subtracted.   Therefore the average (or equivalently the sum) of each column of $X_{\bullet, \bullet}$ equals zero.
+
+$$
+\begin{align} 
+  X_{\bullet, \bullet} &= (x_{\bullet, 1}, \ldots, x_{\bullet, d}) \\ \\ 
+  & \text{with} \\ \\ 
+  1_\bullet^\top \; x_{\bullet, k} &= \sum_{i = 1}^n x_{i, k} = 0 \\ \\ 
+  &\text{for } k \in \{ 1, \ldots, d \} \\ \\ 
+  & \text{so that} \\ \\ 
+  1_\bullet^\top \; X_{\bullet, \bullet} &= 0_\bullet \in \mathbb{R}^d
+\end{align} 
+$$ {#eq-X-ctr-cols-OLD}
+
+The first step in this reconstruction is to seek a vector in feature space, say $z_\bullet = X_{\bullet, \bullet} \; \gamma_\bullet$ that minimizes the following squared error loss function, say $\mathcal{L} (\gamma_\bullet)$.
+
+$$
+\begin{align} 
+  \mathcal{L} (\gamma_\bullet) &= 
+    \sum_{i = 1}^n 
+    \lVert 
+      x_{i, \bullet} \; - \; 
+    \rVert
+\end{align} 
+$$ {#eq-pc-1-sq-error-OLD}
+
+The first principal component of $X_{\bullet, \bullet}$ is determined by the "direction" in feature space of maximum variance.
+
+To elaborate, each vector of coefficients $\gamma_\bullet \in \mathbb{R}^d$ can be mapped to a linear combination of feature vectors, $X_{\bullet, \bullet} \gamma_\bullet$.  Such linear combinations constitute a subspace of $\mathbb{R}^n$ called "feature space".  Each non-zero coefficient vector can be expressed as the product of a scalar magnitude and a unit vector, namely: 
+
+$$
+\begin{align} 
+  \gamma_\bullet &= \lVert \gamma_\bullet \rVert \times 
+  \left ( 
+    \frac{\gamma_\bullet}{\lVert \gamma_\bullet \rVert} 
+  \right )
+    & \text{ for } \gamma_\bullet \ne 0_\bullet
+\end{align} 
+$$ {#eq-gamma-mag-direction}
+
+The above unit vector is called the direction of vector $\gamma_\bullet$.  Now the first principal component of $X_{\bullet, \bullet}$, is defined by the coefficient unit vector, say $u_{\bullet, 1}$, that maximizes the norm of $X_{\bullet, \bullet} u_\bullet$ among all unit vectors $u_\bullet \in \mathbb{R}^d$.
+
+$$
+\begin{align} 
+  u_{\bullet, 1} &= 
+  \arg \max_{\lVert u_\bullet \rVert = 1} 
+  \Vert X_{\bullet, \bullet} \; u_\bullet \rVert 
+\end{align} 
+$$ {#eq-coeff-first-pc}
+
+Then the first principal component, denoted $z_{\bullet, 1}$, is the feature space vector defined by $u_{\bullet, 1}$.
+
+$$
+\begin{align} 
+  z_{\bullet, 1} &= X_{\bullet, \bullet} \; u_{\bullet, 1}
+\end{align} 
+$$ {#eq-first-pc}
+
+Note that the elements of the first principal component $z_{\bullet, 1}$ sum to zero, since this is true of each feature vector, and $z_{\bullet, 1}$ is a linear combination of the feature vectors.
+
+$$
+\begin{align} 
+  1_\bullet^\top z_{\bullet, 1} &= 
+  1_\bullet^\top X_{\bullet, \bullet} \; u_{\bullet, 1} = 0 \\ \\ 
+  & \text{so that} \\ \\ 
+  \bar{z}_1 &= \frac{1}{n} \sum_{i = 1}^n z_{i, 1} \\ 
+  &= \frac{1}{n} \; 1_\bullet^\top \;  z_{\bullet, 1} \\ 
+  &= 0
+\end{align} 
+$$ {#eq-first-pc-ctr}
+
+Therefore, the sample variance of $z_{\bullet, 1}$ is: 
+
+$$
+\begin{align} 
+  var ( z_{\bullet, 1} ) &= 
+  \frac{1}{n - 1} \sum_{i = 1}^n (z_{i, 1} - \bar{z}_1)^2 \\ 
+  &= 
+  \frac{1}{n - 1} \sum_{i = 1}^n z_{i, 1}^2 \\ 
+  &= \frac{1}{n - 1} \; \Vert z_{\bullet, 1} \rVert^2
+\end{align} 
+$$ {#eq-first-pc-var}
+
+That is, by maximizing the norm $\Vert z_{\bullet, 1} \rVert$ the coefficient vector $u_{\bullet, 1}$ maximizes the sample variance of $z_{\bullet, 1}$, which was the intended outcome.
+
+We define the remaining principal components inductively as follows.  Suppose the we have defined principal components $z_{\bullet, 1}, \ldots, z_{\bullet, k}$, where $1 \le k \le d$.  These vectors span a $k-$dimensional subspace of feature space.  If the subspace is in fact _all_ of feature space, we seek no additional principal components.  Otherwise we define the next principal component as the linear combination $X_{\bullet, \bullet} \; u_{\bullet, k + 1}$ of maximal norm among all such linear combinations that are orthogonal to each of the preceding $k$ principal components.
+
+$$
+\begin{align} 
+  u_{\bullet, k + 1} &= 
+  \arg \max_{\lVert u_\bullet \rVert = 1} 
+  \left \{ 
+  \Vert X_{\bullet, \bullet} \; u_\bullet \rVert : \; 
+    X_{\bullet, \bullet} \; u_\bullet \; \perp \; z_{\bullet, \kappa}, \forall \kappa
+  \right \}
+\end{align} 
+$$ {#eq-coeff-next-pc}
+
+Let's take a moment to describe this constraint that the new principal component be orthogonal to its predecessors.  The constraint amounts to setting to zero the following quadratic form defined for pairs of coefficient vectors:
+
+$$
+\begin{align} 
+  0 &= \left < 
+  X_{\bullet, \bullet} \; u_\bullet, \; z_{\bullet, \kappa}
+  \right > \\ 
+  &= u_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; u_{\bullet, \kappa} \\ 
+  &= u_\bullet^\top \; \left ( X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \right ) \; u_{\bullet, \kappa}
+\end{align} 
+$$ {#eq-pc-coeff-quad-form}
+
+Because $X_{\bullet, \bullet}$ is centered, the $d \times d$ matrix defining the quadratic form above is a multiple of the sample covariance matrix among features.
+
+$$
+\begin{align} 
+  cov \left ( X_{\bullet, \bullet} \right ) 
+  &= \frac{1}{n - 1}
+  \left ( 
+  X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
+  \right )
+\end{align} 
+$$ {#eq-cov-X-mat-OLD}
+
+We use this identity in @sec-dim-r-computation to discuss algorithms for calculating principal components.
+
+This inductive process terminates with a complete set of $r$ principal components, $\{ z_{\bullet, 1}, \ldots, z_{\bullet, r} \}$, where $r$ is the dimension of feature space, or equivalently $r = rank(X_{\bullet, \bullet})$, the rank of feature matrix $X_{\bullet, \bullet}$, with $r \le \min(n, d)$.
+
+The principal components thus span feature space.  In fact they constitute an ordered orthogonal basis of decreasing norms.  Therefore each feature vector can be expressed as a linear combination of the principal components:
+
+$$
+\begin{align} 
+  x_{\bullet, j} 
+  &= 
+    \sum_{k = 1}^r 
+      \left < x_{\bullet, j}, z_{\bullet, k} \right > \times 
+      \frac{ z_{\bullet, k} } { \Vert z_{\bullet, k} \rVert^2 } \\ 
+  &= 
+    \sum_{k = 1}^r 
+      \frac{ z_{\bullet, k} } { \Vert z_{\bullet, k} \rVert^2 } \times
+      \left < z_{\bullet, k}, x_{\bullet, j} \right >  \\ 
+  &= 
+  (z_{\bullet, 1}, \ldots, z_{\bullet, r}) \; 
+  D^{-2} \; 
+  (z_{\bullet, 1}, \ldots, z_{\bullet, r})^\top \; 
+  x_{\bullet, j} \\ \\ 
+  & \text{where} \\ \\ 
+  D &= diag 
+  \left ( 
+    \lVert z_{\bullet, 1} \rVert, \ldots, \lVert z_{\bullet, r} \rVert 
+  \right )
+\end{align} 
+$$ {#eq-col-X-per-pc-basis}
+
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
 ## Computational Considerations {#sec-dim-r-computation}
