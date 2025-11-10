@@ -579,9 +579,11 @@ $$ {#eq-cov-X-mat}
 
 Although matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a square matrix having dimensions $d \times d$, its _rank_ may be less than $d$.  Let $r = rank \left ( X_{\bullet, \bullet} \right )$.  Then $r$ is also the rank of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  It is the dimension of the subspace of $\mathbb{R}^d$ spanned by the rows of $X_{\bullet, \bullet}$, as well as the dimension of the subspace of $\mathbb{R}^n$ spanned by the columns of $X_{\bullet, \bullet}$.  Consequently $r \le \min(n, d)$.
 
-Our construction of principal components also relies on the notion of an orthogonal projection $P$ from $\mathbb{R}^d$ to some subspace of $\mathbb{R}^d$.  Recall that $P$ is an orthogonal projection if and only if: it is idempotent $(P^2 = P)$; and it is symmetric  $(P^\top = P)$.  Also, if $P$ is an orthogonal projection then so is its complement $\mathcal{I} - P$.
+Our construction of principal components also relies on the notion of an orthogonal projection $P$ from $\mathbb{R}^d$ to some subspace of $\mathbb{R}^d$.  Recall that $P$ is an orthogonal projection if and only if: it is idempotent $(P^2 = P)$; and symmetric  $(P^\top = P)$.  Also, if $P$ is an orthogonal projection then so is its complement $\mathcal{I} - P$.
 
-The simplest example is the $d \times d$ matrix $v_\bullet \; v_\bullet^\top$, where $v_\bullet \in \mathbb{R}^d$ is a unit vector (a vector of unit norm).  This sends $x_\bullet \in \mathbb{R}^d$ to a scalar multiple of $v_\bullet$, namely $\left < x_\bullet, v_\bullet \right > v_\bullet$.
+The simplest example is the $d \times d$ matrix $v_\bullet \; v_\bullet^\top$, where $v_\bullet \in \mathbb{R}^d$ is a unit vector (a vector of unit norm).  This sends $x_\bullet \in \mathbb{R}^d$ to a scalar multiple of $v_\bullet$, namely $\left < x_\bullet, v_\bullet \right > v_\bullet$. [^inner-product-notation]
+
+[^inner-product-notation]: Among the notations for the inner product (scalar product) of vectors $x, y$ belonging to the same Euclidean space are: (1) $\left < x, y \right>$; and (2) $x^\top \; y$.  The former is less ambiguous.  The latter conforms to the notation of matrix multiplication; it is useful and perhaps more intuitive.  The ambiguity may occur when at least one of $x, y$ is a row or a column of some matrix.  If $x$ is a row vector and $y$ is a column vector, then the inner product of $x, y$ should be written as $x \; y$ according to matrix notation.   Nevertheless the matrix multiplication notation is useful.  For example we use $u \; u^\top$ to denote an orthogonal projection matrix, not a scalar product, when $u$ is a unit vector.
 
 To any projection $P$ defined on $\mathbb{R}^d$ we apply the following loss function $\mathcal{L} (\cdot)$ in order to measure how well $P$ reproduces the rows of the feature matrix $X_{\bullet, \bullet}$.
 
@@ -603,35 +605,54 @@ $$
     \right \rVert^2 \\ 
   &= 
     \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      \left (
-        \mathcal{I} \; - \; P
-      \right ) \; 
-      x_{i, \bullet} \\ 
+      \left < 
+        x_{i, \bullet}, \; 
+        \left (
+          \mathcal{I} \; - \; P
+        \right ) \; 
+        x_{i, \bullet}
+      \right > \\ 
   &= 
     \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      x_{i, \bullet} \; - \; 
+      \left < 
+        x_{i, \bullet}, \; 
+        x_{i, \bullet}
+      \right > \; - \; 
     \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      P \; 
-      x_{i, \bullet} \\ 
+      \left < 
+        x_{i, \bullet}, \; 
+        P \; 
+        x_{i, \bullet}
+      \right >  \\ 
+  &= 
+    \sum_{i = 1}^n 
+      \lVert 
+        x_{i, \bullet}
+      \rVert^2 \; - \; 
+    \sum_{i = 1}^n 
+      \left < 
+        x_{i, \bullet}, \; 
+        P \; 
+        x_{i, \bullet}
+      \right >  \\ 
   &= 
     \mathrm{Tr} \left \{ 
       X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
       \right \} \; - \; 
     \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      P \; 
-      x_{i, \bullet} \\ \\ 
+      \left < 
+        x_{i, \bullet}, \; 
+        P \; 
+        x_{i, \bullet}
+      \right > \\ \\ 
     & \text{subject to the constraint:} \\ \\ 
     & P \text{ is an orthogonal projection defined on } \mathbb{R}^d
 \end{align} 
 $$ {#eq-row-projection-squared-error}
 
-Thus $\mathcal{L} (P)$ is a sum over row index $i$ of squared errors in the approximation of $x_{i, \bullet}$ by $P \; x_{i, \bullet}$.
+Thus $\mathcal{L} (P)$ is a sum over row index $i$ of squared residuals in the approximation of $x_{i, \bullet}$ by $P \; x_{i, \bullet}$.
 
-Now let $\mathcal{P}$ be a family of projections subject to some constraints.  From @eq-row-projection-squared-error we see that: 
+Now let $\mathcal{P}$ be a set of projections.  From @eq-row-projection-squared-error we see that projection $\hat{P} \in \mathcal{P}$ minimizes $\mathcal{L} (P)$ if and only if it maximizes a corresponding quadratic form: 
 
 $$
 \begin{align} 
@@ -641,13 +662,15 @@ $$
   &= 
   \arg \max_{ P \in \mathcal{P} } \; 
   \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
+    \left < 
+      x_{i, \bullet}, \; 
       P \; 
       x_{i, \bullet}
+    \right > 
 \end{align} 
 $$ {#eq-min-loss-equals-max-quad-form}
 
-#### Reconstructing the feature matrix
+#### Outline: reconstructing the feature matrix
 
 Here's an outline of the reconstruction processs.  At step $j$ we define vector $v_{\bullet, j} \in \mathbb{R}^d$ that has unit norm and is orthogonal to any vector $v_{\bullet, \eta}$ defined in any previous step.  At the end of step $j$ we have accumulated an orthonormal set of vectors $(v_{\bullet, 1}, \ldots, v_{\bullet, j})$ that span a $j-$dimensional subspace, say $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$.  This orthonormal set defines the following orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
 
@@ -669,6 +692,108 @@ $$
 $$ {#eq-row-supspace-ortho-projection}
 
 In other words, $P^{(j)}$ is the sum of orthogonal projections, $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$, to 1-dimensional subspaces that are mutually orthogonal.
+
+Since we will apply our loss function $\mathcal{L} (P)$ to $P^{(j)}$, it will be useful to re-express the quadratic form appearing in @eq-min-loss-equals-max-quad-form as follows.
+
+$$
+\begin{align} 
+  & 
+  \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      P^{(j)} \; 
+      x_{i, \bullet} \\ 
+  &= 
+  \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      \left ( 
+        \sum_{\eta = 1}^j 
+            v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; 
+      \right )
+      x_{i, \bullet} \\ 
+  &= 
+  \sum_{i = 1}^n 
+    \sum_{\eta = 1}^j 
+      x_{i, \bullet}^\top \; 
+      v_{\bullet, \eta} \; 
+      v_{\bullet, \eta}^\top \; 
+      x_{i, \bullet} \\ 
+  &= 
+  \sum_{\eta = 1}^j 
+    \sum_{i = 1}^n  \; 
+      v_{\bullet, \eta}^\top \; 
+      x_{i, \bullet}
+      x_{i, \bullet}^\top \; 
+      v_{\bullet, \eta} \\ 
+  &= 
+  \sum_{\eta = 1}^j 
+    v_{\bullet, \eta}^\top \; 
+    \left ( 
+    \sum_{i = 1}^n  \; 
+      x_{i, \bullet}
+      x_{i, \bullet}^\top \; 
+    \right )
+    v_{\bullet, \eta} \\ 
+  &= 
+  \sum_{\eta = 1}^j 
+    v_{\bullet, \eta}^\top \; 
+    \left ( 
+      X_{\bullet, \bullet}^\top \; 
+      X_{\bullet, \bullet}
+    \right )
+    v_{\bullet, \eta}
+\end{align} 
+$$ {#eq-projection-quad-form-as-sum}
+
+$$
+\begin{align} 
+  & 
+  \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      P^{(j)} \; 
+      x_{i, \bullet} \\ 
+  &= 
+  \sum_{i = 1}^n 
+      x_{i, \bullet}^\top \; 
+      \left ( 
+        \sum_{\eta = 1}^j 
+            v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; 
+      \right )
+      x_{i, \bullet} \\ 
+  &= 
+  \sum_{i = 1}^n 
+    \sum_{\eta = 1}^j 
+      x_{i, \bullet}^\top \; 
+      v_{\bullet, \eta} \; 
+      v_{\bullet, \eta}^\top \; 
+      x_{i, \bullet} \\ 
+  &= 
+  \sum_{\eta = 1}^j 
+    \sum_{i = 1}^n  \; 
+      v_{\bullet, \eta}^\top \; 
+      x_{i, \bullet}
+      x_{i, \bullet}^\top \; 
+      v_{\bullet, \eta} \\ 
+  &= 
+  \sum_{\eta = 1}^j 
+    v_{\bullet, \eta}^\top \; 
+    \left ( 
+    \sum_{i = 1}^n  \; 
+      x_{i, \bullet}
+      x_{i, \bullet}^\top \; 
+    \right )
+    v_{\bullet, \eta} \\ 
+  &= 
+  \sum_{\eta = 1}^j 
+    v_{\bullet, \eta}^\top \; 
+    \left ( 
+      X_{\bullet, \bullet}^\top \; 
+      X_{\bullet, \bullet}
+    \right )
+    v_{\bullet, \eta}
+\end{align} 
+$$ {#eq-XXX-OLD}
+
+#### Details: reconstructing the feature matrix
 
 Here are the distinctive details of the reconstruction process.  At step 1 we define vector $v_{\bullet, 1}$ as the unit vector that minimizes $\mathcal{L} (v_\bullet \; v_\bullet^\top)$ among all unit vectors $v_\bullet \in \mathbb{R}^d$: 
 
