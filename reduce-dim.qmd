@@ -577,6 +577,18 @@ $$
 \end{align} 
 $$ {#eq-cov-X-mat}
 
+In particular, the variance of each feature vector is proportional to its squared norm.
+
+$$
+\begin{align} 
+  var( x_{\bullet, k} ) 
+  &= \frac{1}{n - 1}
+  \lVert 
+    x_{\bullet, k}
+  \rVert^2
+\end{align} 
+$$ {#eq-feature-variance-equals-norm2}
+
 Although matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a square matrix having dimensions $d \times d$, its _rank_ may be less than $d$.  Let $r = rank \left ( X_{\bullet, \bullet} \right )$.  Then $r$ is also the rank of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  It is the dimension of the subspace of $\mathbb{R}^d$ spanned by the rows of $X_{\bullet, \bullet}$, as well as the dimension of the subspace of $\mathbb{R}^n$ spanned by the columns of $X_{\bullet, \bullet}$.  Consequently $r \le \min(n, d)$.
 
 Our construction of principal components also relies on the notion of an orthogonal projection $P$ from $\mathbb{R}^d$ to some subspace of $\mathbb{R}^d$.  Recall that $P$ is an orthogonal projection if and only if: it is idempotent $(P^2 = P)$; and symmetric  $(P^\top = P)$.  Also, if $P$ is an orthogonal projection then so is its complement $\mathcal{I} - P$.
@@ -693,44 +705,53 @@ $$ {#eq-row-supspace-ortho-projection}
 
 In other words, $P^{(j)}$ is the sum of orthogonal projections, $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$, to 1-dimensional subspaces that are mutually orthogonal.
 
-Since we will apply our loss function $\mathcal{L} (P)$ to $P^{(j)}$, it will be useful to re-express the quadratic form appearing in @eq-min-loss-equals-max-quad-form as follows.
+Since we will apply our loss function $\mathcal{L} (P)$ to $P^{(j)}$, it will be useful to re-express the quadratic form appearing in @eq-min-loss-equals-max-quad-form. [^row-vector-of-feature-matrix]
+
+[^row-vector-of-feature-matrix]: Note that $x_{i, \bullet} \in \mathbb{R}^d$ is a row vector, namely the $i^{th}$ row of feature matrix $X_{\bullet, \bullet}$.  Therefore the inner product $\left < x_{i, \bullet}, \; P \; x_{i, \bullet} \right >$ is expressed as $x_{i, \bullet} \; P \; x_{i, \bullet}^\top$ in matrix multiplication notation.
 
 $$
 \begin{align} 
   & 
   \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
+    \left < 
+      x_{i, \bullet}, \; 
       P^{(j)} \; 
-      x_{i, \bullet} \\ 
+      x_{i, \bullet}
+    \right > \\ 
   &= 
   \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
+      x_{i, \bullet} \; 
+      P^{(j)} \; 
+      x_{i, \bullet}^\top \\ 
+  &= 
+  \sum_{i = 1}^n 
+      x_{i, \bullet} \; 
       \left ( 
         \sum_{\eta = 1}^j 
             v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; 
       \right )
-      x_{i, \bullet} \\ 
+      x_{i, \bullet}^\top \\ 
   &= 
   \sum_{i = 1}^n 
     \sum_{\eta = 1}^j 
-      x_{i, \bullet}^\top \; 
+      x_{i, \bullet} \; 
       v_{\bullet, \eta} \; 
       v_{\bullet, \eta}^\top \; 
-      x_{i, \bullet} \\ 
+      x_{i, \bullet}^\top \\ 
   &= 
   \sum_{\eta = 1}^j 
     \sum_{i = 1}^n  \; 
       v_{\bullet, \eta}^\top \; 
-      x_{i, \bullet}
-      x_{i, \bullet}^\top \; 
+      x_{i, \bullet}^\top
+      x_{i, \bullet} \; 
       v_{\bullet, \eta} \\ 
   &= 
   \sum_{\eta = 1}^j 
     v_{\bullet, \eta}^\top \; 
     \left ( 
     \sum_{i = 1}^n  \; 
-      x_{i, \bullet}
-      x_{i, \bullet}^\top \; 
+      x_{i, \bullet}^\top
+      x_{i, \bullet} \; 
     \right )
     v_{\bullet, \eta} \\ 
   &= 
@@ -744,58 +765,9 @@ $$
 \end{align} 
 $$ {#eq-projection-quad-form-as-sum}
 
-$$
-\begin{align} 
-  & 
-  \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      P^{(j)} \; 
-      x_{i, \bullet} \\ 
-  &= 
-  \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
-      \left ( 
-        \sum_{\eta = 1}^j 
-            v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; 
-      \right )
-      x_{i, \bullet} \\ 
-  &= 
-  \sum_{i = 1}^n 
-    \sum_{\eta = 1}^j 
-      x_{i, \bullet}^\top \; 
-      v_{\bullet, \eta} \; 
-      v_{\bullet, \eta}^\top \; 
-      x_{i, \bullet} \\ 
-  &= 
-  \sum_{\eta = 1}^j 
-    \sum_{i = 1}^n  \; 
-      v_{\bullet, \eta}^\top \; 
-      x_{i, \bullet}
-      x_{i, \bullet}^\top \; 
-      v_{\bullet, \eta} \\ 
-  &= 
-  \sum_{\eta = 1}^j 
-    v_{\bullet, \eta}^\top \; 
-    \left ( 
-    \sum_{i = 1}^n  \; 
-      x_{i, \bullet}
-      x_{i, \bullet}^\top \; 
-    \right )
-    v_{\bullet, \eta} \\ 
-  &= 
-  \sum_{\eta = 1}^j 
-    v_{\bullet, \eta}^\top \; 
-    \left ( 
-      X_{\bullet, \bullet}^\top \; 
-      X_{\bullet, \bullet}
-    \right )
-    v_{\bullet, \eta}
-\end{align} 
-$$ {#eq-XXX-OLD}
-
 #### Details: reconstructing the feature matrix
 
-Here are the distinctive details of the reconstruction process.  At step 1 we define vector $v_{\bullet, 1}$ as the unit vector that minimizes $\mathcal{L} (v_\bullet \; v_\bullet^\top)$ among all unit vectors $v_\bullet \in \mathbb{R}^d$: 
+Here are the distinctive details of the reconstruction process.  At step 1 we define vector $v_{\bullet, 1}$ as the unit vector that minimizes $\mathcal{L} (v_\bullet \; v_\bullet^\top)$ among all unit vectors $v_\bullet \in \mathbb{R}^d$.  From @eq-min-loss-equals-max-quad-form and @eq-projection-quad-form-as-sum we have: 
 
 $$
 \begin{align} 
@@ -806,25 +778,11 @@ $$
   &= 
   \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
   \sum_{i = 1}^n 
-      x_{i, \bullet}^\top \; 
+    \left < 
+      x_{i, \bullet}, \; 
       v_\bullet \; v_\bullet^\top \; 
-      x_{i, \bullet} \\ 
-  &= 
-  \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
-  \sum_{i = 1}^n 
-      v_\bullet^\top \; 
-      x_{i, \bullet} \; 
-      x_{i, \bullet}^\top \; 
-      v_\bullet \\ 
-  &= 
-  \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
-  v_\bullet^\top \; 
-  \left ( 
-  \sum_{i = 1}^n 
-      x_{i, \bullet} \; 
-      x_{i, \bullet}^\top 
-  \right ) \; 
-  v_\bullet \\ 
+      x_{i, \bullet} 
+    \right > \\ 
   &= 
   \arg \max_{ \Vert v_\bullet \rVert = 1 } \; 
   v_\bullet^\top \; 
@@ -837,7 +795,7 @@ $$ {#eq-max-quad-form-step-1}
 
 The solution to @eq-max-quad-form-step-1 is well known.  The maximal value of $v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$ is the largest eigenvalue, say $\sigma_1^2$, of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$.  And the vector $v_{\bullet, 1}$ that achieves that maximal value is the eigenvector corresponding to $\sigma_1^2$.
 
-Having defined $v_{\bullet, 1}$, we proceed inductively, again with $r$ defined as $r = rank \left ( X_{\bullet, \bullet} \right )$.  Suppose that we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional subspace, denoted $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
+Having defined $v_{\bullet, 1}$, we proceed inductively, again with $r$ defined as $r = rank \left ( X_{\bullet, \bullet} \right )$.  Suppose that we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional $\mathbb{R}^d$ subspace, denoted $\mathcal{R}^{(j)}$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
 
 If $j = r$ we terminate the reconstruction.  Otherwise we define the next vector, $v_{\bullet, j + 1}$, as the unit vector that minimizes $\mathcal{L} (Q^{(j + 1)})$, where $Q^{(j + 1)} = P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top$.
 
@@ -914,25 +872,41 @@ $$ {#eq-maximize-quad-form-b}
 
 Again, this problem of constrained maximization of a quadratic form is well known.  The maximum value is $\sigma_{j + 1}^2$, the eigenvalue of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ of index $j + 1$ in descending order.  The vector $v_{\bullet, j + 1}$ achieving this maximum is the eigenvector corresponding to $\sigma_{j + 1}^2$.
 
-This reconstruction process terminates with an orthonormal set of $d-$dimensional vectors, $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$, whose span is that of the rows of $X_{\bullet, \bullet}$.
+This reconstruction process terminates with an orthonormal set of $d-$dimensional vectors, $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$, that span subspace $\mathcal{R}^{(r)}$ that is spanned by the rows of $X_{\bullet, \bullet}$.
 
-Now let $D$ denote the $r \times r$ diagonal matrix $diag(\sigma_1, \ldots, \sigma_r)$.  Then we have 
+Now let $D$ denote the $r \times r$ diagonal matrix $diag(\sigma_1, \ldots, \sigma_r)$.  From @eq-feature-variance-equals-norm2 and @eq-next-row-projection-error-b we have 
 
 $$
 \begin{align} 
-  \sum_{\eta = 1}^r \sigma_\eta^2 &= \mathrm{Tr} \left ( D^2 \right )  \\ 
+  & 
+    (n - 1) \; 
+    \sum_{k = 1}^d var(x_{\bullet, k})  \\ 
   &= 
-  \mathrm{Tr} 
-  \left ( 
-    X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
-  \right )  \\ 
+    \sum_{k = 1}^d \; \lVert x_{\bullet, k} \rVert^2  \\ 
   &= 
-  (n - 1) \; 
-  \sum_{k = 1}^d var(x_{\bullet, k})  \\ \\ 
+    \mathrm{Tr} 
+    \left ( 
+      X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+    \right )  \\ 
+  &= 
+    \sum_{\eta = 1}^r 
+    v_{\bullet, \eta}^\top \; 
+      X_{\bullet, \bullet}^\top \;
+      X_{\bullet, \bullet} \; 
+    v_{\bullet, \eta} \\ 
+  &= 
+    \sum_{\eta = 1}^r 
+    v_{\bullet, \eta}^\top \; 
+    ( \sigma_\eta^2 \; v_{\bullet, \eta} ) \\ 
+  &= 
+    \sum_{\eta = 1}^r \sigma_\eta^2 \\ 
+  &= \mathrm{Tr} \left ( D^2 \right )  \\ \\ 
   &\text{where} \\ \\ 
   & D = diag(\sigma_1, \ldots, \sigma_r) 
 \end{align} 
 $$ {#eq-cov-trace-equals-eigen-sum}
+
+That is, the sum of the eigenvalues $\sigma_\eta^2$ is equal to the sum of squared feature-norms, $\lVert x_{\bullet, k} \rVert^2$.
 
 #### Matrix decompositions
 
