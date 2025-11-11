@@ -525,16 +525,16 @@ g_fs_pcs <- fms_ctr |>
   ggplot2::geom_abline(
     intercept = 0, 
     slope = fs_slope_1, 
-    color = "red") + 
+    color = "darkorange") + 
   ggplot2::geom_abline(
     intercept = 0, 
     slope = fs_slope_2, 
-    color = "blue") + 
+    color = "purple") + 
   ggplot2::labs(
     title = "PCA: (father, son) centered heights") + 
   ggplot2::labs(
     subtitle = bquote(
-      c[1] * " in red, " * c[2] * " in blue"
+      c[1] * " in orange, " * c[2] * " in purple"
     )
   )
 
@@ -542,9 +542,9 @@ g_fs_pcs
 
 ```
 
-The figure represents two principal components, $(c_1, c_2)$, as respective red and blue lines, which are perpendicular to one another.
+The figure represents two principal components, $(c_1, c_2)$, as respective orange and purple lines, which are perpendicular to one another.
 
-The red line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The blue line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
+The orange line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The purple line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
@@ -950,6 +950,8 @@ That is, the sum of the eigenvalues $\sigma_\eta^2$ is equal to the sum of squar
 
 ### Matrix decompositions
 
+#### Covariance Matrix: Polar Decomposition
+
 In the previous section we reconstructed rows of the feature matrix $X_{\bullet, \bullet}$ using a sequence of orthogonal projections $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$.  This development gave us a partial eigen-decomposition of the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, the scaled feature covariance matrix.  With $r = rank(X_{\bullet, \bullet})$, and for $\eta \in \{1, \ldots, r\}$ the $d-$dimensional vector $v_{\bullet, \eta}$ is an eigenvector of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, having corresponding eigenvalue $\sigma_\eta^2$, indexed in descending magnitude.  In matrix notation we have: 
 
 $$
@@ -1035,7 +1037,11 @@ $$
 \end{align} 
 $$ {#eq-cov-full-eigen-decomp-3}
 
-We now define $(c_{\bullet, 1}, \ldots, c_{\bullet, r})$, the _principal components_ of $X_{\bullet, \bullet}$, as the following respective linear combinations of the columns of $X_{\bullet, \bullet}$.
+#### Principal Components of the Feature Matrix
+
+We now define $(c_{\bullet, 1}, \ldots, c_{\bullet, r})$, the _principal components_ of $X_{\bullet, \bullet}$, as the following respective linear combinations of the columns of $X_{\bullet, \bullet}$.[^pc-lin-combo-v-coeffs]
+
+[^pc-lin-combo-v-coeffs]: Here we define "principal component" to mean $X_{\bullet, \bullet} \; v_{\bullet, \eta}$, the linear combination of feature vectors.  Other authors identify the coefficient vector $v_{\bullet, \eta}$ as the "principal component".
 
 $$
 \begin{align} 
@@ -1093,6 +1099,8 @@ $$
     \end{cases}
 \end{align} 
 $$ {#eq-orthogonal-PCs}
+
+#### SVD of the Feature Matrix
 
 Dividing $c_{\bullet, \eta}$ by its magnitude $\sigma_\eta$, we obtain a unit vector $u_{\bullet, \eta}$ that represents the direction of $c_{\bullet, \eta}$.
 
