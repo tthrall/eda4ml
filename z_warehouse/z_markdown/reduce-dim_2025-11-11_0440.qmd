@@ -546,23 +546,11 @@ The figure represents two principal components, $(c_1, c_2)$, as respective red 
 
 The red line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The blue line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
 
-## Supervised Dimension Reduction {#sec-dim-r-supervised}
-
-## Computational Considerations {#sec-dim-r-computation}
-
-## Choosing and Evaluating Methods {#sec-dim-r-choose-method}
-
-## Other Methods {#sec-dim-r-other-methods}
-
-## Summary {#sec-dim-r-summary}
-
-## Exercises {#sec-dim-r-exercises}
-
-## Appendix A: Matrix Decompositions and PCA
+### Linear Algebra Formulation
 
 To define principal components we will describe a step-wise reconstruction of the $n \times d$ feature matrix $X_{\bullet, \bullet}$.
 
-### Preliminaries
+#### Preliminaries
 
 First, to simplify notation, we assume $X_{\bullet, \bullet}$ to have already been centered: for each column of the original feature matrix the average value of the column elements has been calculated and subtracted.  Therefore the average (or equivalently the sum) of each column of $X_{\bullet, \bullet}$ equals zero.
 
@@ -710,7 +698,7 @@ $$ {#eq-min-loss-equals-max-quad-form}
 
 This last sum of squares is proportional to the sum across $X_{\bullet, \bullet}$ columns (each of which is centered) of the variance of the projected column elements.  Briefly, minimization of loss function $\mathcal{L} (\cdot)$ amounts to maximization of projected column variance.
 
-### Outline: reconstructing the feature matrix
+#### Outline: reconstructing the feature matrix
 
 Here's an outline of the reconstruction processs.  At step $j$ we define vector $v_{\bullet, j} \in \mathbb{R}^d$ that has unit norm and is orthogonal to any vector $v_{\bullet, \eta}$ defined in any previous step.  At the end of step $j$ we have accumulated an orthonormal set of vectors $(v_{\bullet, 1}, \ldots, v_{\bullet, j})$ that span a $j-$dimensional subspace, say $\mathcal{R}^{(j)}$, of $\mathbb{R}^d$.  This orthonormal set defines the following orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
 
@@ -801,7 +789,7 @@ $$ {#eq-projection-quad-form-as-sum}
 
 As we will see, the maximization of the type of quadratic form appearing in the last sum above is a solved problem.
 
-### Details: reconstructing the feature matrix
+#### Details: reconstructing the feature matrix
 
 Here are the distinctive details of the reconstruction process.  At step 1 we define vector $v_{\bullet, 1}$ as the unit vector that minimizes $\mathcal{L} (v_\bullet \; v_\bullet^\top)$ among all unit vectors $v_\bullet \in \mathbb{R}^d$.  From @eq-min-loss-equals-max-quad-form and @eq-projection-quad-form-as-sum we have: 
 
@@ -948,7 +936,7 @@ $$ {#eq-cov-trace-equals-eigen-sum}
 
 That is, the sum of the eigenvalues $\sigma_\eta^2$ is equal to the sum of squared feature-norms, $\lVert x_{\bullet, k} \rVert^2$.
 
-### Matrix decompositions
+#### Matrix decompositions
 
 In the previous section we reconstructed rows of the feature matrix $X_{\bullet, \bullet}$ using a sequence of orthogonal projections $v_{\bullet, \eta} \; v_{\bullet, \eta}^\top$.  This development gave us a partial eigen-decomposition of the $d \times d$ matrix $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, the scaled feature covariance matrix.  With $r = rank(X_{\bullet, \bullet})$, and for $\eta \in \{1, \ldots, r\}$ the $d-$dimensional vector $v_{\bullet, \eta}$ is an eigenvector of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, having corresponding eigenvalue $\sigma_\eta^2$, indexed in descending magnitude.  In matrix notation we have: 
 
@@ -1204,5 +1192,17 @@ $$
 $$ {#eq-svd-3}
 
 This factorization of the feature matrix $X_{\bullet, \bullet}$ is called a _singular value decomposition_ (SVD).
+
+## Supervised Dimension Reduction {#sec-dim-r-supervised}
+
+## Computational Considerations {#sec-dim-r-computation}
+
+## Choosing and Evaluating Methods {#sec-dim-r-choose-method}
+
+## Other Methods {#sec-dim-r-other-methods}
+
+## Summary {#sec-dim-r-summary}
+
+## Exercises {#sec-dim-r-exercises}
 
 
