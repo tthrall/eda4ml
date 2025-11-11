@@ -824,7 +824,10 @@ If $j = r$ we terminate the reconstruction.  Otherwise we define the next vector
 
 $$
 \begin{align} 
-  \mathcal{L} (Q^{(j + 1)})
+  \mathcal{L} 
+  \left ( 
+    Q^{(j + 1)} (v_{\bullet} \; v_\bullet^\top) 
+  \right )
   &= 
     \sum_{i = 1}^n 
     \left \lVert 
@@ -845,9 +848,11 @@ Note that the constraints on $v_\bullet$ ensure that $Q^{(j + 1)} (v_{\bullet} \
 
 $$
 \begin{align} 
-  \mathcal{L}_{j + 1} \left (
-    v_{\bullet} \; v_{\bullet}^\top
-  \right ) 
+  & 
+  \mathcal{L} 
+  \left ( 
+    Q^{(j + 1)} (v_{\bullet} \; v_\bullet^\top) 
+  \right ) \\ 
   &= 
     \sum_{i = 1}^n 
     \left \lVert 
@@ -964,11 +969,11 @@ $$
 \end{align} 
 $$ {#eq-cov-all-eigen-vectors-1}
 
-We also record the full set of eigenvalues in the $d \times d$ diagonal matrix $\Sigma^2$ as follows.
+We also record the full set of eigenvalues in the $d \times d$ diagonal matrix $\tilde{D}^2$ as follows.
 
 $$
 \begin{align} 
-  \Sigma^2 &= 
+  \tilde{D}^2 &= 
     \begin{cases}
       \begin{pmatrix}
         D^2 & 0 \\
@@ -989,7 +994,7 @@ $$
   \right ) \; 
     V 
   &= 
-    V \; \Sigma^2
+    V \; \tilde{D}^2
 \end{align} 
 $$ {#eq-cov-full-eigen-decomp-1}
 
@@ -999,7 +1004,7 @@ $$
 \begin{align} 
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
   &= 
-    V \; \Sigma^2 \; V^\top 
+    V \; \tilde{D}^2 \; V^\top 
 \end{align} 
 $$ {#eq-cov-full-eigen-decomp-2}
 
@@ -1012,7 +1017,7 @@ $$
     \frac{1}{n-1} X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \\ 
   &= V \; 
     \left ( 
-      \frac{1}{n-1} \Sigma^2 \; 
+      \frac{1}{n-1} \tilde{D}^2 \; 
     \right )
     V^\top
 \end{align} 
@@ -1034,29 +1039,41 @@ Note that distinct principal components are orthogonal, and the squared magnitud
 $$
 \begin{align} 
   & 
-  c_{\bullet, \kappa}^\top \; c_{\bullet, \eta} \\ 
+    \left < 
+      c_{\bullet, \kappa} 
+      , \; 
+      c_{\bullet, \eta} 
+    \right > \\ 
   &= 
-    v_{\bullet, \kappa}^\top \; 
-    X_{\bullet, \bullet}^\top \; 
-    X_{\bullet, \bullet} \; 
-    v_{\bullet, \eta} \\ 
+    \left < 
+      X_{\bullet, \bullet} \; 
+      v_{\bullet, \kappa} 
+      , \; 
+      X_{\bullet, \bullet} \; 
+      v_{\bullet, \eta} 
+    \right > \\ 
   &= 
-    v_{\bullet, \kappa}^\top \; 
-    \left ( 
+    \left < 
+      v_{\bullet, \kappa} 
+      , \; 
       X_{\bullet, \bullet}^\top \; 
       X_{\bullet, \bullet} \; 
-      v_{\bullet, \eta}
-    \right ) \\ 
+      v_{\bullet, \eta} 
+    \right > \\ 
   &= 
-    v_{\bullet, \kappa}^\top \; 
-    \left ( 
+    \left < 
+      v_{\bullet, \kappa} 
+      , \; 
       \sigma_\eta^2 \; 
-      v_{\bullet, \eta}
-    \right ) \\ 
+      v_{\bullet, \eta} 
+    \right > \\ 
   &= 
     \sigma_\eta^2 \; 
-    v_{\bullet, \kappa}^\top \; 
-    v_{\bullet, \eta}  \\ 
+    \left < 
+      v_{\bullet, \kappa} 
+      , \; 
+      v_{\bullet, \eta} 
+    \right > \\ 
   &= 
     \begin{cases}
       \sigma_\eta^2 & \text{ if } \kappa = \eta \\ 
@@ -1146,7 +1163,25 @@ $$
 \end{align} 
 $$ {#eq-svd-2}
 
-Multiplying this last equation on the left by matrix $U$ we obtain: 
+where $\Sigma$ is the following $n \times d$ rectangular diagonal matrix: 
+
+$$
+\begin{align} 
+  \Sigma &= 
+    \begin{cases}
+      \begin{pmatrix}
+        \tilde{D} \\ 
+        0
+      \end{pmatrix} & \text{ if } d < n \\ 
+      \tilde{D} &  \text{ if } d = n \\ 
+      \begin{pmatrix}
+        \tilde{D} & 0
+      \end{pmatrix} & \text{ if } d > n
+    \end{cases}
+\end{align} 
+$$ {#eq-Sigma-defn}
+
+Then multiplying @eq-all-left-eigen-vectors-1 on the left by matrix $U$ we obtain: 
 
 $$
 \begin{align} 
