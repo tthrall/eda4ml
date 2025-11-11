@@ -52,6 +52,7 @@ source(here("code", "galton_ht_data.R"))
 # source(here("code", "mnist_file_mgmt.R"))
 # source(here("code", "NCI60_helper.R"))
 # source(here("code", "oecd_bli.R"))
+source(here("code", "pc_aesthetics.R"))
 # source(here("code", "pgram_grid.R"))
 source(here("code", "vc_per_state.R"))
 source(here("code", "wine_quality_uci.R"))
@@ -454,7 +455,7 @@ The remainder of this chapter develops methods that exploit such opportunities. 
 
 Recall the US Arrests dataset with four crime-related variables. Can we represent these 50 states in fewer than four dimensions while preserving most of the information? Principal Component Analysis (PCA) answers this by finding new variables, linear combinations of the original features, that capture maximum variance.
 
-### 2D Example
+### 2D Example: Galton heights
 
 To develop some geometric intuition we begin with a 2D example.  @fig-fs-pca below illustrates PCA for (father, son) centered heights from the Galton data presented in @sec-la-intro.
 
@@ -492,14 +493,16 @@ fms_ctr <- fms_tbl |>
 # PCA(father, son)
 fs_pca_lst <- fms_ctr |> 
   dplyr::select(father, son) |> 
-  stats::prcomp(center = FALSE)
+  stats::prcomp(center = FALSE) |> 
+  # coerce rotation matrix to have mostly positive diagonal
+  pc_rot_diag()
 
 # rotation matrix
 fs_rot_mat <- fs_pca_lst$ rotation
 # fs_rot_mat
-#               PC1        PC2
-# father -0.7041940  0.7100076
-# son    -0.7100076 -0.7041940
+#              PC1        PC2
+# father 0.7041940 -0.7100076
+# son    0.7100076  0.7041940
 
 # slope coefficients for geom_abline()
 fs_slope_1 <- 
@@ -508,6 +511,36 @@ fs_slope_1 <-
 fs_slope_2 <- 
   fs_rot_mat [["son",    "PC2"]] / 
   fs_rot_mat [["father", "PC2"]]
+
+```
+
+```{r}
+#| label: fs-pca-colors
+
+# color per component: actual and cited color names
+pc_colors_tbl <- get_pc_colors()
+
+pc_clr_1 <- pc_colors_tbl$ color [[1]]
+pc_clr_2 <- pc_colors_tbl$ color [[2]]
+
+pc_ref_1 <- pc_colors_tbl$ ref [[1]]
+pc_ref_2 <- pc_colors_tbl$ ref [[2]]
+
+```
+
+```{r}
+#| label: fs-pca-end-pts
+
+# represent each component as a directed 
+# line segment anchored at the origin
+fs_pca_end_pt_mat <- fs_pca_lst |> 
+  get_pc_segs()
+
+f_end_pc_1 <- fs_pca_end_pt_mat [["father", "PC1"]]
+f_end_pc_2 <- fs_pca_end_pt_mat [["father", "PC2"]]
+
+s_end_pc_1 <- fs_pca_end_pt_mat [["son",    "PC1"]]
+s_end_pc_2 <- fs_pca_end_pt_mat [["son",    "PC2"]]
 
 ```
 
@@ -522,19 +555,47 @@ g_fs_pcs <- fms_ctr |>
   )) + 
   ggplot2::geom_point() + 
   ggplot2::coord_fixed(ratio = 1) + 
+  
+  # 1st pc
   ggplot2::geom_abline(
     intercept = 0, 
     slope = fs_slope_1, 
-    color = "darkorange") + 
+    color = pc_clr_1) + 
+  ggplot2::geom_segment(
+    mapping = aes(
+      x = 0, xend = f_end_pc_1,
+      y = 0, yend = s_end_pc_1
+    ),
+    arrow = arrow(
+      length = unit(0.3, "cm"), 
+      ends = "last", type = "closed"
+    ),
+    linetype = 3, linewidth = 0.8, color = pc_clr_1
+  ) + 
+  
+  # 2nd pc
   ggplot2::geom_abline(
     intercept = 0, 
     slope = fs_slope_2, 
-    color = "purple") + 
+    color = pc_clr_2) + 
+  ggplot2::geom_segment(
+    mapping = aes(
+      x = 0, xend = f_end_pc_2,
+      y = 0, yend = s_end_pc_2
+    ),
+    arrow = arrow(
+      length = unit(0.3, "cm"), 
+      ends = "last", type = "closed"
+    ),
+    linetype = 3, linewidth = 0.8, color = pc_clr_2
+  ) + 
+  
   ggplot2::labs(
     title = "PCA: (father, son) centered heights") + 
   ggplot2::labs(
     subtitle = bquote(
-      c[1] * " in orange, " * c[2] * " in purple"
+      c[1] * ": " * ~ .(pc_ref_1) * ", " * 
+      c[2] * ": " * ~ .(pc_ref_2)
     )
   )
 
@@ -542,9 +603,11 @@ g_fs_pcs
 
 ```
 
-The figure represents two principal components, $(c_1, c_2)$, as respective orange and purple lines, which are perpendicular to one another.
+The figure represents two principal components, $(c_1, c_2)$, as respective `r pc_ref_1` and `r pc_ref_2` lines, which are perpendicular to one another.
 
-The orange line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The purple line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
+The `r pc_ref_1` line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The `r pc_ref_2` line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
+
+### 3D Example: US Arrests
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
