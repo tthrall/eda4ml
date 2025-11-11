@@ -10,9 +10,11 @@ toc: true
 toc-depth: 3
 format:
   html:
+    respect-user-color-scheme: true
     theme:
       - cosmo
       - brand
+      - darkly
     toc_float: true
     code-fold: true
     code-summary: "Show the code"
