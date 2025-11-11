@@ -1,0 +1,62 @@
+---
+title: "reduce-dim-outline-2025-11-11a"
+format: html
+---
+
+## Current Chapter 7 Structure (As Discussed)
+
+**Completed sections:**
+
+- ✓ 7.1 Data Examples (USArrests, Beans, Wine, NCI60/Colon Cancer)
+- ✓ 7.2 Dimensionality: Curse and Blessing
+- ✓ 7.3 Principal Component Analysis
+    - ✓ 7.3.1 2D Example [Galton heights]
+    - ✓ 7.3.2 Linear Algebra Formulation [detailed SVD derivation]
+
+**Planned remaining sections:**
+
+```
+7.3 Principal Component Analysis (continued)
+    7.3.3 Algorithm and Computation
+    7.3.4 Detailed Example: Dry Beans
+          - Correlation structure
+          - Scree plot
+          - First few PC interpretations
+          - Biplot visualization
+    7.3.5 Practical Considerations
+          - Scaling and centering
+          - Choosing number of components
+          - Interpretation challenges
+
+7.4 Supervised Dimension Reduction  
+    7.4.1 Partial Least Squares (PLS)
+          - Motivation: PCA ignores response variable
+          - Linear algebra formulation
+          - Example: Bean classification
+    7.4.2 Linear Discriminant Analysis (LDA)
+          - Between vs within class variance
+          - Example: Bean classification
+          - Comparison with PLS and PCA
+
+7.5 Computational Considerations for High Dimensions
+    7.5.1 The p >> n case (NCI60/Colon Cancer)
+    7.5.2 Truncated SVD
+    7.5.3 Randomized algorithms (brief)
+    7.5.4 When dimension matters
+
+7.6 Choosing and Evaluating Dimension Reduction
+    7.6.1 Unsupervised metrics (variance explained)
+    7.6.2 Supervised metrics (cross-validation)
+    7.6.3 Visualization strategies
+    7.6.4 Integration with modeling workflow
+
+7.7 Brief Tour of Other Methods (optional)
+    7.7.1 ICA, NMF (linear but different objectives)
+    7.7.2 UMAP, t-SNE (nonlinear, conceptual only)
+    7.7.3 When to use what
+
+7.8 Summary and Connections
+    - Linear algebra takeaways
+    - Practical guidance
+    - Forward pointers
+```
