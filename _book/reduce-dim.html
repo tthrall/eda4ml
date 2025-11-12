@@ -380,6 +380,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#d-example-galton-heights" id="toc-d-example-galton-heights" class="nav-link" data-scroll-target="#d-example-galton-heights"><span class="header-section-number">7.3.1</span> 2D Example: Galton heights</a></li>
   <li><a href="#d-example-us-arrests" id="toc-d-example-us-arrests" class="nav-link" data-scroll-target="#d-example-us-arrests"><span class="header-section-number">7.3.2</span> 3D Example: US Arrests</a></li>
+  <li><a href="#pca-terminology" id="toc-pca-terminology" class="nav-link" data-scroll-target="#pca-terminology"><span class="header-section-number">7.3.3</span> PCA Terminology</a></li>
   </ul></li>
   <li><a href="#sec-dim-r-supervised" id="toc-sec-dim-r-supervised" class="nav-link" data-scroll-target="#sec-dim-r-supervised"><span class="header-section-number">7.4</span> Supervised Dimension Reduction</a></li>
   <li><a href="#sec-dim-r-computation" id="toc-sec-dim-r-computation" class="nav-link" data-scroll-target="#sec-dim-r-computation"><span class="header-section-number">7.5</span> Computational Considerations</a></li>
@@ -387,7 +388,7 @@ window.Quarto = {
   <li><a href="#sec-dim-r-other-methods" id="toc-sec-dim-r-other-methods" class="nav-link" data-scroll-target="#sec-dim-r-other-methods"><span class="header-section-number">7.7</span> Other Methods</a></li>
   <li><a href="#sec-dim-r-summary" id="toc-sec-dim-r-summary" class="nav-link" data-scroll-target="#sec-dim-r-summary"><span class="header-section-number">7.8</span> Summary</a></li>
   <li><a href="#sec-dim-r-exercises" id="toc-sec-dim-r-exercises" class="nav-link" data-scroll-target="#sec-dim-r-exercises"><span class="header-section-number">7.9</span> Exercises</a></li>
-  <li><a href="#appendix-a-matrix-decompositions-and-pca" id="toc-appendix-a-matrix-decompositions-and-pca" class="nav-link" data-scroll-target="#appendix-a-matrix-decompositions-and-pca"><span class="header-section-number">7.10</span> Appendix A: Matrix Decompositions and PCA</a>
+  <li><a href="#sec-dim-r-mat-decomp" id="toc-sec-dim-r-mat-decomp" class="nav-link" data-scroll-target="#sec-dim-r-mat-decomp"><span class="header-section-number">7.10</span> Appendix A: Matrix Decompositions and PCA</a>
   <ul class="collapse">
   <li><a href="#preliminaries" id="toc-preliminaries" class="nav-link" data-scroll-target="#preliminaries"><span class="header-section-number">7.10.1</span> Preliminaries</a></li>
   <li><a href="#outline-reconstructing-the-feature-matrix" id="toc-outline-reconstructing-the-feature-matrix" class="nav-link" data-scroll-target="#outline-reconstructing-the-feature-matrix"><span class="header-section-number">7.10.2</span> Outline: reconstructing the feature matrix</a></li>
@@ -419,7 +420,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:23 Wed 12-Nov-2025</p>
+      <p class="date">13:29 Wed 12-Nov-2025</p>
     </div>
   </div>
   
@@ -619,8 +620,8 @@ Figure&nbsp;7.1: Violent Crime Rates per US State (1973)
 <div id="fig-arrests-3d-scatter" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-8b4919b361cab77256eb" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-8b4919b361cab77256eb">{"x":{"visdat":{"59a8fe53416":["function () ","plotlyVisDat"]},"cur_data":"59a8fe53416","attrs":{"59a8fe53416":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-bc9fad6461131f3fb83a" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-bc9fad6461131f3fb83a">{"x":{"visdat":{"5fc82f37634e":["function () ","plotlyVisDat"]},"cur_data":"5fc82f37634e","attrs":{"5fc82f37634e":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7.2: Violent Crime Rates in each US State (1973)
@@ -887,7 +888,7 @@ Table&nbsp;7.4: Feature-quality correleations among (red, white) wines
 <p>In 1957 Richard Bellman characterized such challenges as “the curse of dimensionality”. <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
 <p><span class="citation" data-cites="Donoho_2000_High_Dimensional_Data_Analysis">Donoho (<a href="references.html#ref-Donoho_2000_High_Dimensional_Data_Analysis" role="doc-biblioref">2000</a>)</span> points out that: (1) many established statistical methods assume <span class="math inline">\(d &lt; n\)</span>; and (2) we can expect <span class="math inline">\(d \gg n\)</span> to occur more and more often as data-collection is increasingly automated to retrieve all potentially useful details for subsequent screening.</p>
 <p>In addition, <span class="citation" data-cites="wiki_curse_dimensionality"><span>“Curse of Dimensionality | Wikipedia”</span> (<a href="references.html#ref-wiki_curse_dimensionality" role="doc-biblioref">2025</a>)</span> notes that our geometric intuition is grounded in <span class="math inline">\(d \le 3\)</span> and is overturned as <span class="math inline">\(d\)</span> increases. To illustrate, consider a unit hypercube <span class="math inline">\([0,1]^d\)</span> containing the largest possible inscribed ball. The ratio <span class="math inline">\(r(d)\)</span> of their volumes shrinks dramatically: <span class="math inline">\(r(3) \approx 0.52\)</span>, <span class="math inline">\(r(10) \approx 0.0025\)</span>, and <span class="math inline">\(r(100) \approx 2 \times 10^{-70}\)</span>. In high dimensions, the preponderance of randomly generated points within the cube land far from the center!</p>
-<p>Yet <span class="citation" data-cites="Donoho_2000_High_Dimensional_Data_Analysis">Donoho (<a href="references.html#ref-Donoho_2000_High_Dimensional_Data_Analysis" role="doc-biblioref">2000</a>)</span> also sees opportunities. While randomly generated data in high dimensions behaves pathologically (at least froma 3D perspective), actual data tend to be more coherent. Consider the example data sets:</p>
+<p>Yet <span class="citation" data-cites="Donoho_2000_High_Dimensional_Data_Analysis">Donoho (<a href="references.html#ref-Donoho_2000_High_Dimensional_Data_Analysis" role="doc-biblioref">2000</a>)</span> also sees opportunities. While randomly generated data in high dimensions behaves pathologically (at least from a 3D perspective), actual data tend to be more coherent. Consider the example data sets:</p>
 <ul>
 <li><em>US Arrests</em>: The three crime variables (assault, rape, murder) are highly correlated; they don’t independently span 3D space (<a href="#fig-arrests-3d-scatter" class="quarto-xref">Figure&nbsp;<span>7.2</span></a>).</li>
 <li><em>Dry_Beans</em>: The 16 shape measurements aren’t independent; they reflect underlying bean geometry.<br>
@@ -930,8 +931,8 @@ Figure&nbsp;7.6: Principal Components: (father, son) centered heights
 <div id="fig-arm-pca" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arm-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-4772a4f291a561c9439e" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-4772a4f291a561c9439e">{"x":{"visdat":{"59a8465d79d7":["function () ","plotlyVisDat"]},"cur_data":"59a8465d79d7","attrs":{"59a8465d79d7":{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"size":4,"color":"steelblue","opacity":0.69999999999999996},"name":"State","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"},"59a8465d79d7.1":{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkorange"},"name":"PC1","showlegend":false,"inherit":false},"59a8465d79d7.2":{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"purple"},"name":"PC2","showlegend":false,"inherit":false},"59a8465d79d7.3":{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkgreen"},"name":"PC3","showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"z_Assault"},"yaxis":{"title":"z_Rape"},"zaxis":{"title":"z_Murder"},"aspectmode":"cube"},"title":"US Arrest Z-scores: Principal Components","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":"steelblue","size":4,"opacity":0.69999999999999996,"line":{"color":"rgba(31,119,180,1)"}},"name":"State","type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"color":"darkorange","width":6},"name":"PC1","showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"color":"purple","width":6},"name":"PC2","showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"color":"darkgreen","width":6},"name":"PC3","showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-f3c229110326d7710528" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-f3c229110326d7710528">{"x":{"visdat":{"5fc82ef31ff5":["function () ","plotlyVisDat"]},"cur_data":"5fc82ef31ff5","attrs":{"5fc82ef31ff5":{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"size":4,"color":"steelblue","opacity":0.69999999999999996},"name":"State","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"},"5fc82ef31ff5.1":{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkorange"},"name":"PC1","showlegend":false,"inherit":false},"5fc82ef31ff5.2":{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"purple"},"name":"PC2","showlegend":false,"inherit":false},"5fc82ef31ff5.3":{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkgreen"},"name":"PC3","showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"z_Assault"},"yaxis":{"title":"z_Rape"},"zaxis":{"title":"z_Murder"},"aspectmode":"cube"},"title":"US Arrest Z-scores: Principal Components","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":"steelblue","size":4,"opacity":0.69999999999999996,"line":{"color":"rgba(31,119,180,1)"}},"name":"State","type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"color":"darkorange","width":6},"name":"PC1","showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"color":"purple","width":6},"name":"PC2","showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"color":"darkgreen","width":6},"name":"PC3","showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arm-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7.7: US Arrest Z-scores: Principal Components
@@ -987,6 +988,74 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
 </div>
 <p>We see that the first principal component “PC1” <span class="math inline">\((c_1)\)</span> accounts for 79 percent of the total variation, making it a good candidate indeed for a violent crime index (or at least a reference for such an index).</p>
 </section>
+<section id="pca-terminology" class="level3" data-number="7.3.3">
+<h3 data-number="7.3.3" class="anchored" data-anchor-id="pca-terminology"><span class="header-section-number">7.3.3</span> PCA Terminology</h3>
+<p><a href="#sec-dim-r-mat-decomp" class="quarto-xref"><span>Section 7.10</span></a> gives mathematical definitions of principal components and related terms in some detail. In this section we present the main ideas.</p>
+<p>The first principal component, <span class="math inline">\(c_{\bullet, 1}\)</span>, of the centered, <span class="math inline">\(n \times d\)</span> feature matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span> is a particular linear combination of the columns of <span class="math inline">\(X_{\bullet, \bullet}\)</span>, that is, a particular linear combination of the centered, <span class="math inline">\(n-\)</span>dimensional feature vectors <span class="math inline">\((x_{\bullet, 1}, \ldots, x_{\bullet, d})\)</span>. The <span class="math inline">\(d\)</span> coefficients of this linear combination are the elements of the <span class="math inline">\(d-\)</span>dimensional vector <span class="math inline">\(v_{\bullet, 1}\)</span>, a “unit vector”, meaning a vector of norm 1.</p>
+<p><span id="eq-define-c-1-a"><span class="math display">\[
+\begin{align}
+  c_{\bullet, 1}
+  &amp;=
+   v_{1, 1} x_{\bullet, 1} \; + \;
+   \cdots \; + \;
+   v_{d, 1} x_{\bullet, d} \\
+   &amp;=
+   X_{\bullet, \bullet} \; v_{\bullet, 1}
+   &amp; \text{ with } \lVert v_{\bullet, 1} \rVert = 1
+\end{align}
+\qquad(7.1)\]</span></span></p>
+<p>Of all <span class="math inline">\(d-\)</span>dimensional unit vectors <span class="math inline">\(v_\bullet\)</span>, each generating a linear combination <span class="math inline">\(X_{\bullet, \bullet} \; v_\bullet\)</span> of feature vectors, <span class="math inline">\(v_{\bullet, 1}\)</span> has the distinction of maximizing the norm of <span class="math inline">\(X_{\bullet, \bullet} \; v_\bullet\)</span>.</p>
+<p><span id="eq-max-norm-c-1"><span class="math display">\[
+\begin{align}
+  \lVert c_{\bullet, 1} \rVert
+  &amp;=
+    \lVert
+      X_{\bullet, \bullet} \; v_{\bullet, 1}
+    \rVert \\
+  &amp;=
+    \max \left \{
+      \lVert
+        X_{\bullet, \bullet} \; v_\bullet
+      \rVert
+      : \;
+        \lVert v_\bullet \rVert = 1
+    \right \}
+\end{align}
+\qquad(7.2)\]</span></span></p>
+<p>Since each feature vector <span class="math inline">\(x_{\bullet, k}\)</span> is centered, its squared norm, <span class="math inline">\(\lVert x_{\bullet, k} \rVert^2\)</span>, is an <span class="math inline">\((n - 1)\)</span> multiple of its sample variance <span class="math inline">\(var(x_{\bullet, k})\)</span>. Consequently, <span class="math inline">\(c_{\bullet, 1}\)</span> also has maximum sample variance among comparable linear combinations of feature vectors.</p>
+<p><span id="eq-max-variance-c-1"><span class="math display">\[
+\begin{align}
+  &amp;
+    var (c_{\bullet, 1})  \\
+  &amp;=
+    \frac{1}{n - 1} \;
+    \lVert c_{\bullet, 1} \rVert^2 \\
+  &amp;=
+    \frac{1}{n - 1} \;
+    \lVert
+      X_{\bullet, \bullet} \; v_{\bullet, 1}
+    \rVert^2 \\
+  &amp;=
+    \max \left \{
+      \frac{1}{n - 1} \;
+      \lVert
+        X_{\bullet, \bullet} \; v_\bullet
+      \rVert^2
+      : \;
+        \lVert v_\bullet \rVert = 1
+    \right \} \\
+  &amp;=
+    \max \left \{
+      var
+      \left (
+        X_{\bullet, \bullet} \; v_\bullet
+      \right )
+      : \;
+        \lVert v_\bullet \rVert = 1
+    \right \}
+\end{align}
+\qquad(7.3)\]</span></span></p>
+</section>
 </section>
 <section id="sec-dim-r-supervised" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="sec-dim-r-supervised"><span class="header-section-number">7.4</span> Supervised Dimension Reduction</h2>
@@ -1006,8 +1075,8 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
 <section id="sec-dim-r-exercises" class="level2" data-number="7.9">
 <h2 data-number="7.9" class="anchored" data-anchor-id="sec-dim-r-exercises"><span class="header-section-number">7.9</span> Exercises</h2>
 </section>
-<section id="appendix-a-matrix-decompositions-and-pca" class="level2" data-number="7.10">
-<h2 data-number="7.10" class="anchored" data-anchor-id="appendix-a-matrix-decompositions-and-pca"><span class="header-section-number">7.10</span> Appendix A: Matrix Decompositions and PCA</h2>
+<section id="sec-dim-r-mat-decomp" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="sec-dim-r-mat-decomp"><span class="header-section-number">7.10</span> Appendix A: Matrix Decompositions and PCA</h2>
 <p>To define principal components we will describe a step-wise reconstruction of the <span class="math inline">\(n \times d\)</span> feature matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span>.</p>
 <section id="preliminaries" class="level3" data-number="7.10.1">
 <h3 data-number="7.10.1" class="anchored" data-anchor-id="preliminaries"><span class="header-section-number">7.10.1</span> Preliminaries</h3>
@@ -1021,7 +1090,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   &amp; \text{so that} \\ \\
   1_\bullet^\top \; X_{\bullet, \bullet} &amp;= 0_\bullet \in \mathbb{R}^d
 \end{align}
-\qquad(7.1)\]</span></span></p>
+\qquad(7.4)\]</span></span></p>
 <p>As a consequence, the <span class="math inline">\(d \times d\)</span> matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is a multiple of the sample covariance matrix among features.</p>
 <p><span id="eq-cov-X-mat"><span class="math display">\[
 \begin{align}
@@ -1031,7 +1100,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
   \right )
 \end{align}
-\qquad(7.2)\]</span></span></p>
+\qquad(7.5)\]</span></span></p>
 <p>In particular, the variance of each feature vector is proportional to its squared norm.</p>
 <p><span id="eq-feature-variance-equals-norm2"><span class="math display">\[
 \begin{align}
@@ -1041,7 +1110,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     x_{\bullet, k}
   \rVert^2
 \end{align}
-\qquad(7.3)\]</span></span></p>
+\qquad(7.6)\]</span></span></p>
 <p>Although matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is a square matrix having dimensions <span class="math inline">\(d \times d\)</span>, its <em>rank</em> may be less than <span class="math inline">\(d\)</span>. Let <span class="math inline">\(r = rank \left ( X_{\bullet, \bullet} \right )\)</span>. Then <span class="math inline">\(r\)</span> is also the rank of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span>. It is the dimension of the subspace of <span class="math inline">\(\mathbb{R}^d\)</span> spanned by the rows of <span class="math inline">\(X_{\bullet, \bullet}\)</span>, as well as the dimension of the subspace of <span class="math inline">\(\mathbb{R}^n\)</span> spanned by the columns of <span class="math inline">\(X_{\bullet, \bullet}\)</span>. Consequently <span class="math inline">\(r \le \min(n, d)\)</span>.</p>
 <p>Our construction of principal components also relies on the notion of an orthogonal projection <span class="math inline">\(P\)</span> from <span class="math inline">\(\mathbb{R}^d\)</span> to some subspace of <span class="math inline">\(\mathbb{R}^d\)</span>. Recall that <span class="math inline">\(P\)</span> is an orthogonal projection if and only if: it is idempotent <span class="math inline">\((P^2 = P)\)</span>; and symmetric <span class="math inline">\((P^\top = P)\)</span>. Also, if <span class="math inline">\(P\)</span> is an orthogonal projection then so is its complement <span class="math inline">\(\mathcal{I} - P\)</span>.</p>
 <p>The simplest example is the <span class="math inline">\(d \times d\)</span> matrix <span class="math inline">\(v_\bullet \; v_\bullet^\top\)</span>, where <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span> is a unit vector (a vector of unit norm). This sends <span class="math inline">\(x_\bullet \in \mathbb{R}^d\)</span> to a scalar multiple of <span class="math inline">\(v_\bullet\)</span>, namely <span class="math inline">\(\left &lt; x_\bullet, v_\bullet \right &gt; v_\bullet\)</span>. <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
@@ -1120,9 +1189,9 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     &amp; \text{subject to the constraint:} \\ \\
     &amp; P \text{ is an orthogonal projection defined on } \mathbb{R}^d
 \end{align}
-\qquad(7.4)\]</span></span></p>
+\qquad(7.7)\]</span></span></p>
 <p>Thus <span class="math inline">\(\mathcal{L} (P)\)</span> is a sum over row index <span class="math inline">\(i\)</span> of squared residuals in the approximation of <span class="math inline">\(x_{i, \bullet}\)</span> by <span class="math inline">\(P \; x_{i, \bullet}\)</span>.</p>
-<p>Now let <span class="math inline">\(\mathcal{P}\)</span> be a set of projections. From <a href="#eq-row-projection-squared-error" class="quarto-xref">Equation&nbsp;<span>7.4</span></a> we see that projection <span class="math inline">\(\hat{P} \in \mathcal{P}\)</span> minimizes <span class="math inline">\(\mathcal{L} (P)\)</span> if and only if it maximizes a corresponding sum of squares:</p>
+<p>Now let <span class="math inline">\(\mathcal{P}\)</span> be a set of projections. From <a href="#eq-row-projection-squared-error" class="quarto-xref">Equation&nbsp;<span>7.7</span></a> we see that projection <span class="math inline">\(\hat{P} \in \mathcal{P}\)</span> minimizes <span class="math inline">\(\mathcal{L} (P)\)</span> if and only if it maximizes a corresponding sum of squares:</p>
 <p><span id="eq-min-loss-equals-max-quad-form"><span class="math display">\[
 \begin{align}
   &amp;  
@@ -1136,7 +1205,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
         x_{i, \bullet}
       \rVert^2
 \end{align}
-\qquad(7.5)\]</span></span></p>
+\qquad(7.8)\]</span></span></p>
 <p>This last sum of squares is proportional to the sum across <span class="math inline">\(X_{\bullet, \bullet}\)</span> columns (each of which is centered) of the variance of the projected column elements. Briefly, minimization of loss function <span class="math inline">\(\mathcal{L} (\cdot)\)</span> amounts to maximization of projected column variance.</p>
 </section>
 <section id="outline-reconstructing-the-feature-matrix" class="level3" data-number="7.10.2">
@@ -1157,9 +1226,9 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \sum_{\eta = 1}^j
       v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; x_\bullet
 \end{align}
-\qquad(7.6)\]</span></span></p>
+\qquad(7.9)\]</span></span></p>
 <p>In other words, <span class="math inline">\(P^{(j)}\)</span> is the sum of orthogonal projections, <span class="math inline">\(v_{\bullet, \eta} \; v_{\bullet, \eta}^\top\)</span>, to 1-dimensional subspaces that are pair-wise orthogonal.</p>
-<p>Since we will apply our loss function <span class="math inline">\(\mathcal{L} (P)\)</span> to <span class="math inline">\(P^{(j)}\)</span>, it will be useful to re-express the sum of squares appearing in <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.5</span></a>. <a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
+<p>Since we will apply our loss function <span class="math inline">\(\mathcal{L} (P)\)</span> to <span class="math inline">\(P^{(j)}\)</span>, it will be useful to re-express the sum of squares appearing in <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.8</span></a>. <a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
 <p><span id="eq-projection-quad-form-as-sum"><span class="math display">\[
 \begin{align}
   &amp;
@@ -1220,12 +1289,12 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \right )
     v_{\bullet, \eta}
 \end{align}
-\qquad(7.7)\]</span></span></p>
+\qquad(7.10)\]</span></span></p>
 <p>As we will see, the maximization of the type of quadratic form appearing in the last sum above is a solved problem.</p>
 </section>
 <section id="details-reconstructing-the-feature-matrix" class="level3" data-number="7.10.3">
 <h3 data-number="7.10.3" class="anchored" data-anchor-id="details-reconstructing-the-feature-matrix"><span class="header-section-number">7.10.3</span> Details: reconstructing the feature matrix</h3>
-<p>Here are the distinctive details of the reconstruction process. At step 1 we define vector <span class="math inline">\(v_{\bullet, 1}\)</span> as the unit vector that minimizes <span class="math inline">\(\mathcal{L} (v_\bullet \; v_\bullet^\top)\)</span> among all unit vectors <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span>. From <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.5</span></a> and <a href="#eq-projection-quad-form-as-sum" class="quarto-xref">Equation&nbsp;<span>7.7</span></a> we have:</p>
+<p>Here are the distinctive details of the reconstruction process. At step 1 we define vector <span class="math inline">\(v_{\bullet, 1}\)</span> as the unit vector that minimizes <span class="math inline">\(\mathcal{L} (v_\bullet \; v_\bullet^\top)\)</span> among all unit vectors <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span>. From <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.8</span></a> and <a href="#eq-projection-quad-form-as-sum" class="quarto-xref">Equation&nbsp;<span>7.10</span></a> we have:</p>
 <p><span id="eq-max-quad-form-step-1"><span class="math display">\[
 \begin{align}
   v_{\bullet, 1}
@@ -1247,8 +1316,8 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   \right ) \;
   v_\bullet
 \end{align}
-\qquad(7.8)\]</span></span></p>
-<p>The solution to <a href="#eq-max-quad-form-step-1" class="quarto-xref">Equation&nbsp;<span>7.8</span></a> is well known. The maximal value of <span class="math inline">\(v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet\)</span> is the largest eigenvalue, say <span class="math inline">\(\sigma_1^2\)</span>, of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span>. And the vector <span class="math inline">\(v_{\bullet, 1}\)</span> that achieves that maximal value is the eigenvector corresponding to <span class="math inline">\(\sigma_1^2\)</span>.</p>
+\qquad(7.11)\]</span></span></p>
+<p>The solution to <a href="#eq-max-quad-form-step-1" class="quarto-xref">Equation&nbsp;<span>7.11</span></a> is well known. The maximal value of <span class="math inline">\(v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet\)</span> is the largest eigenvalue, say <span class="math inline">\(\sigma_1^2\)</span>, of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span>. And the vector <span class="math inline">\(v_{\bullet, 1}\)</span> that achieves that maximal value is the eigenvector corresponding to <span class="math inline">\(\sigma_1^2\)</span>.</p>
 <p>Having defined <span class="math inline">\(v_{\bullet, 1}\)</span>, we proceed inductively, again with <span class="math inline">\(r\)</span> defined as <span class="math inline">\(r = rank \left ( X_{\bullet, \bullet} \right )\)</span>. Suppose that we have defined an orthonormal set of vectors <span class="math inline">\(v_{\bullet, 1}, \ldots, v_{\bullet, j}\)</span>, where <span class="math inline">\(1 \le j \le r\)</span>. As previously noted, this orthonormal set of vectors spans a <span class="math inline">\(j-\)</span>dimensional <span class="math inline">\(\mathbb{R}^d\)</span> subspace, denoted <span class="math inline">\(\mathcal{R}^{(j)}\)</span>, and also defines an orthogonal projection <span class="math inline">\(P^{(j)}\)</span> from <span class="math inline">\(\mathbb{R}^d\)</span> to <span class="math inline">\(\mathcal{R}^{(j)}\)</span>.</p>
 <p>If <span class="math inline">\(j = r\)</span> we terminate the reconstruction. Otherwise we define the next vector, <span class="math inline">\(v_{\bullet, j + 1}\)</span>, as the unit vector that minimizes <span class="math inline">\(\mathcal{L} (Q^{(j + 1)})\)</span>, where <span class="math inline">\(Q^{(j + 1)} = P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top\)</span>.</p>
 <p><span id="eq-next-row-projection-error-a"><span class="math display">\[
@@ -1271,8 +1340,8 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   &amp; \text{subject to the constraints: } \\ \\
   &amp; \lVert v_\bullet \rVert = 1 \; \text{ and } \; v_\bullet \perp v_{\bullet, \eta} \; \text{ for } \; \eta \le j
 \end{align}
-\qquad(7.9)\]</span></span></p>
-<p>Note that the constraints on <span class="math inline">\(v_\bullet\)</span> ensure that <span class="math inline">\(Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top)\)</span> is an orthogonal projection. Then, abbreviating and expanding <a href="#eq-next-row-projection-error-a" class="quarto-xref">Equation&nbsp;<span>7.9</span></a>, we have:</p>
+\qquad(7.12)\]</span></span></p>
+<p>Note that the constraints on <span class="math inline">\(v_\bullet\)</span> ensure that <span class="math inline">\(Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top)\)</span> is an orthogonal projection. Then, abbreviating and expanding <a href="#eq-next-row-projection-error-a" class="quarto-xref">Equation&nbsp;<span>7.12</span></a>, we have:</p>
 <p><span id="eq-next-row-projection-error-b"><span class="math display">\[
 \begin{align}
   &amp;
@@ -1303,7 +1372,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
       X_{\bullet, \bullet} \;
     v_\bullet
 \end{align}
-\qquad(7.10)\]</span></span></p>
+\qquad(7.13)\]</span></span></p>
 <p>It now follows that</p>
 <p><span id="eq-maximize-quad-form-b"><span class="math display">\[
 \begin{align}
@@ -1321,10 +1390,10 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \text{ and } \;
     v_\bullet \perp v_{\bullet, \eta} \; \text{ for } \eta \le j
 \end{align}
-\qquad(7.11)\]</span></span></p>
+\qquad(7.14)\]</span></span></p>
 <p>Again, this problem of constrained maximization of a quadratic form is well known. The maximum value is <span class="math inline">\(\sigma_{j + 1}^2\)</span>, the eigenvalue of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> of index <span class="math inline">\(j + 1\)</span> in descending order. The vector <span class="math inline">\(v_{\bullet, j + 1}\)</span> achieving this maximum is the eigenvector corresponding to <span class="math inline">\(\sigma_{j + 1}^2\)</span>.</p>
 <p>This reconstruction process terminates with an orthonormal set of <span class="math inline">\(d-\)</span>dimensional vectors, <span class="math inline">\((v_{\bullet, 1}, \ldots, v_{\bullet, r})\)</span>, that span subspace <span class="math inline">\(\mathcal{R}^{(r)}\)</span> that is spanned by the rows of <span class="math inline">\(X_{\bullet, \bullet}\)</span>.</p>
-<p>Now let <span class="math inline">\(D\)</span> denote the <span class="math inline">\(r \times r\)</span> diagonal matrix <span class="math inline">\(diag(\sigma_1, \ldots, \sigma_r)\)</span>. From <a href="#eq-feature-variance-equals-norm2" class="quarto-xref">Equation&nbsp;<span>7.3</span></a> and <a href="#eq-next-row-projection-error-b" class="quarto-xref">Equation&nbsp;<span>7.10</span></a> we have</p>
+<p>Now let <span class="math inline">\(D\)</span> denote the <span class="math inline">\(r \times r\)</span> diagonal matrix <span class="math inline">\(diag(\sigma_1, \ldots, \sigma_r)\)</span>. From <a href="#eq-feature-variance-equals-norm2" class="quarto-xref">Equation&nbsp;<span>7.6</span></a> and <a href="#eq-next-row-projection-error-b" class="quarto-xref">Equation&nbsp;<span>7.13</span></a> we have</p>
 <p><span id="eq-cov-trace-equals-eigen-sum"><span class="math display">\[
 \begin{align}
   &amp;
@@ -1353,7 +1422,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   &amp;\text{where} \\ \\
   &amp; D = diag(\sigma_1, \ldots, \sigma_r)
 \end{align}
-\qquad(7.12)\]</span></span></p>
+\qquad(7.15)\]</span></span></p>
 <p>That is, the sum of the eigenvalues <span class="math inline">\(\sigma_\eta^2\)</span> is equal to the sum of squared feature-norms, <span class="math inline">\(\lVert x_{\bullet, k} \rVert^2\)</span>.</p>
 </section>
 <section id="matrix-decompositions" class="level3" data-number="7.10.4">
@@ -1370,8 +1439,8 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   &amp;=
   (v_{\bullet, 1}, \ldots, v_{\bullet, r}) \; D^2
 \end{align}
-\qquad(7.13)\]</span></span></p>
-<p>Matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is non-negative definite, which means that it has <span class="math inline">\(d\)</span> non-negative eigenvalues and corresponding eigenvectors. The first <span class="math inline">\(r\)</span> eigenvalues are positive. Arranged in descending order, they are the diagonal elements of <span class="math inline">\(D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)\)</span>. If <span class="math inline">\(r = d\)</span> the matrix is strictly positive-definite, and its complete eigen-decomposition is given by <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.13</span></a>.</p>
+\qquad(7.16)\]</span></span></p>
+<p>Matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is non-negative definite, which means that it has <span class="math inline">\(d\)</span> non-negative eigenvalues and corresponding eigenvectors. The first <span class="math inline">\(r\)</span> eigenvalues are positive. Arranged in descending order, they are the diagonal elements of <span class="math inline">\(D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)\)</span>. If <span class="math inline">\(r = d\)</span> the matrix is strictly positive-definite, and its complete eigen-decomposition is given by <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.16</span></a>.</p>
 <p>Suppose now that <span class="math inline">\(r &lt; d\)</span>. Then any unit vector orthogonal to <span class="math inline">\(\mathcal{R}^{(r)}\)</span>, the <span class="math inline">\(d-\)</span>dimensional subspace spanned by <span class="math inline">\((v_{\bullet, 1}, \ldots, v_{\bullet, r})\)</span>, qualifies as an eigenvector (a “null” eigenvector, we’ll say) having an eigenvalue of zero. Therefore we can complement eigenvectors <span class="math inline">\((v_{\bullet, 1}, \ldots, v_{\bullet, r})\)</span> with an orthonormal set of null eigenvectors <span class="math inline">\((v_{\bullet, r + 1}, \ldots, v_{\bullet, d})\)</span>. The combined set of eigenvectors is a complete orthonormal basis for <span class="math inline">\(\mathbb{R}^d\)</span>.</p>
 <p>We thus have two cases to consider: <span class="math inline">\(r &lt; d\)</span>; or <span class="math inline">\(r = d\)</span>. In either case we now have a complete orthonormal basis represented by the <span class="math inline">\(d \times d\)</span> matrix <span class="math inline">\(V = (v_{\bullet, 1}, \ldots, v_{\bullet, d})\)</span>. We delineate the two cases as follows.</p>
 <p><span id="eq-cov-all-eigen-vectors-1"><span class="math display">\[
@@ -1384,7 +1453,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \end{cases} \\
   V &amp;= (V_1, V_2)
 \end{align}
-\qquad(7.14)\]</span></span></p>
+\qquad(7.17)\]</span></span></p>
 <p>We also record the full set of eigenvalues in the <span class="math inline">\(d \times d\)</span> diagonal matrix <span class="math inline">\(\tilde{D}^2\)</span> as follows.</p>
 <p><span id="eq-cov-all-eigen-values-1"><span class="math display">\[
 \begin{align}
@@ -1398,8 +1467,8 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
       D^2 &amp; \text{if } r = d
     \end{cases}
 \end{align}
-\qquad(7.15)\]</span></span></p>
-<p>This enables us to re-express <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.13</span></a> as follows.</p>
+\qquad(7.18)\]</span></span></p>
+<p>This enables us to re-express <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.16</span></a> as follows.</p>
 <p><span id="eq-cov-full-eigen-decomp-1"><span class="math display">\[
 \begin{align}
   \left (
@@ -1409,15 +1478,15 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
   &amp;=
     V \; \tilde{D}^2
 \end{align}
-\qquad(7.16)\]</span></span></p>
-<p>Matrix <span class="math inline">\(V\)</span> is an orthonormal rotation of <span class="math inline">\(\mathbb{R}^d\)</span>, so that <span class="math inline">\(V^\top = V^{-1}\)</span>. Multiplying <a href="#eq-cov-full-eigen-decomp-1" class="quarto-xref">Equation&nbsp;<span>7.16</span></a> on the right by <span class="math inline">\(V^\top\)</span> we obtain:</p>
+\qquad(7.19)\]</span></span></p>
+<p>Matrix <span class="math inline">\(V\)</span> is an orthonormal rotation of <span class="math inline">\(\mathbb{R}^d\)</span>, so that <span class="math inline">\(V^\top = V^{-1}\)</span>. Multiplying <a href="#eq-cov-full-eigen-decomp-1" class="quarto-xref">Equation&nbsp;<span>7.19</span></a> on the right by <span class="math inline">\(V^\top\)</span> we obtain:</p>
 <p><span id="eq-cov-full-eigen-decomp-2"><span class="math display">\[
 \begin{align}
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
   &amp;=
     V \; \tilde{D}^2 \; V^\top
 \end{align}
-\qquad(7.17)\]</span></span></p>
+\qquad(7.20)\]</span></span></p>
 <p>This last equation can be re-expressed as an eigen-decomposition of the feature covariance matrix:</p>
 <p><span id="eq-cov-full-eigen-decomp-3"><span class="math display">\[
 \begin{align}
@@ -1430,7 +1499,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \right )
     V^\top
 \end{align}
-\qquad(7.18)\]</span></span></p>
+\qquad(7.21)\]</span></span></p>
 </section>
 <section id="principal-components-of-the-feature-matrix" class="level4" data-number="7.10.4.2">
 <h4 data-number="7.10.4.2" class="anchored" data-anchor-id="principal-components-of-the-feature-matrix"><span class="header-section-number">7.10.4.2</span> Principal Components of the Feature Matrix</h4>
@@ -1442,7 +1511,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     X_{\bullet, \bullet} \; v_{\bullet, \eta}
     &amp; \text{ for } \eta \in \{ 1, \ldots, r \}
 \end{align}
-\qquad(7.19)\]</span></span></p>
+\qquad(7.22)\]</span></span></p>
 <p>Note that distinct principal components are orthogonal, and the squared magnitude of <span class="math inline">\(c_{\bullet, \eta}\)</span> is <span class="math inline">\(\sigma_\eta^2\)</span>:</p>
 <p><span id="eq-orthogonal-PCs"><span class="math display">\[
 \begin{align}
@@ -1488,7 +1557,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
       0 &amp; \text{ if } \kappa \ne \eta
     \end{cases}
 \end{align}
-\qquad(7.20)\]</span></span></p>
+\qquad(7.23)\]</span></span></p>
 </section>
 <section id="svd-of-the-feature-matrix" class="level4" data-number="7.10.4.3">
 <h4 data-number="7.10.4.3" class="anchored" data-anchor-id="svd-of-the-feature-matrix"><span class="header-section-number">7.10.4.3</span> SVD of the Feature Matrix</h4>
@@ -1502,7 +1571,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \frac{ c _{\bullet, \eta} }{ \sigma_\eta }
     &amp; \text{ for } \eta \in \{ 1, \ldots, r \}
 \end{align}
-\qquad(7.21)\]</span></span></p>
+\qquad(7.24)\]</span></span></p>
 <p>Since the principal components are pair-wise orthogonal, the unit vectors just defined make up an orthonormal set of <span class="math inline">\(n-\)</span>dimensional vectors. Note that</p>
 <p><span id="eq-svd-1"><span class="math display">\[
 \begin{align}
@@ -1544,7 +1613,7 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \sigma_\eta \;
     v_{\bullet, \eta}^\top
 \end{align}
-\qquad(7.22)\]</span></span></p>
+\qquad(7.25)\]</span></span></p>
 <p>We now define <span class="math inline">\(U_1 = ( u_{\bullet, 1}, \ldots, u_{\bullet, r} )\)</span> to be the <span class="math inline">\(n \times r\)</span> matrix having these <span class="math inline">\(r\)</span> unit vectors as its columns. And we extend, if needed, this set of unit vectors to create an orthonormal basis for <span class="math inline">\(\mathbb{R}^n\)</span>. That is, if <span class="math inline">\(r &lt; n\)</span> then the vector space spanned by the columns of <span class="math inline">\(U_1\)</span> is a proper subspace of <span class="math inline">\(\mathbb{R}^n\)</span>. The orthogonal complement to this subspace has dimension <span class="math inline">\(n - r\)</span>, and thus admits an orthonormal basis, which we label as <span class="math inline">\(( u_{\bullet, r + 1}, \ldots, u_{\bullet, n} )\)</span>. And we define <span class="math inline">\(U_2\)</span> to be the matrix having these vectors as its columns. Finally, we define the <span class="math inline">\(n \times n\)</span> orthogonal matrix <span class="math inline">\(U = ( u_{\bullet, 1}, \ldots, u_{\bullet, n} )\)</span>.</p>
 <p><span id="eq-all-left-eigen-vectors-1"><span class="math display">\[
 \begin{align}
@@ -1556,15 +1625,15 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
     \end{cases} \\
   U &amp;= (U_1, U_2)
 \end{align}
-\qquad(7.23)\]</span></span></p>
-<p>We can now re-express <a href="#eq-svd-1" class="quarto-xref">Equation&nbsp;<span>7.22</span></a> as follows.</p>
+\qquad(7.26)\]</span></span></p>
+<p>We can now re-express <a href="#eq-svd-1" class="quarto-xref">Equation&nbsp;<span>7.25</span></a> as follows.</p>
 <p><span id="eq-svd-2"><span class="math display">\[
 \begin{align}
   U^\top \; X_{\bullet, \bullet}
   &amp;=
     \Sigma \; V^\top
 \end{align}
-\qquad(7.24)\]</span></span></p>
+\qquad(7.27)\]</span></span></p>
 <p>where <span class="math inline">\(\Sigma\)</span> is the following <span class="math inline">\(n \times d\)</span> rectangular diagonal matrix:</p>
 <p><span id="eq-Sigma-defn"><span class="math display">\[
 \begin{align}
@@ -1580,15 +1649,15 @@ Table&nbsp;7.5: Arrest z-scores: variance of principal components
       \end{pmatrix} &amp; \text{ if } d &gt; n
     \end{cases}
 \end{align}
-\qquad(7.25)\]</span></span></p>
-<p>Then multiplying <a href="#eq-all-left-eigen-vectors-1" class="quarto-xref">Equation&nbsp;<span>7.23</span></a> on the left by matrix <span class="math inline">\(U\)</span> we obtain:</p>
+\qquad(7.28)\]</span></span></p>
+<p>Then multiplying <a href="#eq-all-left-eigen-vectors-1" class="quarto-xref">Equation&nbsp;<span>7.26</span></a> on the left by matrix <span class="math inline">\(U\)</span> we obtain:</p>
 <p><span id="eq-svd-3"><span class="math display">\[
 \begin{align}
   X_{\bullet, \bullet}
   &amp;=
     U \; \Sigma \; V^\top
 \end{align}
-\qquad(7.26)\]</span></span></p>
+\qquad(7.29)\]</span></span></p>
 <p>This factorization of the feature matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span> is called a <em>singular value decomposition</em> (SVD).</p>
 
 

@@ -754,6 +754,80 @@ z_arm_pc_stats |>
 
 We see that the first principal component "PC1" $(c_1)$ accounts for `r round(z_arm_pc_stats [[1, "var_pct"]])` percent of the total variation, making it a good candidate indeed for a violent crime index (or at least a reference for such an index).
 
+### PCA Terminology
+
+@sec-dim-r-mat-decomp gives mathematical definitions of principal components and related terms in some detail.  In this section we present the main ideas.
+
+The first principal component, $c_{\bullet, 1}$, of the centered, $n \times d$ feature matrix $X_{\bullet, \bullet}$ is a particular linear combination of the columns of $X_{\bullet, \bullet}$, that is, a particular linear combination of the centered, $n-$dimensional feature vectors $(x_{\bullet, 1}, \ldots, x_{\bullet, d})$.  The $d$ coefficients of this linear combination are the elements of the $d-$dimensional vector $v_{\bullet, 1}$, a "unit vector", meaning a vector of norm 1.
+
+$$
+\begin{align}
+  c_{\bullet, 1} 
+  &= 
+   v_{1, 1} x_{\bullet, 1} \; + \; 
+   \cdots \; + \; 
+   v_{d, 1} x_{\bullet, d} \\ 
+   &= 
+   X_{\bullet, \bullet} \; v_{\bullet, 1}
+   & \text{ with } \lVert v_{\bullet, 1} \rVert = 1
+\end{align}
+$$ {#eq-define-c-1-a}
+
+Of all $d-$dimensional unit vectors $v_\bullet$, each generating a linear combination $X_{\bullet, \bullet} \; v_\bullet$ of feature vectors, $v_{\bullet, 1}$ has the distinction of maximizing the norm of $X_{\bullet, \bullet} \; v_\bullet$. 
+
+$$
+\begin{align}
+  \lVert c_{\bullet, 1} \rVert 
+  &= 
+    \lVert 
+      X_{\bullet, \bullet} \; v_{\bullet, 1} 
+    \rVert \\ 
+  &= 
+    \max \left \{ 
+      \lVert 
+        X_{\bullet, \bullet} \; v_\bullet 
+      \rVert 
+      : \; 
+        \lVert v_\bullet \rVert = 1
+    \right \}
+\end{align}
+$$ {#eq-max-norm-c-1}
+
+Since each feature vector $x_{\bullet, k}$ is centered, its squared norm, $\lVert x_{\bullet, k} \rVert^2$, is an $(n - 1)$ multiple of its sample variance $var(x_{\bullet, k})$.  Consequently, $c_{\bullet, 1}$ also has maximum sample variance among comparable linear combinations of feature vectors.
+
+$$
+\begin{align}
+  & 
+    var (c_{\bullet, 1})  \\
+  &= 
+    \frac{1}{n - 1} \; 
+    \lVert c_{\bullet, 1} \rVert^2 \\
+  &= 
+    \frac{1}{n - 1} \; 
+    \lVert 
+      X_{\bullet, \bullet} \; v_{\bullet, 1} 
+    \rVert^2 \\ 
+  &= 
+    \max \left \{ 
+      \frac{1}{n - 1} \; 
+      \lVert 
+        X_{\bullet, \bullet} \; v_\bullet 
+      \rVert^2 
+      : \; 
+        \lVert v_\bullet \rVert = 1
+    \right \} \\
+  &= 
+    \max \left \{ 
+      var 
+      \left ( 
+        X_{\bullet, \bullet} \; v_\bullet 
+      \right ) 
+      : \; 
+        \lVert v_\bullet \rVert = 1
+    \right \}
+\end{align}
+$$ {#eq-max-variance-c-1}
+
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
 ## Computational Considerations {#sec-dim-r-computation}
@@ -766,7 +840,7 @@ We see that the first principal component "PC1" $(c_1)$ accounts for `r round(z_
 
 ## Exercises {#sec-dim-r-exercises}
 
-## Appendix A: Matrix Decompositions and PCA
+## Appendix A: Matrix Decompositions and PCA {#sec-dim-r-mat-decomp}
 
 To define principal components we will describe a step-wise reconstruction of the $n \times d$ feature matrix $X_{\bullet, \bullet}$.
 
