@@ -131,8 +131,9 @@ st_wide_dscr |>
 g_arrests_violin <- arrests_long |> 
   dplyr::filter(var != "UrbanPop") |> 
   dplyr::mutate(var = forcats::as_factor(var)) |> 
+  dplyr::rename(crime = var) |> 
   ggplot2::ggplot(mapping = aes(
-    x = var, y = rate, color = var, fill = var
+    x = crime, y = rate, color = crime, fill = crime
   )) + 
   geom_violin(show.legend = FALSE) + 
   scale_y_log10() + 
@@ -438,7 +439,7 @@ In 1957 Richard Bellman characterized such challenges as "the curse of dimension
 
 In addition, @wiki_curse_dimensionality notes that our geometric intuition is grounded in $d \le 3$ and is overturned as $d$ increases.  To illustrate, consider a unit hypercube $[0,1]^d$ containing the largest possible inscribed ball. The ratio $r(d)$ of their volumes shrinks dramatically: $r(3) \approx 0.52$, $r(10) \approx 0.0025$, and $r(100) \approx 2 \times 10^{-70}$. In high dimensions, the preponderance of randomly generated points within the cube land far from the center!
 
-Yet @Donoho_2000_High_Dimensional_Data_Analysis also sees opportunities.   While randomly generated data in high dimensions behaves pathologically, actual data tend to be more coherent.  Consider the example data sets:
+Yet @Donoho_2000_High_Dimensional_Data_Analysis also sees opportunities.   While randomly generated data in high dimensions behaves pathologically (at least from a 3D perspective), actual data tend to be more coherent.  Consider the example data sets:
 
 - _US Arrests_: The three crime variables (assault, rape, murder) are 
   highly correlated; they don't independently span 3D space (@fig-arrests-3d-scatter).
@@ -447,7 +448,7 @@ Yet @Donoho_2000_High_Dimensional_Data_Analysis also sees opportunities.   While
   fermentation chemistry.
 - _NCI60_: The 6,830 genes participate in shared biological pathways.
 
-In each case, the data likely occupies a much lower-dimensional structure within the high-dimensional feature space. If we can identify this structure, dimension reduction may actually _improve_ modeling by revealing the true degrees of freedom in the data.
+In each case, the data likely occupies a much lower-dimensional structure within the high-dimensional feature space. If we can identify this structure, we are likely to _improve_ any subsequent statistical modeling.
 
 The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (@sec-dim-r-pca), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition. We then explore how supervision (@sec-dim-r-supervised) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (@sec-dim-r-computation) for extreme cases like NCI60 where $d \gg n$.
 
@@ -512,19 +513,18 @@ fs_slope_2 <-
   fs_rot_mat [["son",    "PC2"]] / 
   fs_rot_mat [["father", "PC2"]]
 
+# TODO: change fs_slope_i to fs_slope [[i]]
+
 ```
 
 ```{r}
-#| label: fs-pca-colors
+#| label: pca-colors
 
 # color per component: actual and cited color names
 pc_colors_tbl <- get_pc_colors()
 
-pc_clr_1 <- pc_colors_tbl$ color [[1]]
-pc_clr_2 <- pc_colors_tbl$ color [[2]]
-
-pc_ref_1 <- pc_colors_tbl$ ref [[1]]
-pc_ref_2 <- pc_colors_tbl$ ref [[2]]
+pc_clr <- pc_colors_tbl$ color
+pc_ref <- pc_colors_tbl$ ref
 
 ```
 
@@ -541,6 +541,8 @@ f_end_pc_2 <- fs_pca_end_pt_mat [["father", "PC2"]]
 
 s_end_pc_1 <- fs_pca_end_pt_mat [["son",    "PC1"]]
 s_end_pc_2 <- fs_pca_end_pt_mat [["son",    "PC2"]]
+
+# TODO: use fs_pca_end_pt_mat directly
 
 ```
 
@@ -560,7 +562,7 @@ g_fs_pcs <- fms_ctr |>
   ggplot2::geom_abline(
     intercept = 0, 
     slope = fs_slope_1, 
-    color = pc_clr_1) + 
+    color = pc_clr [[1]]) + 
   ggplot2::geom_segment(
     mapping = aes(
       x = 0, xend = f_end_pc_1,
@@ -570,14 +572,14 @@ g_fs_pcs <- fms_ctr |>
       length = unit(0.3, "cm"), 
       ends = "last", type = "closed"
     ),
-    linetype = 3, linewidth = 0.8, color = pc_clr_1
+    linetype = 3, linewidth = 0.8, color = pc_clr [[1]]
   ) + 
   
   # 2nd pc
   ggplot2::geom_abline(
     intercept = 0, 
     slope = fs_slope_2, 
-    color = pc_clr_2) + 
+    color = pc_clr [[2]]) + 
   ggplot2::geom_segment(
     mapping = aes(
       x = 0, xend = f_end_pc_2,
@@ -587,15 +589,15 @@ g_fs_pcs <- fms_ctr |>
       length = unit(0.3, "cm"), 
       ends = "last", type = "closed"
     ),
-    linetype = 3, linewidth = 0.8, color = pc_clr_2
+    linetype = 3, linewidth = 0.8, color = pc_clr [[2]]
   ) + 
   
   ggplot2::labs(
     title = "PCA: (father, son) centered heights") + 
   ggplot2::labs(
     subtitle = bquote(
-      c[1] * ": " * ~ .(pc_ref_1) * ", " * 
-      c[2] * ": " * ~ .(pc_ref_2)
+      c[1] * ": " * ~ .(pc_ref [[1]]) * ", " * 
+      c[2] * ": " * ~ .(pc_ref [[2]])
     )
   )
 
@@ -603,11 +605,154 @@ g_fs_pcs
 
 ```
 
-The figure represents two principal components, $(c_1, c_2)$, as respective `r pc_ref_1` and `r pc_ref_2` lines, which are perpendicular to one another.
+The figure represents two principal components, $(c_1, c_2)$, as respective `r pc_ref [[1]]` and `r pc_ref [[2]]` lines, which are perpendicular to one another.
 
-The `r pc_ref_1` line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The `r pc_ref_2` line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
+The `r pc_ref [[1]]` line $(c_1)$ points in the direction where the data varies most. Projecting points onto this line captures the maximum possible variance in a single dimension. The `r pc_ref [[2]]` line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance. Together, they form a rotated coordinate system that aligns with the data's natural variation.
 
 ### 3D Example: US Arrests
+
+We now revisit `datasets::USArrests`, which gives the number of arrests per 100,000 population for violent crimes in each of the 50 US states in 1973.  A possible use of PCA is to define a linear combination of the three types of arrests that would serve as a one-dimensional index of violent crime.
+
+Recall that the respective arrest rates for assault, rape, and murder (listed from highest to lowest rate) are on quite different scales.  Without some adjustment, assault rates would dominate the total variance of the data and consequently the determination of principal components.  Yet the severity of the societal problem is a function of both the rate of a crime and the nature of the crime.  As an initial (if not definitive) adjustment, we have transformed each rate into a z-score by subtracting the mean and dividing by the standard deviation (each calculated across the 50 US states).  We've labeled the respective z-scores: `z_Assault`, `z_Rape`, and `z_Murder`.
+
+@fig-arm-pca is a 3D scatterplot of these z-scores, and also shows their three principal components $(c_1, c_2, c_3)$ in respective colors: `r pc_ref[[1]]`, `r pc_ref[[2]]`, and `r pc_ref[[3]]`.
+
+```{r}
+#| label: arrest-rate-z-scores
+
+# center and scale the 3 arrest rates from the USArrests data
+z_arrests_mat <- arrests_wide |> 
+  dplyr::select(Assault, Rape, Murder) |> 
+  scale()
+
+z_arrests_tbl <- arrests_wide |> 
+  dplyr::select(st_abb, st_nm, UrbanPop) |> 
+  dplyr::mutate(
+    z_assault = z_arrests_mat [, "Assault"], 
+    z_rape    = z_arrests_mat [, "Rape"], 
+    z_murder  = z_arrests_mat [, "Murder"]
+  )
+
+```
+
+```{r}
+#| label: z-arrests-pca-lst
+
+# z_arrests |> PCA
+  z_arrests_pca_lst <- z_arrests_tbl |> 
+  dplyr::select(z_assault, z_rape, z_murder) |> 
+  stats::prcomp(center = FALSE) |> 
+  # coerce rotation matrix to have mostly positive diagonal
+  pc_rot_diag()
+
+# z_arrests_pca_lst$ rotation
+#                 PC1        PC2        PC3
+# z_assault 0.6079818 -0.2140236  0.7645600
+# z_rape    0.5393836  0.8179779 -0.1999436
+# z_murder  0.5826006 -0.5339532 -0.6127565
+
+```
+
+```{r}
+#| label: z-arrest-pca-end-pts
+
+# represent each component as a directed 
+# line segment anchored at the origin
+arm_pca_end_pt_mat <- z_arrests_pca_lst |> 
+  get_pc_segs()
+
+# arm_pca_end_pt_mat |> print(digits = 2)
+#           PC1   PC2   PC3
+# z_assault 1.5 -0.29  0.69
+# z_rape    1.4  1.12 -0.18
+# z_murder  1.5 -0.73 -0.55
+
+```
+
+```{r}
+#| label: fig-arm-pca
+#| fig-cap: "US Arrest Z-scores: Principal Components"
+
+# Create 3D scatterplot with principal component directions
+g_arm_pca <- plot_ly(
+  x = z_arrests_tbl$z_assault, 
+  y = z_arrests_tbl$z_rape, 
+  z = z_arrests_tbl$z_murder, 
+  type = "scatter3d",
+  mode = "markers",
+  # mode = "markers+text", 
+  text = z_arrests_tbl$st_abb, 
+  # textposition = "top center", 
+  # textfont = list(size = 8), 
+  marker = list(
+    size = 4,
+    color = "steelblue",
+    opacity = 0.7
+  ),
+  name = "State"
+)
+
+# PC axes: add directed line segments from origin
+for (i in 1:3) {
+  g_arm_pca <- g_arm_pca |> 
+    add_trace(
+      x = c(0, arm_pca_end_pt_mat["z_assault", i]), 
+      y = c(0, arm_pca_end_pt_mat["z_rape", i]), 
+      z = c(0, arm_pca_end_pt_mat["z_murder", i]), 
+      type = "scatter3d",
+      mode = "lines",
+      line = list(width = 6, color = pc_clr[i]),
+      name = paste0("PC", i),
+      showlegend = FALSE,
+      inherit = FALSE  # Added: prevents inheriting marker properties
+    )
+}
+
+g_arm_pca <- g_arm_pca |> layout(
+  scene = list(
+    xaxis = list(title = "z_Assault"),
+    yaxis = list(title = "z_Rape"),
+    zaxis = list(title = "z_Murder"),
+    aspectmode = "cube"
+  ),
+  title = "US Arrest Z-scores: Principal Components"
+)
+
+g_arm_pca
+
+```
+
+The first principal component $(c_1)$ is a promising candidate to serve as an index of violent crime.  The coefficients of its linear combination of the three z-score variables are all positive, so that an increase in any one of the three types of crime would cause this index to rise. [^crime-index]
+
+[^crime-index]: Of course the construction of a violent crime index might begin with a principal component analysis (PCA), but would require more work.  To render the index as a rate per 100,000 population, we might consider taking a weighted geometric mean of the three underlying rates, with the weights derived in part from PCA.
+
+We would want any such index to account for a preponderance of the total variation (which is the sum of the variances of each type of arrest rate).  Note that the z-scores are constrained to have unit variance, so the total variation among the three z-scores is 3.  Here are the amounts of that total variation accounted for by the 3 principal components.
+
+```{r}
+#| label: z-arm-pc-stats
+
+z_arm_pc_stats <- z_arrests_pca_lst |> 
+  get_pc_stats()
+```
+
+```{r}
+#| label: tbl-z-arm-pc-stats
+#| tbl-cap: "Arrest z-scores: variance of principal components"
+
+z_arm_pc_stats |> 
+  dplyr::mutate(across(
+    .cols = sd:var_pct, 
+    .fns = ~ signif(.x, digits = 2)
+  )) |> 
+  dplyr::select(- idx) |> 
+  dplyr::rename(variance = var) |> 
+  knitr::kable(
+    caption = "Arrest z-scores: variance of principal components"
+  )
+
+```
+
+We see that the first principal component "PC1" $(c_1)$ accounts for `r round(z_arm_pc_stats [[1, "var_pct"]])` percent of the total variation, making it a good candidate indeed for a violent crime index (or at least a reference for such an index).
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
