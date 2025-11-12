@@ -150,6 +150,30 @@ get_pc_segs <- function(
   return(end_pt_mat)
 }
 
+##
+#  get_pc_stats()
+#    Return the standard deviation and variance 
+#    of each principal component.
+##
+get_pc_stats <- function(
+    prcomp_obj # <lst> object returned by stats::prcomp()
+) {
+  # adopt column names of the rotation matrix
+  rot_tbl <- prcomp_obj$ rotation |> 
+    tibble::as_tibble(rownames = "var")
+  
+  stats_tbl <- tibble::tibble(
+    idx     = 1:ncol(prcomp_obj$ rotation), 
+    id      = paste0("PC", idx), 
+    # standard deviation
+    sd      = prcomp_obj$ sdev, 
+    # variance
+    var     = sd^2, 
+    var_pct = 100 * var / sum(var)
+  )
+  return(stats_tbl)
+}
+
 
 ##
 #  EOF
