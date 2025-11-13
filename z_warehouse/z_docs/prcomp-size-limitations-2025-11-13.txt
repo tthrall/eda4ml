@@ -1,0 +1,73 @@
+prcomp-size-limitations -2025-11-13
+
+Copilot:
+
+In R, stats::prcomp() is implemented in C and uses singular value decomposition (SVD) under the hood.
+There is no explicit hard-coded row/column limit in prcomp() itself — the main constraints are available memory and numeric stability.
+
+Key Size Limitations
+
+Memory Usage
+
+prcomp() stores:
+
+The centered/scaled data matrix (same size as input)
+The rotation matrix (loadings, size: ncol × ncol)
+The x matrix (scores, size: nrow × ncol)
+
+This means memory usage can be several times the size of your input matrix.
+For a matrix with:
+
+n rows (observations)
+p columns (variables)
+Memory footprint ≈ O(n × p) for the data + O(p²) for rotation + O(n × p) for scores.
+
+
+
+Example:
+A 100,000 × 500 numeric matrix (double precision, 8 bytes per value):
+
+Raw data: 100,000 × 500 × 8 ≈ 381 MB
+Centered copy: another ~381 MB
+Scores: ~381 MB
+Rotation: 500 × 500 × 8 ≈ 2 MB
+Total: ~1.15 GB (plus overhead)
+
+If your dataset is large, you can easily hit R’s memory limit.
+
+Integer Index Limits
+
+R uses 32-bit integers for indexing in many internal C routines.
+This means a single matrix dimension cannot exceed about 2.1 billion elements.
+In practice, you will run out of RAM long before hitting this.
+
+Numeric Stability
+
+Very large or very small values can cause floating-point precision issues in SVD.
+Scaling (scale.=TRUE) is often recommended for variables with different magnitudes.
+
+Time Complexity
+
+SVD complexity is roughly:
+
+Tall matrix (n > p): O(n × p²)
+Wide matrix (p > n): O(p × n²)
+
+
+This can become prohibitively slow for large datasets.
+
+Practical Workarounds for Large Data
+If prcomp() is too slow or memory-heavy:
+
+Use prcomp(x, rank.=k) to compute only the first k components (R ≥ 3.5.0).
+Use irlba::prcomp_irlba() for truncated SVD on large sparse/dense matrices.
+Use bigstatsr::big_randomSVD() for out-of-core computation.
+Manually center/scale and use svd() on a smaller matrix.
+Sample rows if full PCA is not required.
+
+
+✅ Summary:
+stats::prcomp() has no fixed size limit, but is constrained by RAM, 32-bit indexing, and SVD computation time. For very large datasets, switch to truncated or out-of-core PCA methods.
+
+If you want, I can give you a memory usage formula and a quick R function to estimate whether your dataset will fit in prcomp() before running it.
+Do you want me to prepare that?
