@@ -754,11 +754,15 @@ z_arm_pc_stats |>
 
 We see that the first principal component "PC1" $(c_1)$ accounts for `r round(z_arm_pc_stats [[1, "var_pct"]])` percent of the total variation, making it a good candidate indeed for a violent crime index (or at least a reference for such an index).
 
-### PCA Terminology
+### Terminology
 
 @sec-dim-r-mat-decomp gives mathematical definitions of principal components and related terms in some detail.  In this section we present the main ideas.
 
-The first principal component, $c_{\bullet, 1}$, of the centered, $n \times d$ feature matrix $X_{\bullet, \bullet}$ is a particular linear combination of the columns of $X_{\bullet, \bullet}$, that is, a particular linear combination of the centered, $n-$dimensional feature vectors $(x_{\bullet, 1}, \ldots, x_{\bullet, d})$.  The $d$ coefficients of this linear combination are the elements of the $d-$dimensional vector $v_{\bullet, 1}$, a "unit vector", meaning a vector of norm 1.
+#### First principal component 
+
+The first principal component, $c_{\bullet, 1}$, of the centered, $n \times d$ feature matrix $X_{\bullet, \bullet}$ is a particular linear combination of the columns of $X_{\bullet, \bullet}$, that is, a particular linear combination of the centered, $n-$dimensional feature vectors $(x_{\bullet, 1}, \ldots, x_{\bullet, d})$.  The $d$ coefficients of this linear combination are the elements of the $d-$dimensional vector $v_{\bullet, 1}$, a "unit vector", meaning a vector of norm 1. [^pc-row-v-column-interpretation]
+
+[^pc-row-v-column-interpretation]: The term "principal component" may refer either to the $n-$dimensional vector $c_{\bullet, 1}$ or to the $d-$dimensional vector of its coefficients $v_{\bullet, 1}$.  The identity $c_{\bullet, 1} = X_{\bullet, \bullet} \; v_{\bullet, 1}$ is a mapping, $v_{\bullet, 1} \mapsto c_{\bullet, 1}$.  Scatterplots and other visualizations of individual cases of data represent _rows_ of the feature matrix $X_{\bullet, \bullet}$, which is the perspective of $d-$space, to which $v_{\bullet, 1}$ belongs.  Model formulations, such as $y = X \beta + \epsilon$ represent _columns_ of the feature matrix, which is the perspective of $n-$space, to which $c_{\bullet, 1}$ belongs.
 
 $$
 \begin{align}
@@ -772,6 +776,8 @@ $$
    & \text{ with } \lVert v_{\bullet, 1} \rVert = 1
 \end{align}
 $$ {#eq-define-c-1-a}
+
+Each respective coefficient $v_{k, 1}$ is also called the _loading_ of the $k^{th}$ feature vector $x_{\bullet, k}$ onto the first principal component.
 
 Of all $d-$dimensional unit vectors $v_\bullet$, each generating a linear combination $X_{\bullet, \bullet} \; v_\bullet$ of feature vectors, $v_{\bullet, 1}$ has the distinction of maximizing the norm of $X_{\bullet, \bullet} \; v_\bullet$. 
 
@@ -827,6 +833,203 @@ $$
     \right \}
 \end{align}
 $$ {#eq-max-variance-c-1}
+
+Now the coefficient vector $v_{\bullet, 1}$ is an eigenvector of matrix  $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ whose eigenvalue is denoted $\sigma_1^2$.
+
+$$
+\begin{align} 
+  \left ( 
+    X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} 
+  \right ) \; 
+  v_{\bullet, 1} 
+&= 
+  \sigma_1^2 \; v_{\bullet, 1} 
+\end{align} 
+$$ {#eq-Xt-X-eigen-1-a}
+
+Eigenvalue $\sigma_1^2$ is the largest eigenvalue of matrix  $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$, and is also the squared norm of principal component $c_{\bullet, 1}$.
+
+$$
+\begin{align}
+& 
+  \lVert 
+    c_{\bullet, 1} 
+  \rVert^2  \\ 
+&= 
+  \left < 
+    c_{\bullet, 1}, \; 
+    c_{\bullet, 1}
+  \right >  \\ 
+&= 
+  \left < 
+    X_{\bullet, \bullet} \; v_{\bullet, 1}, \; 
+    X_{\bullet, \bullet} \; v_{\bullet, 1}
+  \right >  \\ 
+&= 
+  \left < 
+    v_{\bullet, 1}, \; 
+    X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_{\bullet, 1}
+  \right >  \\ 
+&= 
+  \left < 
+    v_{\bullet, 1}, \; 
+    \sigma_1^2 \; v_{\bullet, 1}
+  \right >  \\ 
+&= 
+  \sigma_1^2 \; 
+  \left < 
+    v_{\bullet, 1}, \; 
+    v_{\bullet, 1}
+  \right >  \\ 
+&= 
+  \sigma_1^2 \; 
+  \lVert 
+    v_{\bullet, 1} 
+  \rVert^2  \\ 
+&= 
+  \sigma_1^2 
+\end{align}
+$$ {#eq-norm-sq-pc-1-a}
+
+The normalized first principal component 
+
+$$
+\begin{align}
+  u_{\bullet, 1} 
+  &= 
+    \frac 
+      { c_{\bullet, 1} }
+      { \lVert  c_{\bullet, 1} \rVert } \\ 
+  &= 
+    \frac 
+      { 1 }
+      { \sigma_1 } \; 
+    c_{\bullet, 1}
+\end{align}
+$$ {#eq-pc-unit-1-a}
+
+is a unit vector called the first _left singular vector_ of the feature matrix $X_{\bullet, \bullet}$ due to the following property: 
+
+$$
+\begin{align}
+  & 
+    u_{\bullet, 1}^\top \; X_{\bullet, \bullet} \\ 
+  &= 
+    \frac 
+      { 1 }
+      { \sigma_1 } \; 
+    c_{\bullet, 1}^\top \; X_{\bullet, \bullet} \\ 
+  &= 
+    \frac 
+      { 1 }
+      { \sigma_1 } \; 
+    \left ( 
+      X_{\bullet, \bullet}^\top \; c_{\bullet, 1} 
+    \right )^\top \\ 
+  &= 
+    \frac 
+      { 1 }
+      { \sigma_1 } \; 
+    \left ( 
+      X_{\bullet, \bullet}^\top \; 
+      X_{\bullet, \bullet} \; 
+      v_{\bullet, 1} 
+    \right )^\top \\ 
+  &= 
+    \frac 
+      { 1 }
+      { \sigma_1 } \; 
+    \left ( 
+      \sigma_1^2 \; 
+      v_{\bullet, 1} 
+    \right )^\top \\ 
+  &= 
+    \sigma_1 \; 
+    v_{\bullet, 1}^\top  
+\end{align}
+$$ {#eq-map-left-to-right-unit-1-a}
+
+so that 
+
+$$
+\begin{align}
+    X_{\bullet, \bullet}^\top \; 
+    u_{\bullet, 1} 
+  &= 
+    \sigma_1 \; 
+    v_{\bullet, 1} 
+\end{align}
+$$ {#eq-map-left-to-right-unit-1-b}
+
+This last equality gives a mapping $u_{\bullet, 1} \mapsto \sigma_1 \;  v_{\bullet, 1}$ from left to right singular vectors of the feature matrix.
+
+#### Scores of the first principal component
+
+The $n$ elements of vector $c_{\bullet, 1}$, namely $(c_{1, 1}, \ldots, c_{n, 1})$, are called the _scores_ of the first principal component.
+
+$$
+\begin{align}
+  score_{i, 1} 
+  &= 
+    c_{i, 1} \\ 
+  &= 
+    \left < 
+      x_{i, \bullet}, \; 
+      v_{\bullet, 1}
+    \right > 
+\end{align}
+$$ {#eq-score-i-1}
+
+In other words, the $i^{th}$ score is the inner product of the $i^{th}$ row of the feature matrix with the coefficient vector $v_{\bullet, 1}$.
+
+Here's a geometric representation of this score within the context of $d-$dimensional vectors.  The coefficient vector $v_{\bullet, 1}$ defines a line, say $\mathcal{l}_d (v_{\bullet, 1})$, which is a one-dimensional subspace of $\mathbb{R}^d$ consisting of all scalar multiples of $v_{\bullet, 1}$.
+
+$$
+\begin{align}
+  \mathcal{l}_d (v_{\bullet, 1}) 
+  &= 
+    \left \{ 
+      s \; 
+      v_{\bullet, 1}
+      : \; 
+      s \in \mathbb{R}
+    \right \} 
+\end{align}
+$$ {#eq-dim-1-subspace-of-d-space}
+
+The $d \times d$ matrix $v_{\bullet, 1} \; v_{\bullet, 1}^\top$ represents an orthogonal projection of $\mathbb{R}^d$ onto $\mathcal{l}_d (v_{\bullet, 1})$.  In particular, this projection sends the $i^{th}$ row of the feature matrix, $x_{i, \bullet}$ to $score_{i, 1} \times v_{\bullet, 1}$.
+
+$$
+\begin{align}
+  & 
+    \left ( 
+      v_{\bullet, 1} \; v_{\bullet, 1}^\top
+    \right ) \; 
+    x_{i, \bullet} \\ 
+  &= 
+    \left ( 
+      v_{\bullet, 1}^\top \; x_{i, \bullet}
+    \right ) \; 
+    v_{\bullet, 1} \\ 
+  &= 
+    \left < 
+      x_{i, \bullet}, \; 
+      v_{\bullet, 1}
+    \right > \; 
+    v_{\bullet, 1} \\ 
+  &= 
+    score_{i, 1} \;  
+    v_{\bullet, 1} \\ 
+  & \in 
+    \mathcal{l}_d (v_{\bullet, 1})
+\end{align}
+$$ {#eq-project-row-i-onto-dim-1-d-subspace}
+
+#### Next principal components
+
+[TODO: make this the last in the current sequence of subsections.]
+
+Having defined $v_{\bullet, 1}$, we proceed inductively, again with $r$ defined as $r = rank \left ( X_{\bullet, \bullet} \right )$.  Suppose that we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional $\mathbb{R}^d$ subspace, denoted $\mathcal{R}^{(j)}$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
