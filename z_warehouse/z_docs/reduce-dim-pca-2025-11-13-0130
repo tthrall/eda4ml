@@ -1,0 +1,23 @@
+
+TODO: improve or reject attempt to represent scores along n-vector $c_{\bullet, 1}.
+
+Also note that $v_{\bullet, 1}$ is an eigenvector of the feature covariance matrix.
+
+$$
+\begin{align} 
+  & cov(X_{\bullet, \bullet}) \\ 
+  &= 
+    \frac{1}{n-1} X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
+\end{align} 
+$$ {#eq-cov-versus-Xt-X}
+
+The eigenvalue $\sigma_1^2$ of eigenvector $v_{\bullet, 1}$ is the largest eigenvalue of $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ and thus the largest eigenvalue of $cov(X_{\bullet, \bullet})$.  It is also the squared norm of the first principal component $c_{\bullet, 1}$.
+
+There are two ways to interpret this score geometrically.  First, within the context of $d-$dimensional vectors, the $i^{th}$ score can be interpreted as the coordinate of $x_{i, \bullet}$, the $i^{th}$ row of the feature matrix, along the line defined by $v_{\bullet, 1}$. 
+
+Second, the $i^{th}$ score can also be interpreted as the coordinate of the $i^{th}$ row of the feature matrix along a line, say $\mathcal{R}^{(1)}$, defined by the first principal component $c_{\bullet, 1}$.
+
+
+The scores all fall on a line, say $\mathcal{R}^{(1)}$, defined by the coefficient vector $v_{\bullet, 1}$.
+
+The $i^{th}$ score, $c_{i, 1}$ is the projection of the $i^{th}$ row of the feature matrix
