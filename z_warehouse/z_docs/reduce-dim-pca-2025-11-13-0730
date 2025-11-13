@@ -1,0 +1,15 @@
+
+The remaining principal components can be defined by their coefficient vectors as a sequence $(v_{\bullet, 1}), \ldots, v_{\bullet, d})$ of eigenvectors and corresponding eigenvalues $\sigma_1^2 \ge \cdots \ge \sigma_d^2 \ge 0$ of matrix $X_{\bullet, \bullet}$.
+
+Having defined $v_{\bullet, 1}$, one can proceed inductively in a sequence of definitions.  At the completion of the $j^th$ step we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$.  This orthonormal set of vectors spans a $j-$dimensional $\mathbb{R}^d$ subspace, say $\mathcal{R}^{(j)}$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$, where the matrix of $P^{(j)}$ is the following sum of 1-dimensional projections.
+
+$$
+\begin{align}
+  P_{\bullet, \bullet}^{(j)} 
+  &= 
+    \sum_{\eta = 1}^j 
+      v_{\bullet, \eta} \; v_{\bullet, \eta}^\top
+\end{align}
+$$ {#eq-projection-mat-step-j}
+
+The rows of feature matrix $X_{\bullet, \bullet}$ span an $\mathbb{R}^d$ subspace of dimension $r = rank(X_{\bullet, \bullet})$.  If $j < r$, there must exist a $d-$dimensional unit vector $v_\bullet$ orthogonal to $\mathcal{R}^{(j)}$.  Of all such vectors we define $v_{\bullet, j + 1}$ to be one that maximizes $\lVert X_{\bullet, \bullet} \; v_\bullet \rVert$.

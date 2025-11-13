@@ -760,9 +760,9 @@ We see that the first principal component "PC1" $(c_1)$ accounts for `r round(z_
 
 #### First principal component 
 
-The first principal component, $c_{\bullet, 1}$, of the centered, $n \times d$ feature matrix $X_{\bullet, \bullet}$ is a particular linear combination of the columns of $X_{\bullet, \bullet}$, that is, a particular linear combination of the centered, $n-$dimensional feature vectors $(x_{\bullet, 1}, \ldots, x_{\bullet, d})$.  The $d$ coefficients of this linear combination are the elements of the $d-$dimensional vector $v_{\bullet, 1}$, a "unit vector", meaning a vector of norm 1. [^pc-row-v-column-interpretation]
+The first principal component, [^pc-row-v-column-interpretation] $c_{\bullet, 1}$, of the centered, $n \times d$ feature matrix $X_{\bullet, \bullet}$ is a particular linear combination of the columns of $X_{\bullet, \bullet}$, that is, a particular linear combination of the centered, $n-$dimensional feature vectors $(x_{\bullet, 1}, \ldots, x_{\bullet, d})$.  The $d$ coefficients of this linear combination are the elements of the $d-$dimensional vector $v_{\bullet, 1}$, a "unit vector", meaning a vector of norm 1.
 
-[^pc-row-v-column-interpretation]: The term "principal component" may refer either to the $n-$dimensional vector $c_{\bullet, 1}$ or to the $d-$dimensional vector of its coefficients $v_{\bullet, 1}$.  The identity $c_{\bullet, 1} = X_{\bullet, \bullet} \; v_{\bullet, 1}$ is a mapping, $v_{\bullet, 1} \mapsto c_{\bullet, 1}$.  Scatterplots and other visualizations of individual cases of data represent _rows_ of the feature matrix $X_{\bullet, \bullet}$, which is the perspective of $d-$space, to which $v_{\bullet, 1}$ belongs.  Model formulations, such as $y = X \beta + \epsilon$ represent _columns_ of the feature matrix, which is the perspective of $n-$space, to which $c_{\bullet, 1}$ belongs.
+[^pc-row-v-column-interpretation]: The term "principal component" may refer either to the $n-$dimensional vector $c_{\bullet, 1}$ or to the $d-$dimensional vector of its coefficients $v_{\bullet, 1}$.  The identity $c_{\bullet, 1} = X_{\bullet, \bullet} \; v_{\bullet, 1}$ is a mapping, $v_{\bullet, 1} \mapsto c_{\bullet, 1}$.  Scatterplots and other visualizations of individual cases of data represent _rows_ of the feature matrix $X_{\bullet, \bullet}$.  This is the perspective of $d-$space, to which $v_{\bullet, 1}$ belongs.  Model formulations, such as $y = X \beta + \epsilon$ represent _columns_ of the feature matrix, which is the perspective of $n-$space, to which $c_{\bullet, 1}$ belongs.
 
 $$
 \begin{align}
@@ -799,7 +799,7 @@ $$
 \end{align}
 $$ {#eq-max-norm-c-1}
 
-Since each feature vector $x_{\bullet, k}$ is centered, its squared norm, $\lVert x_{\bullet, k} \rVert^2$, is an $(n - 1)$ multiple of its sample variance $var(x_{\bullet, k})$.  Consequently, $c_{\bullet, 1}$ also has maximum sample variance among comparable linear combinations of feature vectors.
+Since each feature vector $x_{\bullet, k}$ is centered, its squared norm, $\lVert x_{\bullet, k} \rVert^2$, is an $(n - 1)$ multiple of its sample variance $var(x_{\bullet, k})$.  Consequently, $c_{\bullet, 1}$ also maximizes sample variance.
 
 $$
 \begin{align}
@@ -834,7 +834,9 @@ $$
 \end{align}
 $$ {#eq-max-variance-c-1}
 
-Now the coefficient vector $v_{\bullet, 1}$ is an eigenvector of matrix  $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ whose eigenvalue is denoted $\sigma_1^2$.
+Now the coefficient vector $v_{\bullet, 1}$ is an eigenvector of matrix  $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ whose eigenvalue is denoted $\sigma_1^2$. [^cov-matrix-polar-decomposition]
+
+[^cov-matrix-polar-decomposition]: $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ is a $d \times d$ symmetric, non-negative definite matrix.  Any such matrix admits an eigen-decomposition (or polar decomposition) into a complete set of eigenvectors $(v_{\bullet, 1}, \ldots, v_{\bullet, d})$ and corresponding eigenvalues $\sigma_1^2 \ge \sigma_2^2 \; \cdots \; \ge \sigma_d^2 \ge 0$.  The set of eigenvectors is an orthonormal basis for $\mathbb{R}^d$.  From these facts one can show that $\lVert X_{\bullet, \bullet} \; v_\bullet \rVert^2 = v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet$, with $\Vert v_\bullet \rVert = 1$, is maximized by $v_{\bullet, 1}$.
 
 $$
 \begin{align} 
@@ -961,7 +963,7 @@ $$
 \end{align}
 $$ {#eq-map-left-to-right-unit-1-b}
 
-This last equality gives a mapping $u_{\bullet, 1} \mapsto \sigma_1 \;  v_{\bullet, 1}$ from left to right singular vectors of the feature matrix.
+This last equality gives a mapping $u_{\bullet, 1} \mapsto \sigma_1 \;  v_{\bullet, 1}$ from left to right singular vectors of the feature matrix.  These terms align with the _singular value decomposition_ (SVD) of the feature matrix, which is described in @sec-dim-r-mat-decomp.
 
 #### Scores of the first principal component
 
@@ -1007,6 +1009,12 @@ $$
     \right ) \; 
     x_{i, \bullet} \\ 
   &= 
+    v_{\bullet, 1} \; 
+    \left ( 
+      v_{\bullet, 1}^\top \; 
+      x_{i, \bullet}
+    \right ) \\ 
+  &= 
     \left ( 
       v_{\bullet, 1}^\top \; x_{i, \bullet}
     \right ) \; 
@@ -1025,11 +1033,19 @@ $$
 \end{align}
 $$ {#eq-project-row-i-onto-dim-1-d-subspace}
 
-#### Next principal components
+#### Remaining principal components
 
-[TODO: make this the last in the current sequence of subsections.]
+The remaining coefficient vectors are members of the sequence $(v_{\bullet, 1}, \ldots, v_{\bullet, d})$ of eigenvectors and corresponding eigenvalues $\sigma_1^2 \ge \cdots \ge \sigma_d^2 \ge 0$ of matrix $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$.  The first $r$ of these eigenvalues are all positive, with any remaining eigenvalues all equal to zero.  Here $r = rank(X_{\bullet, \bullet})$.  These first $r$ eigenvectors define the entire set of $r$ principal components:
 
-Having defined $v_{\bullet, 1}$, we proceed inductively, again with $r$ defined as $r = rank \left ( X_{\bullet, \bullet} \right )$.  Suppose that we have defined an orthonormal set of vectors $v_{\bullet, 1}, \ldots, v_{\bullet, j}$, where $1 \le j \le r$.  As previously noted, this orthonormal set of vectors spans a $j-$dimensional $\mathbb{R}^d$ subspace, denoted $\mathcal{R}^{(j)}$, and also defines an orthogonal projection $P^{(j)}$ from $\mathbb{R}^d$ to $\mathcal{R}^{(j)}$.
+$$
+\begin{align}
+  c_{\bullet, \eta} &= 
+    X_{\bullet, \bullet} \; v_{\bullet, \eta} 
+    & \text{ for } 1 \le \eta \le r
+\end{align}
+$$ {#eq-r-PCs}
+
+
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
