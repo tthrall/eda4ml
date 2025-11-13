@@ -7,7 +7,7 @@ date: last-modified
 date-format: HH:mm ddd D-MMM-YYYY
 editor: source
 toc: true
-toc-depth: 3
+toc-depth: 4
 format:
   html:
     respect-user-color-scheme: true
