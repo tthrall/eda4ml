@@ -351,15 +351,24 @@ window.Quarto = {
    
   <ul>
   <li><a href="#data-examples" id="toc-data-examples" class="nav-link active" data-scroll-target="#data-examples"><span class="header-section-number">6.1</span> Data Examples</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#heights-of-parents-and-oldest-child" id="toc-heights-of-parents-and-oldest-child" class="nav-link" data-scroll-target="#heights-of-parents-and-oldest-child"><span class="header-section-number">6.1.1</span> Heights of Parents and Oldest Child</a></li>
   <li><a href="#survey-data-better-life-index" id="toc-survey-data-better-life-index" class="nav-link" data-scroll-target="#survey-data-better-life-index"><span class="header-section-number">6.1.2</span> Survey Data: Better Life Index</a></li>
-  <li><a href="#mnist-images-of-handwritten-digits" id="toc-mnist-images-of-handwritten-digits" class="nav-link" data-scroll-target="#mnist-images-of-handwritten-digits"><span class="header-section-number">6.1.3</span> MNIST: Images of Handwritten Digits</a></li>
+  <li><a href="#mnist-images-of-handwritten-digits" id="toc-mnist-images-of-handwritten-digits" class="nav-link" data-scroll-target="#mnist-images-of-handwritten-digits"><span class="header-section-number">6.1.3</span> MNIST: Images of Handwritten Digits</a>
+  <ul class="collapse">
+  <li><a href="#multinomial-logistic-regression" id="toc-multinomial-logistic-regression" class="nav-link" data-scroll-target="#multinomial-logistic-regression"><span class="header-section-number">6.1.3.1</span> Multinomial Logistic Regression</a></li>
+  <li><a href="#matrix-representation" id="toc-matrix-representation" class="nav-link" data-scroll-target="#matrix-representation"><span class="header-section-number">6.1.3.2</span> Matrix Representation</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">6.2</span> Notation</a></li>
   <li><a href="#geometry" id="toc-geometry" class="nav-link" data-scroll-target="#geometry"><span class="header-section-number">6.3</span> Geometry</a>
+  <ul>
+  <li><a href="#distance-measures" id="toc-distance-measures" class="nav-link" data-scroll-target="#distance-measures"><span class="header-section-number">6.3.1</span> Distance Measures</a>
   <ul class="collapse">
-  <li><a href="#distance-measures" id="toc-distance-measures" class="nav-link" data-scroll-target="#distance-measures"><span class="header-section-number">6.3.1</span> Distance Measures</a></li>
+  <li><a href="#vector-norms" id="toc-vector-norms" class="nav-link" data-scroll-target="#vector-norms"><span class="header-section-number">6.3.1.1</span> Vector norms</a></li>
+  <li><a href="#matrix-norms" id="toc-matrix-norms" class="nav-link" data-scroll-target="#matrix-norms"><span class="header-section-number">6.3.1.2</span> Matrix norms</a></li>
+  <li><a href="#metric-spaces" id="toc-metric-spaces" class="nav-link" data-scroll-target="#metric-spaces"><span class="header-section-number">6.3.1.3</span> Metric spaces</a></li>
+  </ul></li>
   <li><a href="#family-heights" id="toc-family-heights" class="nav-link" data-scroll-target="#family-heights"><span class="header-section-number">6.3.2</span> Family heights</a></li>
   <li><a href="#centering-data-vectors" id="toc-centering-data-vectors" class="nav-link" data-scroll-target="#centering-data-vectors"><span class="header-section-number">6.3.3</span> Centering Data Vectors</a></li>
   <li><a href="#least-squares-solutions" id="toc-least-squares-solutions" class="nav-link" data-scroll-target="#least-squares-solutions"><span class="header-section-number">6.3.4</span> Least Squares Solutions</a></li>
@@ -368,11 +377,35 @@ window.Quarto = {
   <li><a href="#column-versus-row-visualization" id="toc-column-versus-row-visualization" class="nav-link" data-scroll-target="#column-versus-row-visualization"><span class="header-section-number">6.4</span> Column versus Row Visualization</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">6.5</span> Summary</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6.6</span> Exercises</a>
+  <ul>
+  <li><a href="#concepts" id="toc-concepts" class="nav-link" data-scroll-target="#concepts"><span class="header-section-number">6.6.1</span> Concepts</a>
   <ul class="collapse">
-  <li><a href="#concepts" id="toc-concepts" class="nav-link" data-scroll-target="#concepts"><span class="header-section-number">6.6.1</span> Concepts</a></li>
-  <li><a href="#calculations" id="toc-calculations" class="nav-link" data-scroll-target="#calculations"><span class="header-section-number">6.6.2</span> Calculations</a></li>
-  <li><a href="#programming" id="toc-programming" class="nav-link" data-scroll-target="#programming"><span class="header-section-number">6.6.3</span> Programming</a></li>
-  <li><a href="#advanced" id="toc-advanced" class="nav-link" data-scroll-target="#advanced"><span class="header-section-number">6.6.4</span> Advanced</a></li>
+  <li><a href="#row-vs-column-perspective" id="toc-row-vs-column-perspective" class="nav-link" data-scroll-target="#row-vs-column-perspective"><span class="header-section-number">6.6.1.1</span> Row vs Column Perspective</a></li>
+  <li><a href="#colx_bullet-bullet" id="toc-colx_bullet-bullet" class="nav-link" data-scroll-target="#colx_bullet-bullet"><span class="header-section-number">6.6.1.2</span> <span class="math inline">\(col(X_{\bullet, \bullet})\)</span></a></li>
+  <li><a href="#orthogonality" id="toc-orthogonality" class="nav-link" data-scroll-target="#orthogonality"><span class="header-section-number">6.6.1.3</span> Orthogonality</a></li>
+  <li><a href="#centering-data" id="toc-centering-data" class="nav-link" data-scroll-target="#centering-data"><span class="header-section-number">6.6.1.4</span> Centering Data</a></li>
+  </ul></li>
+  <li><a href="#calculations" id="toc-calculations" class="nav-link" data-scroll-target="#calculations"><span class="header-section-number">6.6.2</span> Calculations</a>
+  <ul class="collapse">
+  <li><a href="#d-projection" id="toc-d-projection" class="nav-link" data-scroll-target="#d-projection"><span class="header-section-number">6.6.2.1</span> 1D Projection</a></li>
+  <li><a href="#distance-measures-1" id="toc-distance-measures-1" class="nav-link" data-scroll-target="#distance-measures-1"><span class="header-section-number">6.6.2.2</span> Distance Measures</a></li>
+  <li><a href="#d-projection-1" id="toc-d-projection-1" class="nav-link" data-scroll-target="#d-projection-1"><span class="header-section-number">6.6.2.3</span> 2D Projection</a></li>
+  </ul></li>
+  <li><a href="#programming" id="toc-programming" class="nav-link" data-scroll-target="#programming"><span class="header-section-number">6.6.3</span> Programming</a>
+  <ul class="collapse">
+  <li><a href="#centering-heights" id="toc-centering-heights" class="nav-link" data-scroll-target="#centering-heights"><span class="header-section-number">6.6.3.1</span> Centering Heights</a></li>
+  <li><a href="#visualizing-residuals" id="toc-visualizing-residuals" class="nav-link" data-scroll-target="#visualizing-residuals"><span class="header-section-number">6.6.3.2</span> Visualizing Residuals</a></li>
+  <li><a href="#visualizing-feature-space" id="toc-visualizing-feature-space" class="nav-link" data-scroll-target="#visualizing-feature-space"><span class="header-section-number">6.6.3.3</span> Visualizing Feature Space</a></li>
+  </ul></li>
+  <li><a href="#advanced" id="toc-advanced" class="nav-link" data-scroll-target="#advanced"><span class="header-section-number">6.6.4</span> Advanced</a>
+  <ul class="collapse">
+  <li><a href="#covariance-and-inner-product" id="toc-covariance-and-inner-product" class="nav-link" data-scroll-target="#covariance-and-inner-product"><span class="header-section-number">6.6.4.1</span> Covariance and Inner Product</a></li>
+  <li><a href="#correlation-geometry" id="toc-correlation-geometry" class="nav-link" data-scroll-target="#correlation-geometry"><span class="header-section-number">6.6.4.2</span> Correlation Geometry</a></li>
+  <li><a href="#correlated-features" id="toc-correlated-features" class="nav-link" data-scroll-target="#correlated-features"><span class="header-section-number">6.6.4.3</span> Correlated Features</a></li>
+  <li><a href="#sum-of-squares-decomposition" id="toc-sum-of-squares-decomposition" class="nav-link" data-scroll-target="#sum-of-squares-decomposition"><span class="header-section-number">6.6.4.4</span> Sum of Squares Decomposition</a></li>
+  <li><a href="#projection-matrix" id="toc-projection-matrix" class="nav-link" data-scroll-target="#projection-matrix"><span class="header-section-number">6.6.4.5</span> Projection Matrix</a></li>
+  <li><a href="#feature-basis-vectors" id="toc-feature-basis-vectors" class="nav-link" data-scroll-target="#feature-basis-vectors"><span class="header-section-number">6.6.4.6</span> Feature Basis Vectors</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/la-intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>

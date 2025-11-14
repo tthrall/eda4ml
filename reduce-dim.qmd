@@ -454,7 +454,9 @@ The remainder of this chapter develops methods that exploit such opportunities. 
 
 ## Principal Component Analysis {#sec-dim-r-pca}
 
-Recall the US Arrests dataset with four crime-related variables. Can we represent these 50 states in fewer than four dimensions while preserving most of the information? Principal Component Analysis (PCA) answers this by finding new variables, linear combinations of the original features, that capture maximum variance.
+Principal Component Analysis (PCA) is one of the most widely used methods to approximate a feature matrix of $d$ features with substantially fewer linear combinations of those features.  The goal is to reveal the primary structure of the data and facilitate subsequent analyses (regression or classification, for example).
+
+We introduce the concept of a principal component using a 2D example (Galton height data), present a 3D example (US Arrest data) of constructing a single index of violent crime arrests from the three types of crimes in the feature matrix, and then move on to higher dimensional examples.  See @r_doc_LearnPCA for an in-depth introduction to PCA.
 
 ### 2D Example: Galton heights
 
@@ -645,6 +647,10 @@ z_arrests_tbl <- arrests_wide |>
   # coerce rotation matrix to have mostly positive diagonal
   pc_rot_diag()
 
+# record dimensions of rotation matrix
+n_arrests_rot_rows <- z_arrests_pca_lst$ rotation |> nrow()
+n_arrests_rot_cols <- z_arrests_pca_lst$ rotation |> ncol()
+
 # z_arrests_pca_lst$ rotation
 #                 PC1        PC2        PC3
 # z_assault 0.6079818 -0.2140236  0.7645600
@@ -722,9 +728,47 @@ g_arm_pca
 
 ```
 
-The first principal component $(c_1)$ is a promising candidate to serve as an index of violent crime.  The coefficients of its linear combination of the three z-score variables are all positive, so that an increase in any one of the three types of crime would cause this index to rise. [^crime-index]
+The first principal component $(c_1)$ is a promising representative of the overall level of violent crime per state.  As @fig-arm-loadings shows, the coefficient (also called "loading") of each z-score variable is positive.  Consequently a violent crime index aligned with $c_1$ would respond to an increase in any one of the three types of crime. [^crime-index]
 
 [^crime-index]: Of course the construction of a violent crime index might begin with a principal component analysis (PCA), but would require more work.  To render the index as a rate per 100,000 population, we might consider taking a weighted geometric mean of the three underlying rates, with the weights derived in part from PCA.
+
+```{r}
+#| label: z-arrests-rot
+
+# prepare to plot component loadings (coefficients)
+z_arrests_rot_lst <- 
+  z_arrests_pca_lst |> 
+  get_rot_tbl_lst()
+
+z_arrests_rot_wide <- z_arrests_rot_lst$ rot_wide
+z_arrests_rot_long <- z_arrests_rot_lst$ rot_long
+
+```
+
+```{r}
+#| label: fig-arm-loadings
+#| fig-cap: "US Arrests: coefficients of each principal component"
+
+g_arm_loadings <- z_arrests_rot_long |> 
+  dplyr::mutate(crime = forcats::as_factor(var)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = crime, y = coeff, color = pc, fill = pc
+  )) + 
+  ggplot2::geom_col(
+    color = rep(pc_clr, each = n_arrests_rot_cols), 
+    fill  = rep(pc_clr, each = n_arrests_rot_cols), 
+    show.legend = FALSE
+  ) + 
+  ggplot2::facet_grid(rows = vars(pc)) + 
+  ggplot2::geom_hline(
+    yintercept = 0, color = "red", 
+    linetype = 2, linewidth = 1
+  ) + 
+  ggplot2::labs(
+    title = "US Arrests: coefficients of each principal component"
+  )
+g_arm_loadings
+```
 
 We would want any such index to account for a preponderance of the total variation (which is the sum of the variances of each type of arrest rate).  Note that the z-scores are constrained to have unit variance, so the total variation among the three z-scores is 3.  Here are the amounts of that total variation accounted for by the 3 principal components.
 
@@ -1046,6 +1090,14 @@ $$
 $$ {#eq-r-PCs}
 
 
+### Computation
+
+There are two distinct approaches to calculating principal components: 
+
+  1. _EVD_ (eigenvalue decomposition): Calculate $X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}$ and then calculate the eigenvalues and eigenvectors of this $d \times d$ matrix.
+  2. _SVD_ (singular value decomposition): Based on the matrix factorization $X_{\bullet, \bullet} = U_{\bullet, \bullet} \; \Sigma_{\bullet, \bullet} \; V_{\bullet, \bullet}^\top$, calculate singular value $\sigma_\eta$ and corresponding left singular vector $u_{\bullet, \eta}$ in order to construct principal component $c_{\bullet, \eta} = \sigma_\eta \; u_{\bullet, \eta}$.
+
+If the number of features $d$ is large, then EVD is cumbersome. Actually either approach requires careful planning for a large feature matrix, but SVD is typically used.  It facilitates computation of just some, not all, of the principal components.  For example, SVD is the approach used by `R` function `stats::prcomp()`.  See @Martin_2012_SVD for an overview of applications and extensions of SVD algorithms.
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
