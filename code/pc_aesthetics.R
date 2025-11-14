@@ -158,10 +158,6 @@ get_pc_segs <- function(
 get_pc_stats <- function(
     prcomp_obj # <lst> object returned by stats::prcomp()
 ) {
-  # adopt column names of the rotation matrix
-  rot_tbl <- prcomp_obj$ rotation |> 
-    tibble::as_tibble(rownames = "var")
-  
   stats_tbl <- tibble::tibble(
     idx     = 1:ncol(prcomp_obj$ rotation), 
     id      = paste0("PC", idx), 
@@ -172,6 +168,37 @@ get_pc_stats <- function(
     var_pct = 100 * var / sum(var)
   )
   return(stats_tbl)
+}
+
+##
+#  get_rot_tbl_lst()
+#    Return the rotation matrix as a tibble
+#    in both wide and long configurations.
+##
+get_rot_tbl_lst <- function(
+    prcomp_obj # <lst> object returned by stats::prcomp()
+) {
+  rot_wide <- prcomp_obj$ rotation |> 
+    tibble::as_tibble(rownames = "var")
+  
+  rot_long <- rot_wide |> 
+    tidyr::pivot_longer(
+      cols = - var, 
+      names_to = "i_pc", 
+      names_prefix = "PC", 
+      values_to = "coeff"
+    ) |> 
+    # label each component as both integer and name
+    dplyr::mutate(
+      i_pc = as.integer(i_pc), 
+      pc   = paste0("PC", i_pc)
+    ) |> 
+    dplyr::select(var, i_pc, pc, everything())
+    
+  return(list(
+    rot_wide = rot_wide, 
+    rot_long = rot_long
+  ))
 }
 
 
