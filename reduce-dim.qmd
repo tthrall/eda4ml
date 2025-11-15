@@ -1310,6 +1310,45 @@ g_wq_coeff_profiles <- wq_rot_long |>
 g_wq_coeff_profiles
 ```
 
+The PCA "biplot" is another way to visualize the data.  Each row of the data matrix is projected onto two respective principal components in the form of principal component scores.  This shows data cases in a 2D coordinate system defined by the two principal components.  A PCA biplot can: reveal patterns and clusters within the data; help to identify important features; and highlight extreme values that might distort the PCA results.
+
+@fig-wq-scores-pc1-2 is an example biplot based on the first two principal components of the wine quality data.
+
+```{r}
+#| label: wq-scores-tbl
+
+wq_scores_wide <- wq_pca_lst$ x |> 
+  tibble::as_tibble() |> 
+  # Add "quality" and "is_red" as potential labeling variables.
+  # NB: PCA scores were developed for the z-scores of the original variables, 
+  #     but the new labeling variables are in original units.
+  dplyr::mutate(
+    quality = wq_all_numeric$ quality, 
+    is_red  = wq_all_numeric$ is_red) |> 
+  dplyr::select(is_red, quality, tidyr::everything())
+  
+```
+
+```{r}
+#| label: fig-wq-scores-pc1-2
+#| fig-cap: "Wine Quality PCA: scores of PC1, PC2"
+
+g_wq_scores_pc1_2 <- wq_scores_wide |> 
+  dplyr::rename(score_1 = PC1, score_2 = PC2) |> 
+ggplot2::ggplot(mapping = aes(
+  x = score_1, y = score_2
+)) + 
+  ggplot2::geom_point() + 
+  ggplot2::labs(
+    title = "Wine Quality PCA: scores of PC1, PC2"
+  )
+g_wq_scores_pc1_2
+```
+
+This biplot has indeed revealed a split in the data based on score_1.  For now, we set aside this intriguing aspect of the data.
+
+In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (either quality, or else the red-white distinction).
+
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
 ## Computational Considerations {#sec-dim-r-computation}
