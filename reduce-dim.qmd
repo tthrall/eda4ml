@@ -30,6 +30,7 @@ library(ISLR2)
 # library(keras)
 library(knitr)
 # library(latex2exp)
+library(mclust)
 # library(OECD)
 # library(patchwork)
 library(plotly)
@@ -1319,13 +1320,15 @@ The PCA "biplot" is another way to visualize the data.  Each row of the data mat
 
 wq_scores_wide <- wq_pca_lst$ x |> 
   tibble::as_tibble() |> 
-  # Add "quality" and "is_red" as potential labeling variables.
+  # Add potential labeling variables.
   # NB: PCA scores were developed for the z-scores of the original variables, 
   #     but the new labeling variables are in original units.
   dplyr::mutate(
     quality = wq_all_numeric$ quality, 
-    is_red  = wq_all_numeric$ is_red) |> 
-  dplyr::select(is_red, quality, tidyr::everything())
+    is_red  = wq_all_numeric$ is_red, 
+    # alternative recording of color
+    color   = dplyr::if_else(is_red, "red", "white")) |> 
+  dplyr::select(is_red, color, quality, tidyr::everything())
   
 ```
 
@@ -1345,9 +1348,126 @@ ggplot2::ggplot(mapping = aes(
 g_wq_scores_pc1_2
 ```
 
-This biplot has indeed revealed a split in the data based on score_1.  For now, we set aside this intriguing aspect of the data.
+```{r}
+#| label: dmclust-wq-score-1
 
-In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (either quality, or else the red-white distinction).
+# GMM: fit a 2-component Gaussian mixture model to score_1
+
+# simplify the name of the vector fed to densityMclust()
+score_1 <- wq_scores_wide$ PC1
+
+dmclust_wq_score_1 <- score_1 |> 
+  densityMclust(
+    G = 2, modelNames = "V", plot = FALSE)
+
+# dmclust_wq_score_1 |> summary(parameters = TRUE)
+# ------------------------------------------------------- 
+# Density estimation via Gaussian finite mixture modeling 
+# ------------------------------------------------------- 
+# 
+# Mclust V (univariate, unequal variance) model with 2 components: 
+# 
+#  log-likelihood    n df       BIC       ICL
+#       -10904.98 6497  5 -21853.85 -21897.66
+# 
+# Mixing probabilities:
+#         1         2 
+# 0.7509525 0.2490475 
+# 
+# Means:
+#         1         2 
+# -1.041244  3.139660 
+# 
+# Variances:
+#         1         2 
+# 0.5056731 0.7409680 
+
+```
+
+```{r}
+#| label: score-1-dens-tbl
+
+# tibble derived from fitting a Gaussian mixture model
+score_1_dens_tbl <- tibble::tibble(
+  score_1 = dmclust_wq_score_1$ data [, 1], 
+  class   = dmclust_wq_score_1$ classification |> as.integer(), 
+  dens    = dmclust_wq_score_1$ density) |> 
+  # add labeling variables
+  dplyr::mutate(
+    is_red  = wq_scores_wide$ is_red, 
+    color   = wq_scores_wide$ color, 
+    quality = wq_scores_wide$ quality) |> 
+  dplyr::select(is_red, color, quality, tidyr::everything())
+
+```
+
+```{r}
+#| label: dmclust-wq-score-1-break
+
+# find the score_1 break-point between class 1 and class 2
+#   - summarise() gives a 3-by-2 tibble
+score_1_break_tbl <- score_1_dens_tbl |> 
+  dplyr::summarise(
+    .by = class, 
+    min_score = min(score_1), 
+    max_score = max(score_1)
+  ) |> 
+  dplyr::arrange(class)
+
+#   - value where score_1 transitions from class 1 to class 2
+score_1_break_pt <- 
+  (score_1_break_tbl [[1, "max_score"]] + 
+   score_1_break_tbl [[2, "min_score"]] ) / 2
+
+```
+
+This biplot has indeed revealed a split in the data based on `score_1`.  @fig-score-1-density shows a `score_1` probability density function estimated from a Gaussian mixture model (GMM).  The break-point between the Gaussian components (from `class` 1 to `class` 2) occurs at `r round(score_1_break_pt, 2)`.
+
+```{r}
+#| label: fig-score-1-density
+#| fig-cap: "Score_1 density from a Gaussian mixture model"
+
+dmclust_wq_score_1 |> plot(what = "density")
+
+# TODO: debug the following call to ggplot()
+# g_score_1_dens <- score_1_dens_tbl |> 
+#   dplyr::rename(density = dens) |> 
+#   ggplot2::ggplot(mapping = aes(
+#     x = score_1, y = density
+#   )) + 
+#   ggplot2::geom_smooth(se = FALSE) + 
+#   ggplot2::geom_vline(
+#     xintercept = score_1_break_pt, 
+#     color = "red", linetype = 2)
+
+```
+
+The proportion of `score_1` values falling into the left Gaussian component (`class` 1) is about 75%, with the remaining 25% falling into the right Gaussian component (`class` 2).  These proportions match those of the split between red and white wines.  @tbl-xtabs-class-color confirms the suspicion that `score_1` (principal component 1) is capturing the difference between red and white wines.
+
+```{r}
+#| label: tbl-xtabs-class-color
+#| tbl-cap: "Wine Quality PCA: wine color versus score_1 class"
+
+score_1_class_color_long <- score_1_dens_tbl |> 
+  dplyr::arrange(class, desc(color)) |> 
+  dplyr::summarise(
+    .by = c(class, color), 
+    n = n())
+
+score_1_class_color_wide <- score_1_class_color_long |> 
+  tidyr::pivot_wider(
+    names_from = "color", 
+    values_from = "n"
+  )
+
+score_1_class_color_wide |> 
+  knitr::kable(
+    caption = "Wine Quality PCA: wine color versus score_1 class"
+  )
+
+```
+
+In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (either quality, or the red-white distinction).
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
