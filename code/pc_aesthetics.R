@@ -52,7 +52,8 @@ pc_rot_sum <- function(
 ##
 #  pc_rot_diag()
 #    Repair rotation matrix returned by stats:prcomp().
-#    Require diag(rot) > 0.
+#    Require diag(rot) > 0, with the possible exception 
+#    of the final diagonal element.
 ##
 pc_rot_diag <- function(
     prcomp_obj # <lst> object returned by stats::prcomp()
@@ -179,11 +180,14 @@ get_rot_tbl_lst <- function(
     prcomp_obj # <lst> object returned by stats::prcomp()
 ) {
   rot_wide <- prcomp_obj$ rotation |> 
-    tibble::as_tibble(rownames = "var")
+    tibble::as_tibble(rownames = "var") |> 
+    # index the variables as backup for long variable names
+    dplyr::mutate(i_var = 1:nrow(prcomp_obj$ rotation)) |> 
+    dplyr::select(i_var, tidyr::everything())
   
   rot_long <- rot_wide |> 
     tidyr::pivot_longer(
-      cols = - var, 
+      cols = - c(i_var, var), 
       names_to = "i_pc", 
       names_prefix = "PC", 
       values_to = "coeff"
@@ -193,7 +197,7 @@ get_rot_tbl_lst <- function(
       i_pc = as.integer(i_pc), 
       pc   = paste0("PC", i_pc)
     ) |> 
-    dplyr::select(var, i_pc, pc, everything())
+    dplyr::select(i_var, var, i_pc, pc, everything())
     
   return(list(
     rot_wide = rot_wide, 
