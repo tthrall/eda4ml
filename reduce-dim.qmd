@@ -26,6 +26,7 @@ library(GGally)
 library(HistData)
 library(here)
 library(ISLR2)
+# library(LearnPCA)
 # library(keras)
 library(knitr)
 # library(latex2exp)
@@ -1277,7 +1278,37 @@ g_wq_loadings <- wq_rot_long |>
 g_wq_loadings
 ```
 
-Interpreting principal components can be challenging, but worth the attempt.  One distinction between the first component versus the next two components is the use of the last variable, `is_red`.
+Interpreting principal components can be challenging, but worth the attempt.  One distinction between the first component versus the next two components is the use of the last variable, `is_red`.  But does this distinction hold up in comparison to the remaining principal coefficients?
+
+This question is addressed by @fig-wq-coeff-profiles (busy chart that it is).  Again, variable `is_red` is in the last $(13^{th})$ position on the right of the chart.  We see that several principal components give prominent weight to that coefficient, so the proposed distinction of the first principal component does not hold up after all.
+
+```{r}
+#| label: fig-wq-coeff-profiles
+#| fig-cap: "Wine Quality PCA: coefficient profiles"
+
+g_wq_coeff_profiles <- wq_rot_long |> 
+  dplyr::mutate(pc_idx = forcats::as_factor(i_pc)) |> 
+  dplyr::rename(
+    variable_index = i_var, 
+    PC_index       = i_pc
+  ) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = variable_index, y = coeff, 
+    group = PC_index, color = pc_idx, fill = pc_idx
+  )) + 
+  ggplot2::geom_smooth(se = FALSE) + 
+  ggplot2::geom_hline(
+    yintercept = 0, color = "red", 
+    linetype = 2, linewidth = 1
+  ) + 
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 13, by = 2)
+  ) + 
+  ggplot2::labs(
+    title = "Wine Quality PCA: coefficient profiles"
+  )
+g_wq_coeff_profiles
+```
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
