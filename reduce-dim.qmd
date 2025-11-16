@@ -1469,13 +1469,25 @@ score_1_class_color_wide |>
 
 We now conclude this introductory PCA of the wine quality data, noting that: 
 
-  1. The set of 13 features may be represented by 6 or more of the principal components (depending on the needed proportion of total variance) according to @fig-wq-pc-stats and @tbl-wq-pc-stats.
+  1. The set of 13 features may require 6 or more of the principal components for adequate representation (depending on the needed proportion of total variance) according to @fig-wq-pc-stats and @tbl-wq-pc-stats.  Using only the first 3 principal components is more amenable to visualization but captures little more than 60% of the total variation.
   1. The first principal component $(c_1)$ corresponds to wine color (red versus white) according to @tbl-xtabs-class-color.
   1. The wine color correspondence with $c_1$ was first revealed to us in a PCA biplot (@fig-wq-scores-pc1-2), thus illustrating the use of PCA visualizations to interpret principal components, and to gain data insights (association of other features with wine color).
 
 In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (wine color, or wine quality).
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
+
+Principal component analysis (PCA) is a prime example of an "unsupervised" method of reducing the column dimension $(d)$ of the feature matrix in order to improve our understanding and modeling of the data.  The term "unsupervised" corresponds to the absence of a response variable (target variable, or label).
+
+If the available data include a response variable, then the modeling goal is more focused: to determine a function of the feature matrix that closely approximates the response variable.
+
+With or without an explanatory variable the modeling process may entail partitioning the available data into three sets for the respective purposes of training, testing, and evaluating (or validating) a model.  Our focus in this chapter is instead on the linear algebra underlying different dimension reduction methods.
+
+We continue to use the wine quality data to illustrate methods, beginning with linear discriminant analysis (LDA) and concluding with partial least squares (PLS).
+
+### LDA: Linear Discriminant Analysis
+
+### PLS: Partial Least Squares
 
 ## Computational Considerations {#sec-dim-r-computation}
 
