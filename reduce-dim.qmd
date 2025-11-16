@@ -19,7 +19,9 @@ library(assertthat)
 library(beans)
 library(Cairo)
 # library(cairoDevice)
+library(conflicted)
 library(corrplot)
+library(discrim)
 # library(dslabs)
 library(GGally)
 # library(ggimg)
@@ -44,6 +46,16 @@ library(tidymodels)
 library(tidyverse)
 # library(tinytex)
 # library(UsingR)
+```
+
+```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+tidymodels_prefer()
 ```
 
 ```{r}
@@ -1481,11 +1493,235 @@ Principal component analysis (PCA) is a prime example of an "unsupervised" metho
 
 If the available data include a response variable, then the modeling goal is more focused: to determine a function of the feature matrix that closely approximates the response variable.
 
-With or without an explanatory variable the modeling process may entail partitioning the available data into three sets for the respective purposes of training, testing, and evaluating (or validating) a model.  Our focus in this chapter is instead on the linear algebra underlying different dimension reduction methods.
+In the presence of a response variable (or even without one), the modeling process may entail partitioning the available data into three sets for the respective purposes of training, testing, and evaluating (or validating) a model.  But for present purposes, in order to focus on methods from the perspective of linear algebra, we use all available data to train the model.
 
 We continue to use the wine quality data to illustrate methods, beginning with linear discriminant analysis (LDA) and concluding with partial least squares (PLS).
 
+In the wine quality principal component analysis (PCA) of the previous section, the feature matrix included wine quality and wine color.  In these new sections wine quality and wine color are removed from the feature set to play the role of responses (or labels, or target vectors).
+
 ### LDA: Linear Discriminant Analysis
+
+In the wine quality PCA of the previous section, the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines.  Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.
+
+We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes, but set them aside as responses to the remaining 11 features.  In this new framework, let's see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this task.
+
+#### LDA Model
+
+The basic LDA model assumes that each observation, that is, each row $x_{i, \bullet}$ of the feature matrix $X_{\bullet, \bullet}$ belongs to one of $K$ categories, $(\mathcal{C}_1, \ldots, \mathcal{C}_K)$.  A response or labeling variable $Y$ (available in the training data) identifies the category to which each row belongs. [^K-2-wine-color] [^label-format]  
+
+[^K-2-wine-color]:  For the wine data, $K = 2$, since the categories are red wine and white wine.
+
+[^label-format]: $Y$ can be constructed either as a simple label, say $Y \in \{ 1, \ldots, K \}$ or as an indicator vector $Y \in \{ e_{\bullet, 1}, \ldots, e_{\bullet, K} \}$, where $e_{\bullet, k} \in \mathbb{R}^K$ is the $k^{th}$ Euclidean basis vector and signals membership in category $k$. 
+
+Let $\pi_k$ denote the population proportion of the $k^{th}$ category, which we estimate by the proportion of observations belonging to category $k$ in our data.
+
+$$
+\begin{align}
+  \hat{\pi}_k &= \frac{n_k}{n} \\ \\ 
+  & \text{where} \\ \\ 
+  n_k &= \text{number of observations in category } k \\ 
+  n &= \text{total number of observations} \\ 
+  &= \sum_{k = 1}^K n_k
+\end{align}
+$$ {#eq-estimate-pi-k}
+
+The model also assumes that within each category $k$, the $d$ features have a multivariate normal (Gaussian) distribution, whose density function $f_k(x_\bullet)$ can be expressed as follows: 
+
+$$
+\begin{align}
+  & 
+    -2 \; \log_e (f_k(x_\bullet)) \\ 
+  &= 
+    d \; \log_e (2 \pi) \; + \; \log_e (\det (Cov_{\bullet, \bullet}))
+    \; + \; 
+    (x_\bullet - \mu_{\bullet, k})^\top \; 
+    Cov_{\bullet, \bullet}^{-1} \; 
+    (x_\bullet - \mu_{\bullet, k})
+\end{align}
+$$ {#eq-ln-normal-density-k}
+
+Note the model assumption that the feature covariance matrix $Cov_{\bullet, \bullet}$ is the same for all $K$ categories, and that the vectors $\mu_{\bullet, k}$ of mean values are distinct across categories.  The mean vectors and covariance matrix are then estimated as follows.
+
+$$
+\begin{align}
+  \hat{\mu}_{\bullet, k} 
+  &= 
+    \frac{1}{n_k} 
+      \sum_{x_{i, \bullet} \in \mathcal{C}_k} 
+      x_{i, \bullet}^\top
+\end{align}
+$$ {#eq-estimate-mean}
+
+$$
+\begin{align}
+  \hat{C}ov_{\bullet, \bullet} 
+  &= 
+    \frac{1}{n - K} 
+      \sum_{k = 1}^K
+      \sum_{x_{i, \bullet} \in \mathcal{C}_k} 
+      (x_{i, \bullet}^\top \; - \hat{\mu}_{\bullet, k}) \; (x_{i, \bullet}^\top \; - \hat{\mu}_{\bullet, k})^\top
+\end{align}
+$$ {#eq-estimate-mean-cov}
+
+Replacing the mean and covariance terms by their estimated values gives an estimated density function $\hat{f}_k(x_\bullet)$.
+
+According to Bayesian decision theory (which we hereby invoke), the Bayes classification rule is to assign the $d-$dimensional observation vector $x_\bullet$ to whichever category $k$ maximizes the weighted density $\pi_k \; f_k(x_\bullet)$.  This amounts to the maximization of: 
+
+$$
+\begin{align}
+  \delta_k (x_\bullet)
+  &= 
+    x_\bullet^\top \; 
+      Cov_{\bullet, \bullet}^{-1} \; 
+      \mu_{\bullet, k}
+      \; - \; 
+      \frac{1}{2} \; 
+      \mu_{\bullet, k}^\top \; 
+      Cov_{\bullet, \bullet}^{-1} \; 
+      \mu_{\bullet, k} 
+      \; + \; 
+      \log_e (\pi_k)
+\end{align}
+$$ {#eq-delta-k}
+
+The LDA model implements this rule by replacing each unknown parameter value with the corresponding value estimated from the data:
+
+$$
+\begin{align}
+  \hat{\delta}_k (x_\bullet)
+  &= 
+    x_\bullet^\top \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      \hat{\mu}_{\bullet, k}
+      \; - \; 
+      \frac{1}{2} \; 
+      \hat{\mu}_{\bullet, k}^\top \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      \hat{\mu}_{\bullet, k} 
+      \; + \; 
+      \log_e (\hat{\pi}_k)
+\end{align}
+$$ {#eq-hat-delta-k}
+
+This amounts to using the estimated density $\hat{f}_k(x_\bullet)$ in place of the exact, but unknown density $f_k(x_\bullet)$.
+
+For each category index $k$ let $\hat{\mathcal{H}}_k$ denote the following subset of $\mathbb{R}^d$:
+
+$$
+\begin{align}
+  \hat{\mathcal{H}}_k 
+  &= 
+  \left \{ 
+    x_\bullet \in \mathbb{R}^d 
+    : \; 
+    \hat{\delta}_k (x_\bullet) = 0
+  \right \}
+\end{align}
+$$ {#eq-hat-H-k}
+
+Then $\hat{\mathcal{H}}_k$ defines a hyperplane in $\mathbb{R}^d$ of dimension $d - 1$ that is parallel to subspace $\hat{\mathcal{S}}_k$: 
+
+$$
+\begin{align}
+  \hat{\mathcal{S}}_k 
+  &= 
+  \left \{ 
+    x_\bullet \in \mathbb{R}^d 
+    : \; 
+    \left < 
+      x_\bullet, \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      \hat{\mu}_{\bullet, k} 
+    \right > = 0
+  \right \} \\ 
+  &= 
+  \left \{ 
+    x_\bullet \in \mathbb{R}^d 
+    : \; 
+      x_\bullet, \; 
+      \perp \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      \hat{\mu}_{\bullet, k}
+  \right \}
+\end{align}
+$$ {#eq-hat-S-k}
+
+#### LDA: Wine Quality
+
+```{r}
+#| label: wq-lda-color-mdl
+
+wq_lda_color_mdl <-
+  parsnip::discrim_linear() |>
+  parsnip::fit_xy(
+    x = wine_quality |> 
+      dplyr::select(- c(quality, color)), 
+    y = wine_quality$ color |> 
+      forcats::as_factor()
+  )
+
+```
+
+```{r}
+#| label: wq-lda-color-predict
+
+# tibble of 1 column <fct>: .pred_class (red or white)
+wq_lda_color_class <- wq_lda_color_mdl |> 
+  parsnip::predict.model_fit(
+    new_data = wine_quality |> 
+      dplyr::select(- c(quality, color)), 
+    type = "class")
+
+# tibble of 2 columns <dbl>: (.pred_red, .pred_white)
+wq_lda_color_prob <- wq_lda_color_mdl |> 
+  parsnip::predict.model_fit(
+    new_data = wine_quality |> 
+      dplyr::select(- c(quality, color)), 
+    type = "prob")
+
+wq_lda_color_predict <- dplyr::bind_cols(
+  wine_quality, wq_lda_color_class, wq_lda_color_prob)
+
+```
+
+@tbl-lda-coefficients shows the coefficients fit by `R` function `MASS::lda()`.
+
+```{r}
+#| label: tbl-lda-coefficients
+#| tbl-cap: "Wine Color LDA: model coefficients"
+
+wq_lda_color_mdl$ fit$ scaling |> 
+  tibble::as_tibble(rownames = "feature") |> 
+  knitr::kable(
+    caption = "Wine Color LDA: model coefficients", 
+    digits = 2)
+
+```
+
+@tbl-lda-xtabs-color is a cross-tabulation of actual versus predicted color.
+
+```{r}
+#| label: tbl-lda-xtabs-color
+#| tbl-cap: "Wine Color: actual versus LDA prediction"
+
+wq_lda_color_xtabs_long <- wq_lda_color_predict |> 
+  dplyr::summarise(
+    .by = c(color, .pred_class), 
+    n = n())
+
+wq_lda_color_xtabs_wide <- wq_lda_color_xtabs_long |> 
+  tidyr::pivot_wider(
+    names_from = "color", 
+    values_from = "n")
+
+wq_lda_color_xtabs_wide |> 
+  knitr::kable(
+    caption = "Wine Color: actual versus LDA prediction"
+  )
+
+```
+
+
 
 ### PLS: Partial Least Squares
 
