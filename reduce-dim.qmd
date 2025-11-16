@@ -1467,7 +1467,13 @@ score_1_class_color_wide |>
 
 ```
 
-In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (either quality, or the red-white distinction).
+We now conclude this introductory PCA of the wine quality data, noting that: 
+
+  1. The set of 13 features may be represented by 6 or more of the principal components (depending on the needed proportion of total variance) according to @fig-wq-pc-stats and @tbl-wq-pc-stats.
+  1. The first principal component $(c_1)$ corresponds to wine color (red versus white) according to @tbl-xtabs-class-color.
+  1. The wine color correspondence with $c_1$ was first revealed to us in a PCA biplot (@fig-wq-scores-pc1-2), thus illustrating the use of PCA visualizations to interpret principal components, and to gain data insights (association of other features with wine color).
+
+In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (wine color, or wine quality).
 
 ## Supervised Dimension Reduction {#sec-dim-r-supervised}
 
