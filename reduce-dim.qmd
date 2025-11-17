@@ -1501,17 +1501,17 @@ In the wine quality principal component analysis (PCA) of the previous section, 
 
 ### LDA: Linear Discriminant Analysis
 
-In the wine quality PCA of the previous section, the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines.  Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.
+In the previous section we conducted a principal component analysis (PCA) of the the wine quality data in which the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines.  Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.
 
-We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes, but set them aside as responses to the remaining 11 features.  In this new framework, let's see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this task.
+We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes as responses to the remaining 11 features.  In this new setting, let's see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this task.
 
-#### LDA Model
+#### Model of $K$ Categories
 
-The basic LDA model assumes that each observation, that is, each row $x_{i, \bullet}$ of the feature matrix $X_{\bullet, \bullet}$ belongs to one of $K$ categories, $(\mathcal{C}_1, \ldots, \mathcal{C}_K)$.  A response or labeling variable $Y$ (available in the training data) identifies the category to which each row belongs. [^K-2-wine-color] [^label-format]  
+The basic LDA model assumes that each observation, that is, each row $x_{i, \bullet}$ of the feature matrix $X_{\bullet, \bullet}$ belongs to one of $K$ categories, $(\mathcal{C}_1, \ldots, \mathcal{C}_K)$ identified by $Y$, a label (response variable) available in the training data.  Let us denote the output of the model as $\hat{Y} (\cdot)$, a function of $x_\bullet \in \mathbb{R}^d$ designed to agree with $Y$ as often as possible. [^K-2-wine-color] [^label-format]  
 
 [^K-2-wine-color]:  For the wine data, $K = 2$, since the categories are red wine and white wine.
 
-[^label-format]: $Y$ can be constructed either as a simple label, say $Y \in \{ 1, \ldots, K \}$ or as an indicator vector $Y \in \{ e_{\bullet, 1}, \ldots, e_{\bullet, K} \}$, where $e_{\bullet, k} \in \mathbb{R}^K$ is the $k^{th}$ Euclidean basis vector and signals membership in category $k$. 
+[^label-format]: For the moment we encode $Y$ as an identifier of the form "$\mathcal{C}_k$".  Later, in order to leverage matrix multiplication, we may encode $Y$ as an indicator vector $Y \in \{ e_{\bullet, 1}, \ldots, e_{\bullet, K} \}$, where $e_{\bullet, k} \in \mathbb{R}^K$, the $k^{th}$ Euclidean basis vector, indicates membership in category $k$. 
 
 Let $\pi_k$ denote the population proportion of the $k^{th}$ category, which we estimate by the proportion of observations belonging to category $k$ in our data.
 
@@ -1565,7 +1565,18 @@ $$ {#eq-estimate-mean-cov}
 
 Replacing the mean and covariance terms by their estimated values gives an estimated density function $\hat{f}_k(x_\bullet)$.
 
-According to Bayesian decision theory (which we hereby invoke), the Bayes classification rule is to assign the $d-$dimensional observation vector $x_\bullet$ to whichever category $k$ maximizes the weighted density $\pi_k \; f_k(x_\bullet)$.  This amounts to the maximization of: 
+According to Bayesian decision theory (which we hereby invoke), the Bayes classification rule is to assign the $d-$dimensional observation vector $x_\bullet$ to whichever category $k$ maximizes the weighted density $\pi_k \; f_k(x_\bullet)$.
+
+$$
+\begin{align}
+  \hat{Y} (x_\bullet) 
+  &= 
+    \mathcal{C}_\eta 
+    & \text{ if } \delta_\eta (x_\bullet) = \max \{ \delta_k (x_\bullet) \}_{k = 1}^K
+\end{align}
+$$ {#eq-category-assignment-criterion}
+
+where 
 
 $$
 \begin{align}
@@ -1584,7 +1595,29 @@ $$
 \end{align}
 $$ {#eq-delta-k}
 
-The LDA model implements this rule by replacing each unknown parameter value with the corresponding value estimated from the data:
+In this Bayesian framework the posterior probability that a new observation $\mathcal{X} = x_\bullet$ belongs to class $Y = \mathcal{C}_\eta$ is: 
+
+$$
+\begin{align}
+  &
+    P 
+    \left ( 
+      Y = \mathcal{C}_\eta 
+      \; | \; 
+      \mathcal{X} = x_\bullet
+    \right ) \\ 
+  &= 
+    \frac 
+      { \pi_\eta \; f_\eta (x_\bullet) }
+      { \sum_{k = 1}^K \pi_k \; f_k (x_\bullet)  } \\ 
+  &= 
+    \frac 
+      {\exp( \delta_\eta (x_\bullet) )}
+      { \sum_{k = 1}^K \exp( \delta_k (x_\bullet) )  }
+\end{align}
+$$ {#eq-posterior-probability-class-eta}
+
+The LDA model implements @eq-delta-k by replacing each unknown parameter value with the corresponding value estimated from the data:
 
 $$
 \begin{align}
@@ -1646,7 +1679,87 @@ $$
 \end{align}
 $$ {#eq-hat-S-k}
 
-#### LDA: Wine Quality
+#### Binary Case: $K = 2$
+
+When $K = 2$ we have the following binary assignment of $x_\bullet \in \mathbb{R}^d$: 
+
+$$
+\begin{align}
+  \hat{Y} (x_\bullet) 
+  &= 
+    \begin{cases}
+      \mathcal{C}_1 & \text{ if } 
+        \hat{\delta}_1 (x_\bullet) \ge 
+        \hat{\delta}_2 (x_\bullet) \\ 
+      \mathcal{C}_2 & \text{ otherwise } 
+    \end{cases}
+\end{align}
+$$ {#eq-binary-assignment-1}
+
+Therefore the assignment criterion can be reduced to $\hat{\delta}_1 (x_\bullet) - \hat{\delta}_2 (x_\bullet)$:
+
+$$
+\begin{align}
+  &
+  \hat{\delta}_{1, 2} (x_\bullet) \\ 
+  &= 
+    \hat{\delta}_1 (x_\bullet) 
+    \; - \; 
+    \hat{\delta}_2 (x_\bullet) \\ 
+  &= 
+    x_\bullet^\top \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      (\hat{\mu}_{\bullet, 1} - \hat{\mu}_{\bullet, 2}) \\ 
+      & \quad 
+      \; - \; \frac{1}{2} \; 
+      \hat{\mu}_{\bullet, 1}^\top \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      \hat{\mu}_{\bullet, 1} \\ 
+      & \quad 
+      \; + \; \frac{1}{2} \; 
+      \hat{\mu}_{\bullet, 2}^\top \; 
+      \hat{C}ov_{\bullet, \bullet}^{-1} \; 
+      \hat{\mu}_{\bullet, 2} \\ 
+      & \quad
+      \; + \;  \log_e (\hat{\pi}_1) \; - \; \log_e (\hat{\pi}_2)
+\end{align}
+$$ {#eq-delta-1-minus-delta-2}
+
+We now have a single linear discriminant function $\hat{\delta}_{1, 2} (\cdot)$:
+
+$$
+\begin{align}
+  \hat{Y} (x_\bullet) 
+  &= 
+    \begin{cases}
+      \mathcal{C}_1 
+        & \text{ if } 
+        \hat{\delta}_{1, 2} (x_\bullet) \ge 0 \\ 
+      \mathcal{C}_2 
+        & \text{ otherwise } 
+    \end{cases}
+\end{align}
+$$ {#eq-binary-assignment-2}
+
+#### Wine Quality Example
+
+```{r}
+#| label: wq-z
+
+# z-values of each feature
+# excluding quality and color
+wq_z <- wine_quality |> 
+  dplyr::select(- c(quality, color)) |> 
+  dplyr::mutate(across(
+    .cols = tidyr::everything(), 
+    .fns  = scale
+  )) |> 
+  dplyr::mutate(
+    quality = wine_quality$ quality, 
+    color   = wine_quality$ color
+  )
+
+```
 
 ```{r}
 #| label: wq-lda-color-mdl
@@ -1654,9 +1767,9 @@ $$ {#eq-hat-S-k}
 wq_lda_color_mdl <-
   parsnip::discrim_linear() |>
   parsnip::fit_xy(
-    x = wine_quality |> 
+    x = wq_z |> 
       dplyr::select(- c(quality, color)), 
-    y = wine_quality$ color |> 
+    y = wq_z$ color |> 
       forcats::as_factor()
   )
 
@@ -1668,23 +1781,23 @@ wq_lda_color_mdl <-
 # tibble of 1 column <fct>: .pred_class (red or white)
 wq_lda_color_class <- wq_lda_color_mdl |> 
   parsnip::predict.model_fit(
-    new_data = wine_quality |> 
+    new_data = wq_z |> 
       dplyr::select(- c(quality, color)), 
     type = "class")
 
 # tibble of 2 columns <dbl>: (.pred_red, .pred_white)
 wq_lda_color_prob <- wq_lda_color_mdl |> 
   parsnip::predict.model_fit(
-    new_data = wine_quality |> 
+    new_data = wq_z |> 
       dplyr::select(- c(quality, color)), 
     type = "prob")
 
 wq_lda_color_predict <- dplyr::bind_cols(
-  wine_quality, wq_lda_color_class, wq_lda_color_prob)
+  wq_z, wq_lda_color_class, wq_lda_color_prob)
 
 ```
 
-@tbl-lda-coefficients shows the coefficients fit by `R` function `MASS::lda()`.
+To facilitate the interpretation of the LDA linear discriminant function (`LD1`), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-lda-coefficients.
 
 ```{r}
 #| label: tbl-lda-coefficients
