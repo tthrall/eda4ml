@@ -1595,7 +1595,7 @@ $$
 \end{align}
 $$ {#eq-delta-k}
 
-In this Bayesian framework the posterior probability that a new observation $\mathcal{X} = x_\bullet$ belongs to class $Y = \mathcal{C}_\eta$ is: 
+In this Bayesian framework the posterior probability that a new observation having feature set $\mathcal{X} = x_\bullet$ belongs to class $Y = \mathcal{C}_\eta$ is: 
 
 $$
 \begin{align}
@@ -1805,13 +1805,18 @@ To facilitate the interpretation of the LDA linear discriminant function (`LD1`)
 
 wq_lda_color_mdl$ fit$ scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
+  dplyr::mutate(
+    feature = str_remove_all(feature, "`")
+  ) |> 
   knitr::kable(
     caption = "Wine Color LDA: model coefficients", 
     digits = 2)
 
 ```
 
-@tbl-lda-xtabs-color is a cross-tabulation of actual versus predicted color.
+The coefficients having a magnitude of nearly 1 or greater correspond to the following color-distinguishing features: residual sugar, total sulfur dioxide, density, and alcohol.
+
+Now let's see how well this linear discriminant function, LD1, distinguished the actual red and white wines.  @tbl-lda-xtabs-color is a cross-tabulation of actual versus predicted color.
 
 ```{r}
 #| label: tbl-lda-xtabs-color
@@ -1834,7 +1839,66 @@ wq_lda_color_xtabs_wide |>
 
 ```
 
+The mis-classification rates are remarkably low: about 1% for red wines, and 0.4% for white wines.
 
+Let's look a bit deeper.  Among the correct classifications, how many had decisive classification probabilities, as opposed to somewhat ambiguous probabilities?
+
+@fig-wq-lda-color-probs addresses this question in a $2 \times 2$ matrix of cells.  The LDA algorithm produces a pair of complementary probabilities, labeled `p.red` and `p.white`: for each case of data $p.red + p.white = 1$.  In each cell of the figure we see the distribution of both probabilities, one a mirror image of the other.  If $p.red \ge p.white$ then the case is assigned class `c.red`; otherwise the case is assigned class `c.white`.  These classifications mark the rows of the figure.  Marking the columns are the actual colors, "red" and "white".  The layout matches that of @tbl-lda-xtabs-color.
+
+```{r}
+#| label: wq-lda-color-probs
+
+# prepare tibble for violin plot
+wq_lda_color_probs <- wq_lda_color_predict |> 
+  dplyr::select(color, .pred_class, .pred_red, .pred_white) |> 
+  dplyr::rename(class = .pred_class) |> 
+  dplyr::mutate(
+    class = class |> forcats::fct_recode (
+      "c.red"   = "red", 
+      "c.white" = "white")
+  ) |> 
+  tidyr::pivot_longer(
+    cols = c(.pred_red, .pred_white), 
+    names_prefix = ".pred_", 
+    names_to = "prob_color", 
+    values_to = "prob") |> 
+  dplyr::mutate(
+    prob_color = case_when(
+      prob_color == "red"   ~ "p.red", 
+      prob_color == "white" ~ "p.white"
+    )
+  )
+
+```
+
+```{r}
+#| label: fig-wq-lda-color-probs
+#| fig-cap: "Color probabilies per actual and predicted color"
+
+g_wq_lda_color_probs <- wq_lda_color_probs |> 
+  dplyr::rename(probability = prob) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = prob_color, y = probability, 
+    color = "black", fill = prob_color
+  )) + 
+  ggplot2::geom_violin(
+    show.legend = FALSE
+  ) + 
+  ggplot2::facet_grid(
+    rows = vars(class), 
+    cols = vars(color)
+  ) + 
+  ggplot2::labs(
+    title = "Color probabilies per actual and predicted color"
+  )
+g_wq_lda_color_probs
+```
+
+For red wines, the LDA classifier probabilities were decisively zero or one, with very few exceptions; the classifier was decisively wrong for about 1% of the instances of red wine.
+
+As for white wines, the mis-classification rate was merely 0.4%.  And in those instances of mis-classification, the classifier tended to produce more ambiguous probabilities than for red wines.
+
+We now move from the classification of wine color to the prediction of wine quality.
 
 ### PLS: Partial Least Squares
 
