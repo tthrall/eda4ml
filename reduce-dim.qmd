@@ -36,6 +36,7 @@ library(mclust)
 # library(OECD)
 # library(patchwork)
 library(plotly)
+library(rlang)
 # library(regclass)
 # library(rgl)
 # library(R.utils)
@@ -63,6 +64,7 @@ tidymodels_prefer()
 
 source(here("code", "d_ball.R"))
 source(here("code", "galton_ht_data.R"))
+source(here("code", "lda_2D.R"))
 # source(here("code", "mnist_file_mgmt.R"))
 # source(here("code", "NCI60_helper.R"))
 # source(here("code", "oecd_bli.R"))
@@ -1865,6 +1867,10 @@ wq_2D_lda_color_long <- wq_2D_lda_color_predict |>
 
 ```
 
+To illustrate the application of LDA to the wine quality data in a 2D scatter-plot, we initially restrict the set of features to just `density` and `res-sugar` (residual sugar).  In addition, to facilitate the interpretation of the LDA linear discriminant function (`LD1`), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-2D-lda-coefficients. [^homogeneous-coefficients]
+
+[^homogeneous-coefficients]: The table gives the homogeneous coordinates of the LD1 line in the form of $c_0 \; + \; c_1 \; x_{\bullet, 1} \; + \; c_2 \; x_{\bullet, 2} = 0$.  Unfortunately, the constant coefficient $c_0$ was calculated but not listed in the output.
+
 ```{r}
 #| label: tbl-2D-lda-coefficients
 #| tbl-cap: "Wine Color: 2D LDA model coefficients"
@@ -1876,6 +1882,30 @@ wq_2D_lda_color_mdl$ fit$ scaling |>
     digits = 2)
 
 ```
+
+```{r}
+#| label: wq-2D-lda-lst
+
+# determine appropriate intercept for LD1 line
+
+wq_2D_lda_lst <- wq_z |> 
+  l2D_get_xy_stats(density, res_sugar, color)
+
+wq_2D_lda_x_means    <- wq_2D_lda_lst$ x_means
+wq_2D_lda_x_cov      <- wq_2D_lda_lst$ x_cov
+wq_2D_lda_grp_stats  <- wq_2D_lda_lst$ grp_stats
+wq_2D_lda_coeff_tbl  <- wq_2D_lda_lst$ coeff_tbl
+wq_2D_lda_coeff_diff <- wq_2D_lda_lst$ coeff_diff
+
+# wq_2D_lda_coeff_diff
+# # A tibble: 1 × 5
+#   color_1 color_2 const density res_sugar
+#   <chr>   <chr>   <dbl>   <dbl>     <dbl>
+# 1 red     white   -1.96    1.95     -1.89
+
+```
+
+@fig-wq-2D-lda-xy shows a scatter diagram of density and res-sugar, along with the estimated LDA line separating red wines from white wines.  Points corresonding to red wines are shown in red.
 
 ```{r}
 #| label: fig-wq-2D-lda-xy
@@ -1893,17 +1923,21 @@ g_wq_2D_lda_xy <- wq_2D_lda_color_predict |>
       "white" = "steelblue")
   ) + 
   ggplot2::geom_abline(
-    intercept = 0, 
     # draw line orthogonal to vector LD1
+    intercept = 
+      - wq_2D_lda_coeff_diff [[1, "const"]] / 
+        wq_2D_lda_coeff_diff [[1, "res_sugar"]], 
     slope     = 
-      - wq_2D_LD1_coeff ["density"  , 1] / 
-        wq_2D_LD1_coeff ["res_sugar",   1] ) + 
+      - wq_2D_lda_coeff_diff [[1, "density"]] / 
+        wq_2D_lda_coeff_diff [[1, "res_sugar"]] ) + 
   ggplot2::labs(
     title = "Wine color: linear discriminant function LD1", 
     subtitle = "(values have been converted to standard units)"
   )
 g_wq_2D_lda_xy
 ```
+
+Notable here are the outlying values.  These certainly merit further inspection, but we set aside that investigation for now.
 
 #### Wine Quality: $d = 2$, $K = 4$
 
