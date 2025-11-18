@@ -99,6 +99,31 @@ describe_wq_vars <- function() {
 }
 
 ##
+#  abbreviate_wq_var_names()
+##
+abbreviate_wq_var_names <- function() {
+  wq_abbrev_tbl <- describe_wq_vars() |> 
+    dplyr::mutate(abbrev = case_when(
+      var == "fixed acidity"        ~ "fix_acidity", 
+      var == "volatile acidity"     ~ "vol_acidity", 
+      var == "citric acid"          ~ "citric_acid", 
+      var == "residual sugar"       ~ "res_sugar", 
+      var == "chlorides"            ~ "chlorides", 
+      var == "free sulfur dioxide"  ~ "free_so2", 
+      var == "total sulfur dioxide" ~ "total_so2", 
+      var == "density"              ~ "density", 
+      var == "pH"                   ~ "pH", 
+      var == "sulphates"            ~ "sulphates", 
+      var == "alcohol"              ~ "alcohol", 
+      var == "quality"              ~ "quality", 
+      var == "color"                ~ "color"
+    )) |> 
+    dplyr::select(abbrev, tidyr::everything())
+  
+  return(wq_abbrev_tbl)
+}
+
+##
 #  get_rw_quality_corr_tbl()
 #    return tibble of cor(feature, quality) for (red, white) wines
 ##
