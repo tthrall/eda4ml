@@ -1795,7 +1795,7 @@ wq_2D_lda_color_mdl <-
   parsnip::discrim_linear() |>
   parsnip::fit_xy(
     x = wq_z |> 
-      dplyr::select(res_sugar, density), 
+      dplyr::select(density, res_sugar), 
     y = wq_z$ color |> 
       forcats::as_factor()
   )
@@ -1805,10 +1805,10 @@ wq_2D_LD1_coeff <-
   wq_2D_lda_color_mdl$ fit$ scaling
 
 # wq_2D_LD1_coeff |> str()
-#  num [1:2, 1] 1.67 -1.72
-#  - attr(*, "dimnames")=List of 2
-#   ..$ : chr [1:2] "res_sugar" "density"
-#   ..$ : chr "LD1"
+ # num [1:2, 1] -1.72 1.67
+ # - attr(*, "dimnames")=List of 2
+ #  ..$ : chr [1:2] "density" "res_sugar"
+ #  ..$ : chr "LD1"
 
 # wq_2D_LD1_coeff
 #                 LD1
@@ -1824,21 +1824,21 @@ wq_2D_LD1_coeff <-
 wq_2D_lda_color_class <- wq_2D_lda_color_mdl |> 
   parsnip::predict.model_fit(
     new_data = wq_z |> 
-      dplyr::select(res_sugar, density), 
+      dplyr::select(density, res_sugar), 
     type = "class")
 
 # tibble of 2 columns <dbl>: (.pred_red, .pred_white)
 wq_2D_lda_color_prob <- wq_2D_lda_color_mdl |> 
   parsnip::predict.model_fit(
     new_data = wq_z |> 
-      dplyr::select(res_sugar, density), 
+      dplyr::select(density, res_sugar), 
     type = "prob")
 
 wq_2D_lda_color_predict <- dplyr::bind_cols(
   wq_z  |> 
     dplyr::select(
-      res_sugar, 
       density, 
+      res_sugar, 
       color), 
   wq_2D_lda_color_class, 
   wq_2D_lda_color_prob) |> 
@@ -1905,7 +1905,7 @@ wq_2D_lda_coeff_diff <- wq_2D_lda_lst$ coeff_diff
 
 ```
 
-@fig-wq-2D-lda-xy shows a scatter diagram of density and res-sugar, along with the estimated LDA line separating red wines from white wines.  Points corresonding to red wines are shown in red.
+@fig-wq-2D-lda-xy shows a scatter diagram of density and res-sugar, along with the estimated LDA line separating red wines from white wines.  Points corresponding to red wines are shown in red.
 
 ```{r}
 #| label: fig-wq-2D-lda-xy
@@ -1937,9 +1937,32 @@ g_wq_2D_lda_xy <- wq_2D_lda_color_predict |>
 g_wq_2D_lda_xy
 ```
 
-Notable here are the outlying values.  These certainly merit further inspection, but we set aside that investigation for now.
+Notable here are the outlying values.  These certainly merit further inspection, but we set that aside for now.
 
-#### Wine Quality: $d = 2$, $K = 4$
+Now let's see how well this linear discriminant function, LD1, distinguished the actual red and white wines.  @tbl-lda-2D-xtabs-color is a cross-tabulation of actual versus predicted color.
+
+```{r}
+#| label: tbl-lda-2D-xtabs-color
+#| tbl-cap: "Wine Color: actual versus LDA prediction"
+
+wq_lda_2D_color_xtabs_long <- wq_2D_lda_color_predict |> 
+  dplyr::summarise(
+    .by = c(color, class), 
+    n = n())
+
+wq_lda_2D_color_xtabs_wide <- wq_lda_2D_color_xtabs_long |> 
+  tidyr::pivot_wider(
+    names_from = "color", 
+    values_from = "n")
+
+wq_lda_2D_color_xtabs_wide |> 
+  knitr::kable(
+    caption = "Wine Color: actual versus LDA prediction"
+  )
+
+```
+
+The mis-classification rates are about 12% for red wines, and 3% for white wines.  Those rates can be reduced by using additional predictors, as we'll see shortly.
 
 #### Wine Quality: $d = 11$, $K = 2$
 
@@ -1979,7 +2002,7 @@ wq_lda_color_predict <- dplyr::bind_cols(
 
 ```
 
-To facilitate the interpretation of the LDA linear discriminant function (`LD1`), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-lda-coefficients.
+We now employ all 11 features for comparison to the initial classificaton based on 2 features. Once again we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-lda-coefficients.
 
 ```{r}
 #| label: tbl-lda-coefficients
@@ -1996,9 +2019,9 @@ wq_lda_color_mdl$ fit$ scaling |>
 
 ```
 
-The coefficients having a magnitude of nearly 1 or greater correspond to the following color-distinguishing features: residual sugar, total sulfur dioxide, density, and alcohol.
+The coefficients having a magnitude of nearly 1 or greater correspond to the following features: residual sugar, total sulfur dioxide, density, and alcohol.
 
-Now let's see how well this linear discriminant function, LD1, distinguished the actual red and white wines.  @tbl-lda-xtabs-color is a cross-tabulation of actual versus predicted color.
+@tbl-lda-xtabs-color is a cross-tabulation of actual versus predicted color.
 
 ```{r}
 #| label: tbl-lda-xtabs-color
@@ -2021,7 +2044,7 @@ wq_lda_color_xtabs_wide |>
 
 ```
 
-The mis-classification rates are remarkably low: about 1% for red wines, and 0.4% for white wines.
+The mis-classification rates are now remarkably low: about 1% for red wines, and 0.4% for white wines.
 
 Let's look a bit deeper.  Among the correct classifications, how many had decisive classification probabilities, as opposed to somewhat ambiguous probabilities?
 
@@ -2079,8 +2102,6 @@ g_wq_lda_color_probs
 For red wines, the LDA classifier probabilities were decisively zero or one, with very few exceptions; the classifier was decisively wrong for about 1% of the instances of red wine.
 
 As for white wines, the mis-classification rate was merely 0.4%.  And in those instances of mis-classification, the classifier tended to produce more ambiguous probabilities than for red wines.
-
-We now move from the classification of wine color to the prediction of wine quality.
 
 ### PLS: Partial Least Squares
 
