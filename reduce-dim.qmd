@@ -1788,6 +1788,7 @@ wq_z <- wq_data |>
 ```{r}
 #| label: wq-2D-lda-color-mdl
 
+# LDA model: trained by data but output excludes data
 wq_2D_lda_color_mdl <-
   parsnip::discrim_linear() |>
   parsnip::fit_xy(
@@ -1796,6 +1797,21 @@ wq_2D_lda_color_mdl <-
     y = wq_z$ color |> 
       forcats::as_factor()
   )
+
+# capture LD1 coefficients: 2-by-1 named matrix
+wq_2D_LD1_coeff <- 
+  wq_2D_lda_color_mdl$ fit$ scaling
+
+# wq_2D_LD1_coeff |> str()
+#  num [1:2, 1] 1.67 -1.72
+#  - attr(*, "dimnames")=List of 2
+#   ..$ : chr [1:2] "res_sugar" "density"
+#   ..$ : chr "LD1"
+
+# wq_2D_LD1_coeff
+#                 LD1
+# res_sugar  1.667462
+# density   -1.722731
 
 ```
 
@@ -1855,9 +1871,6 @@ wq_2D_lda_color_long <- wq_2D_lda_color_predict |>
 
 wq_2D_lda_color_mdl$ fit$ scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
-  dplyr::mutate(
-    feature = str_remove_all(feature, "`")
-  ) |> 
   knitr::kable(
     caption = "Wine Color: 2D LDA model coefficients", 
     digits = 2)
@@ -1876,10 +1889,20 @@ g_wq_2D_lda_xy <- wq_2D_lda_color_predict |>
   ggplot2::geom_point(show.legend = FALSE)  +
   ggplot2::scale_color_manual(
     values = c(
-      "red" = "darkred",
+      "red"   = "darkred",
       "white" = "steelblue")
+  ) + 
+  ggplot2::geom_abline(
+    intercept = 0, 
+    # draw line orthogonal to vector LD1
+    slope     = 
+      - wq_2D_LD1_coeff ["density"  , 1] / 
+        wq_2D_LD1_coeff ["res_sugar",   1] ) + 
+  ggplot2::labs(
+    title = "Wine color: linear discriminant function LD1", 
+    subtitle = "(values have been converted to standard units)"
   )
-
+g_wq_2D_lda_xy
 ```
 
 #### Wine Quality: $d = 2$, $K = 4$
