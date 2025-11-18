@@ -329,12 +329,27 @@ The modeling goal is to understand the chemical properties influencing wine qual
 ```{r}
 #| label: tbl-wq-var-dscr
 
-wq_var_dscr <- describe_wq_vars()
+wq_abbrev_tbl <- abbreviate_wq_var_names()
 
-wq_var_dscr |> 
+wq_abbrev_tbl |> 
+  dplyr::select(- abbrev) |> 
   dplyr::rename(variable = var) |> 
   knitr::kable(
     caption = "Wine: physicochemical properties")
+```
+
+```{r}
+#| label: wq-data-replacement
+
+## 
+#  replace wine_quality with wq_data
+## 
+
+# use abbreviated names of variables (columns)
+wq_data <- wine_quality
+names(wq_data) <- wq_abbrev_tbl$ abbrev
+
+rm(wine_quality)
 ```
 
 Correlations among the `r wq_ncol - 2L` numeric features are shown in @fig-rw-wq-corrplot below for red and white wines, respectively.
@@ -349,7 +364,7 @@ Correlations among the `r wq_ncol - 2L` numeric features are shown in @fig-rw-wq
 
 wq_corr_colors <- grDevices::colorRampPalette(c("blue", "red"))
 
-red_wq_corr_lst <- wine_quality |> 
+red_wq_corr_lst <- wq_data |> 
   dplyr::filter(color == "red") |> 
   dplyr::select(-c(quality, color)) |> 
   cor() |> 
@@ -361,7 +376,7 @@ red_wq_corr_lst <- wine_quality |>
     tl.col        = "black"
   )
 
-white_wq_corr_lst <- wine_quality |> 
+white_wq_corr_lst <- wq_data |> 
   dplyr::filter(color == "white") |> 
   dplyr::select(-c(quality, color)) |> 
   cor() |> 
@@ -382,7 +397,7 @@ These figures reveal some substantial correlations, with distinct patterns per w
 ```{r}
 #| label: rw-quality-corr-tbl
 
-rw_quality_corr_tbl <- wine_quality |> 
+rw_quality_corr_tbl <- wq_data |> 
   get_rw_quality_corr_tbl()
 
 ```
@@ -1135,7 +1150,7 @@ In some situations it is practical to reduce the number of terms appearing in @e
 #| label: wq-all-numeric
 
 # 6497-by-13 data tibble with color re-coded as "is_red"
-wq_all_numeric <- wine_quality |> 
+wq_all_numeric <- wq_data |> 
   dplyr::mutate(is_red = (color == "red")) |> 
   dplyr::select(- color)
 
@@ -1741,25 +1756,135 @@ $$
 \end{align}
 $$ {#eq-binary-assignment-2}
 
-#### Wine Quality Example
+#### Wine Quality: $d = 2$, $K = 2$
 
 ```{r}
 #| label: wq-z
 
-# z-values of each feature
-# excluding quality and color
-wq_z <- wine_quality |> 
+## 
+#  scale feature values to standard units (z-values)
+## 
+wq_z <- wq_data |> 
+  # remove (quality, color)
   dplyr::select(- c(quality, color)) |> 
+  # convert remaining feature values to standard units
   dplyr::mutate(across(
     .cols = tidyr::everything(), 
     .fns  = scale
   )) |> 
+  # convert each single-column matrix to vector
+  dplyr::mutate(across(
+    .cols = tidyr::everything(), 
+    .fns  = as.vector
+  )) |> 
   dplyr::mutate(
-    quality = wine_quality$ quality, 
-    color   = wine_quality$ color
+    # restore (quality, color)
+    quality = wq_data$ quality, 
+    color   = wq_data$ color
   )
 
 ```
+
+```{r}
+#| label: wq-2D-lda-color-mdl
+
+wq_2D_lda_color_mdl <-
+  parsnip::discrim_linear() |>
+  parsnip::fit_xy(
+    x = wq_z |> 
+      dplyr::select(res_sugar, density), 
+    y = wq_z$ color |> 
+      forcats::as_factor()
+  )
+
+```
+
+```{r}
+#| label: wq-2D-lda-color-predict
+
+# tibble of 1 column <fct>: .pred_class (red or white)
+wq_2D_lda_color_class <- wq_2D_lda_color_mdl |> 
+  parsnip::predict.model_fit(
+    new_data = wq_z |> 
+      dplyr::select(res_sugar, density), 
+    type = "class")
+
+# tibble of 2 columns <dbl>: (.pred_red, .pred_white)
+wq_2D_lda_color_prob <- wq_2D_lda_color_mdl |> 
+  parsnip::predict.model_fit(
+    new_data = wq_z |> 
+      dplyr::select(res_sugar, density), 
+    type = "prob")
+
+wq_2D_lda_color_predict <- dplyr::bind_cols(
+  wq_z  |> 
+    dplyr::select(
+      res_sugar, 
+      density, 
+      color), 
+  wq_2D_lda_color_class, 
+  wq_2D_lda_color_prob) |> 
+  dplyr::rename(
+    class   = .pred_class, 
+    p.red   = .pred_red, 
+    p.white = .pred_white
+  ) |> 
+  dplyr::mutate(
+    class = class |> forcats::fct_recode (
+      "c.red"   = "red", 
+      "c.white" = "white")
+  )
+
+```
+
+```{r}
+#| label: wq-2D-lda-color-long
+
+# long version for violin plot, etc.
+wq_2D_lda_color_long <- wq_2D_lda_color_predict |> 
+  tidyr::pivot_longer(
+    cols = c(p.red, p.white), 
+    names_to = "prob_color", 
+    values_to = "prob")
+
+```
+
+```{r}
+#| label: tbl-2D-lda-coefficients
+#| tbl-cap: "Wine Color: 2D LDA model coefficients"
+
+wq_2D_lda_color_mdl$ fit$ scaling |> 
+  tibble::as_tibble(rownames = "feature") |> 
+  dplyr::mutate(
+    feature = str_remove_all(feature, "`")
+  ) |> 
+  knitr::kable(
+    caption = "Wine Color: 2D LDA model coefficients", 
+    digits = 2)
+
+```
+
+```{r}
+#| label: fig-wq-2D-lda-xy
+#| fig-cap: "Wine color: linear discriminant function LD1"
+
+g_wq_2D_lda_xy <- wq_2D_lda_color_predict |>
+  ggplot2::ggplot(mapping = aes(
+    x = density, y = res_sugar, 
+    colour = color, fill = color, group = color
+  )) + 
+  ggplot2::geom_point(show.legend = FALSE)  +
+  ggplot2::scale_color_manual(
+    values = c(
+      "red" = "darkred",
+      "white" = "steelblue")
+  )
+
+```
+
+#### Wine Quality: $d = 2$, $K = 4$
+
+#### Wine Quality: $d = 11$, $K = 2$
 
 ```{r}
 #| label: wq-lda-color-mdl
