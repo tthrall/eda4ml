@@ -1759,7 +1759,7 @@ $$
 \end{align}
 $$ {#eq-binary-assignment-2}
 
-#### Wine Quality: $d = 2$, $K = 2$
+#### Wine Color: $d = 2$, $K = 2$
 
 ```{r}
 #| label: wq-z
@@ -1789,10 +1789,10 @@ wq_z <- wq_data |>
 ```
 
 ```{r}
-#| label: wq-2D-lda-color-mdl
+#| label: wclr-2D-lda-mdl
 
 # LDA model: trained by data but output excludes data
-wq_2D_lda_color_mdl <-
+wclr_2D_lda_mdl <-
   parsnip::discrim_linear() |>
   parsnip::fit_xy(
     x = wq_z |> 
@@ -1802,16 +1802,16 @@ wq_2D_lda_color_mdl <-
   )
 
 # capture LD1 coefficients: 2-by-1 named matrix
-wq_2D_LD1_coeff <- 
-  wq_2D_lda_color_mdl$ fit$ scaling
+wclr_2D_LD1_coeff <- 
+  wclr_2D_lda_mdl$ fit$ scaling
 
-# wq_2D_LD1_coeff |> str()
+# wclr_2D_LD1_coeff |> str()
  # num [1:2, 1] -1.72 1.67
  # - attr(*, "dimnames")=List of 2
  #  ..$ : chr [1:2] "density" "res_sugar"
  #  ..$ : chr "LD1"
 
-# wq_2D_LD1_coeff
+# wclr_2D_LD1_coeff
 #                 LD1
 # density   -1.722731
 # res_sugar  1.667462
@@ -1819,30 +1819,30 @@ wq_2D_LD1_coeff <-
 ```
 
 ```{r}
-#| label: wq-2D-lda-color-predict
+#| label: wclr-2D-lda-predict
 
 # tibble of 1 column <fct>: .pred_class (red or white)
-wq_2D_lda_color_class <- wq_2D_lda_color_mdl |> 
+wclr_2D_lda_class <- wclr_2D_lda_mdl |> 
   parsnip::predict.model_fit(
     new_data = wq_z |> 
       dplyr::select(density, res_sugar), 
     type = "class")
 
 # tibble of 2 columns <dbl>: (.pred_red, .pred_white)
-wq_2D_lda_color_prob <- wq_2D_lda_color_mdl |> 
+wclr_2D_lda_prob <- wclr_2D_lda_mdl |> 
   parsnip::predict.model_fit(
     new_data = wq_z |> 
       dplyr::select(density, res_sugar), 
     type = "prob")
 
-wq_2D_lda_color_predict <- dplyr::bind_cols(
+wclr_2D_lda_predict <- dplyr::bind_cols(
   wq_z  |> 
     dplyr::select(
       density, 
       res_sugar, 
       color), 
-  wq_2D_lda_color_class, 
-  wq_2D_lda_color_prob) |> 
+  wclr_2D_lda_class, 
+  wclr_2D_lda_prob) |> 
   dplyr::rename(
     class   = .pred_class, 
     p.red   = .pred_red, 
@@ -1857,10 +1857,10 @@ wq_2D_lda_color_predict <- dplyr::bind_cols(
 ```
 
 ```{r}
-#| label: wq-2D-lda-color-long
+#| label: wclr-2D-lda-long
 
 # long version for violin plot, etc.
-wq_2D_lda_color_long <- wq_2D_lda_color_predict |> 
+wclr_2D_lda_long <- wclr_2D_lda_predict |> 
   tidyr::pivot_longer(
     cols = c(p.red, p.white), 
     names_to = "prob_color", 
@@ -1876,7 +1876,7 @@ To illustrate the application of LDA to the wine quality data in a 2D scatter-pl
 #| label: tbl-2D-lda-coefficients
 #| tbl-cap: "Wine Color: 2D LDA model coefficients"
 
-wq_2D_lda_color_mdl$ fit$ scaling |> 
+wclr_2D_lda_mdl$ fit$ scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
   knitr::kable(
     caption = "Wine Color: 2D LDA model coefficients", 
@@ -1885,20 +1885,20 @@ wq_2D_lda_color_mdl$ fit$ scaling |>
 ```
 
 ```{r}
-#| label: wq-2D-lda-lst
+#| label: wclr-2D-lda-lst
 
 # determine appropriate intercept for LD1 line
 
-wq_2D_lda_lst <- wq_z |> 
+wclr_2D_lda_lst <- wq_z |> 
   l2D_get_xy_stats(density, res_sugar, color)
 
-wq_2D_lda_x_means    <- wq_2D_lda_lst$ x_means
-wq_2D_lda_x_cov      <- wq_2D_lda_lst$ x_cov
-wq_2D_lda_grp_stats  <- wq_2D_lda_lst$ grp_stats
-wq_2D_lda_coeff_tbl  <- wq_2D_lda_lst$ coeff_tbl
-wq_2D_lda_coeff_diff <- wq_2D_lda_lst$ coeff_diff
+wclr_2D_lda_x_means    <- wclr_2D_lda_lst$ x_means
+wclr_2D_lda_x_cov      <- wclr_2D_lda_lst$ x_cov
+wclr_2D_lda_grp_stats  <- wclr_2D_lda_lst$ grp_stats
+wclr_2D_lda_coeff_tbl  <- wclr_2D_lda_lst$ coeff_tbl
+wclr_2D_lda_coeff_diff <- wclr_2D_lda_lst$ coeff_diff
 
-# wq_2D_lda_coeff_diff
+# wclr_2D_lda_coeff_diff
 # # A tibble: 1 × 5
 #   color_1 color_2 const density res_sugar
 #   <chr>   <chr>   <dbl>   <dbl>     <dbl>
@@ -1906,13 +1906,13 @@ wq_2D_lda_coeff_diff <- wq_2D_lda_lst$ coeff_diff
 
 ```
 
-@fig-wq-2D-lda-xy shows a scatter diagram of density and res-sugar, along with the estimated LDA line separating red wines from white wines.  Points corresponding to red wines are shown in red.
+@fig-wclr-2D-lda-xy shows a scatter diagram of density and res-sugar, along with the estimated LDA line separating red wines from white wines.  Points corresponding to red wines are shown in red.
 
 ```{r}
-#| label: fig-wq-2D-lda-xy
+#| label: fig-wclr-2D-lda-xy
 #| fig-cap: "Wine color: linear discriminant function LD1"
 
-g_wq_2D_lda_xy <- wq_2D_lda_color_predict |>
+g_wclr_2D_lda_xy <- wclr_2D_lda_predict |>
   ggplot2::ggplot(mapping = aes(
     x = density, y = res_sugar, 
     colour = color, fill = color, group = color
@@ -1926,16 +1926,16 @@ g_wq_2D_lda_xy <- wq_2D_lda_color_predict |>
   ggplot2::geom_abline(
     # draw line orthogonal to vector LD1
     intercept = 
-      - wq_2D_lda_coeff_diff [[1, "const"]] / 
-        wq_2D_lda_coeff_diff [[1, "res_sugar"]], 
+      - wclr_2D_lda_coeff_diff [[1, "const"]] / 
+        wclr_2D_lda_coeff_diff [[1, "res_sugar"]], 
     slope     = 
-      - wq_2D_lda_coeff_diff [[1, "density"]] / 
-        wq_2D_lda_coeff_diff [[1, "res_sugar"]] ) + 
+      - wclr_2D_lda_coeff_diff [[1, "density"]] / 
+        wclr_2D_lda_coeff_diff [[1, "res_sugar"]] ) + 
   ggplot2::labs(
     title = "Wine color: linear discriminant function LD1", 
     subtitle = "(values have been converted to standard units)"
   )
-g_wq_2D_lda_xy
+g_wclr_2D_lda_xy
 ```
 
 Notable here are the outlying values.  These certainly merit further inspection, but we set that aside for now.
@@ -1946,17 +1946,17 @@ Now let's see how well this linear discriminant function, LD1, distinguished the
 #| label: tbl-lda-2D-xtabs-color
 #| tbl-cap: "Wine Color: actual versus LDA prediction"
 
-wq_lda_2D_color_xtabs_long <- wq_2D_lda_color_predict |> 
+wclr_lda_2D_xtabs_long <- wclr_2D_lda_predict |> 
   dplyr::summarise(
     .by = c(color, class), 
     n = n())
 
-wq_lda_2D_color_xtabs_wide <- wq_lda_2D_color_xtabs_long |> 
+wclr_lda_2D_xtabs_wide <- wclr_lda_2D_xtabs_long |> 
   tidyr::pivot_wider(
     names_from = "color", 
     values_from = "n")
 
-wq_lda_2D_color_xtabs_wide |> 
+wclr_lda_2D_xtabs_wide |> 
   knitr::kable(
     caption = "Wine Color: actual versus LDA prediction"
   )
@@ -1965,12 +1965,14 @@ wq_lda_2D_color_xtabs_wide |>
 
 The mis-classification rates are about 12% for red wines, and 3% for white wines.  Those rates can be reduced by using additional predictors, as we'll see shortly.
 
-#### Wine Quality: $d = 11$, $K = 2$
+#### Wine Quality: $d = 2$, $K = 3$
+
+#### Wine Color: $d = 11$, $K = 2$
 
 ```{r}
-#| label: wq-lda-color-mdl
+#| label: wclr-lda-mdl
 
-wq_lda_color_mdl <-
+wclr_lda_mdl <-
   parsnip::discrim_linear() |>
   parsnip::fit_xy(
     x = wq_z |> 
@@ -1982,24 +1984,24 @@ wq_lda_color_mdl <-
 ```
 
 ```{r}
-#| label: wq-lda-color-predict
+#| label: wclr-lda-predict
 
 # tibble of 1 column <fct>: .pred_class (red or white)
-wq_lda_color_class <- wq_lda_color_mdl |> 
+wclr_lda_class <- wclr_lda_mdl |> 
   parsnip::predict.model_fit(
     new_data = wq_z |> 
       dplyr::select(- c(quality, color)), 
     type = "class")
 
 # tibble of 2 columns <dbl>: (.pred_red, .pred_white)
-wq_lda_color_prob <- wq_lda_color_mdl |> 
+wclr_lda_prob <- wclr_lda_mdl |> 
   parsnip::predict.model_fit(
     new_data = wq_z |> 
       dplyr::select(- c(quality, color)), 
     type = "prob")
 
-wq_lda_color_predict <- dplyr::bind_cols(
-  wq_z, wq_lda_color_class, wq_lda_color_prob)
+wclr_lda_predict <- dplyr::bind_cols(
+  wq_z, wclr_lda_class, wclr_lda_prob)
 
 ```
 
@@ -2009,7 +2011,7 @@ We now employ all 11 features for comparison to the initial classificaton based 
 #| label: tbl-lda-coefficients
 #| tbl-cap: "Wine Color LDA: model coefficients"
 
-wq_lda_color_mdl$ fit$ scaling |> 
+wclr_lda_mdl$ fit$ scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
   dplyr::mutate(
     feature = str_remove_all(feature, "`")
@@ -2028,17 +2030,17 @@ The coefficients having a magnitude of nearly 1 or greater correspond to the fol
 #| label: tbl-lda-xtabs-color
 #| tbl-cap: "Wine Color: actual versus LDA prediction"
 
-wq_lda_color_xtabs_long <- wq_lda_color_predict |> 
+wclr_lda_xtabs_long <- wclr_lda_predict |> 
   dplyr::summarise(
     .by = c(color, .pred_class), 
     n = n())
 
-wq_lda_color_xtabs_wide <- wq_lda_color_xtabs_long |> 
+wclr_lda_xtabs_wide <- wclr_lda_xtabs_long |> 
   tidyr::pivot_wider(
     names_from = "color", 
     values_from = "n")
 
-wq_lda_color_xtabs_wide |> 
+wclr_lda_xtabs_wide |> 
   knitr::kable(
     caption = "Wine Color: actual versus LDA prediction"
   )
@@ -2049,13 +2051,13 @@ The mis-classification rates are now remarkably low: about 1% for red wines, and
 
 Let's look a bit deeper.  Among the correct classifications, how many had decisive classification probabilities, as opposed to somewhat ambiguous probabilities?
 
-@fig-wq-lda-color-probs addresses this question in a $2 \times 2$ matrix of cells.  The LDA algorithm produces a pair of complementary probabilities, labeled `p.red` and `p.white`: for each case of data $p.red + p.white = 1$.  In each cell of the figure we see the distribution of both probabilities, one a mirror image of the other.  If $p.red \ge p.white$ then the case is assigned class `c.red`; otherwise the case is assigned class `c.white`.  These classifications mark the rows of the figure.  Marking the columns are the actual colors, "red" and "white".  The layout matches that of @tbl-lda-xtabs-color.
+@fig-wclr-lda-probs addresses this question in a $2 \times 2$ matrix of cells.  The LDA algorithm produces a pair of complementary probabilities, labeled `p.red` and `p.white`: for each case of data $p.red + p.white = 1$.  In each cell of the figure we see the distribution of both probabilities, one a mirror image of the other.  If $p.red \ge p.white$ then the case is assigned class `c.red`; otherwise the case is assigned class `c.white`.  These classifications mark the rows of the figure.  Marking the columns are the actual colors, "red" and "white".  The layout matches that of @tbl-lda-xtabs-color.
 
 ```{r}
-#| label: wq-lda-color-probs
+#| label: wclr-lda-probs
 
 # prepare tibble for violin plot
-wq_lda_color_probs <- wq_lda_color_predict |> 
+wclr_lda_probs <- wclr_lda_predict |> 
   dplyr::select(color, .pred_class, .pred_red, .pred_white) |> 
   dplyr::rename(class = .pred_class) |> 
   dplyr::mutate(
@@ -2078,10 +2080,10 @@ wq_lda_color_probs <- wq_lda_color_predict |>
 ```
 
 ```{r}
-#| label: fig-wq-lda-color-probs
+#| label: fig-wclr-lda-probs
 #| fig-cap: "Color probabilies per actual and predicted color"
 
-g_wq_lda_color_probs <- wq_lda_color_probs |> 
+g_wclr_lda_probs <- wclr_lda_probs |> 
   dplyr::rename(probability = prob) |> 
   ggplot2::ggplot(mapping = aes(
     x = prob_color, y = probability, 
@@ -2097,7 +2099,7 @@ g_wq_lda_color_probs <- wq_lda_color_probs |>
   ggplot2::labs(
     title = "Color probabilies per actual and predicted color"
   )
-g_wq_lda_color_probs
+g_wclr_lda_probs
 ```
 
 For red wines, the LDA classifier probabilities were decisively zero or one, with very few exceptions; the classifier was decisively wrong for about 1% of the instances of red wine.
