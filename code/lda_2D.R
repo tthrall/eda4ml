@@ -154,6 +154,226 @@ l2D_get_xy_stats <- function(
   ))
 }
 
+## 
+#  tt_intersect()
+#  
+#    Each of two lines is defined by a triplet, (c0, c1, c2), 
+#    of homogeneous coefficients.  Return the point of 
+#    intersection of the two lines.
+#  
+#    line: c0 + c1 x + c2 y = 0
+## 
+tt_intersect <- function(
+    trip_1, # <dbl> 1st triplet
+    trip_2  # <dbl> 2nd triplet
+) {
+  assertthat::assert_that(
+    length(trip_1) == 3L, 
+    length(trip_2) == 3L)
+  
+  c_mat <- matrix(
+    data = c( 
+      trip_1 [2:3], 
+      trip_2 [2:3]), 
+    nrow = 2, ncol = 2, byrow = TRUE)
+  
+  soln <- solve(
+    a = c_mat, 
+    b = -c( trip_1 [[1]], trip_2 [[1]] )
+  ) |> 
+    as.vector()
+  
+  names(soln) <- c("x", "y")
+  return(soln)
+}
+
+## 
+#  bt_list()
+#  
+#    Find the points of intersection of a bounding box and a line.
+#  
+#      bbox: (xmin, xmax, ymin, ymax)
+#  
+#      line: c0 + c1 x + c2 y = 0
+#  
+#    Return a list of 2 intersection points or else return NULL.
+## 
+bt_list <- function(
+    bbox, # <lst> named list (xmin, xmax, ymin, ymax)
+    trip, # <dbl> un-named triplet (c0, c1, c2)
+    tol = 1e-10 # <dbl> lower bound for norm(c1, c2)
+) {
+  ## 
+  # is trip valid?
+  ## 
+  assertthat::assert_that( length(trip) == 3L )
+  
+  nrm_2_3 <- sqrt(trip[2]^2 + trip[3]^2)
+  assertthat::assert_that( nrm_2_3 > tol )
+  
+  ## 
+  # is bbox valid?
+  ## 
+  assertthat::assert_that(
+    is.list(bbox), 
+    length(bbox) == 4L, 
+    bbox$ xmin < bbox$ xmax, 
+    bbox$ ymin < bbox$ ymax
+  )
+  
+  # t_new = (const, cos(theta), sin(theta)), 0 <= theta <= pi
+  t_new <- trip / nrm_2_3
+  if ( t_new [[3]] < 0 ) t_new = - t_new
+  c0 <- t_new [[1]]
+  c1 <- t_new [[2]]
+  c2 <- t_new [[3]]
+  
+  # initialize list of intersection points
+  pt_lst <- list()
+  i_pt   <- 0L
+  
+  ## 
+  # Check each edge of the bounding box.
+  # 
+  #   Include corner intersections. 
+  #   Return exactly 2 points or else NULL.
+  ## 
+  
+  # Left edge: x = xmin
+  if ( abs(c2) > tol ) {
+    y_left <- -( c0 + c1 * bbox$ xmin ) / c2
+    if (
+      (y_left >= bbox$ ymin) && 
+      (y_left <= bbox$ ymax)
+    ) {
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = bbox$ xmin, y = y_left )
+    }
+  } else {
+    # line: c0 + c1 * x = 0
+    x_vline <- - (c0 / c1)
+    if (
+      (x_vline > bbox$ xmin) && 
+      (x_vline < bbox$ xmax)
+    ) {
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = x_vline, y = bbox$ ymin )
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = x_vline, y = bbox$ ymax )
+      return(pt_lst)
+    } else {
+      return(NULL)
+    }
+  }
+  
+  # Right edge: x = xmax
+  if ( abs(c2) > tol ) {
+    y_right <- -( c0 + c1 * bbox$ xmax ) / c2
+    if (
+      (y_right >= bbox$ ymin) && 
+      (y_right <= bbox$ ymax)
+    ) {
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = bbox$ xmax, y = y_right )
+    }
+  } else {
+    # line: c0 + c1 * x = 0
+    # this case treated above
+  }
+  
+  # Bottom edge: y = ymin
+  if ( abs(c1) > tol ) {
+    x_bottom <- -( c0 + c2 * bbox$ ymin ) / c1
+    if (
+      (x_bottom >= bbox$ xmin) && 
+      (x_bottom <+ bbox$ xmax)
+    ) {
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = x_bottom, y = bbox$ ymin )
+    }
+  } else {
+    # line: c0 + c2 * y = 0
+    y_hline <- - (c0 / c2)
+    if (
+      (y_hline > bbox$ ymin) && 
+      (y_hline < bbox$ ymax)
+    ) {
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = bbox$ xmin, y = y_hline )
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = bbox$ xmax, y = y_hline )
+      return(pt_lst)
+    } else {
+      return(NULL)
+    }
+  }
+  
+  # Top edge: y = ymax
+  if ( abs(c1) > tol ) {
+    x_top <- -( c0 + c2 * bbox$ ymax ) / c1
+    if (
+      (x_top >= bbox$ xmin) && 
+      (x_top <= bbox$ xmax)
+    ) {
+      i_pt <- i_pt + 1L
+      pt_lst [[i_pt]] <- c( x = x_top, y = bbox$ ymax )
+    }
+  } else {
+    # line: c0 + c2 * y = 0
+    # this case treated above
+  }
+  
+  if ( length( pt_lst ) >= 2L ) {
+    # check the logic above
+    assertthat::assert_that(
+      length( pt_lst ) == 2L )
+    return( pt_lst )
+  } else {
+    return(NULL)
+  }
+}
+
+## 
+#  bt_seg()
+#  
+#    Find the points of intersection of a bounding box and a line.
+#  
+#      bbox: (xmin, xmax, ymin, ymax)
+#  
+#      line: c0 + c1 x + c2 y = 0
+#  
+#    Return a directed segment in the form of a named 
+#    vector (x, y, xend, yend) or else return NULL.
+## 
+bt_seg <- function(
+    bbox, # <lst> named list (xmin, xmax, ymin, ymax)
+    trip, # <dbl> un-named triplet (c0, c1, c2)
+    tol = 1e-10 # <dbl> lower bound for norm(c1, c2)
+) {
+  pt_lst <- bt_list(bbox, trip, tol)
+  if (is.null( pt_lst) ) {
+    return(NULL)
+  } else {
+    xy_tbl <- tibble::tibble(
+      x = c(
+        pt_lst [[1]] ["x"], 
+        pt_lst [[2]] ["x"]), 
+      y = c(
+        pt_lst [[1]] ["y"], 
+        pt_lst [[2]] ["y"])
+    ) |> 
+      # prepare segment with non-negative delta-y
+      dplyr::arrange(y, x)
+    seg_vec <- c(
+      x    = xy_tbl [[1, "x"]], 
+      y    = xy_tbl [[1, "y"]], 
+      xend = xy_tbl [[2, "x"]], 
+      yend = xy_tbl [[2, "y"]]
+    )
+  }
+  return(seg_vec)
+}
+
 
 ##
 #  EOF

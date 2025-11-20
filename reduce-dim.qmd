@@ -36,6 +36,7 @@ library(mclust)
 # library(OECD)
 # library(patchwork)
 library(plotly)
+library(pracma)
 library(rlang)
 # library(regclass)
 # library(rgl)
@@ -1812,8 +1813,8 @@ wq_2D_LD1_coeff <-
 
 # wq_2D_LD1_coeff
 #                 LD1
-# res_sugar  1.667462
 # density   -1.722731
+# res_sugar  1.667462
 
 ```
 
@@ -1869,7 +1870,7 @@ wq_2D_lda_color_long <- wq_2D_lda_color_predict |>
 
 To illustrate the application of LDA to the wine quality data in a 2D scatter-plot, we initially restrict the set of features to just `density` and `res-sugar` (residual sugar).  In addition, to facilitate the interpretation of the LDA linear discriminant function (`LD1`), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-2D-lda-coefficients. [^homogeneous-coefficients]
 
-[^homogeneous-coefficients]: The table gives the homogeneous coordinates of the LD1 line in the form of $c_0 \; + \; c_1 \; x_{\bullet, 1} \; + \; c_2 \; x_{\bullet, 2} = 0$.  Unfortunately, the constant coefficient $c_0$ was calculated but not listed in the output.
+[^homogeneous-coefficients]: The table refers to homogeneous coefficients $(c_0, c_1, c_2)$ of the LD1 line, defined to be the subset of $(x_1, x_2)$ points that satisfy the equation $c_0 \; + \; c_1 \; x_1 \; + \; c_2 \; x_2 = 0$.  Unfortunately, the constant coefficient $c_0$ was calculated but not listed in the output.  Note that the two sets of homogeneous coefficients $(c_0, c_1, c_2)$ and $(\kappa c_0, \kappa c_1, \kappa c_2)$ define the same line for any non-zero factor $\kappa$.
 
 ```{r}
 #| label: tbl-2D-lda-coefficients
