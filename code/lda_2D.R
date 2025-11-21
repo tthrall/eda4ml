@@ -36,10 +36,11 @@ l2D_select_xy_tbl <- function(
 #    return a list of statistics for the given columns.
 ## 
 l2D_get_xy_stats <- function(
-    df,     # <df>  a data frame containing (x_1, x_2, y_group)
-    x_1,    # <id>  name of 1st predictor variable
-    x_2,    # <id>  name of 2nd predictor variable
-    y_group # <id>  name of grouping variable
+    df,      # <df>  a data frame containing (x_1, x_2, y_group)
+    x_1,     # <id>  name of 1st predictor variable
+    x_2,     # <id>  name of 2nd predictor variable
+    y_group, # <id>  name of grouping variable
+    tol = 1e-10 # <dbl> lower bound for abs(det())
 ) {
   # 3 selected columns from n-by-d df
   xy_tbl <- l2D_select_xy_tbl(
@@ -63,10 +64,13 @@ l2D_get_xy_stats <- function(
   K <- nrow(x_means)
   assertthat::assert_that( K >= 2L )
   
-  # 2-by-2 named matrix
+  # 2-by-2 named matrix: cov(x_1, x_2)
   x_cov <- xy_tbl |> 
     dplyr::select(- xy_names [[3]] ) |> 
     cov(use = "complete.obs")
+  
+  assertthat::assert_that(
+    abs( det( cov2cor( x_cov ) ) ) > tol )
   
   # (count, proportion) per group
   grp_stats <- xy_tbl |> 
@@ -80,6 +84,8 @@ l2D_get_xy_stats <- function(
   ## 
   #   linear discriminant coefficients per group
   ## 
+  
+  # right side of x_cov %*% t(slope_mat) = b_mat
   b_mat <- x_means |> 
     dplyr::select(- 1) |> 
     # K-by-2
@@ -87,16 +93,18 @@ l2D_get_xy_stats <- function(
     # 2-by-K
     t()
   
+  # solution: x_cov %*% t(slope_mat) = b_mat
   slope_mat <- solve(a = x_cov, b = b_mat) |> 
     # K-by-2
     t()
   
-  # inner products
+  # const coefficient via inner products
   xb_vec <- vector(mode = "numeric")
   for (k in 1:K) {
     xb_vec [[k]] <- pracma::dot(slope_mat[k, ], b_mat [, k])
   }
   
+  # per group: (const, c1, c2)
   coeff_tbl <- grp_stats |> 
     dplyr::mutate(
       const = log(prop) - xb_vec/2) |> 
@@ -109,15 +117,24 @@ l2D_get_xy_stats <- function(
   #   coefficient differences: grp_1 - grp_2
   ## 
   
-  idx_tbl <- tibble::tibble(
-    idx_1 = rep(1:K, each  = K), 
-    idx_2 = rep(1:K, times = K)) |> 
-    dplyr::filter( idx_1 < idx_2 )
+  # ig_tbl: ig_1, ig_2, g_1, g_2
+  ig_tbl <- tibble::tibble(
+    # group index
+    ig_1 = rep(1:K, each  = K), 
+    ig_2 = rep(1:K, times = K)) |> 
+    dplyr::filter( ig_1 < ig_2 ) |> 
+    # group name
+    dplyr::mutate(
+      g_1 = (coeff_tbl |> dplyr::pull(1)) [ig_1], 
+      g_2 = (coeff_tbl |> dplyr::pull(1)) [ig_2]
+    )
+  names(ig_tbl) [3:4] <- paste0(xy_names [[3]], "_", 1:2)
   
   coeff_mat <- coeff_tbl |> 
     dplyr::select(-1) |> 
     as.matrix()
-  g_diff_mat <- matrix(nrow = nrow(idx_tbl), ncol = 3L)
+  
+  grp_diff_mat <- matrix(nrow = nrow(ig_tbl), ncol = 3L)
   rdx = 0L
   for (j in 1:(K - 1L)) {
     for (k in (j + 1L):K) {
@@ -128,22 +145,16 @@ l2D_get_xy_stats <- function(
         as.vector()
       
       rdx <- rdx + 1L
-      g_diff_mat[rdx, ] <- g_1_vec - g_2_vec
+      grp_diff_mat[rdx, ] <- g_1_vec - g_2_vec
     }
   }
+  colnames(grp_diff_mat) <- (colnames(coeff_tbl)) [-1]
   
-  # coeff_diff
-  colnames(g_diff_mat) <- (colnames(coeff_tbl)) [-1]
-  coeff_diff <- g_diff_mat |> 
-    tibble::as_tibble() |> 
-    dplyr::bind_cols(idx_tbl) |> 
-    dplyr::mutate(
-      g_1 = (coeff_tbl |> dplyr::pull(1)) [idx_1], 
-      g_2 = (coeff_tbl |> dplyr::pull(1)) [idx_2]
-    ) |> 
-    dplyr::select(- c(idx_1, idx_2)) |> 
-    dplyr::select(g_1, g_2, tidyr::everything())
-  names(coeff_diff) [1:2] <- paste0(xy_names [[3]], "_", 1:2)
+  # coeff_diff: ig_1, ig_2, g_1, g_2, c0_diff, c1_diff, c2_diff
+  coeff_diff <- ig_tbl |> 
+    dplyr::bind_cols(
+      grp_diff_mat |> 
+        tibble::as_tibble() )
   
   return(list(
     x_means    = x_means, 
@@ -548,7 +559,7 @@ l2D_get_bb_segs <- function(
   
   # K-by-3 numeric matrix of line coefficients
   trip_mat   <- coeff_diff  |> 
-    dplyr::select(- (1:2) ) |> 
+    dplyr::select( 5:7 ) |> 
     as.matrix()
   
   # template for output from bt_seg()
@@ -572,7 +583,7 @@ l2D_get_bb_segs <- function(
   }
   colnames(segs_mat) <- names(seg_vec)
   
-  # columns: g_1, g_2, c0, c1, c2, x, y, xend, yend
+  # columns: ig_1, ig_2, g_1, g_2, c0, c1, c2, x, y, xend, yend
   bb_segs_tbl <- coeff_diff |> 
     dplyr::bind_cols(
       segs_mat |> tibble::as.tibble())
