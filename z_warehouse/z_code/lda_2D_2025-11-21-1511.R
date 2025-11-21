@@ -64,32 +64,6 @@ l2D_get_xy_stats <- function(
   K <- nrow(x_means)
   assertthat::assert_that( K >= 2L )
   
-  # K-by-5 tibble: (y_group, min_1, max_1, min_2, max_2)
-  x_minmax <- xy_tbl |> 
-    dplyr::summarise(
-      .by = xy_names [[3]], 
-      dplyr::across(
-        .cols = tidyr::everything(), 
-        .fns = list(
-          min = ~ min(.x, na.rm = TRUE), 
-          max = ~ max(.x, na.rm = TRUE) )
-      ))
-  
-  # 1-by-5 tibble: ("ALL", min_1, max_1, min_2, max_2)
-  #   -- may be used as default value for bounding box
-  x_minmax_all <- xy_tbl |> 
-    dplyr::select(- 3) |> 
-    dplyr::summarise(
-      dplyr::across(
-        .cols = tidyr::everything(), 
-        .fns = list(
-          min = ~ min(.x, na.rm = TRUE), 
-          max = ~ max(.x, na.rm = TRUE) )
-      )) |> 
-    dplyr::mutate( grp_level = "ALL" ) |> 
-    dplyr::select( grp_level, tidyr::everything())
-  names(x_minmax_all) [1] = xy_names [[3]]
-  
   # 2-by-2 named matrix: cov(x_1, x_2)
   x_cov <- xy_tbl |> 
     dplyr::select(- xy_names [[3]] ) |> 
@@ -183,13 +157,11 @@ l2D_get_xy_stats <- function(
         tibble::as_tibble() )
   
   return(list(
-    x_means      = x_means, 
-    x_minmax     = x_minmax, 
-    x_minmax_all = x_minmax_all, 
-    x_cov        = x_cov, 
-    grp_stats    = grp_stats, 
-    coeff_tbl    = coeff_tbl, 
-    coeff_diff   = coeff_diff
+    x_means    = x_means, 
+    x_cov      = x_cov, 
+    grp_stats  = grp_stats, 
+    coeff_tbl  = coeff_tbl, 
+    coeff_diff = coeff_diff
   ))
 }
 
@@ -403,12 +375,8 @@ tt_point <- function(
   
   # is c_mat singular?
   c_det <- det(c_mat)
-  c_tst <- ( abs( c_det ) > tol )
-  assertthat::validate_that(
-    abs( det( c_mat ) ) > tol )
-  if (! c_tst ) {
-    return(NULL)
-  }
+  assertthat::assert_that(
+    abs( c_det ) > tol )
   
   soln <- solve(
     a = c_mat, 
@@ -573,11 +541,11 @@ bt_seg <- function(
 #    for each pair of distinct groups.
 ## 
 l2D_get_bb_segs <- function(
-    df,         # <df>  a data frame containing (x_1, x_2, y_group)
-    x_1,        # <id>  name of 1st predictor variable
-    x_2,        # <id>  name of 2nd predictor variable
-    y_group,    # <id>  name of grouping variable
-    bbox = NULL # <lst> named list (xmin, xmax, ymin, ymax)
+    df,      # <df>  a data frame containing (x_1, x_2, y_group)
+    x_1,     # <id>  name of 1st predictor variable
+    x_2,     # <id>  name of 2nd predictor variable
+    y_group, # <id>  name of grouping variable
+    bbox     # <lst> named list (xmin, xmax, ymin, ymax)
 ) {
   # list of stats tables from 3 columns of n-by-d df
   xy_stats_lst <- l2D_get_xy_stats(
@@ -585,20 +553,6 @@ l2D_get_bb_segs <- function(
     !! enquo(x_1), 
     !! enquo(x_2), 
     !! enquo(y_group))
-  
-  # bbox default
-  if ( is.null( bbox ) ) {
-    bb_def_tbl  <- 
-      xy_stats_lst$ 
-      x_minmax_all |> 
-      dplyr::select(-1)
-    bbox <- list(
-      xmin = bb_def_tbl [[1, 1]], 
-      xmax = bb_def_tbl [[1, 2]], 
-      ymin = bb_def_tbl [[1, 3]], 
-      ymax = bb_def_tbl [[1, 4]]
-    )
-  }
   
   # line coefficients for each pair of distinct groups
   coeff_diff <- xy_stats_lst$ coeff_diff
@@ -666,68 +620,6 @@ l2D_get_bb_segs <- function(
 #     xmin = -1, xmax = 1,
 #     ymin = -1, ymax = 1)
 # )
-
-## 
-#  get_igroup_tbl()
-#  
-#    Generate a tibble of integer indices.
-## 
-get_igroup_tbl <- function(
-    n_groups = 4L # <int> determines group indices 1:n_groups
-) {
-  if ( n_groups < 2L ) {
-    return(NULL) }
-  
-  igroup_tbl <- tibble::tibble(
-    ig_1 = rep( 1:(n_groups - 1L), each = (n_groups - 1L) ), 
-    ig_2 = rep( 2:n_groups,        times = (n_groups - 1L) ) ) |> 
-    dplyr::filter(ig_1 < ig_2)
-  
-  return(igroup_tbl)
-}
-
-## 
-#  get_iseg_tbl()
-#  
-#    Given igroup_tbl: containing the indices (ig_1, ig_2) 
-#    of pairs of distinct groups having a bbox line segment.
-#    
-#    Return iseg_tbl: (is_1, is_2, ig_1, ig_2, ig_3, ig_4), 
-#    consisting of the indices of selected pairs of distinct 
-#    segments and their corresponding group indices.
-#    
-#    Selection criteria: 
-#      (1) index pair (ig_1, ig_2) has exactly one integer 
-#        value in common with (ig_3, ig_4).
-#      (2) each possible segment combination (is_1, is_2) 
-#        occurs no more than once in the returned tibble.
-## 
-get_iseg_tbl <- function(
-    igroup_tbl # <tbl> starts with columns (ig_1, ig_2, ...)
-) {
-  if ( nrow( igroup_tbl ) < 2L ) {
-    return(NULL) }
-  
-  ig_tbl <- igroup_tbl |> 
-    dplyr::select(1:2) |> 
-    dplyr::mutate(is_1 = 1:nrow(igroup_tbl)) |> 
-    dplyr::select(is_1, tidyr::everything())
-  
-  iseg_tbl <- tibble::tibble(
-    is_1 = rep( 1:nrow(igroup_tbl), each = nrow(igroup_tbl) ), 
-    is_2 = rep( 1:nrow(igroup_tbl), times = nrow(igroup_tbl) ) ) |> 
-    dplyr::filter(is_1 < is_2) |> 
-    dplyr::mutate(
-      ig_1 = ( ig_tbl |> dplyr::pull(2) ) [is_1], 
-      ig_2 = ( ig_tbl |> dplyr::pull(3) ) [is_1], 
-      ig_3 = ( ig_tbl |> dplyr::pull(2) ) [is_2], 
-      ig_4 = ( ig_tbl |> dplyr::pull(3) ) [is_2] ) |> 
-    dplyr::rowwise() |> 
-    dplyr::filter(
-      ( ig_1 %in% c(ig_3, ig_4) ) || ( ig_2 %in% c(ig_3, ig_4) )
-    )
-  return(iseg_tbl)
-}
 
 ## 
 #  l2D_get_boundaries()
