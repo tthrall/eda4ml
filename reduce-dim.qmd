@@ -1967,6 +1967,80 @@ The mis-classification rates are about 12% for red wines, and 3% for white wines
 
 #### Wine Quality: $d = 2$, $K = 3$
 
+```{r}
+#| label: wqual-z
+
+wqual_z <- wq_z |> 
+  dplyr::mutate(
+    q_level = dplyr::case_when(
+      quality <= 5 ~ "low", 
+      quality <  7 ~ "medium", 
+      quality >= 7 ~ "high"), 
+    q_level = forcats::as_factor(q_level)
+  )
+
+```
+
+Continuing with the wine quality data, we now change the labeling variable from color (red wine versus white wine) to quality ratings on a nominal scale from 0 to 10.  More specifically, let's group wines according to their quality score, assigning a "low" level when quality $\le 5$, a "medium" level when $5 <$ quality score $< 7$, and a "high" level when quality score $\ge 7$. @fig-wqual-hist shows the number of wines at these different levels.
+
+```{r}
+#| label: fig-wqual-hist
+
+g_wqual_hist <- wqual_z |> 
+  dplyr::rename(level = q_level) |> 
+  ggplot2::ggplot(mapping = aes(
+  x = quality, color = level, fill = level
+)) + 
+  ggplot2::geom_histogram() + 
+  ggplot2::labs(title = "Wine quality cut-points (5, 7)")
+
+g_wqual_hist
+
+```
+
+To see the quality groups in a scatter plot, let's select features `alcohol` and `res_sugar` (residual sugar).  @fig-wqual-clr-a-s colors each data point according to its quality level, with separate plots for red and white wines, respectively.
+
+```{r}
+#| label: fig-wqual-clr-a-s
+#| fig-cap: "Wine quality per alcohol, sugar z-values"
+
+g_wqual_clr_a_s <- wqual_z |> 
+  dplyr::rename(level = q_level) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = alcohol, y = res_sugar, 
+    colour = level, fill = level, 
+    group = color)) + 
+  ggplot2::geom_point() + 
+  ggplot2::facet_grid(rows = vars(color)) + 
+  ggplot2::labs(
+    title = "Wine quality per alcohol, sugar z-values")
+
+g_wqual_clr_a_s
+
+```
+
+The white wines include cases with extremely high residual sugar, more than 5 or 10 standard deviations above the average.  Let's exclude these data points in order to examine the remaining data in more detail.  Let's also restrict attention to the white wines.  @fig-wqual-white-a-s shows the resulting data.
+
+```{r}
+#| label: fig-wqual-white-a-s
+#| fig-cap: "White wine quality per alcohol, sugar z_values"
+
+g_wqual_white_a_s <- wqual_z |> 
+  dplyr::filter(color == "white", res_sugar < 5) |> 
+  dplyr::rename(level = q_level) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = alcohol, y = res_sugar, 
+    colour = level, fill = level
+  )) + 
+  ggplot2::geom_point() + 
+  ggplot2::labs(
+    title = "White wine quality per alcohol, sugar z_values", 
+    subtitle = "(exludes sugar z-values > 5)")
+
+g_wqual_white_a_s
+
+```
+
 #### Wine Color: $d = 11$, $K = 2$
 
 ```{r}
