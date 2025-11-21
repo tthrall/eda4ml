@@ -421,6 +421,58 @@ tt_point <- function(
 }
 
 ## 
+#  bbox_valid()
+#  
+#    Validate a purported bounding box, 
+#    which is a list of the following form.
+#  
+#      bbox = list (xmin, xmax, ymin, ymax)
+## 
+bbox_valid <- function(
+    bbox # <lst> named list (xmin, xmax, ymin, ymax)
+) {
+  # is bbox valid?
+  bb_tst <- assertthat::validate_that(
+    is.list( bbox ), 
+    length( bbox ) == 4L, 
+    bbox$ xmin < bbox$ xmax, 
+    bbox$ ymin < bbox$ ymax )
+  if ( is.character( bb_tst ) ) {
+    return(FALSE)
+  } else {
+    return(TRUE)
+  }
+}
+
+## 
+#  xy_in_bbox()
+#  
+#    Determine whether point(s) (x, y) belongs to 
+#    the closed rectangle defined by a bounding box, 
+#    which is a list of the following form.
+#  
+#      bbox = list (xmin, xmax, ymin, ymax)
+## 
+xy_in_bbox <- function(
+  x,   # <dbl> 1st coordinate of point (x, y) 
+  y,   # <dbl> 2nd coordinate of point (x, y)  
+  bbox # <lst> named list (xmin, xmax, ymin, ymax)
+) {
+  # is bbox valid?
+  if (! bbox_valid( bbox ) ) {
+    return(NULL) }
+  xy_tst <- assertthat::validate_that(
+    length(x) > 0, 
+    length(x) == length(y) )
+  if ( is.character( xy_tst ) ) {
+    return(NULL) }
+  
+  tf_x <- (x >= bbox$ xmin) & (x <= bbox$ xmax)
+  tf_y <- (y >= bbox$ ymin) & (y <= bbox$ ymax)
+  return( tf_x & tf_y )
+}
+
+## 
 #  bt_list()
 #  
 #    Find the points of intersection of a bounding box and a line.
@@ -436,13 +488,8 @@ bt_list <- function(
     trip, # <dbl> triplet (c0, c1, c2)
     tol = 1e-10 # <dbl> lower bound for norm(c1, c2)
 ) {
-  # is bbox valid?
-  assertthat::assert_that(
-    is.list(bbox), 
-    length(bbox) == 4L, 
-    bbox$ xmin < bbox$ xmax, 
-    bbox$ ymin < bbox$ ymax
-  )
+  if (! bbox_valid( bbox )) {
+    return(NULL) }
   
   # scale trip coefficients, if possible
   t_std <- trip |> get_std_trip(tol = tol)
