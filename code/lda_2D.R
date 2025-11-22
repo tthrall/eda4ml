@@ -194,6 +194,35 @@ l2D_get_xy_stats <- function(
 }
 
 ## 
+#  trip_valid()
+#  
+#    Validate a purported triplet of homogeneous coefficients, 
+#    which is a vector of the following form.
+#  
+#      trip = c( c0, c1, c2 )
+## 
+trip_valid <- function(
+    trip, # <dbl> vector c( c0, c1, c2 )
+    tol = 1e-10 # <dbl> lower bound for norm(c1, c2)
+) {
+  trip_tst_1 <- assertthat::validate_that(
+    is.numeric( trip ), 
+    is.vector ( trip ), 
+    length(trip) >= 3L)
+  if ( is.character( trip_tst_1 ) ) {
+    return(FALSE) }
+  
+  nrm_2_3 <- sqrt( ( trip [2] ^2 ) + ( trip [3] ^2 ) )
+  trip_tst_2 <- assertthat::validate_that( nrm_2_3 > tol )
+  
+  if ( is.character( trip_tst_2 ) ) {
+    return(FALSE) 
+  } else {
+    return(TRUE)
+  }
+}
+
+## 
 #  get_std_trip()
 #  
 #    Ensure that a given numeric triplet, (c0, c1, c2), 
@@ -210,18 +239,11 @@ get_std_trip <- function(
     trip, # <dbl> triplet c(c0, c1, c2)
     tol = 1e-10 # <dbl> lower bound for norm(c1, c2)
 ) {
-  ## 
-  # is trip valid?
-  ## 
-  assertthat::assert_that(
-    is.numeric( trip ), 
-    is.vector ( trip ), 
-    length(trip) >= 3L)
+  if (! trip |> trip_valid (tol = tol)) {
+    return(NULL) }
   
-  nrm_2_3 <- sqrt(trip[2]^2 + trip[3]^2)
-  assertthat::assert_that( nrm_2_3 > tol )
-  
-  # t_new = (const, cos(theta), sin(theta)), 0 <= theta <= pi
+  # t_std = (const, cos(theta), sin(theta)), 0 <= theta <= pi
+  nrm_2_3 <- sqrt( ( trip [2] ^2 ) + ( trip [3] ^2 ) )
   t_std <- trip [1:3] / nrm_2_3
   if ( t_std [[3]] < 0 ) t_std = - t_std
   
@@ -281,6 +303,38 @@ trip_meets_seg <- function(
     trip_line(xend, yend) <= 0
   
   return(t_meets_s)
+}
+
+## 
+#  seg_valid()
+#  
+#    Validate a purported directed segment of the following form.
+#  
+#      seg = c( x, y, xend, yend )
+## 
+seg_valid <- function(
+    seg, # <dbl> vector c( x, y, xend, yend ) 
+    tol = 1e-10 # <dbl> lower bound for norm(c1, c2)
+) {
+  seg_tst_1 <- assertthat::validate_that(
+    is.numeric( seg ), 
+    is.vector ( seg ), 
+    length( seg ) >= 4L)
+  if ( is.character( seg_tst_1 ) ) {
+    return(FALSE) }
+  
+  # extract seg elements
+  x    <- seg [[1]]
+  y    <- seg [[2]]
+  xend <- seg [[3]]
+  yend <- seg [[4]]
+  
+  seg_nrm <- sqrt( (x - xend)^2 + (y - yend)^2 )
+  seg_tst_2 <- assertthat::validate_that( seg_nrm > tol )
+  if ( is.character( seg_tst_2 ) ) {
+    return(FALSE) }
+  
+  return(TRUE)
 }
 
 ## 
@@ -442,6 +496,89 @@ bbox_valid <- function(
   } else {
     return(TRUE)
   }
+}
+
+## 
+#  bbox_diag_to_seg()
+#  
+#    Given bounding box 
+#  
+#      bbox = list(xmin, xmax, ymin, ymax) 
+#  
+#    return segment 
+#  
+#      seg = c(x = xmin, y = ymin, xend = xmax, yend = ymax)
+## 
+bbox_diag_to_seg <- function(
+    bbox = NULL # <lst> named list(xmin, xmax, ymin, ymax)
+) {
+  # bbox default value
+  if ( is.null( bbox ) ) {
+    bbox <- list(xmin = -1, xmax = 1, ymin = -1, ymax = 1) }
+  
+  if (! bbox |> bbox_valid() ) {
+    return(NULL) }
+  
+  seg <- c(
+    x    = bbox$ xmin, y    = bbox$ ymin, 
+    xend = bbox$ xmax, yend = bbox$ ymax )
+  
+  return(seg)
+}
+
+## 
+#  seg_to_bbox()
+#  
+#    Given a segment defined by a quartet of end-point coordinates 
+#  
+#      seg = c(x, y, xend, yend)
+#    
+#    return a bounding box, which is a list of the form 
+#  
+#      bbox = list(xmin, xmax, ymin, ymax)
+#  
+#    Map seg end-points to opposite bbox corners.
+## 
+seg_to_bbox <- function(
+    seg  = NULL, # <dbl> quartet c(x, y, xend, yend)
+    tol  = 1e-10 # <dbl> lower bound for (x_nrm, y_nrm)
+) {
+  # seg default value
+  if ( is.null( seg ) ) {
+    seg <- c(x = -1, y = -1, xend = 1, yend = 1) }
+  
+  if (! seg |> seg_valid(tol = tol) ) {
+    return(NULL) }
+  
+  # extract seg elements
+  x    <- seg [[1]]
+  y    <- seg [[2]]
+  xend <- seg [[3]]
+  yend <- seg [[4]]
+  
+  sx_min <- min(x, xend)
+  sx_max <- max(x, xend)
+  x_nrm  <- sx_max - sx_min
+  
+  sy_min <- min(y, yend)
+  sy_max <- max(y, yend)
+  y_nrm  <- sy_max - sy_min
+  
+  # ensure seg not parallel to x-axis or y-axis
+  seg_tst <- assertthat::validate_that(
+    x_nrm > tol, 
+    y_nrm > tol )
+  if ( is.character( seg_tst ) ) {
+    return(NULL) }
+  
+  bbox = list(
+    xmin = sx_min, 
+    xmax = sx_max, 
+    
+    ymin = sy_min, 
+    ymax = sy_max )
+  
+  return(bbox)
 }
 
 ## 
@@ -609,7 +746,7 @@ bt_seg <- function(
 }
 
 ## 
-#  l2D_get_bb_segs()
+#  get_bb_segs()
 #  
 #    Given: data frame df, 2 specified predictor columns, 
 #    (x_1, x_2), 1 specified grouping column (y_group), 
@@ -619,7 +756,7 @@ bt_seg <- function(
 #    a table of bounding box segments, one directed segment 
 #    for each pair of distinct groups.
 ## 
-l2D_get_bb_segs <- function(
+get_bb_segs <- function(
     df,         # <df>  a data frame containing (x_1, x_2, y_group)
     x_1,        # <id>  name of 1st predictor variable
     x_2,        # <id>  name of 2nd predictor variable
@@ -699,20 +836,14 @@ l2D_get_bb_segs <- function(
   return(bb_segs_lst)
 }
 # test 1:
-# wq_z |> l2D_get_bb_segs(
+# wq_z |> get_bb_segs(
 #   density, res_sugar, color,
-#   bbox = list(
-#     xmin = -1, xmax = 1,
-#     ymin = -1, ymax = 1)
-# )
+#   bbox = seg_to_bbox() )
 # 
 # test 2:
-# wqual_z  |> l2D_get_bb_segs(
+# wqual_z  |> get_bb_segs(
 #   alcohol, res_sugar, q_level,
-#   bbox = list(
-#     xmin = -1, xmax = 1,
-#     ymin = -1, ymax = 1)
-# )
+#   bbox = seg_to_bbox() )
 
 ## 
 #  get_igroup_tbl()
