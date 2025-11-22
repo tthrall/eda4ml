@@ -2003,7 +2003,7 @@ To see the quality groups in a scatter plot, let's select features `alcohol` and
 
 ```{r}
 #| label: fig-wqual-clr-a-s
-#| fig-cap: "Wine quality per alcohol, sugar z-values"
+#| fig-cap: "Wine quality per alcohol and sugar z-values"
 
 g_wqual_clr_a_s <- wqual_z |> 
   dplyr::rename(level = q_level) |> 
@@ -2014,33 +2014,206 @@ g_wqual_clr_a_s <- wqual_z |>
   ggplot2::geom_point() + 
   ggplot2::facet_grid(rows = vars(color)) + 
   ggplot2::labs(
-    title = "Wine quality per alcohol, sugar z-values")
+    title = "Wine quality per alcohol and sugar z-values")
 
 g_wqual_clr_a_s
 
 ```
 
-The white wines include cases with extremely high residual sugar, more than 5 or 10 standard deviations above the average.  Let's exclude these data points in order to examine the remaining data in more detail.  Let's also restrict attention to the white wines.  @fig-wqual-white-a-s shows the resulting data.
+The white wines include cases with extremely high residual sugar, more than 5 or 10 standard deviations above the average.  Let's exclude these data points in order to examine the remaining data in more detail.  Let's also restrict attention to the white wines.
+
+```{r}
+#| label: wqual-white-alc-sugar
+
+wqual_was <- wqual_z |> 
+  dplyr::filter(color == "white", res_sugar < 5)
+
+```
+
+```{r}
+#| label: wqual-white-a-s-ss-pts
+
+wqual_was_ss_pts_lst <- wqual_was |> 
+  get_ss_points(alcohol, res_sugar, q_level)
+
+```
+
+```{r}
+#| label: wqual-was-bb-segs
+
+wqual_was_bb_segs_tbl <- 
+  wqual_was_ss_pts_lst$ bb_segs_tbl
+
+wqual_was_bb_segs_iqlvl <- 
+  wqual_was_bb_segs_tbl |> 
+  dplyr::select(ig_1, ig_2) |> 
+  dplyr::rowwise() |> 
+  dplyr::mutate(
+    iqlvl = paste0("iq_", ig_1, "_", ig_2)
+  )
+  
+
+wqual_was_bb_segs_mat <- 
+  wqual_was_bb_segs_tbl |> 
+  dplyr::select(x:yend) |> 
+  as.matrix()
+rownames(wqual_was_bb_segs_mat) <- 
+  wqual_was_bb_segs_iqlvl$ iqlvl
+
+# wqual_was_bb_segs_mat
+#                 x         y       xend     yend
+# iq_1_2 -0.3508346 -1.017956 -1.7263387 4.331151
+# iq_1_3  1.6096527 -1.017956  0.8229706 4.331151
+# iq_2_3  0.6722320 -1.017956 -0.3959994 4.331151
+
+```
+
+@fig-wqual-white-a-s shows the resulting data, along with line segments representing linear discrimination between each pair of quality levels (low, medium, high).
 
 ```{r}
 #| label: fig-wqual-white-a-s
-#| fig-cap: "White wine quality per alcohol, sugar z_values"
+#| fig-cap: "White wine quality per alcohol and sugar z-values"
 
-g_wqual_white_a_s <- wqual_z |> 
-  dplyr::filter(color == "white", res_sugar < 5) |> 
+g_wqual_was <- wqual_was |> 
   dplyr::rename(level = q_level) |> 
   ggplot2::ggplot(mapping = aes(
     x = alcohol, y = res_sugar, 
     colour = level, fill = level
   )) + 
-  ggplot2::geom_point() + 
+  ggplot2::geom_point(show.legend = FALSE) + 
+  ggplot2::geom_segment(
+    show.legend = FALSE, 
+    aes(colour = "black", 
+      x    = wqual_was_bb_segs_mat [[1, "x"]], 
+      y    = wqual_was_bb_segs_mat [[1, "y"]], 
+      xend = wqual_was_bb_segs_mat [[1, "xend"]], 
+      yend = wqual_was_bb_segs_mat [[1, "yend"]] ) ) + 
+  ggplot2::geom_segment(
+    show.legend = FALSE, 
+    aes(colour = "black", 
+      x    = wqual_was_bb_segs_mat [[2, "x"]], 
+      y    = wqual_was_bb_segs_mat [[2, "y"]], 
+      xend = wqual_was_bb_segs_mat [[2, "xend"]], 
+      yend = wqual_was_bb_segs_mat [[2, "yend"]] ) ) + 
+  ggplot2::geom_segment(
+    show.legend = FALSE, 
+    aes(colour = "black", 
+        x    = wqual_was_bb_segs_mat [[3, "x"]], 
+        y    = wqual_was_bb_segs_mat [[3, "y"]], 
+        xend = wqual_was_bb_segs_mat [[3, "xend"]], 
+        yend = wqual_was_bb_segs_mat [[3, "yend"]] ) ) + 
   ggplot2::labs(
-    title = "White wine quality per alcohol, sugar z_values", 
+    title = "White wine quality per alcohol and sugar z-values", 
     subtitle = "(exludes sugar z-values > 5)")
 
-g_wqual_white_a_s
+g_wqual_was
 
 ```
+
+```{r}
+#| label: wqual-was-lda-mdl
+
+wqual_was_lda_mdl <-
+  parsnip::discrim_linear() |>
+  parsnip::fit_xy(
+    x = wqual_was |> 
+      dplyr::select(alcohol, res_sugar), 
+    y = wqual_was$ q_level
+  )
+
+```
+
+```{r}
+#| label: wqual-was-lda-predict
+
+# tibble of 1 column <fct>: .pred_class (red or white)
+wqual_was_lda_class <- wqual_was_lda_mdl |> 
+  parsnip::predict.model_fit(
+    new_data = wqual_was |> 
+      dplyr::select(alcohol, res_sugar), 
+    type = "class")
+
+# tibble of 2 columns <dbl>: (.pred_red, .pred_white)
+wqual_was_lda_prob <- wqual_was_lda_mdl |> 
+  parsnip::predict.model_fit(
+    new_data = wqual_was |> 
+      dplyr::select(alcohol, res_sugar), 
+    type = "prob")
+
+wqual_was_lda_predict <- dplyr::bind_cols(
+  wqual_was, wqual_was_lda_class, wqual_was_lda_prob)
+
+```
+
+The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-wqual-was-lda-coefficients.
+
+```{r}
+#| label: tbl-wqual-was-lda-coefficients
+#| tbl-cap: "White wine quality LDA: model coefficients"
+
+wqual_was_lda_mdl$ fit$ scaling |> 
+  tibble::as_tibble(rownames = "feature") |> 
+  knitr::kable(
+    caption = "White wine quality LDA: model coefficients", 
+    digits = 2)
+
+```
+
+```{r}
+#| label: wqual-was-lda-xtabs
+
+wqual_was_lda_xtabs_long <- wqual_was_lda_predict |> 
+  dplyr::summarise(
+    .by = c(q_level, .pred_class), 
+    n = n()) |> 
+  dplyr::arrange(q_level, .pred_class)
+
+wqual_was_lda_xtabs_wide <- wqual_was_lda_xtabs_long |> 
+  tidyr::pivot_wider(
+    names_from = "q_level", 
+    values_from = "n")
+
+wqual_was_lda_xtabs_mat <- 
+  wqual_was_lda_xtabs_wide |> 
+  dplyr::select(- .pred_class) |> 
+  as.matrix()
+rownames(wqual_was_lda_xtabs_mat) <- 
+  wqual_was_lda_xtabs_wide$.pred_class
+
+n_wqual_was <- nrow(wqual_was)
+n_wqual_was_pred_correct <- 
+  wqual_was_lda_xtabs_mat |> diag() |> sum()
+prop_wqual_was_pred_correct <- 
+  n_wqual_was_pred_correct / n_wqual_was
+prop_wqual_was_pred_wrong <- 1 - prop_wqual_was_pred_correct
+pct_wqual_was_pred_wrong <- 
+  round(100 * prop_wqual_was_pred_wrong)
+
+# > n_wqual_was
+# [1] 4895
+# > n_wqual_was_pred_correct
+# [1] 2589
+# > prop_wqual_was_pred_correct
+# [1] 0.528907
+
+```
+
+@tbl-wqual-was-lda-xtabs is a cross-tabulation of the actual versus the predicted quality level.
+
+```{r}
+#| label: tbl-wqual-was-lda-xtabs
+#| tbl-cap: "White wine quality level: actual versus LDA prediction"
+
+wqual_was_lda_xtabs_wide |> 
+  knitr::kable(
+    caption = "White wine quality level: actual versus LDA prediction"
+  )
+
+```
+
+The table shows an overall error rate of about `r pct_wqual_was_pred_wrong` percent, which is very high. [^multinomial-guessing]  Including more predictors should lower the error rate, but the quality of wine may also require prediction methods other than linear classifiers.
+
+[^multinomial-guessing]: Remember that classification becomes more difficult with more categories.  The expected error rate from the random guessing of 3 equally likely categories is 67 percent.
 
 #### Wine Color: $d = 11$, $K = 2$
 

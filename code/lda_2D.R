@@ -57,8 +57,7 @@ l2D_sim_xy_tbl <- function(
   # mu_mat
   assertthat::assert_that(
     nrow( mu_mat ) == 2L, 
-    ncol( mu_mat ) == 9L
-  )
+    ncol( mu_mat ) == 9L )
   
   # pi_vec
   assertthat::assert_that(
@@ -83,9 +82,9 @@ l2D_sim_xy_tbl <- function(
   # number of rows in each group
   grp_size <- rmultinom(1, n_rows, pi_vec)
   
-  rdx_1 <- 1L # starting row index
+  rdx_1 <- 1L # initial row index
   for (cls in 1:3) {
-    # number of rows for each of 3 Z centroids per cls
+    # number of rows for each of 3 Z-centroids per cls
     n_per_ctr <- rmultinom(1, grp_size [[cls]], pi_vec)
     for (mix in 1:3) {
       mu_idx <- (3L * (cls - 1L)) + mix
@@ -94,6 +93,7 @@ l2D_sim_xy_tbl <- function(
         mu    = mu_mat [mu_idx, ], 
         Sigma = cov_mat
       )
+      # rdx_2: final row index
       rdx_2 <- rdx_1 + n_per_ctr [[mix]] - 1L
       xy_mat [rdx_1:rdx_2, 1:2] <- s
       xy_mat [rdx_1:rdx_2,   3] <- cls
