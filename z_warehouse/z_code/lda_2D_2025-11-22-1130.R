@@ -8,103 +8,6 @@
 #####
 
 ## 
-#  l2D_sim_xy_tbl()
-#  
-#    Randomly generate a 3-column tibble (x_1, x_2, y_group).  By  
-#    default (x_1, x_2) are conditionally independent given y_group, 
-#    and are each mixtures of independent Gaussian variables.
-#    
-#      y_group %in% 1:3
-#    
-#      E( (X_1, X_2) | Y = k) 
-#        = sum_j pi_j * (mu_1 [[j, k]], mu_2 [[j, k]])
-#  
-#    Code adapted from from Knox_2018_ML.
-## 
-l2D_sim_xy_tbl <- function(
-    mu_mat  = NULL, # <dbl> means of Gaussian mixture components
-    pi_vec  = NULL, # <dbl> 3 group probabilities (sum = 1)
-    cov_mat = NULL, # <dbl> conditional covariance of (Z_1, Z_2)
-    n_rows  = 720L  # <int> desired number of rows of data
-) {
-  ## 
-  #  default values
-  ## 
-  
-  # mu_mat default
-  if ( is.null( mu_mat ) ) {
-    radius <- rep(3:1, 3)
-    angle  <- seq(3, 19, 2) * pi / 9
-    mu_mat <- matrix(nrow = 9, ncol = 2)
-    for (i in 1:9) {
-      mu_mat [i, ] <- radius [[i]] * c(
-        cos( angle [[i]] ), sin( angle [[i]] ) )
-    }
-  }
-  
-  # pi_vec default: equi-probable
-  if ( is.null( pi_vec ) ) {
-    pi_vec <- c(1, 1, 1)/3 }
-  
-  # cov_mat default: 2D identity matrix
-  if ( is.null( cov_mat ) ) {
-    cov_mat = diag(2) }
-  
-  ## 
-  #  validate given specs
-  ## 
-  
-  # mu_mat
-  assertthat::assert_that(
-    nrow( mu_mat ) == 2L, 
-    ncol( mu_mat ) == 9L
-  )
-  
-  # pi_vec
-  assertthat::assert_that(
-    length( pi_vec ) == 3L, 
-    min( pi_vec ) >= 0, 
-    dplyr::near(1, sum( pi_vec ) ) )
-  
-  # cov_mat
-  assertthat::assert_that(
-    nrow( cov_mat ) == 2L, 
-    ncol( cov_mat ) == 2L, 
-    det( cov2cor( cov_mat ) ) > 0 )
-  
-  ## 
-  #  generate xy_tbl
-  ## 
-  
-  # initialize data matrix
-  xy_mat <- matrix(NA, n_rows, 3)
-  colnames(xy_mat) <- c("x_1", "x_2", "y_group")
-  
-  # number of rows in each group
-  grp_size <- rmultinom(1, n_rows, pi_vec)
-  
-  rdx_1 <- 1L # starting row index
-  for (cls in 1:3) {
-    # number of rows for each of 3 Z centroids per cls
-    n_per_ctr <- rmultinom(1, grp_size [[cls]], pi_vec)
-    for (mix in 1:3) {
-      mu_idx <- (3L * (cls - 1L)) + mix
-      s <- MASS::mvrnorm(
-        n     = n_per_ctr [[mix]], 
-        mu    = mu_mat [mu_idx, ], 
-        Sigma = cov_mat
-      )
-      rdx_2 <- rdx_1 + n_per_ctr [[mix]] - 1L
-      xy_mat [rdx_1:rdx_2, 1:2] <- s
-      xy_mat [rdx_1:rdx_2,   3] <- cls
-      rdx_1 <- rdx_1 + n_per_ctr [[mix]]
-    }
-  }
-  xy_tbl <- xy_mat |> tibble::as_tibble()
-  return(xy_tbl)
-}
-
-## 
 #  l2D_select_xy_tbl()
 #  
 #    Given data frame df and 3 specified columns, 
@@ -1107,14 +1010,26 @@ get_ss_points <- function(
         )) 
       ) |> 
       dplyr::select(1:10, seg_1, seg_2)
-    
     # point of segment intersection
-    ss_pts_tbl <- ss_pts_tbl |>
-      dplyr::rowwise() |>
-      dplyr::mutate(
-        pt = list( ss_point(seg_1, seg_2) )
-      )
+    # ss_pts_tbl <- ss_pts_tbl |> 
+    #   dplyr::rowwise() |> 
+    #   dplyr::mutate(
+    #     pt = list( ss_point(seg_1, seg_2) )
+    #   )
     pt_lst <- list()
+    for (i in 1:nrow(ss_pts_tbl)) {
+      s_1    <- ss_pts_tbl$ seg_1 [[i]]
+      s_2    <- ss_pts_tbl$ seg_2 [[i]]
+      pt_tmp <- ss_point( s_1, s_2 )
+      cat(
+        "\ni = ", i, "\ns_1 = ", s_1, "\ns_2 = ", s_2, "\npt_tmp == NULL", is.null(pt_tmp)
+      )
+      pt_lst [[i]] <- pt_tmp
+    }
+    
+    ss_pts_tbl <- ss_pts_tbl |>
+      dplyr::mutate(
+        pt = list(pt_lst) )
     
     # repair names
     names(ss_pts_tbl) [1:10] <- names(iseg_tbl)
@@ -1129,11 +1044,6 @@ get_ss_points <- function(
 }
 # test_1: 
 # tst_ss_pts_lst <- wqual_z  |> get_ss_points(alcohol, res_sugar, q_level)
-# 
-# test_2: 
-# tst_sim_xy_tbl <- l2D_sim_xy_tbl()
-# tst_ss_pts_lst <- tst_sim_xy_tbl |> get_ss_points(x_1, x_2, y_group)
-# tst_ss_pts_lst$ ss_pts_tbl$ pt
 
 ##
 #  EOF
