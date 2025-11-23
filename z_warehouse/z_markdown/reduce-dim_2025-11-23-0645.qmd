@@ -1506,13 +1506,25 @@ We now conclude this introductory PCA of the wine quality data, noting that:
 
 In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (wine color, or wine quality).
 
-## LDA: Linear Discriminant Analysis
+## Supervised Dimension Reduction {#sec-dim-r-supervised}
+
+Principal component analysis (PCA) is a prime example of an "unsupervised" method of reducing the column dimension $(d)$ of the feature matrix in order to improve our understanding and modeling of the data.  The term "unsupervised" corresponds to the absence of a response variable (target variable, or label).
+
+If the available data include a response variable, then the modeling goal is more focused: to determine a function of the feature matrix that closely approximates the response variable.
+
+In the presence of a response variable (or even without one), the modeling process may entail partitioning the available data into three sets for the respective purposes of training, testing, and evaluating (or validating) a model.  But for present purposes, in order to focus on methods from the perspective of linear algebra, we use all available data to train the model.
+
+We continue to use the wine quality data to illustrate methods, beginning with linear discriminant analysis (LDA) and concluding with partial least squares (PLS).
+
+In the wine quality principal component analysis (PCA) of the previous section, the feature matrix included wine quality and wine color.  In these new sections wine quality and wine color are removed from the feature set to play the role of responses (or labels, or target vectors).
+
+### LDA: Linear Discriminant Analysis
 
 In the previous section we conducted a principal component analysis (PCA) of the wine quality data in which the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines.  Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.
 
 We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes as responses to the remaining 11 features.  In this new setting, let's see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this task.
 
-### Model of $K$ Categories
+#### Model of $K$ Categories
 
 The basic LDA model assumes that each observation, that is, each row $x_{i, \bullet}$ of the feature matrix $X_{\bullet, \bullet}$ belongs to one of $K$ categories, $(\mathcal{C}_1, \ldots, \mathcal{C}_K)$ identified by $Y$, a label (response variable) available in the training data.  Let us denote the output of the model as $\hat{Y} (\cdot)$, a function of $x_\bullet \in \mathbb{R}^d$ designed to agree with $Y$ as often as possible. [^K-2-wine-color] [^label-format]  
 
@@ -1697,7 +1709,7 @@ $$
 \end{align}
 $$ {#eq-hat-S-k}
 
-### Binary Case: $K = 2$
+#### Binary Case: $K = 2$
 
 When $K = 2$ we have the following binary assignment of $x_\bullet \in \mathbb{R}^d$: 
 
@@ -1759,7 +1771,7 @@ $$
 \end{align}
 $$ {#eq-binary-assignment-2}
 
-### Wine Color: $d = 2$, $K = 2$
+#### Wine Color: $d = 2$, $K = 2$
 
 ```{r}
 #| label: wq-z
@@ -1965,7 +1977,7 @@ wclr_lda_2D_xtabs_wide |>
 
 The mis-classification rates are about 12% for red wines, and 3% for white wines.  Those rates can be reduced by using additional predictors, as we'll see shortly.
 
-### Wine Color: $d = 11$, $K = 2$
+#### Wine Color: $d = 11$, $K = 2$
 
 ```{r}
 #| label: wclr-lda-mdl
@@ -2104,7 +2116,7 @@ For red wines, the LDA classifier probabilities were decisively zero or one, wit
 
 As for white wines, the mis-classification rate was merely 0.4%.  And in those instances of mis-classification, the classifier tended to produce more ambiguous probabilities than for red wines.
 
-### Wine Quality: $d = 2$, $K = 3$
+#### Wine Quality: $d = 2$, $K = 3$
 
 ```{r}
 #| label: wqual-z
@@ -2353,17 +2365,11 @@ The table shows an overall error rate of about `r pct_wqual_was_pred_wrong` perc
 
 [^multinomial-guessing]: Remember that classification becomes more difficult with more categories.  The expected error rate from the random guessing of 3 equally likely categories is 67 percent.
 
-## Supervised or Not {#sec-dim-r-supervised}
+### PLS: Partial Least Squares
 
-Principal component analysis (PCA) is a prime example of an "unsupervised" method of reducing the column dimension $(d)$ of the feature matrix in order to improve our understanding and modeling of the data.  The term "unsupervised" corresponds to the absence of a response variable (target variable, or label).
+## Computational Considerations {#sec-dim-r-computation}
 
-If the available data include a response variable, then the modeling goal is more focused: to determine a function of the feature matrix that closely approximates the response variable.
-
-In the presence of a response variable (or even without one), the modeling process may entail partitioning the available data into three sets for the respective purposes of training, testing, and evaluating (or validating) a model.  But for present purposes, in order to focus on methods from the perspective of linear algebra, we use all available data to train the model.
-
-We continue to use the wine quality data to illustrate methods, beginning with linear discriminant analysis (LDA) and concluding with partial least squares (PLS).
-
-In the wine quality principal component analysis (PCA) of the previous section, the feature matrix included wine quality and wine color.  In these new sections wine quality and wine color are removed from the feature set to play the role of responses (or labels, or target vectors).
+## Choosing and Evaluating Methods {#sec-dim-r-choose-method}
 
 ## Other Methods {#sec-dim-r-other-methods}
 
