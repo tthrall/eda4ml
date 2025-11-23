@@ -8,6 +8,78 @@
 #####
 
 ## 
+#  sim_1D_xy_tbl()
+#  
+#    Randomly generate a 3-column tibble (x_1, i_grp, y_group) from 
+#    mixture specifications given by input tibble xy_params.
+#  
+#    Return both the input and output tibbles.
+## 
+sim_1D_xy_tbl <- function(
+    xy_params = NULL, # <tbl> prescribed mean, sd, prob, label per group
+    n_rows   = 1000L  # <int> desired number of rows of data
+) {
+  # default example: book price (general, technical)
+  # url: https://latestcost.com/average-cost-of-hardcover-book/
+  if ( is.null( xy_params ) ) {
+    xy_params <- tibble::tibble(
+      mean = c(30, 100), 
+      sd   = c(5, 20), 
+      prob = c(0.8, 0.2), 
+      label = c("general", "technical")
+    ) 
+  } else {
+    # check validity of given xy_params
+    assertthat::validate_that(
+      tibble::is_tibble( xy_params ), 
+      ( names(xy_params) %in% 
+        c("mean", "sd", "prob", "label") ) |> 
+        all(), 
+      is.numeric( xy_params$ mean ), 
+      is.numeric( xy_params$ sd ), 
+      is.numeric( xy_params$ prob ), 
+      min( xy_params$ sd ) > 0, 
+      min( xy_params$ prob ) > 0, 
+      dplyr::near(1, sum( xy_params$ prob )), 
+      length( unique( xy_params$ label) ) >= 2L
+    )
+  }
+  # initialize data matrix
+  xy_mat <- matrix(NA, n_rows, 2)
+  colnames(xy_mat) <- c("x_1", "i_grp")
+  
+  # number of groups, data rows per group
+  n_groups <- nrow(xy_params)
+  grp_size <- rmultinom( 1, n_rows, xy_params$ prob )
+  
+  # generate data values
+  rdx_1 <- 1L # initial row index
+  for (i_g in 1:n_groups) {
+    # rdx_2: final data-row index within group i_g
+    rdx_2 <- rdx_1 + grp_size [[i_g]] - 1L
+    
+    xy_mat [rdx_1:rdx_2, "x_1"] <- rnorm(
+      n    = grp_size [[i_g]], 
+      mean = xy_params$ mean [[i_g]], 
+      sd   = xy_params$ sd [[i_g]] )
+    
+    xy_mat [rdx_1:rdx_2, "i_grp"] = i_g
+    
+    rdx_1 <- rdx_2 + 1L
+  }
+  xy_tbl <- xy_mat |> 
+    tibble::as_tibble() |> 
+    dplyr::mutate(
+      y_group = xy_params$ label [i_grp]
+    )
+  
+  return(list(
+    xy_params = xy_params, 
+    xy_tbl    = xy_tbl
+  ))
+}
+
+## 
 #  l2D_sim_xy_tbl()
 #  
 #    Randomly generate a 3-column tibble (x_1, x_2, y_group).  By  
@@ -569,6 +641,28 @@ tt_point <- function(
   
   names(soln) <- c("x", "y")
   return(soln)
+}
+
+##
+#  extract_ggplot_bbox()
+#
+#    Given a ggplot object, extract the actual axis limits
+#    that will be used for rendering.
+##
+extract_ggplot_bbox <- function(
+    gg_plot # <lst> object returned by ggplot2::ggplot()
+  ) {
+  
+  built        <- ggplot_build(gg_plot)
+  panel_params <- built$ layout$ panel_params [[1]]
+  
+  bbox <- list(
+    xmin = panel_params$ x.range [1],
+    xmax = panel_params$ x.range [2],
+    ymin = panel_params$ y.range [1],
+    ymax = panel_params$ y.range [2] )
+  
+  return(bbox)
 }
 
 ## 
