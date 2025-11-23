@@ -13,7 +13,7 @@
 #    Randomly generate a 3-column tibble (x_1, i_grp, y_group) from 
 #    mixture specifications given by input tibble xy_params.
 #  
-#    Return both the input and output tibbles.
+#    Return input and output tibbles, along with a summary of the output.
 ## 
 sim_1D_xy_tbl <- function(
     xy_params = NULL, # <tbl> prescribed mean, sd, prob, label per group
@@ -73,9 +73,38 @@ sim_1D_xy_tbl <- function(
       y_group = xy_params$ label [i_grp]
     )
   
+  # summarize data values per y_group
+  xy_smy <- xy_tbl |> 
+    dplyr::summarise(
+      .by    = y_group, 
+      x_mean = mean(x_1), 
+      x_sd   = sd(x_1), 
+      n      = n(), 
+      propn  = n / nrow(xy_tbl) )
+  
+  # summarize data values unconditionally
+  xy_unc <- xy_tbl |> 
+    dplyr::summarise(
+      x_mean = mean(x_1), 
+      x_sd   = sd(x_1), 
+      n      = n(), 
+      propn  = n / nrow(xy_tbl) )
+  
+  # TODO: Calculate decision boundary between successive group means
+  # A Gentle Introduction to Gaussian Discriminant Analysis: 
+  # Gaussian Naive Bayes, Linear Discriminant Analysis, and 
+  # Quadratic Discriminant Analysis | by Yuki Shizuya | 
+  # The Quantastic Journal | Medium
+  # 
+  # https://medium.com/the-quantastic-journal/
+  # 
+  # d_x = (mu_1 + mu_2)/2 + s^2 * ln(pi_1 / pi_2) /(mu_1 - mu_2)
+  
   return(list(
     xy_params = xy_params, 
-    xy_tbl    = xy_tbl
+    xy_tbl    = xy_tbl, 
+    xy_smy    = xy_smy, 
+    xy_unc    = xy_unc
   ))
 }
 
