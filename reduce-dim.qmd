@@ -1584,7 +1584,29 @@ $$ {#eq-estimate-mean-cov}
 
 Replacing the mean and covariance terms by their estimated values gives an estimated density function $\hat{f}_k(x_\bullet)$.
 
-According to Bayesian decision theory (which we hereby invoke), the Bayes classification rule is to assign the $d-$dimensional observation vector $x_\bullet$ to whichever category $k$ maximizes the weighted density $\pi_k \; f_k(x_\bullet)$.
+According to Bayesian decision theory the posterior probability that a new observation having feature set $\mathcal{X} = x_\bullet$ belongs to class $Y = \mathcal{C}_\eta$ is: 
+
+$$
+\begin{align}
+  &
+    P 
+    \left ( 
+      Y = \mathcal{C}_\eta 
+      \; | \; 
+      \mathcal{X} = x_\bullet
+    \right ) \\ 
+  &= 
+    \frac 
+      { \pi_\eta \; f_\eta (x_\bullet) }
+      { \sum_{k = 1}^K \pi_k \; f_k (x_\bullet)  } \\ 
+  &= 
+    \frac 
+      {\exp( \delta_\eta (x_\bullet) )}
+      { \sum_{k = 1}^K \exp( \delta_k (x_\bullet) )  }
+\end{align}
+$$ {#eq-posterior-probability-class-eta}
+
+Therefore the Bayes classification rule is to assign the $d-$dimensional observation vector $x_\bullet$ to whichever category $k$ maximizes the weighted density $\pi_k \; f_k(x_\bullet)$.
 
 $$
 \begin{align}
@@ -1624,28 +1646,6 @@ $$
       \log_e (\pi_k)
 \end{align}
 $$ {#eq-delta-k}
-
-In this Bayesian framework the posterior probability that a new observation having feature set $\mathcal{X} = x_\bullet$ belongs to class $Y = \mathcal{C}_\eta$ is: 
-
-$$
-\begin{align}
-  &
-    P 
-    \left ( 
-      Y = \mathcal{C}_\eta 
-      \; | \; 
-      \mathcal{X} = x_\bullet
-    \right ) \\ 
-  &= 
-    \frac 
-      { \pi_\eta \; f_\eta (x_\bullet) }
-      { \sum_{k = 1}^K \pi_k \; f_k (x_\bullet)  } \\ 
-  &= 
-    \frac 
-      {\exp( \delta_\eta (x_\bullet) )}
-      { \sum_{k = 1}^K \exp( \delta_k (x_\bullet) )  }
-\end{align}
-$$ {#eq-posterior-probability-class-eta}
 
 The LDA model implements @eq-delta-k by replacing each unknown parameter value with the corresponding value estimated from the data:
 
