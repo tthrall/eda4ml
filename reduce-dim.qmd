@@ -35,7 +35,7 @@ library(knitr)
 library(MASS)
 library(mclust)
 # library(OECD)
-# library(patchwork)
+library(patchwork)
 library(plotly)
 library(pracma)
 library(rlang)
@@ -1511,6 +1511,122 @@ In the next section we continue our analysis of the wine quality data, but with 
 In the previous section we conducted a principal component analysis (PCA) of the wine quality data in which the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines.  Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.
 
 We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes as responses to the remaining 11 features.  In this new setting, let's see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this task.
+
+### 1D Toy Example
+
+```{r}
+#| label: sim-1D-4-1
+
+sim_1D_lst_4_1 <- sim_1D_xy_tbl()
+xy_params_4_1  <- sim_1D_lst_4_1$ xy_params
+xy_tbl_4_1     <- sim_1D_lst_4_1$ xy_tbl
+xy_smy_4_1     <- sim_1D_lst_4_1$ xy_smy
+xy_unc_4_1     <- sim_1D_lst_4_1$ xy_unc
+
+# xy_smy_4_1
+# # A tibble: 2 × 5
+#   y_group   x_mean  x_sd     n propn
+#   <chr>      <dbl> <dbl> <int> <dbl>
+# 1 general     30.0  5.12   798 0.798
+# 2 technical  101.  19.3    202 0.202
+
+# xy_unc_4_1
+# # A tibble: 1 × 4
+#   x_mean  x_sd     n propn
+#    <dbl> <dbl> <int> <dbl>
+# 1   44.3  30.1  1000     1
+
+```
+
+```{r}
+#| label: sim-1D-1-1
+
+# change probabilities from (80, 20) to (50, 50)
+xy_params_1_1 <- xy_params_4_1 |> 
+  dplyr::mutate(
+    prob = c(.5, .5)
+  )
+sim_1D_lst_1_1 <- sim_1D_xy_tbl(xy_params_1_1)
+xy_tbl_1_1     <- sim_1D_lst_1_1$ xy_tbl
+xy_smy_1_1     <- sim_1D_lst_1_1$ xy_smy
+xy_unc_1_1     <- sim_1D_lst_1_1$ xy_unc
+
+# xy_smy_1_1
+# # A tibble: 2 × 5
+#   y_group   x_mean  x_sd     n propn
+#   <chr>      <dbl> <dbl> <int> <dbl>
+# 1 general     29.8  4.98   510  0.51
+# 2 technical  100.  20.3    490  0.49
+
+# xy_unc_1_1
+# # A tibble: 1 × 4
+#   x_mean  x_sd     n propn
+#    <dbl> <dbl> <int> <dbl>
+# 1   64.3  38.2  1000     1
+
+```
+
+```{r}
+#| label: sim-1D-ref
+
+# change sd's and probabilities 
+xy_params_ref <- xy_params_4_1 |> 
+  dplyr::mutate(
+    sd   = c(10, 10), 
+    prob = c(.5, .5)
+  )
+sim_1D_lst_ref <- sim_1D_xy_tbl(xy_params_ref)
+xy_tbl_ref     <- sim_1D_lst_ref$ xy_tbl
+xy_smy_ref     <- sim_1D_lst_ref$ xy_smy
+xy_unc_ref     <- sim_1D_lst_ref$ xy_unc
+
+# xy_smy_ref
+# # A tibble: 2 × 5
+#   y_group   x_mean  x_sd     n propn
+#   <chr>      <dbl> <dbl> <int> <dbl>
+# 1 general     29.9 10.2    476 0.476
+# 2 technical  100.   9.31   524 0.524
+
+# xy_unc_ref
+# # A tibble: 1 × 4
+#   x_mean  x_sd     n propn
+#    <dbl> <dbl> <int> <dbl>
+# 1   66.7  36.4  1000     1
+
+```
+
+```{r}
+#| label: sim-1D-df_lbl
+
+# join the 3 simulated data sets
+xy_tbl_df_lbl <- dplyr::bind_rows(
+  xy_tbl_ref |> 
+    dplyr::mutate(df_lbl = "ref"), 
+  xy_tbl_1_1 |> 
+    dplyr::mutate(df_lbl = "p_50_50"), 
+  xy_tbl_4_1 |> 
+    dplyr::mutate(df_lbl = "p_80_20")
+)
+
+```
+
+```{r}
+#| label: fig-xy-df_lbl
+
+g_xy_df_lbl <- xy_tbl_df_lbl |> 
+  dplyr::mutate(df_lbl = forcats::as_factor(df_lbl)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = x_1, colour = y_group, fill = y_group
+  )) + 
+  ggplot2::geom_density() + 
+  # ggplot2::geom_histogram() + 
+  ggplot2::facet_grid(
+    rows = vars(df_lbl), 
+    scales = "free_y" )
+
+g_xy_df_lbl
+
+```
 
 ### Model of $K$ Categories
 
