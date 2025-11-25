@@ -13,37 +13,21 @@
 #    Randomly generate a 3-column tibble (x_1, i_grp, y_group) from 
 #    mixture specifications given by input tibble xy_params.
 #  
-#    Return input and output tibbles, along with a summary of the output.
+#    Return input and output tibbles, along with output summaries.
 ## 
 sim_1D_xy_tbl <- function(
     xy_params = NULL, # <tbl> prescribed mean, sd, prob, label per group
     n_rows   = 1000L  # <int> desired number of rows of data
 ) {
-  # default example: book price (general, technical)
-  # url: https://latestcost.com/average-cost-of-hardcover-book/
   if ( is.null( xy_params ) ) {
-    xy_params <- tibble::tibble(
-      mean = c(30, 100), 
-      sd   = c(5, 20), 
-      prob = c(0.8, 0.2), 
-      label = c("general", "technical")
-    ) 
+    xy_params <- get_default_xy_params()
   } else {
     # check validity of given xy_params
-    assertthat::validate_that(
-      tibble::is_tibble( xy_params ), 
-      ( names(xy_params) %in% 
-        c("mean", "sd", "prob", "label") ) |> 
-        all(), 
-      is.numeric( xy_params$ mean ), 
-      is.numeric( xy_params$ sd ), 
-      is.numeric( xy_params$ prob ), 
-      min( xy_params$ sd ) > 0, 
-      min( xy_params$ prob ) > 0, 
-      dplyr::near(1, sum( xy_params$ prob )), 
-      length( unique( xy_params$ label) ) >= 2L
-    )
+    is_valid <- xy_params |> valid_xy_params()
+    if (! is_valid ) {
+      return(NULL) }
   }
+  
   # initialize data matrix
   xy_mat <- matrix(NA, n_rows, 2)
   colnames(xy_mat) <- c("x_1", "i_grp")
@@ -90,21 +74,212 @@ sim_1D_xy_tbl <- function(
       n      = n(), 
       propn  = n / nrow(xy_tbl) )
   
-  # TODO: Calculate decision boundary between successive group means
-  # A Gentle Introduction to Gaussian Discriminant Analysis: 
-  # Gaussian Naive Bayes, Linear Discriminant Analysis, and 
-  # Quadratic Discriminant Analysis | by Yuki Shizuya | 
-  # The Quantastic Journal | Medium
-  # 
-  # https://medium.com/the-quantastic-journal/
-  # 
-  # d_x = (mu_1 + mu_2)/2 + s^2 * ln(pi_1 / pi_2) /(mu_1 - mu_2)
+  # calculate group boundary from simulation specs
+  pop_bdry <- xy_params |> 
+    Bayes_boundary_1D()
+  
+  # calculate group boundary from simulated data
+  smpl_bdry <- xy_smy |> 
+    dplyr::rename(
+      mean  = x_mean, 
+      sd    = x_sd, 
+      prob  = propn, 
+      label = y_group ) |> 
+    Bayes_boundary_1D()
   
   return(list(
     xy_params = xy_params, 
     xy_tbl    = xy_tbl, 
     xy_smy    = xy_smy, 
-    xy_unc    = xy_unc
+    xy_unc    = xy_unc, 
+    pop_bdry  = pop_bdry, 
+    smpl_bdry = smpl_bdry
+  ))
+}
+
+## 
+#  get_default_xy_params()
+#  
+#    Return 2-by-4 tibble: mean, sd, prob, label per group
+# 
+#    default example: book price (general, technical)
+#    url: https://latestcost.com/average-cost-of-hardcover-book/
+## 
+get_default_xy_params <- function() {
+  
+  xy_params <- tibble::tibble(
+    mean = c(30, 100), 
+    sd   = c(5, 20), 
+    prob = c(0.8, 0.2), 
+    label = c("general", "technical"))
+  
+  return(xy_params)
+}
+
+## 
+#  valid_xy_params()
+#  
+#    Check K-by-4 input tibble: 
+#      mean, sd, prob, label per group
+## 
+valid_xy_params <- function(
+    xy_params,  # <tbl> prescribed mean, sd, prob, label per group
+    tol = 1e-10 # <dbl> lower bound to compare abs(x) to zero
+) {
+  is_valid <- assertthat::validate_that(
+    tibble::is_tibble( xy_params ), 
+    ( c("mean", "sd", "prob", "label") %in% 
+        names(xy_params) ) |> 
+      all(), 
+    is.numeric( xy_params$ mean ), 
+    is.numeric( xy_params$ sd ), 
+    is.numeric( xy_params$ prob ), 
+    min( xy_params$ sd ) > 0, 
+    min( xy_params$ prob ) > 0, 
+    dplyr::near(1, sum( xy_params$ prob )), 
+    length( unique( xy_params$ label) ) >= 2L
+  )
+  
+  if ( is.character( is_valid ) ) {
+    return(FALSE) }
+  
+  return(TRUE)
+}
+
+## 
+#  Bayes_boundary_1D()
+#  
+#    Mixture model for k in 1:2: 
+#  
+#      (X | Y = k) = X_k 
+#                  = mu_k + sigma_k * Z_k
+#  
+#      P(Y = k) = p_k
+#  
+#    Problem: determine d_x, the Bayes optimal decision boundary 
+#             between X_1 and X_2.
+#  
+#    Return: list solution type, roots, and coefficients.
+## 
+Bayes_boundary_1D <- function(
+    xy_params = NULL, # <tbl> prescribed mean, sd, prob, label per group
+    tol       = 1e-10 # <dbl> lower bound to compare abs(x) to zero
+) {
+  ## 
+  # obtain and check xy_params
+  ## 
+  if ( is.null( xy_params ) ) {
+    xy_params <- get_default_xy_params()
+  } else {
+    # check validity of given xy_params
+    is_valid <- xy_params |> 
+      valid_xy_params(tol = tol)
+    if (! is_valid ) {
+      return(NULL) }
+  }
+  
+  # further checks
+  assertthat::assert_that(
+    nrow( xy_params ) == 2L, 
+    xy_params [[2, "mean"]] - 
+      xy_params [[1, "mean"]] > tol
+  )
+  
+  ## 
+  # extract params to simplify notation
+  ## 
+  mu_1 <- xy_params [[1, "mean"]]
+  mu_2 <- xy_params [[2, "mean"]]
+  
+  sigma_1 <- xy_params [[1, "sd"]]
+  sigma_2 <- xy_params [[2, "sd"]]
+  
+  p_1 <- xy_params [[1, "prob"]]
+  p_2 <- xy_params [[2, "prob"]]
+  
+  # conditional expected value of X^2
+  mom2_1 <- sigma_1^2 + mu_1^2
+  mom2_2 <- sigma_2^2 + mu_2^2
+  
+  ## 
+  # compute unconditional moments
+  ## 
+  mu_all    <- (p_1 * mu_1)   + (p_2 * mu_2)
+  mom2_all  <- (p_1 * mom2_1) + (p_2 * mom2_2)
+  var_all   <- mom2_all - mu_all^2
+  sigma_all <- sqrt(var_all)
+  
+  ## 
+  # quadratic coefficients for QDA
+  #   a*x^2 + b*x + c = 0
+  ## 
+  a <- 0.5 * (1/sigma_1^2 - 1/sigma_2^2)
+  b <- mu_2/sigma_2^2 - mu_1/sigma_1^2
+  c <- mu_1^2/(2*sigma_1^2) - mu_2^2/(2*sigma_2^2) - 
+    log(p_1/p_2) + log(sigma_1/sigma_2)
+  
+  coeff_vec <- c(a = a, b = b, c = c)
+  
+  # return NULL if all zero coefficients
+  nrm_abc <- pracma::Norm(coeff_vec)
+  
+  valid_nrm <- assertthat::validate_that(
+    nrm_abc > tol,
+    Norm(coeff_vec[1:2]) / nrm_abc > tol)
+  if ( is.character( valid_nrm ) ) {
+    return(NULL) }
+  
+  coeff_nrm <- coeff_vec / nrm_abc
+  
+  # coeff_nrm [["a"]]: round to zero if needed
+  if ( abs( coeff_nrm [["a"]] ) <= tol ) {
+    coeff_nrm [["a"]] <- 0
+    problem_type      <- "LDA"
+  } else {
+    problem_type      <- "QDA"
+  }
+  
+  roots_tbl <- 
+    pracma::polyroots( coeff_nrm ) |> 
+    tibble::as_tibble()
+  n_polyroots <- nrow(roots_tbl)
+  
+  # check normalized coefficients
+  dscrm_abc <- 
+    coeff_nrm [["b"]]^2 - 4 * coeff_nrm [["a"]] * coeff_nrm [["c"]]
+  if (dscrm_abc <= - tol) {
+    n_real_roots <- 0L
+    dx <- NaN
+  } else {
+    if ( abs( dscrm_abc ) <= tol ) {
+      n_real_roots <- 1L
+      # use LDA formula with sigma_all
+      dx <- (mu_1 + mu_2) / 2 + 
+        log(p_1 / p_2) * (sigma_all^2 / (mu_2 - mu_1))
+    } else {
+      n_real_roots <- 2L
+      rt_min <- min( roots_tbl [, "root"] )
+      rt_max <- max( roots_tbl [, "root"] )
+      
+      # log probability of errors
+      lp_err_1 <- log(p_1) + pnorm(
+        rt_min, mean = mu_1, sd = sigma_1, 
+        lower.tail = FALSE, log.p = TRUE )
+      lp_err_2 <- log(p_2) + pnorm(
+        rt_max, mean = mu_2, sd = sigma_2, 
+        lower.tail = TRUE, log.p = TRUE )
+      
+      dx <- dplyr::if_else(
+        lp_err_1 <= lp_err_2, 
+        rt_min, rt_max )
+    }
+  }
+  
+  return(list(
+    type         = problem_type,
+    boundary     = dx,
+    all_roots    = roots_tbl,
+    coefficients = coeff_vec
   ))
 }
 
