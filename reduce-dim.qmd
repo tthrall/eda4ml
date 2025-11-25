@@ -485,7 +485,7 @@ In each case, the data likely occupies a much lower-dimensional structure within
 
 The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (@sec-dim-r-pca), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition. We then explore how supervision (@sec-dim-r-supervised) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (@sec-dim-r-computation) for extreme cases like NCI60 where $d \gg n$.
 
-## Principal Component Analysis {#sec-dim-r-pca}
+## PCA: Principal Component Analysis {#sec-dim-r-pca}
 
 Principal Component Analysis (PCA) is one of the most widely used methods to approximate a feature matrix of $d$ features with substantially fewer linear combinations of those features.  The goal is to reveal the primary structure of the data and facilitate subsequent analyses (regression or classification, for example).
 
@@ -1837,6 +1837,52 @@ smpl_dx_sp <- dplyr::if_else(
 ```
 
 ```{r}
+#| label: prep-toy-example-histograms
+
+# create common x-axis for first two scenarios
+
+xy_df_lbl <- dplyr::bind_rows(
+  xy_tbl_ref |> 
+    dplyr::mutate(df_lbl = "ref"), 
+  xy_tbl_p |> 
+    dplyr::mutate(df_lbl = "p") )
+
+xy_df_lbl_smy <- xy_df_lbl |> 
+  dplyr::summarise(
+    x_min = min(x_1), 
+    x_max = max(x_1) )
+
+g_xy_df_lbl <- xy_df_lbl |> 
+  dplyr::rename(price = x_1, type = y_group) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = price, colour = type, fill = type
+  ))
+
+bbox_xy_df_lbl <- g_xy_df_lbl |> 
+  extract_ggplot_bbox()
+
+# xy_df_lbl_smy
+# # A tibble: 1 × 2
+#   x_min x_max
+#   <dbl> <dbl>
+# 1 -12.1  134.
+
+# bbox_xy_df_lbl
+# $xmin
+# [1] -19.44721
+# 
+# $xmax
+# [1] 141.1883
+# 
+# $ymin
+# [1] -0.05
+# 
+# $ymax
+# [1] 1.05
+
+```
+
+```{r}
 #| label: create-toy-example-histograms
 
 # g_toy_ref
@@ -1845,6 +1891,9 @@ g_toy_ref <- xy_tbl_ref |>
   ggplot2::ggplot(mapping = aes(
     x = price, colour = type, fill = type
   )) + 
+  ggplot2::scale_x_continuous(
+    limits = xy_df_lbl_smy[1, c("x_min", "x_max")] |> 
+      as.matrix() |> as.vector() ) + 
   ggplot2::geom_histogram() + 
   ggplot2::geom_vline(xintercept = smpl_dx_ref)
 
@@ -1859,6 +1908,9 @@ g_toy_p <- xy_tbl_p |>
   ggplot2::ggplot(mapping = aes(
     x = price, colour = type, fill = type
   )) + 
+  ggplot2::scale_x_continuous(
+    limits = xy_df_lbl_smy[1, c("x_min", "x_max")] |> 
+      as.matrix() |> as.vector() ) + 
   ggplot2::geom_histogram() + 
   ggplot2::geom_vline(xintercept = smpl_dx_p)
 
@@ -1895,7 +1947,7 @@ here::here("images", "g_toy_sp.png") |>
 Technical versus general book prices: 3 scenarios
 :::
 
-In this setting, we use linear and quadratic discriminant methods to distinguish a new book as either technical or general based solely on its price.  For the first two scenarios linear discriminant analysis (LDA) provides an optimal distinguishing price marked by the vertical line separating the two modes of the histogram.  (In the second scenario, having fewer technical books reduces the risk of mis-classifying them, so the demarcation point increases slightly.)  LDA suffices because the technical and general books share the same standard deviation.  (Equivalently, they share the same variance.)  In the third scenario, the larger book-price standard deviation of technical books increases the risk of mis-classifying a technical book as a general book.  Quadratic discrimination (QDA) addresses this possibility and provides a reduced demarcation price to mitigate the risk.
+In this setting, we use linear and quadratic discriminant methods to distinguish a new book as either technical or general based solely on its price.  For the first two scenarios linear discriminant analysis (LDA) provides an optimal distinguishing price marked by the vertical line separating the two modes of the histogram.  (In the second scenario, having fewer technical books reduces the risk of mis-classifying them, so the demarcation price increases slightly.)  LDA suffices because the technical and general books share the same standard deviation.  (Equivalently, they share the same variance.)  In the third scenario, the larger book-price standard deviation of technical books increases the risk of mis-classifying a technical book as a general book.  Quadratic discrimination (QDA) addresses this possibility and provides a reduced demarcation price to mitigate the risk.
 
 The next section generalizes this book-price example by introducing the LDA model for $d$ predictors of $K$ distinct categories.
 
