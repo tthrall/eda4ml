@@ -483,7 +483,7 @@ Yet @Donoho_2000_High_Dimensional_Data_Analysis also sees opportunities.   While
 
 In each case, the data likely occupies a much lower-dimensional structure within the high-dimensional feature space. If we can identify this structure, we are likely to _improve_ any subsequent statistical modeling.
 
-The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (@sec-dim-r-pca), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition. We then explore how supervision (@sec-dim-r-supervised) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (@sec-dim-r-computation) for extreme cases like NCI60 where $d \gg n$.
+The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (PCA, @sec-dim-r-pca), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition.  Then @sec-dim-r-lda presents Linear Discriminant Analysis (LDA) as an example of dimension reduction designed to identify the category (of two or more possible categories) of a new observation. The chapter concludes with a brief overview of other methods of dimension reduction.
 
 ## PCA: Principal Component Analysis {#sec-dim-r-pca}
 
@@ -1506,11 +1506,11 @@ We now conclude this introductory PCA of the wine quality data, noting that:
 
 In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (wine color, or wine quality).
 
-## LDA: Linear Discriminant Analysis
+## LDA: Linear Discriminant Analysis {#sec-dim-r-lda}
 
 In the previous section we conducted a principal component analysis (PCA) of the wine quality data in which the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines.  Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.
 
-We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes as responses to the remaining 11 features.  In this new setting, let's see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this task.
+We now remove wine quality and wine color as feature columns.  We retain them in the available data for training purposes as responses to the remaining features.  In this new setting, we will see how well a linear combination of the feature vectors can separate white wines from red wines.  First we develop a mathematical framework for this approach called linear discriminant analysis (LDA).
 
 ### 1D Toy Example
 
@@ -1935,7 +1935,7 @@ here::here("images", "g_toy_sp.png") |>
 
 ```
 
-@fig-toy-example-hist shows three different book-price scenarios that differ in the mixture of technical versus general books.  In the reference scenario ("a"), technical book prices have a higher mean value, but the same standard deviation as general books, and the proportion of technical books is the same as the proportion of general books.  In the next scenario ("b"), technical book prices again have the same standard deviation as general book prices, but the store stocks fewer technical books than general books.  In the final scenario ("c") the store again stocks fewer technical than general books, but now the book-price standard deviation is larger for technical books versus general books.
+@fig-toy-example-hist shows three different book-price scenarios that differ in the proportion and price distribution of technical versus general books.  In the reference scenario ("a"), technical book prices have a higher mean value, but the same standard deviation as general books, and the proportion of technical books is the same as the proportion of general books.  In the next scenario ("b"), technical book prices again have the same standard deviation as general book prices, but the store stocks fewer technical books than general books.  In the final scenario ("c") the store again stocks fewer technical than general books, but now the book-price standard deviation is larger for technical books versus general books.
 
 ::: {#fig-toy-example-hist layout-nrow=3}
 ![same sd and prob](./images/g_toy_ref.png){#fig-toy-ref}
@@ -1947,11 +1947,317 @@ here::here("images", "g_toy_sp.png") |>
 Technical versus general book prices: 3 scenarios
 :::
 
-In this setting, we use linear and quadratic discriminant methods to distinguish a new book as either technical or general based solely on its price.  For the first two scenarios linear discriminant analysis (LDA) provides an optimal distinguishing price marked by the vertical line separating the two modes of the histogram.  (In the second scenario, having fewer technical books reduces the risk of mis-classifying them, so the demarcation price increases slightly.)  LDA suffices because the technical and general books share the same standard deviation.  (Equivalently, they share the same variance.)  In the third scenario, the larger book-price standard deviation of technical books increases the risk of mis-classifying a technical book as a general book.  Quadratic discrimination (QDA) addresses this possibility and provides a reduced demarcation price to mitigate the risk.
+In this setting, we use linear and quadratic discriminant methods to distinguish a new book as either technical or general based solely on its price.
 
-The next section generalizes this book-price example by introducing the LDA model for $d$ predictors of $K$ distinct categories.
+For the first two scenarios linear discriminant analysis (LDA) provides an optimal distinguishing price marked by the vertical line separating the two modes of the histogram.  (In the second scenario, having fewer technical books reduces the risk of mis-classifying them, so the demarcation price increases slightly.)
+
+LDA can distinguish the two types of books because a critical LDA assumption is met by the first two scenarios: the technical and general books share the same standard deviation.  (Equivalently, they share the same variance.)
+
+In the third scenario, the larger book-price standard deviation of technical books increases the risk of mis-classifying a technical book as a general book.  Quadratic discrimination (QDA) addresses this possibility and provides a reduced demarcation price to mitigate the risk.
+
+The next section explains the mathematical basis of LDA and QDA in this simple setting in which we have just two categories (technical versus general books) and just one predictor (book price).
+
+### One Predictor of Two Categories
+
+Recall that inear least-squares regression assumes squared-error loss: $(y - \hat{y})^2$ is the penalty for predicting $\hat{y}$ versus a true value of $y$.  Classification requires a different loss structure. When the response $Y$ is categorical—here, $Y \in \{\mathcal{C}_1, \mathcal{C}_2\}$ for general and technical books—we incur a discrete penalty for mis-classification.
+
+**Loss and Risk.** Let $c_{j,k} \ge 0$ denote the cost of classifying a book as $\mathcal{C}_j$ when it truly belongs to $\mathcal{C}_k$. (This is a discrete loss function.) We assume correct classifications incur no cost $(c_{1,1} = c_{2,2} = 0)$, leaving two positive costs: $c_{2,1}$ for misclassifying a general book as technical, and $c_{1,2}$ for the reverse error. Let $\pi_k = P(Y = \mathcal{C}_k)$ denote the prior probability that a randomly selected book belongs to class $k$. A decision rule $\mathcal{D}(x)$ maps an observed price $x$ to a class index $\in \{1, 2\}$. The *risk* of this rule is its expected mis-classification cost:
+
+$$
+\begin{align}
+  \rho(\mathcal{D}) 
+  &= 
+    c_{2,1} \, \pi_1 \, 
+    P(\mathcal{D} = 2 \mid Y = \mathcal{C}_1) \\ 
+  & 
+    + c_{1,2} \, \pi_2 \, P(\mathcal{D} = 1 \mid Y = \mathcal{C}_2)
+\end{align}
+$$ {#eq-mis-class-risk-K2}
+
+**Optimal Decision Rule:** For books in class $\mathcal{C}_k$ let $f_k(x)$ denote the probability density of book-price. The rule $\mathcal{D} (x)$ that minimizes risk assigns price $x$ to class $\mathcal{C}_j$ as follows.
+
+$$
+\begin{align}
+  \mathcal{D} (x) 
+  &= 
+  \begin{cases}
+    1 & \text{ if} \quad 
+      c_{2,1} \, \pi_1 \, f_1(x) > 
+      c_{1,2} \, \pi_2 \, f_2(x) \\ 
+    2 & \text{ if} \quad 
+      c_{2,1} \, \pi_1 \, f_1(x) < 
+      c_{1,2} \, \pi_2 \, f_2(x)
+  \end{cases}
+\end{align}
+$$ {#eq-decision-rule-K2}
+
+Equivalently, classify as $\mathcal{C}_j$ based on the *likelihood ratio*:
+
+$$
+\begin{align}
+  \mathcal{D} (x) 
+  &= 
+  \begin{cases}
+    1 & \text{ if} \quad 
+      \frac 
+      {f_1(x)} 
+      {f_2(x)} 
+    > 
+    \frac 
+      {c_{1,2} \, \pi_2} 
+      {c_{2,1} \, \pi_1}  \\ 
+    2 & \text{ if} \quad 
+      \frac 
+      {f_1(x)} 
+      {f_2(x)} 
+    < 
+    \frac 
+      {c_{1,2} \, \pi_2} 
+      {c_{2,1} \, \pi_1} 
+  \end{cases} 
+\end{align}
+$$ {#eq-lik-ratio-rule-K2}
+
+This is the *Bayes decision rule*. The threshold fraction on the right side of the inequality reduces to $\pi_2 / \pi_1$ when mis-classification costs are symmetric $(c_{1,2} = c_{2,1})$, and further reduces to unity when the classes are equally prevalent $(\pi_1 = \pi_2)$.
+
+**Gaussian Assumption:** Suppose book prices in each class follow a normal distribution:
+
+$$
+\begin{align}
+  f_k(x) 
+  &= 
+    \frac{1}{\sqrt{2\pi}\,\sigma_k} \, 
+    \exp\!\left( -\frac{(x - \mu_k)^2}{2\sigma_k^2} \right), 
+    \quad k \in \{ 1, 2 \}
+\end{align}
+$$ {#eq-normal-density-1D}
+
+Taking logarithms, the Bayes rule becomes: 
+
+$$
+\begin{align}
+  \mathcal{D} (x) 
+  &= 
+  \begin{cases}
+    1 & \text{ if} \quad 
+      \log \left ( 
+        \frac 
+        {f_1(x)} 
+        {f_2(x)} 
+      \right ) 
+    > 
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) \\ 
+    2 & \text{ if} \quad 
+      \log \left ( 
+        \frac 
+        {f_1(x)} 
+        {f_2(x)} 
+      \right ) 
+    < 
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) 
+  \end{cases} 
+\end{align}
+$$ {#eq-log-lik-ratio-rule-K2}
+
+Expanding the log-densities yields a *quadratic* function of $x$:
+
+$$
+\begin{align}
+  &
+    \log \left ( 
+      \frac 
+        {f_1(x)} 
+        {f_2(x)} 
+    \right )  \\
+  &= 
+    \frac 
+      { (x - \mu_2)^2 }
+      {2 \, \sigma_2^2} 
+      \, - \, 
+    \frac 
+      { (x - \mu_1)^2 }
+      {2 \, \sigma_1^2} 
+      \, + \, 
+    \log \left ( 
+      \frac 
+      {\sigma_2}
+      {\sigma_1}
+    \right ) 
+\end{align}
+$$ {#eq-log-lik-ratio-quadratic}
+
+Applying @eq-log-lik-ratio-quadratic to @eq-log-lik-ratio-rule-K2 gives the decision rule of *quadratic discriminant analysis* (QDA): the decision boundary is determined by a quadratic equation in price.
+
+**Equal Variances: LDA.** When both classes share a common variance $\sigma^2 = \sigma_1^2 = \sigma_2^2$, the $x^2$ terms cancel. Then the log-ratio of densities simplifies to
+
+$$
+\begin{align}
+  &
+    \log \left ( 
+      \frac 
+        {f_1(x)} 
+        {f_2(x)} 
+    \right )  \\
+  &= 
+    \frac 
+      { \mu_1 - \mu_2 }
+      {\sigma^2} 
+      \, x \, + \, 
+    \frac 
+      { \mu_2^2 - \mu_1^2 }
+      {2 \, \sigma^2} 
+\end{align}
+$$ {#eq-log-lik-ratio-linear}
+
+which is *linear* in $x$. The Bayes rule then classifies as $\mathcal{C}_1$ when $x$ crosses a threshold $\delta_0$.
+
+$$
+\begin{align}
+  \mathcal{D} (x) 
+  &= 
+  \begin{cases}
+    1 & \text{ if} \quad 
+      \frac 
+      { \mu_1 - \mu_2 }
+      {\sigma^2} 
+      \, x \, + \, 
+    \frac 
+      { \mu_2^2 - \mu_1^2 }
+      {2 \, \sigma^2}  
+    > 
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) \\ 
+    2 & \text{ if} \quad 
+      \frac 
+      { \mu_1 - \mu_2 }
+      {\sigma^2} 
+      \, x \, + \, 
+    \frac 
+      { \mu_2^2 - \mu_1^2 }
+      {2 \, \sigma^2} 
+    < 
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) \\ 
+  \end{cases} 
+\end{align}
+$$ {#eq-linear-log-lik-ratio-rule-K2}
+
+If $\mu_1 < \mu_2$ then the coefficient of $x$ is negative.  Dividing by that coefficient reverses the inequality, so we have 
+
+$$
+\begin{align}
+  \mathcal{D} (x) 
+  &= 
+  \begin{cases}
+    1 & \text{ if} \quad 
+      x \, - \, 
+    \frac 
+      { \mu_1 + \mu_2 }
+      {2}  
+    < 
+    - \frac 
+      {\sigma^2}
+      {\mu_2 - \mu_1}
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) \\ 
+    2 & \text{ if} \quad 
+      x \, - \, 
+    \frac 
+      { \mu_1 + \mu_2 }
+      {2}  
+    > 
+    - \frac 
+      {\sigma^2}
+      {\mu_2 - \mu_1}
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) 
+  \end{cases} 
+\end{align}
+$$ {#eq-linear-log-lik-ratio-rule-K2-b}
+
+Simplifying the last equation, we have 
+
+$$
+\begin{align}
+  \mathcal{D} (x) 
+  &= 
+  \begin{cases}
+    1 & \text{ if} \quad x < \delta_0 \\ 
+    2 & \text{ if} \quad x > \delta_0 
+  \end{cases} \\ \\ 
+  & 
+    \text{where} \\ \\ 
+    \delta_0 
+  &= 
+    \frac 
+      { \mu_1 + \mu_2 }
+      {2} 
+    - \frac 
+      {\sigma^2}
+      {\mu_2 - \mu_1} 
+    \,
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) 
+\end{align}
+$$ {#eq-linear-log-lik-ratio-rule-K2-c}
+
+The assumption of equal group variances thus leads to *linear discriminant analysis* (LDA). Note that the threshold $\delta_0$ is simply the midpoint of the two group means when costs are symmetric and prior probabilities are equal.
+
+$$
+\begin{align}
+  \delta_0 
+  &= 
+    \frac 
+      { \mu_1 + \mu_2 }
+      {2} 
+    - \frac 
+      {\sigma^2}
+      {\mu_2 - \mu_1} 
+    \,
+    \log \left ( 
+      \frac 
+        {c_{1,2} \, \pi_2} 
+        {c_{2,1} \, \pi_1} 
+    \right ) \\ 
+  &= 
+    \frac 
+      { \mu_1 + \mu_2 }
+      {2} \\ \\ 
+  & 
+    \text{when} \\ \\ 
+  & 
+    c_{1, 2} = c_{2, 1} \quad \text{and} \quad \pi_1 = \pi_2
+\end{align}
+$$ {#eq-linear-log-lik-ratio-rule-K2-c}
+
+The next section treats higher dimensions $(d \ge 2)$, where decision boundaries are based on hyperplanes (LDA) or quadratic surfaces (QDA), whose orientation requires a certain eigenvalue analysis, to be given shortly.
 
 ### $d$ Predictors of $K$ Categories
+
+#### Model Assumptions
 
 The basic LDA model assumes that each observation, that is, each row $x_{i, \bullet}$ of the feature matrix $X_{\bullet, \bullet}$ belongs to one of $K$ categories, $(\mathcal{C}_1, \ldots, \mathcal{C}_K)$ identified by $Y$, a label (response variable) available in the training data.  Let us denote the output of the model as $\hat{Y} (\cdot)$, a function of $x_\bullet \in \mathbb{R}^d$ designed to agree with $Y$ as often as possible. [^K-2-wine-color] [^label-format]  
 
@@ -2010,6 +2316,8 @@ $$
 $$ {#eq-estimate-mean-cov}
 
 Replacing the mean and covariance terms by their estimated values gives an estimated density function $\hat{f}_k(x_\bullet)$.
+
+#### Bayes Decision Rule
 
 According to Bayesian decision theory the posterior probability that a new observation having feature set $\mathcal{X} = x_\bullet$ belongs to class $Y = \mathcal{C}_\eta$ is: 
 
@@ -2135,6 +2443,137 @@ $$
   \right \}
 \end{align}
 $$ {#eq-hat-S-k}
+
+#### Pairwise Boundaries
+
+From @eq-category-assignment-criterion-2 we can interpret the selected category $\eta$ as having a linear functional $\delta_\eta (\cdot)$ that is "best compared to the rest".  If we were to limit the comparison to just a pair of categories, say $\mathcal{C}_j$ versus $\mathcal{C}_k$, the better match for a given observation $x_\bullet$ would be derived from the maximum of the two values, $\delta_j (x_\bullet)$ and $\delta_k (x_\bullet)$.  Equivalently, we could form the comparison function $\delta_{j, k} (x_\bullet)$: 
+
+$$
+\begin{align}
+  \delta_{j, k} (x_\bullet) 
+  &= 
+    \delta_j (x_\bullet) \; - \; 
+    \delta_k (x_\bullet)
+\end{align}
+$$ {#eq-pairwise-compare-fn} 
+
+to make the following pair-wise decision.
+
+$$
+\begin{align}
+  \mathcal{D}_{j, k} (x_\bullet) 
+  &= 
+  \begin{cases}
+    \mathcal{C}_j 
+    & 
+      \text{ if } \delta_{j, k} (x_\bullet) > 0 \\ 
+    \mathcal{C}_k 
+    & 
+      \text{ if } \delta_{j, k} (x_\bullet) < 0 
+  \end{cases}
+\end{align}
+$$ {#eq-pairwise-compare-decision} 
+
+If $x_\bullet$ evaluates to zero by $\delta_{j, k} (\cdot)$ then $x_\bullet$ belongs the boundary $\mathcal{B}_{j,k}$ between the two preferences, which is the following linear hyperplane in $d-$space.
+
+$$
+\begin{align}
+  \mathcal{B}_{j,k} 
+  &= 
+    \left \{ 
+      x_\bullet \in \mathbb{R}^d : \;  
+      \delta_{j, k} (x_\bullet) = 0 
+    \right \}
+\end{align}
+$$ {#eq-pairwise-compare-decision}
+
+When visualizing the data in a 2D or 3D scatter diagram, these pairwise boundary lines (2D) or planes (3D) provide a visual representation of the decision rule.
+
+#### Polar Decomposition of the Covariance Matrix
+
+Another valuable aid to data visualization (as well as data analysis) is to compute the polar (eigen-) decomposition of the covariance matrix.  This is essentially principal component analysis (PCA) of the feature vectors.  The resulting orthonormal eigenvectors account, in descending order, for the total variance of the feature vectors.  The search for one or more of these eigenvectors that best predicts observation categories is a systematic search for an effective, lower-dimensional subspace of features.
+
+Here is a mathematical elaboration of this idea.  We denote the polar decomposition of the covariance matrix as follows.
+
+$$
+\begin{align}
+  Cov_{\bullet, \bullet} 
+  &= 
+    U \; D^2 \; U^\top \\ \\ 
+    & \text{where} \\ \\ 
+  D^2 &= diag(\lambda_1^2, \ldots, \lambda_d^2) \\ \\ 
+    & \text{and} \\ \\ 
+  U^\top U &= U \; U^\top = I
+\end{align}
+$$ {#eq-cov-polar-decomp}
+
+Now for any vector $v_\bullet \in \mathbb{R}^d$ let  $\tilde{v}_\bullet$ serve as short-hand for the following linear transformation of $v_\bullet$.
+
+$$
+\begin{align}
+  \tilde{v}_\bullet 
+  &= 
+    D^{-1} \; U^\top \; v_\bullet \\ 
+  &= 
+    Cov_{\bullet, \bullet}^{-1/2} \; v_\bullet
+\end{align}
+$$ {#eq-normalization-wrt-cov}
+
+Note that the elements of $\tilde{v}_\bullet \; - \tilde{\mu}_{\bullet, k}$ are z-values that are centered with respect to the mean vector for category $\mathcal{C}_k$.
+
+$$
+\begin{align}
+  \tilde{v}_\bullet \; - \tilde{\mu}_{\bullet, k} 
+  &= 
+    D^{-1} \; U^\top \; (v_\bullet - \mu_{\bullet, k}) \\ 
+  &= 
+    Cov_{\bullet, \bullet}^{-1/2} \; (v_\bullet - \mu_{\bullet, k})
+\end{align}
+$$ {#eq-z-values-wrt-class-k}
+
+Using this linear transformation (and short-hand) we obtain the following more compact expression of @eq-delta-k.
+
+$$
+\begin{align}
+  \delta_k (x_\bullet)
+  &= 
+    x_\bullet^\top \; 
+      Cov_{\bullet, \bullet}^{-1} \; 
+      \mu_{\bullet, k}
+      \; - \; 
+      \frac{1}{2} \; 
+      \mu_{\bullet, k}^\top \; 
+      Cov_{\bullet, \bullet}^{-1} \; 
+      \mu_{\bullet, k} 
+      \; + \; 
+      \log_e (\pi_k) \\ 
+  &= 
+    \tilde{x}_\bullet^\top \; 
+      \tilde{\mu}_{\bullet, k}
+      \; - \; 
+      \frac{1}{2} \; 
+      \tilde{\mu}_{\bullet, k}^\top \; 
+      \tilde{\mu}_{\bullet, k} 
+      \; + \; 
+      \log_e (\pi_k) \\ 
+  &= 
+    \left < 
+      \tilde{\mu}_{\bullet, k}, \; 
+      \tilde{x}_\bullet
+    \right > 
+      \; - \; 
+      \frac{1}{2} \; 
+      \lVert \tilde{\mu}_{\bullet, k} \rVert^2
+      \; + \; 
+      \log_e (\pi_k) \\ 
+  &= 
+    \tilde{\delta}_k (\tilde{x}_\bullet)
+\end{align}
+$$ {#eq-delta-k-tilde}
+
+Both $\delta_k (x_\bullet)$ and $\tilde{\delta}_k (\tilde{x}_\bullet)$ are affine functions of their arguments, meaning a linear function plus a constant.  The linear component of $\tilde{\delta}_k (\tilde{x}_\bullet)$, namely $\left < \tilde{\mu}_{\bullet, k}, \; \tilde{x}_\bullet \right >$, can be interpreted as the coordinate of $\tilde{x}_\bullet$ with respect to $\tilde{\mu}_{\bullet, k}$.
+
+In `R` function `MASS::lda()` and other LDA software, the eigenvectors $(u_{\bullet, 1}, \ldots, u_{\bullet, d})$ are represented as "LD1, LD2, $\ldots$".
 
 ### Binary Case: $K = 2$
 

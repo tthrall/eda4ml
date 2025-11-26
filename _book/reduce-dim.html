@@ -389,14 +389,21 @@ window.Quarto = {
   <li><a href="#computation" id="toc-computation" class="nav-link" data-scroll-target="#computation"><span class="header-section-number">7.3.4</span> Computation</a></li>
   <li><a href="#detailed-example-wine-quality" id="toc-detailed-example-wine-quality" class="nav-link" data-scroll-target="#detailed-example-wine-quality"><span class="header-section-number">7.3.5</span> Detailed Example: Wine Quality</a></li>
   </ul></li>
-  <li><a href="#lda-linear-discriminant-analysis" id="toc-lda-linear-discriminant-analysis" class="nav-link" data-scroll-target="#lda-linear-discriminant-analysis"><span class="header-section-number">7.4</span> LDA: Linear Discriminant Analysis</a>
+  <li><a href="#sec-dim-r-lda" id="toc-sec-dim-r-lda" class="nav-link" data-scroll-target="#sec-dim-r-lda"><span class="header-section-number">7.4</span> LDA: Linear Discriminant Analysis</a>
   <ul>
   <li><a href="#d-toy-example" id="toc-d-toy-example" class="nav-link" data-scroll-target="#d-toy-example"><span class="header-section-number">7.4.1</span> 1D Toy Example</a></li>
-  <li><a href="#d-predictors-of-k-categories" id="toc-d-predictors-of-k-categories" class="nav-link" data-scroll-target="#d-predictors-of-k-categories"><span class="header-section-number">7.4.2</span> <span class="math inline">\(d\)</span> Predictors of <span class="math inline">\(K\)</span> Categories</a></li>
-  <li><a href="#binary-case-k-2" id="toc-binary-case-k-2" class="nav-link" data-scroll-target="#binary-case-k-2"><span class="header-section-number">7.4.3</span> Binary Case: <span class="math inline">\(K = 2\)</span></a></li>
-  <li><a href="#wine-color-d-2-k-2" id="toc-wine-color-d-2-k-2" class="nav-link" data-scroll-target="#wine-color-d-2-k-2"><span class="header-section-number">7.4.4</span> Wine Color: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 2\)</span></a></li>
-  <li><a href="#wine-color-d-11-k-2" id="toc-wine-color-d-11-k-2" class="nav-link" data-scroll-target="#wine-color-d-11-k-2"><span class="header-section-number">7.4.5</span> Wine Color: <span class="math inline">\(d = 11\)</span>, <span class="math inline">\(K = 2\)</span></a></li>
-  <li><a href="#wine-quality-d-2-k-3" id="toc-wine-quality-d-2-k-3" class="nav-link" data-scroll-target="#wine-quality-d-2-k-3"><span class="header-section-number">7.4.6</span> Wine Quality: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 3\)</span></a></li>
+  <li><a href="#one-predictor-of-two-categories" id="toc-one-predictor-of-two-categories" class="nav-link" data-scroll-target="#one-predictor-of-two-categories"><span class="header-section-number">7.4.2</span> One Predictor of Two Categories</a></li>
+  <li><a href="#d-predictors-of-k-categories" id="toc-d-predictors-of-k-categories" class="nav-link" data-scroll-target="#d-predictors-of-k-categories"><span class="header-section-number">7.4.3</span> <span class="math inline">\(d\)</span> Predictors of <span class="math inline">\(K\)</span> Categories</a>
+  <ul class="collapse">
+  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">7.4.3.1</span> Model Assumptions</a></li>
+  <li><a href="#bayes-decision-rule" id="toc-bayes-decision-rule" class="nav-link" data-scroll-target="#bayes-decision-rule"><span class="header-section-number">7.4.3.2</span> Bayes Decision Rule</a></li>
+  <li><a href="#pairwise-boundaries" id="toc-pairwise-boundaries" class="nav-link" data-scroll-target="#pairwise-boundaries"><span class="header-section-number">7.4.3.3</span> Pairwise Boundaries</a></li>
+  <li><a href="#polar-decomposition-of-the-covariance-matrix" id="toc-polar-decomposition-of-the-covariance-matrix" class="nav-link" data-scroll-target="#polar-decomposition-of-the-covariance-matrix"><span class="header-section-number">7.4.3.4</span> Polar Decomposition of the Covariance Matrix</a></li>
+  </ul></li>
+  <li><a href="#binary-case-k-2" id="toc-binary-case-k-2" class="nav-link" data-scroll-target="#binary-case-k-2"><span class="header-section-number">7.4.4</span> Binary Case: <span class="math inline">\(K = 2\)</span></a></li>
+  <li><a href="#wine-color-d-2-k-2" id="toc-wine-color-d-2-k-2" class="nav-link" data-scroll-target="#wine-color-d-2-k-2"><span class="header-section-number">7.4.5</span> Wine Color: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 2\)</span></a></li>
+  <li><a href="#wine-color-d-11-k-2" id="toc-wine-color-d-11-k-2" class="nav-link" data-scroll-target="#wine-color-d-11-k-2"><span class="header-section-number">7.4.6</span> Wine Color: <span class="math inline">\(d = 11\)</span>, <span class="math inline">\(K = 2\)</span></a></li>
+  <li><a href="#wine-quality-d-2-k-3" id="toc-wine-quality-d-2-k-3" class="nav-link" data-scroll-target="#wine-quality-d-2-k-3"><span class="header-section-number">7.4.7</span> Wine Quality: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 3\)</span></a></li>
   </ul></li>
   <li><a href="#sec-dim-r-supervised" id="toc-sec-dim-r-supervised" class="nav-link" data-scroll-target="#sec-dim-r-supervised"><span class="header-section-number">7.5</span> Supervised or Not</a></li>
   <li><a href="#sec-dim-r-other-methods" id="toc-sec-dim-r-other-methods" class="nav-link" data-scroll-target="#sec-dim-r-other-methods"><span class="header-section-number">7.6</span> Other Methods</a></li>
@@ -439,7 +446,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">14:18 Tue 25-Nov-2025</p>
+      <p class="date">14:31 Wed 26-Nov-2025</p>
     </div>
   </div>
   
@@ -639,8 +646,8 @@ Figure&nbsp;7.1: Violent Crime Rates per US State (1973)
 <div id="fig-arrests-3d-scatter" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-e858f852c8847238b1bd" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-e858f852c8847238b1bd">{"x":{"visdat":{"65ec51e6ab1":["function () ","plotlyVisDat"]},"cur_data":"65ec51e6ab1","attrs":{"65ec51e6ab1":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-88edf76f82ea7bf7897e" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-88edf76f82ea7bf7897e">{"x":{"visdat":{"3a1014a8ce0":["function () ","plotlyVisDat"]},"cur_data":"3a1014a8ce0","attrs":{"3a1014a8ce0":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7.2: Violent Crime Rates in each US State (1973)
@@ -916,7 +923,7 @@ Table&nbsp;7.4: Feature-quality correleations among (red, white) wines
 <li><em>NCI60</em>: The 6,830 genes participate in shared biological pathways.</li>
 </ul>
 <p>In each case, the data likely occupies a much lower-dimensional structure within the high-dimensional feature space. If we can identify this structure, we are likely to <em>improve</em> any subsequent statistical modeling.</p>
-<p>The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (<a href="#sec-dim-r-pca" class="quarto-xref"><span>Section 7.3</span></a>), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition. We then explore how supervision (<a href="#sec-dim-r-supervised" class="quarto-xref"><span>Section 7.5</span></a>) can guide dimension reduction when prediction is the goal. Finally, we examine computational strategies (<span class="quarto-unresolved-ref">?sec-dim-r-computation</span>) for extreme cases like NCI60 where <span class="math inline">\(d \gg n\)</span>.</p>
+<p>The remainder of this chapter develops methods that exploit such opportunities. We begin with Principal Component Analysis (PCA, <a href="#sec-dim-r-pca" class="quarto-xref"><span>Section 7.3</span></a>), which finds low-dimensional approximations to high-dimensional data through eigen-decomposition. Then <a href="#sec-dim-r-lda" class="quarto-xref"><span>Section 7.4</span></a> presents Linear Discriminant Analysis (LDA) as an example of dimension reduction designed to identify the category (of two or more possible categories) of a new observation. The chapter concludes with a brief overview of other methods of dimension reduction.</p>
 </section>
 <section id="sec-dim-r-pca" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="sec-dim-r-pca"><span class="header-section-number">7.3</span> PCA: Principal Component Analysis</h2>
@@ -951,8 +958,8 @@ Figure&nbsp;7.6: Principal Components: (father, son) centered heights
 <div id="fig-arm-pca" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arm-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-a9f46fa1df12992e299b" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-a9f46fa1df12992e299b">{"x":{"visdat":{"65ec111e7bae":["function () ","plotlyVisDat"]},"cur_data":"65ec111e7bae","attrs":{"65ec111e7bae":{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"size":4,"color":"steelblue","opacity":0.69999999999999996},"name":"State","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"},"65ec111e7bae.1":{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkorange"},"name":"PC1","showlegend":false,"inherit":false},"65ec111e7bae.2":{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"purple"},"name":"PC2","showlegend":false,"inherit":false},"65ec111e7bae.3":{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkgreen"},"name":"PC3","showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"z_Assault"},"yaxis":{"title":"z_Rape"},"zaxis":{"title":"z_Murder"},"aspectmode":"cube"},"title":"US Arrest Z-scores: Principal Components","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":"steelblue","size":4,"opacity":0.69999999999999996,"line":{"color":"rgba(31,119,180,1)"}},"name":"State","type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"color":"darkorange","width":6},"name":"PC1","showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"color":"purple","width":6},"name":"PC2","showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"color":"darkgreen","width":6},"name":"PC3","showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-37abc6c02ae101b9a7f2" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-37abc6c02ae101b9a7f2">{"x":{"visdat":{"3a1053b17636":["function () ","plotlyVisDat"]},"cur_data":"3a1053b17636","attrs":{"3a1053b17636":{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"size":4,"color":"steelblue","opacity":0.69999999999999996},"name":"State","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"},"3a1053b17636.1":{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkorange"},"name":"PC1","showlegend":false,"inherit":false},"3a1053b17636.2":{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"purple"},"name":"PC2","showlegend":false,"inherit":false},"3a1053b17636.3":{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkgreen"},"name":"PC3","showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"z_Assault"},"yaxis":{"title":"z_Rape"},"zaxis":{"title":"z_Murder"},"aspectmode":"cube"},"title":"US Arrest Z-scores: Principal Components","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":"steelblue","size":4,"opacity":0.69999999999999996,"line":{"color":"rgba(31,119,180,1)"}},"name":"State","type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"color":"darkorange","width":6},"name":"PC1","showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"color":"purple","width":6},"name":"PC2","showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"color":"darkgreen","width":6},"name":"PC3","showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arm-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7.7: US Arrest Z-scores: Principal Components
@@ -1668,10 +1675,10 @@ Table&nbsp;7.8: Wine Quality PCA: wine color versus score_1 class
 <p>In the next section we continue our analysis of the wine quality data, but with the aim of improving models that include a response variable (wine color, or wine quality).</p>
 </section>
 </section>
-<section id="lda-linear-discriminant-analysis" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="lda-linear-discriminant-analysis"><span class="header-section-number">7.4</span> LDA: Linear Discriminant Analysis</h2>
+<section id="sec-dim-r-lda" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec-dim-r-lda"><span class="header-section-number">7.4</span> LDA: Linear Discriminant Analysis</h2>
 <p>In the previous section we conducted a principal component analysis (PCA) of the wine quality data in which the first principal component separated red and white wines: scores below a certain threshold corresponded to white wines; and scores above that threshold corresponded to red wines. Of course, this successful discernment of wine color was achieved by a linear combination of features that included wine color.</p>
-<p>We now remove wine quality and wine color as feature columns. We retain them in the available data for training purposes as responses to the remaining 11 features. In this new setting, let’s see how well a linear combination of the feature vectors can separate white wines from red wines. First we develop a mathematical framework for this task.</p>
+<p>We now remove wine quality and wine color as feature columns. We retain them in the available data for training purposes as responses to the remaining features. In this new setting, we will see how well a linear combination of the feature vectors can separate white wines from red wines. First we develop a mathematical framework for this approach called linear discriminant analysis (LDA).</p>
 <section id="d-toy-example" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="d-toy-example"><span class="header-section-number">7.4.1</span> 1D Toy Example</h3>
 <p>As a simple illustration of LDA, consider the following hypothetical example. The price of a new book is markedly different for technical books (programming, math, <span class="math inline">\(\ldots\)</span>) versus general books (new releases, fiction, business advice, <span class="math inline">\(\ldots\)</span>). Imagine the stock of a bookstore in different settings, e.g., on a college campus, at a major airport, etc.</p>
@@ -1680,7 +1687,7 @@ Table&nbsp;7.8: Wine Quality PCA: wine color versus score_1 class
 <pre><code>systemfonts and textshaping have been compiled with different versions of Freetype. Because of this, textshaping will not use the font cache provided by systemfonts</code></pre>
 </div>
 </div>
-<p><a href="#fig-toy-example-hist" class="quarto-xref">Figure&nbsp;<span>7.14</span></a> shows three different book-price scenarios that differ in the mixture of technical versus general books. In the reference scenario (“a”), technical book prices have a higher mean value, but the same standard deviation as general books, and the proportion of technical books is the same as the proportion of general books. In the next scenario (“b”), technical book prices again have the same standard deviation as general book prices, but the store stocks fewer technical books than general books. In the final scenario (“c”) the store again stocks fewer technical than general books, but now the book-price standard deviation is larger for technical books versus general books.</p>
+<p><a href="#fig-toy-example-hist" class="quarto-xref">Figure&nbsp;<span>7.14</span></a> shows three different book-price scenarios that differ in the proportion and price distribution of technical versus general books. In the reference scenario (“a”), technical book prices have a higher mean value, but the same standard deviation as general books, and the proportion of technical books is the same as the proportion of general books. In the next scenario (“b”), technical book prices again have the same standard deviation as general book prices, but the store stocks fewer technical books than general books. In the final scenario (“c”) the store again stocks fewer technical than general books, but now the book-price standard deviation is larger for technical books versus general books.</p>
 <div id="fig-toy-example-hist" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-toy-example-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1732,11 +1739,289 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
 </figcaption>
 </figure>
 </div>
-<p>In this setting, we use linear and quadratic discriminant methods to distinguish a new book as either technical or general based solely on its price. For the first two scenarios linear discriminant analysis (LDA) provides an optimal distinguishing price marked by the vertical line separating the two modes of the histogram. (In the second scenario, having fewer technical books reduces the risk of mis-classifying them, so the demarcation price increases slightly.) LDA suffices because the technical and general books share the same standard deviation. (Equivalently, they share the same variance.) In the third scenario, the larger book-price standard deviation of technical books increases the risk of mis-classifying a technical book as a general book. Quadratic discrimination (QDA) addresses this possibility and provides a reduced demarcation price to mitigate the risk.</p>
-<p>The next section generalizes this book-price example by introducing the LDA model for <span class="math inline">\(d\)</span> predictors of <span class="math inline">\(K\)</span> distinct categories.</p>
+<p>In this setting, we use linear and quadratic discriminant methods to distinguish a new book as either technical or general based solely on its price.</p>
+<p>For the first two scenarios linear discriminant analysis (LDA) provides an optimal distinguishing price marked by the vertical line separating the two modes of the histogram. (In the second scenario, having fewer technical books reduces the risk of mis-classifying them, so the demarcation price increases slightly.)</p>
+<p>LDA can distinguish the two types of books because a critical LDA assumption is met by the first two scenarios: the technical and general books share the same standard deviation. (Equivalently, they share the same variance.)</p>
+<p>In the third scenario, the larger book-price standard deviation of technical books increases the risk of mis-classifying a technical book as a general book. Quadratic discrimination (QDA) addresses this possibility and provides a reduced demarcation price to mitigate the risk.</p>
+<p>The next section explains the mathematical basis of LDA and QDA in this simple setting in which we have just two categories (technical versus general books) and just one predictor (book price).</p>
 </section>
-<section id="d-predictors-of-k-categories" class="level3" data-number="7.4.2">
-<h3 data-number="7.4.2" class="anchored" data-anchor-id="d-predictors-of-k-categories"><span class="header-section-number">7.4.2</span> <span class="math inline">\(d\)</span> Predictors of <span class="math inline">\(K\)</span> Categories</h3>
+<section id="one-predictor-of-two-categories" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="one-predictor-of-two-categories"><span class="header-section-number">7.4.2</span> One Predictor of Two Categories</h3>
+<p>Recall that inear least-squares regression assumes squared-error loss: <span class="math inline">\((y - \hat{y})^2\)</span> is the penalty for predicting <span class="math inline">\(\hat{y}\)</span> versus a true value of <span class="math inline">\(y\)</span>. Classification requires a different loss structure. When the response <span class="math inline">\(Y\)</span> is categorical—here, <span class="math inline">\(Y \in \{\mathcal{C}_1, \mathcal{C}_2\}\)</span> for general and technical books—we incur a discrete penalty for mis-classification.</p>
+<p><strong>Loss and Risk.</strong> Let <span class="math inline">\(c_{j,k} \ge 0\)</span> denote the cost of classifying a book as <span class="math inline">\(\mathcal{C}_j\)</span> when it truly belongs to <span class="math inline">\(\mathcal{C}_k\)</span>. (This is a discrete loss function.) We assume correct classifications incur no cost <span class="math inline">\((c_{1,1} = c_{2,2} = 0)\)</span>, leaving two positive costs: <span class="math inline">\(c_{2,1}\)</span> for misclassifying a general book as technical, and <span class="math inline">\(c_{1,2}\)</span> for the reverse error. Let <span class="math inline">\(\pi_k = P(Y = \mathcal{C}_k)\)</span> denote the prior probability that a randomly selected book belongs to class <span class="math inline">\(k\)</span>. A decision rule <span class="math inline">\(\mathcal{D}(x)\)</span> maps an observed price <span class="math inline">\(x\)</span> to a class index <span class="math inline">\(\in \{1, 2\}\)</span>. The <em>risk</em> of this rule is its expected mis-classification cost:</p>
+<p><span id="eq-mis-class-risk-K2"><span class="math display">\[
+\begin{align}
+  \rho(\mathcal{D})
+  &amp;=
+    c_{2,1} \, \pi_1 \,
+    P(\mathcal{D} = 2 \mid Y = \mathcal{C}_1) \\
+  &amp;
+    + c_{1,2} \, \pi_2 \, P(\mathcal{D} = 1 \mid Y = \mathcal{C}_2)
+\end{align}
+\qquad(7.14)\]</span></span></p>
+<p><strong>Optimal Decision Rule:</strong> For books in class <span class="math inline">\(\mathcal{C}_k\)</span> let <span class="math inline">\(f_k(x)\)</span> denote the probability density of book-price. The rule <span class="math inline">\(\mathcal{D} (x)\)</span> that minimizes risk assigns price <span class="math inline">\(x\)</span> to class <span class="math inline">\(\mathcal{C}_j\)</span> as follows.</p>
+<p><span id="eq-decision-rule-K2"><span class="math display">\[
+\begin{align}
+  \mathcal{D} (x)
+  &amp;=
+  \begin{cases}
+    1 &amp; \text{ if} \quad
+      c_{2,1} \, \pi_1 \, f_1(x) &gt;
+      c_{1,2} \, \pi_2 \, f_2(x) \\
+    2 &amp; \text{ if} \quad
+      c_{2,1} \, \pi_1 \, f_1(x) &lt;
+      c_{1,2} \, \pi_2 \, f_2(x)
+  \end{cases}
+\end{align}
+\qquad(7.15)\]</span></span></p>
+<p>Equivalently, classify as <span class="math inline">\(\mathcal{C}_j\)</span> based on the <em>likelihood ratio</em>:</p>
+<p><span id="eq-lik-ratio-rule-K2"><span class="math display">\[
+\begin{align}
+  \mathcal{D} (x)
+  &amp;=
+  \begin{cases}
+    1 &amp; \text{ if} \quad
+      \frac
+      {f_1(x)}
+      {f_2(x)}
+    &gt;
+    \frac
+      {c_{1,2} \, \pi_2}
+      {c_{2,1} \, \pi_1}  \\
+    2 &amp; \text{ if} \quad
+      \frac
+      {f_1(x)}
+      {f_2(x)}
+    &lt;
+    \frac
+      {c_{1,2} \, \pi_2}
+      {c_{2,1} \, \pi_1}
+  \end{cases}
+\end{align}
+\qquad(7.16)\]</span></span></p>
+<p>This is the <em>Bayes decision rule</em>. The threshold fraction on the right side of the inequality reduces to <span class="math inline">\(\pi_2 / \pi_1\)</span> when mis-classification costs are symmetric <span class="math inline">\((c_{1,2} = c_{2,1})\)</span>, and further reduces to unity when the classes are equally prevalent <span class="math inline">\((\pi_1 = \pi_2)\)</span>.</p>
+<p><strong>Gaussian Assumption:</strong> Suppose book prices in each class follow a normal distribution:</p>
+<p><span id="eq-normal-density-1D"><span class="math display">\[
+\begin{align}
+  f_k(x)
+  &amp;=
+    \frac{1}{\sqrt{2\pi}\,\sigma_k} \,
+    \exp\!\left( -\frac{(x - \mu_k)^2}{2\sigma_k^2} \right),
+    \quad k \in \{ 1, 2 \}
+\end{align}
+\qquad(7.17)\]</span></span></p>
+<p>Taking logarithms, the Bayes rule becomes:</p>
+<p><span id="eq-log-lik-ratio-rule-K2"><span class="math display">\[
+\begin{align}
+  \mathcal{D} (x)
+  &amp;=
+  \begin{cases}
+    1 &amp; \text{ if} \quad
+      \log \left (
+        \frac
+        {f_1(x)}
+        {f_2(x)}
+      \right )
+    &gt;
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right ) \\
+    2 &amp; \text{ if} \quad
+      \log \left (
+        \frac
+        {f_1(x)}
+        {f_2(x)}
+      \right )
+    &lt;
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right )
+  \end{cases}
+\end{align}
+\qquad(7.18)\]</span></span></p>
+<p>Expanding the log-densities yields a <em>quadratic</em> function of <span class="math inline">\(x\)</span>:</p>
+<p><span id="eq-log-lik-ratio-quadratic"><span class="math display">\[
+\begin{align}
+  &amp;
+    \log \left (
+      \frac
+        {f_1(x)}
+        {f_2(x)}
+    \right )  \\
+  &amp;=
+    \frac
+      { (x - \mu_2)^2 }
+      {2 \, \sigma_2^2}
+      \, - \,
+    \frac
+      { (x - \mu_1)^2 }
+      {2 \, \sigma_1^2}
+      \, + \,
+    \log \left (
+      \frac
+      {\sigma_2}
+      {\sigma_1}
+    \right )
+\end{align}
+\qquad(7.19)\]</span></span></p>
+<p>Applying <a href="#eq-log-lik-ratio-quadratic" class="quarto-xref">Equation&nbsp;<span>7.19</span></a> to <a href="#eq-log-lik-ratio-rule-K2" class="quarto-xref">Equation&nbsp;<span>7.18</span></a> gives the decision rule of <em>quadratic discriminant analysis</em> (QDA): the decision boundary is determined by a quadratic equation in price.</p>
+<p><strong>Equal Variances: LDA.</strong> When both classes share a common variance <span class="math inline">\(\sigma^2 = \sigma_1^2 = \sigma_2^2\)</span>, the <span class="math inline">\(x^2\)</span> terms cancel. Then the log-ratio of densities simplifies to</p>
+<p><span id="eq-log-lik-ratio-linear"><span class="math display">\[
+\begin{align}
+  &amp;
+    \log \left (
+      \frac
+        {f_1(x)}
+        {f_2(x)}
+    \right )  \\
+  &amp;=
+    \frac
+      { \mu_1 - \mu_2 }
+      {\sigma^2}
+      \, x \, + \,
+    \frac
+      { \mu_2^2 - \mu_1^2 }
+      {2 \, \sigma^2}
+\end{align}
+\qquad(7.20)\]</span></span></p>
+<p>which is <em>linear</em> in <span class="math inline">\(x\)</span>. The Bayes rule then classifies as <span class="math inline">\(\mathcal{C}_1\)</span> when <span class="math inline">\(x\)</span> crosses a threshold <span class="math inline">\(\delta_0\)</span>.</p>
+<p><span id="eq-linear-log-lik-ratio-rule-K2"><span class="math display">\[
+\begin{align}
+  \mathcal{D} (x)
+  &amp;=
+  \begin{cases}
+    1 &amp; \text{ if} \quad
+      \frac
+      { \mu_1 - \mu_2 }
+      {\sigma^2}
+      \, x \, + \,
+    \frac
+      { \mu_2^2 - \mu_1^2 }
+      {2 \, \sigma^2}  
+    &gt;
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right ) \\
+    2 &amp; \text{ if} \quad
+      \frac
+      { \mu_1 - \mu_2 }
+      {\sigma^2}
+      \, x \, + \,
+    \frac
+      { \mu_2^2 - \mu_1^2 }
+      {2 \, \sigma^2}
+    &lt;
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right ) \\
+  \end{cases}
+\end{align}
+\qquad(7.21)\]</span></span></p>
+<p>If <span class="math inline">\(\mu_1 &lt; \mu_2\)</span> then the coefficient of <span class="math inline">\(x\)</span> is negative. Dividing by that coefficient reverses the inequality, so we have</p>
+<p><span id="eq-linear-log-lik-ratio-rule-K2-b"><span class="math display">\[
+\begin{align}
+  \mathcal{D} (x)
+  &amp;=
+  \begin{cases}
+    1 &amp; \text{ if} \quad
+      x \, - \,
+    \frac
+      { \mu_1 + \mu_2 }
+      {2}  
+    &lt;
+    - \frac
+      {\sigma^2}
+      {\mu_2 - \mu_1}
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right ) \\
+    2 &amp; \text{ if} \quad
+      x \, - \,
+    \frac
+      { \mu_1 + \mu_2 }
+      {2}  
+    &gt;
+    - \frac
+      {\sigma^2}
+      {\mu_2 - \mu_1}
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right )
+  \end{cases}
+\end{align}
+\qquad(7.22)\]</span></span></p>
+<p>Simplifying the last equation, we have</p>
+<p><span id="eq-linear-log-lik-ratio-rule-K2-c"><span class="math display">\[
+\begin{align}
+  \mathcal{D} (x)
+  &amp;=
+  \begin{cases}
+    1 &amp; \text{ if} \quad x &lt; \delta_0 \\
+    2 &amp; \text{ if} \quad x &gt; \delta_0
+  \end{cases} \\ \\
+  &amp;
+    \text{where} \\ \\
+    \delta_0
+  &amp;=
+    \frac
+      { \mu_1 + \mu_2 }
+      {2}
+    - \frac
+      {\sigma^2}
+      {\mu_2 - \mu_1}
+    \,
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right )
+\end{align}
+\qquad(7.23)\]</span></span></p>
+<p>The assumption of equal group variances thus leads to <em>linear discriminant analysis</em> (LDA). Note that the threshold <span class="math inline">\(\delta_0\)</span> is simply the midpoint of the two group means when costs are symmetric and prior probabilities are equal.</p>
+<p><span id="eq-linear-log-lik-ratio-rule-K2-c"><span class="math display">\[
+\begin{align}
+  \delta_0
+  &amp;=
+    \frac
+      { \mu_1 + \mu_2 }
+      {2}
+    - \frac
+      {\sigma^2}
+      {\mu_2 - \mu_1}
+    \,
+    \log \left (
+      \frac
+        {c_{1,2} \, \pi_2}
+        {c_{2,1} \, \pi_1}
+    \right ) \\
+  &amp;=
+    \frac
+      { \mu_1 + \mu_2 }
+      {2} \\ \\
+  &amp;
+    \text{when} \\ \\
+  &amp;
+    c_{1, 2} = c_{2, 1} \quad \text{and} \quad \pi_1 = \pi_2
+\end{align}
+\qquad(7.24)\]</span></span></p>
+<p>The next section treats higher dimensions <span class="math inline">\((d \ge 2)\)</span>, where decision boundaries are based on hyperplanes (LDA) or quadratic surfaces (QDA), whose orientation requires a certain eigenvalue analysis, to be given shortly.</p>
+</section>
+<section id="d-predictors-of-k-categories" class="level3" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="d-predictors-of-k-categories"><span class="header-section-number">7.4.3</span> <span class="math inline">\(d\)</span> Predictors of <span class="math inline">\(K\)</span> Categories</h3>
+<section id="model-assumptions" class="level4" data-number="7.4.3.1">
+<h4 data-number="7.4.3.1" class="anchored" data-anchor-id="model-assumptions"><span class="header-section-number">7.4.3.1</span> Model Assumptions</h4>
 <p>The basic LDA model assumes that each observation, that is, each row <span class="math inline">\(x_{i, \bullet}\)</span> of the feature matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span> belongs to one of <span class="math inline">\(K\)</span> categories, <span class="math inline">\((\mathcal{C}_1, \ldots, \mathcal{C}_K)\)</span> identified by <span class="math inline">\(Y\)</span>, a label (response variable) available in the training data. Let us denote the output of the model as <span class="math inline">\(\hat{Y} (\cdot)\)</span>, a function of <span class="math inline">\(x_\bullet \in \mathbb{R}^d\)</span> designed to agree with <span class="math inline">\(Y\)</span> as often as possible. <a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> <a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
 <p>Let <span class="math inline">\(\pi_k\)</span> denote the population proportion of the <span class="math inline">\(k^{th}\)</span> category, which we estimate by the proportion of observations belonging to category <span class="math inline">\(k\)</span> in our data.</p>
 <p><span id="eq-estimate-pi-k"><span class="math display">\[
@@ -1747,7 +2032,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
   n &amp;= \text{total number of observations} \\
   &amp;= \sum_{k = 1}^K n_k
 \end{align}
-\qquad(7.14)\]</span></span></p>
+\qquad(7.25)\]</span></span></p>
 <p>The model also assumes that within each category <span class="math inline">\(k\)</span>, the <span class="math inline">\(d\)</span> features have a multivariate normal (Gaussian) distribution, whose density function <span class="math inline">\(f_k(x_\bullet)\)</span> can be expressed as follows:</p>
 <p><span id="eq-ln-normal-density-k"><span class="math display">\[
 \begin{align}
@@ -1760,7 +2045,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
     Cov_{\bullet, \bullet}^{-1} \;
     (x_\bullet - \mu_{\bullet, k})
 \end{align}
-\qquad(7.15)\]</span></span></p>
+\qquad(7.26)\]</span></span></p>
 <p>Note the model assumption that the feature covariance matrix <span class="math inline">\(Cov_{\bullet, \bullet}\)</span> is the same for all <span class="math inline">\(K\)</span> categories, and that the vectors <span class="math inline">\(\mu_{\bullet, k}\)</span> of mean values are distinct across categories. The mean vectors and covariance matrix are then estimated as follows.</p>
 <p><span id="eq-estimate-mean"><span class="math display">\[
 \begin{align}
@@ -1770,7 +2055,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       \sum_{x_{i, \bullet} \in \mathcal{C}_k}
       x_{i, \bullet}^\top
 \end{align}
-\qquad(7.16)\]</span></span></p>
+\qquad(7.27)\]</span></span></p>
 <p><span id="eq-estimate-mean-cov"><span class="math display">\[
 \begin{align}
   \hat{C}ov_{\bullet, \bullet}
@@ -1780,8 +2065,11 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       \sum_{x_{i, \bullet} \in \mathcal{C}_k}
       (x_{i, \bullet}^\top \; - \hat{\mu}_{\bullet, k}) \; (x_{i, \bullet}^\top \; - \hat{\mu}_{\bullet, k})^\top
 \end{align}
-\qquad(7.17)\]</span></span></p>
+\qquad(7.28)\]</span></span></p>
 <p>Replacing the mean and covariance terms by their estimated values gives an estimated density function <span class="math inline">\(\hat{f}_k(x_\bullet)\)</span>.</p>
+</section>
+<section id="bayes-decision-rule" class="level4" data-number="7.4.3.2">
+<h4 data-number="7.4.3.2" class="anchored" data-anchor-id="bayes-decision-rule"><span class="header-section-number">7.4.3.2</span> Bayes Decision Rule</h4>
 <p>According to Bayesian decision theory the posterior probability that a new observation having feature set <span class="math inline">\(\mathcal{X} = x_\bullet\)</span> belongs to class <span class="math inline">\(Y = \mathcal{C}_\eta\)</span> is:</p>
 <p><span id="eq-posterior-probability-class-eta"><span class="math display">\[
 \begin{align}
@@ -1801,7 +2089,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       {\exp( \delta_\eta (x_\bullet) )}
       { \sum_{k = 1}^K \exp( \delta_k (x_\bullet) )  }
 \end{align}
-\qquad(7.18)\]</span></span></p>
+\qquad(7.29)\]</span></span></p>
 <p>Therefore the Bayes classification rule is to assign the <span class="math inline">\(d-\)</span>dimensional observation vector <span class="math inline">\(x_\bullet\)</span> to whichever category <span class="math inline">\(k\)</span> maximizes the weighted density <span class="math inline">\(\pi_k \; f_k(x_\bullet)\)</span>.</p>
 <p><span id="eq-category-assignment-criterion"><span class="math display">\[
 \begin{align}
@@ -1810,7 +2098,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
     \mathcal{C}_\eta
     &amp; \text{ if } \pi_\eta \; f_\eta (x_\bullet) = \max \{ \pi_k \; f_k (x_\bullet) \}_{k = 1}^K
 \end{align}
-\qquad(7.19)\]</span></span></p>
+\qquad(7.30)\]</span></span></p>
 <p>After canceling out common factors, this is equivalent to the following decision rule.</p>
 <p><span id="eq-category-assignment-criterion-2"><span class="math display">\[
 \begin{align}
@@ -1819,7 +2107,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
     \mathcal{C}_\eta
     &amp; \text{ if } \delta_\eta (x_\bullet) = \max \{ \delta_k (x_\bullet) \}_{k = 1}^K
 \end{align}
-\qquad(7.20)\]</span></span></p>
+\qquad(7.31)\]</span></span></p>
 <p>where</p>
 <p><span id="eq-delta-k"><span class="math display">\[
 \begin{align}
@@ -1836,8 +2124,8 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       \; + \;
       \log_e (\pi_k)
 \end{align}
-\qquad(7.21)\]</span></span></p>
-<p>The LDA model implements <a href="#eq-delta-k" class="quarto-xref">Equation&nbsp;<span>7.21</span></a> by replacing each unknown parameter value with the corresponding value estimated from the data:</p>
+\qquad(7.32)\]</span></span></p>
+<p>The LDA model implements <a href="#eq-delta-k" class="quarto-xref">Equation&nbsp;<span>7.32</span></a> by replacing each unknown parameter value with the corresponding value estimated from the data:</p>
 <p><span id="eq-hat-delta-k"><span class="math display">\[
 \begin{align}
   \hat{\delta}_k (x_\bullet)
@@ -1853,7 +2141,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       \; + \;
       \log_e (\hat{\pi}_k)
 \end{align}
-\qquad(7.22)\]</span></span></p>
+\qquad(7.33)\]</span></span></p>
 <p>This amounts to using the estimated density <span class="math inline">\(\hat{f}_k(x_\bullet)\)</span> in place of the exact, but unknown density <span class="math inline">\(f_k(x_\bullet)\)</span>.</p>
 <p>For each category index <span class="math inline">\(k\)</span> let <span class="math inline">\(\hat{\mathcal{H}}_k\)</span> denote the following subset of <span class="math inline">\(\mathbb{R}^d\)</span>:</p>
 <p><span id="eq-hat-H-k"><span class="math display">\[
@@ -1866,7 +2154,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
     \hat{\delta}_k (x_\bullet) = 0
   \right \}
 \end{align}
-\qquad(7.23)\]</span></span></p>
+\qquad(7.34)\]</span></span></p>
 <p>Then <span class="math inline">\(\hat{\mathcal{H}}_k\)</span> defines a hyperplane in <span class="math inline">\(\mathbb{R}^d\)</span> of dimension <span class="math inline">\(d - 1\)</span> that is parallel to subspace <span class="math inline">\(\hat{\mathcal{S}}_k\)</span>:</p>
 <p><span id="eq-hat-S-k"><span class="math display">\[
 \begin{align}
@@ -1891,10 +2179,126 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       \hat{\mu}_{\bullet, k}
   \right \}
 \end{align}
-\qquad(7.24)\]</span></span></p>
+\qquad(7.35)\]</span></span></p>
 </section>
-<section id="binary-case-k-2" class="level3" data-number="7.4.3">
-<h3 data-number="7.4.3" class="anchored" data-anchor-id="binary-case-k-2"><span class="header-section-number">7.4.3</span> Binary Case: <span class="math inline">\(K = 2\)</span></h3>
+<section id="pairwise-boundaries" class="level4" data-number="7.4.3.3">
+<h4 data-number="7.4.3.3" class="anchored" data-anchor-id="pairwise-boundaries"><span class="header-section-number">7.4.3.3</span> Pairwise Boundaries</h4>
+<p>From <a href="#eq-category-assignment-criterion-2" class="quarto-xref">Equation&nbsp;<span>7.31</span></a> we can interpret the selected category <span class="math inline">\(\eta\)</span> as having a linear functional <span class="math inline">\(\delta_\eta (\cdot)\)</span> that is “best compared to the rest”. If we were to limit the comparison to just a pair of categories, say <span class="math inline">\(\mathcal{C}_j\)</span> versus <span class="math inline">\(\mathcal{C}_k\)</span>, the better match for a given observation <span class="math inline">\(x_\bullet\)</span> would be derived from the maximum of the two values, <span class="math inline">\(\delta_j (x_\bullet)\)</span> and <span class="math inline">\(\delta_k (x_\bullet)\)</span>. Equivalently, we could form the comparison function <span class="math inline">\(\delta_{j, k} (x_\bullet)\)</span>:</p>
+<p><span id="eq-pairwise-compare-fn"><span class="math display">\[
+\begin{align}
+  \delta_{j, k} (x_\bullet)
+  &amp;=
+    \delta_j (x_\bullet) \; - \;
+    \delta_k (x_\bullet)
+\end{align}
+\qquad(7.36)\]</span></span></p>
+<p>to make the following pair-wise decision.</p>
+<p><span id="eq-pairwise-compare-decision"><span class="math display">\[
+\begin{align}
+  \mathcal{D}_{j, k} (x_\bullet)
+  &amp;=
+  \begin{cases}
+    \mathcal{C}_j
+    &amp;
+      \text{ if } \delta_{j, k} (x_\bullet) &gt; 0 \\
+    \mathcal{C}_k
+    &amp;
+      \text{ if } \delta_{j, k} (x_\bullet) &lt; 0
+  \end{cases}
+\end{align}
+\qquad(7.37)\]</span></span></p>
+<p>If <span class="math inline">\(x_\bullet\)</span> evaluates to zero by <span class="math inline">\(\delta_{j, k} (\cdot)\)</span> then <span class="math inline">\(x_\bullet\)</span> belongs the boundary <span class="math inline">\(\mathcal{B}_{j,k}\)</span> between the two preferences, which is the following linear hyperplane in <span class="math inline">\(d-\)</span>space.</p>
+<p><span id="eq-pairwise-compare-decision"><span class="math display">\[
+\begin{align}
+  \mathcal{B}_{j,k}
+  &amp;=
+    \left \{
+      x_\bullet \in \mathbb{R}^d : \;  
+      \delta_{j, k} (x_\bullet) = 0
+    \right \}
+\end{align}
+\qquad(7.38)\]</span></span></p>
+<p>When visualizing the data in a 2D or 3D scatter diagram, these pairwise boundary lines (2D) or planes (3D) provide a visual representation of the decision rule.</p>
+</section>
+<section id="polar-decomposition-of-the-covariance-matrix" class="level4" data-number="7.4.3.4">
+<h4 data-number="7.4.3.4" class="anchored" data-anchor-id="polar-decomposition-of-the-covariance-matrix"><span class="header-section-number">7.4.3.4</span> Polar Decomposition of the Covariance Matrix</h4>
+<p>Another valuable aid to data visualization (as well as data analysis) is to compute the polar (eigen-) decomposition of the covariance matrix. This is essentially principal component analysis (PCA) of the feature vectors. The resulting orthonormal eigenvectors account, in descending order, for the total variance of the feature vectors. The search for one or more of these eigenvectors that best predicts observation categories is a systematic search for an effective, lower-dimensional subspace of features.</p>
+<p>Here is a mathematical elaboration of this idea. We denote the polar decomposition of the covariance matrix as follows.</p>
+<p><span id="eq-cov-polar-decomp"><span class="math display">\[
+\begin{align}
+  Cov_{\bullet, \bullet}
+  &amp;=
+    U \; D^2 \; U^\top \\ \\
+    &amp; \text{where} \\ \\
+  D^2 &amp;= diag(\lambda_1^2, \ldots, \lambda_d^2) \\ \\
+    &amp; \text{and} \\ \\
+  U^\top U &amp;= U \; U^\top = I
+\end{align}
+\qquad(7.39)\]</span></span></p>
+<p>Now for any vector <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span> let <span class="math inline">\(\tilde{v}_\bullet\)</span> serve as short-hand for the following linear transformation of <span class="math inline">\(v_\bullet\)</span>.</p>
+<p><span id="eq-normalization-wrt-cov"><span class="math display">\[
+\begin{align}
+  \tilde{v}_\bullet
+  &amp;=
+    D^{-1} \; U^\top \; v_\bullet \\
+  &amp;=
+    Cov_{\bullet, \bullet}^{-1/2} \; v_\bullet
+\end{align}
+\qquad(7.40)\]</span></span></p>
+<p>Note that the elements of <span class="math inline">\(\tilde{v}_\bullet \; - \tilde{\mu}_{\bullet, k}\)</span> are z-values that are centered with respect to the mean vector for category <span class="math inline">\(\mathcal{C}_k\)</span>.</p>
+<p><span id="eq-z-values-wrt-class-k"><span class="math display">\[
+\begin{align}
+  \tilde{v}_\bullet \; - \tilde{\mu}_{\bullet, k}
+  &amp;=
+    D^{-1} \; U^\top \; (v_\bullet - \mu_{\bullet, k}) \\
+  &amp;=
+    Cov_{\bullet, \bullet}^{-1/2} \; (v_\bullet - \mu_{\bullet, k})
+\end{align}
+\qquad(7.41)\]</span></span></p>
+<p>Using this linear transformation (and short-hand) we obtain the following more compact expression of <a href="#eq-delta-k" class="quarto-xref">Equation&nbsp;<span>7.32</span></a>.</p>
+<p><span id="eq-delta-k-tilde"><span class="math display">\[
+\begin{align}
+  \delta_k (x_\bullet)
+  &amp;=
+    x_\bullet^\top \;
+      Cov_{\bullet, \bullet}^{-1} \;
+      \mu_{\bullet, k}
+      \; - \;
+      \frac{1}{2} \;
+      \mu_{\bullet, k}^\top \;
+      Cov_{\bullet, \bullet}^{-1} \;
+      \mu_{\bullet, k}
+      \; + \;
+      \log_e (\pi_k) \\
+  &amp;=
+    \tilde{x}_\bullet^\top \;
+      \tilde{\mu}_{\bullet, k}
+      \; - \;
+      \frac{1}{2} \;
+      \tilde{\mu}_{\bullet, k}^\top \;
+      \tilde{\mu}_{\bullet, k}
+      \; + \;
+      \log_e (\pi_k) \\
+  &amp;=
+    \left &lt;
+      \tilde{\mu}_{\bullet, k}, \;
+      \tilde{x}_\bullet
+    \right &gt;
+      \; - \;
+      \frac{1}{2} \;
+      \lVert \tilde{\mu}_{\bullet, k} \rVert^2
+      \; + \;
+      \log_e (\pi_k) \\
+  &amp;=
+    \tilde{\delta}_k (\tilde{x}_\bullet)
+\end{align}
+\qquad(7.42)\]</span></span></p>
+<p>Both <span class="math inline">\(\delta_k (x_\bullet)\)</span> and <span class="math inline">\(\tilde{\delta}_k (\tilde{x}_\bullet)\)</span> are affine functions of their arguments, meaning a linear function plus a constant. The linear component of <span class="math inline">\(\tilde{\delta}_k (\tilde{x}_\bullet)\)</span>, namely <span class="math inline">\(\left &lt; \tilde{\mu}_{\bullet, k}, \; \tilde{x}_\bullet \right &gt;\)</span>, can be interpreted as the coordinate of <span class="math inline">\(\tilde{x}_\bullet\)</span> with respect to <span class="math inline">\(\tilde{\mu}_{\bullet, k}\)</span>.</p>
+<p>In <code>R</code> function <code>MASS::lda()</code> and other LDA software, the eigenvectors <span class="math inline">\((u_{\bullet, 1}, \ldots, u_{\bullet, d})\)</span> are represented as “LD1, LD2, <span class="math inline">\(\ldots\)</span>”.</p>
+</section>
+</section>
+<section id="binary-case-k-2" class="level3" data-number="7.4.4">
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="binary-case-k-2"><span class="header-section-number">7.4.4</span> Binary Case: <span class="math inline">\(K = 2\)</span></h3>
 <p>When <span class="math inline">\(K = 2\)</span> we have the following binary assignment of <span class="math inline">\(x_\bullet \in \mathbb{R}^d\)</span>:</p>
 <p><span id="eq-binary-assignment-1"><span class="math display">\[
 \begin{align}
@@ -1907,7 +2311,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       \mathcal{C}_2 &amp; \text{ otherwise }
     \end{cases}
 \end{align}
-\qquad(7.25)\]</span></span></p>
+\qquad(7.43)\]</span></span></p>
 <p>Therefore the assignment criterion can be reduced to <span class="math inline">\(\hat{\delta}_1 (x_\bullet) - \hat{\delta}_2 (x_\bullet)\)</span>:</p>
 <p><span id="eq-delta-1-minus-delta-2"><span class="math display">\[
 \begin{align}
@@ -1934,7 +2338,7 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
       &amp; \quad
       \; + \;  \log_e (\hat{\pi}_1) \; - \; \log_e (\hat{\pi}_2)
 \end{align}
-\qquad(7.26)\]</span></span></p>
+\qquad(7.44)\]</span></span></p>
 <p>We now have a single linear discriminant function <span class="math inline">\(\hat{\delta}_{1, 2} (\cdot)\)</span>:</p>
 <p><span id="eq-binary-assignment-2"><span class="math display">\[
 \begin{align}
@@ -1948,10 +2352,10 @@ Figure&nbsp;7.14: Technical versus general book prices: 3 scenarios
         &amp; \text{ otherwise }
     \end{cases}
 \end{align}
-\qquad(7.27)\]</span></span></p>
+\qquad(7.45)\]</span></span></p>
 </section>
-<section id="wine-color-d-2-k-2" class="level3" data-number="7.4.4">
-<h3 data-number="7.4.4" class="anchored" data-anchor-id="wine-color-d-2-k-2"><span class="header-section-number">7.4.4</span> Wine Color: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 2\)</span></h3>
+<section id="wine-color-d-2-k-2" class="level3" data-number="7.4.5">
+<h3 data-number="7.4.5" class="anchored" data-anchor-id="wine-color-d-2-k-2"><span class="header-section-number">7.4.5</span> Wine Color: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 2\)</span></h3>
 <p>To illustrate the application of LDA to the wine quality data in a 2D scatter-plot, we initially restrict the set of features to just <code>density</code> and <code>res-sugar</code> (residual sugar). In addition, to facilitate the interpretation of the LDA linear discriminant function (<code>LD1</code>), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation. The resulting coefficients fit by <code>R</code> function <code>MASS::lda()</code> are shown in <a href="#tbl-2D-lda-coefficients" class="quarto-xref">Table&nbsp;<span>7.9</span></a>. <a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
 <div class="cell">
 <div id="tbl-2D-lda-coefficients" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -2039,8 +2443,8 @@ Table&nbsp;7.10: Wine Color: actual versus LDA prediction
 </div>
 <p>The mis-classification rates are about 12% for red wines, and 3% for white wines. Those rates can be reduced by using additional predictors, as we’ll see shortly.</p>
 </section>
-<section id="wine-color-d-11-k-2" class="level3" data-number="7.4.5">
-<h3 data-number="7.4.5" class="anchored" data-anchor-id="wine-color-d-11-k-2"><span class="header-section-number">7.4.5</span> Wine Color: <span class="math inline">\(d = 11\)</span>, <span class="math inline">\(K = 2\)</span></h3>
+<section id="wine-color-d-11-k-2" class="level3" data-number="7.4.6">
+<h3 data-number="7.4.6" class="anchored" data-anchor-id="wine-color-d-11-k-2"><span class="header-section-number">7.4.6</span> Wine Color: <span class="math inline">\(d = 11\)</span>, <span class="math inline">\(K = 2\)</span></h3>
 <p>We now employ all 11 features for comparison to the initial classificaton based on 2 features. Once again we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation. The resulting coefficients fit by <code>R</code> function <code>MASS::lda()</code> are shown in <a href="#tbl-lda-coefficients" class="quarto-xref">Table&nbsp;<span>7.11</span></a>.</p>
 <div class="cell">
 <div id="tbl-lda-coefficients" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -2167,8 +2571,8 @@ Figure&nbsp;7.16: Color probabilies per actual and predicted color
 <p>For red wines, the LDA classifier probabilities were decisively zero or one, with very few exceptions; the classifier was decisively wrong for about 1% of the instances of red wine.</p>
 <p>As for white wines, the mis-classification rate was merely 0.4%. And in those instances of mis-classification, the classifier tended to produce more ambiguous probabilities than for red wines.</p>
 </section>
-<section id="wine-quality-d-2-k-3" class="level3" data-number="7.4.6">
-<h3 data-number="7.4.6" class="anchored" data-anchor-id="wine-quality-d-2-k-3"><span class="header-section-number">7.4.6</span> Wine Quality: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 3\)</span></h3>
+<section id="wine-quality-d-2-k-3" class="level3" data-number="7.4.7">
+<h3 data-number="7.4.7" class="anchored" data-anchor-id="wine-quality-d-2-k-3"><span class="header-section-number">7.4.7</span> Wine Quality: <span class="math inline">\(d = 2\)</span>, <span class="math inline">\(K = 3\)</span></h3>
 <p>Continuing with the wine quality data, we now change the labeling variable from color (red wine versus white wine) to quality ratings on a nominal scale from 0 to 10. More specifically, let’s group wines according to their quality score, assigning a “low” level when quality <span class="math inline">\(\le 5\)</span>, a “medium” level when <span class="math inline">\(5 &lt;\)</span> quality score <span class="math inline">\(&lt; 7\)</span>, and a “high” level when quality score <span class="math inline">\(\ge 7\)</span>. <a href="#fig-wqual-hist" class="quarto-xref">Figure&nbsp;<span>7.17</span></a> shows the number of wines at these different levels.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2331,7 +2735,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   &amp; \text{so that} \\ \\
   1_\bullet^\top \; X_{\bullet, \bullet} &amp;= 0_\bullet \in \mathbb{R}^d
 \end{align}
-\qquad(7.28)\]</span></span></p>
+\qquad(7.46)\]</span></span></p>
 <p>As a consequence, the <span class="math inline">\(d \times d\)</span> matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is a multiple of the sample covariance matrix among features.</p>
 <p><span id="eq-cov-X-mat"><span class="math display">\[
 \begin{align}
@@ -2341,7 +2745,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
   \right )
 \end{align}
-\qquad(7.29)\]</span></span></p>
+\qquad(7.47)\]</span></span></p>
 <p>In particular, the variance of each feature vector is proportional to its squared norm.</p>
 <p><span id="eq-feature-variance-equals-norm2"><span class="math display">\[
 \begin{align}
@@ -2351,7 +2755,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     x_{\bullet, k}
   \rVert^2
 \end{align}
-\qquad(7.30)\]</span></span></p>
+\qquad(7.48)\]</span></span></p>
 <p>Although matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is a square matrix having dimensions <span class="math inline">\(d \times d\)</span>, its <em>rank</em> may be less than <span class="math inline">\(d\)</span>. Let <span class="math inline">\(r = rank \left ( X_{\bullet, \bullet} \right )\)</span>. Then <span class="math inline">\(r\)</span> is also the rank of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span>. It is the dimension of the subspace of <span class="math inline">\(\mathbb{R}^d\)</span> spanned by the rows of <span class="math inline">\(X_{\bullet, \bullet}\)</span>, as well as the dimension of the subspace of <span class="math inline">\(\mathbb{R}^n\)</span> spanned by the columns of <span class="math inline">\(X_{\bullet, \bullet}\)</span>. Consequently <span class="math inline">\(r \le \min(n, d)\)</span>.</p>
 <p>Our construction of principal components also relies on the notion of an orthogonal projection <span class="math inline">\(P\)</span> from <span class="math inline">\(\mathbb{R}^d\)</span> to some subspace of <span class="math inline">\(\mathbb{R}^d\)</span>. Recall that <span class="math inline">\(P\)</span> is an orthogonal projection if and only if: it is idempotent <span class="math inline">\((P^2 = P)\)</span>; and symmetric <span class="math inline">\((P^\top = P)\)</span>. Also, if <span class="math inline">\(P\)</span> is an orthogonal projection then so is its complement <span class="math inline">\(\mathcal{I} - P\)</span>.</p>
 <p>The simplest example is the <span class="math inline">\(d \times d\)</span> matrix <span class="math inline">\(v_\bullet \; v_\bullet^\top\)</span>, where <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span> is a unit vector (a vector of unit norm). This sends <span class="math inline">\(x_\bullet \in \mathbb{R}^d\)</span> to a scalar multiple of <span class="math inline">\(v_\bullet\)</span>, namely <span class="math inline">\(\left &lt; x_\bullet, v_\bullet \right &gt; v_\bullet\)</span>. <a href="#fn16" class="footnote-ref" id="fnref16" role="doc-noteref"><sup>16</sup></a></p>
@@ -2430,9 +2834,9 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     &amp; \text{subject to the constraint:} \\ \\
     &amp; P \text{ is an orthogonal projection defined on } \mathbb{R}^d
 \end{align}
-\qquad(7.31)\]</span></span></p>
+\qquad(7.49)\]</span></span></p>
 <p>Thus <span class="math inline">\(\mathcal{L} (P)\)</span> is a sum over row index <span class="math inline">\(i\)</span> of squared residuals in the approximation of <span class="math inline">\(x_{i, \bullet}\)</span> by <span class="math inline">\(P \; x_{i, \bullet}\)</span>.</p>
-<p>Now let <span class="math inline">\(\mathcal{P}\)</span> be a set of projections. From <a href="#eq-row-projection-squared-error" class="quarto-xref">Equation&nbsp;<span>7.31</span></a> we see that projection <span class="math inline">\(\hat{P} \in \mathcal{P}\)</span> minimizes <span class="math inline">\(\mathcal{L} (P)\)</span> if and only if it maximizes a corresponding sum of squares:</p>
+<p>Now let <span class="math inline">\(\mathcal{P}\)</span> be a set of projections. From <a href="#eq-row-projection-squared-error" class="quarto-xref">Equation&nbsp;<span>7.49</span></a> we see that projection <span class="math inline">\(\hat{P} \in \mathcal{P}\)</span> minimizes <span class="math inline">\(\mathcal{L} (P)\)</span> if and only if it maximizes a corresponding sum of squares:</p>
 <p><span id="eq-min-loss-equals-max-quad-form"><span class="math display">\[
 \begin{align}
   &amp;  
@@ -2446,7 +2850,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
         x_{i, \bullet}
       \rVert^2
 \end{align}
-\qquad(7.32)\]</span></span></p>
+\qquad(7.50)\]</span></span></p>
 <p>This last sum of squares is proportional to the sum across <span class="math inline">\(X_{\bullet, \bullet}\)</span> columns (each of which is centered) of the variance of the projected column elements. Briefly, minimization of loss function <span class="math inline">\(\mathcal{L} (\cdot)\)</span> amounts to maximization of projected column variance.</p>
 </section>
 <section id="outline-reconstructing-the-feature-matrix" class="level3" data-number="7.9.2">
@@ -2467,9 +2871,9 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \sum_{\eta = 1}^j
       v_{\bullet, \eta} \; v_{\bullet, \eta}^\top \; x_\bullet
 \end{align}
-\qquad(7.33)\]</span></span></p>
+\qquad(7.51)\]</span></span></p>
 <p>In other words, <span class="math inline">\(P^{(j)}\)</span> is the sum of orthogonal projections, <span class="math inline">\(v_{\bullet, \eta} \; v_{\bullet, \eta}^\top\)</span>, to 1-dimensional subspaces that are pair-wise orthogonal.</p>
-<p>Since we will apply our loss function <span class="math inline">\(\mathcal{L} (P)\)</span> to <span class="math inline">\(P^{(j)}\)</span>, it will be useful to re-express the sum of squares appearing in <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.32</span></a>. <a href="#fn18" class="footnote-ref" id="fnref18" role="doc-noteref"><sup>18</sup></a></p>
+<p>Since we will apply our loss function <span class="math inline">\(\mathcal{L} (P)\)</span> to <span class="math inline">\(P^{(j)}\)</span>, it will be useful to re-express the sum of squares appearing in <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.50</span></a>. <a href="#fn18" class="footnote-ref" id="fnref18" role="doc-noteref"><sup>18</sup></a></p>
 <p><span id="eq-projection-quad-form-as-sum"><span class="math display">\[
 \begin{align}
   &amp;
@@ -2530,12 +2934,12 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \right )
     v_{\bullet, \eta}
 \end{align}
-\qquad(7.34)\]</span></span></p>
+\qquad(7.52)\]</span></span></p>
 <p>As we will see, the maximization of the type of quadratic form appearing in the last sum above is a solved problem.</p>
 </section>
 <section id="details-reconstructing-the-feature-matrix" class="level3" data-number="7.9.3">
 <h3 data-number="7.9.3" class="anchored" data-anchor-id="details-reconstructing-the-feature-matrix"><span class="header-section-number">7.9.3</span> Details: reconstructing the feature matrix</h3>
-<p>Here are the distinctive details of the reconstruction process. At step 1 we define vector <span class="math inline">\(v_{\bullet, 1}\)</span> as the unit vector that minimizes <span class="math inline">\(\mathcal{L} (v_\bullet \; v_\bullet^\top)\)</span> among all unit vectors <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span>. From <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.32</span></a> and <a href="#eq-projection-quad-form-as-sum" class="quarto-xref">Equation&nbsp;<span>7.34</span></a> we have:</p>
+<p>Here are the distinctive details of the reconstruction process. At step 1 we define vector <span class="math inline">\(v_{\bullet, 1}\)</span> as the unit vector that minimizes <span class="math inline">\(\mathcal{L} (v_\bullet \; v_\bullet^\top)\)</span> among all unit vectors <span class="math inline">\(v_\bullet \in \mathbb{R}^d\)</span>. From <a href="#eq-min-loss-equals-max-quad-form" class="quarto-xref">Equation&nbsp;<span>7.50</span></a> and <a href="#eq-projection-quad-form-as-sum" class="quarto-xref">Equation&nbsp;<span>7.52</span></a> we have:</p>
 <p><span id="eq-max-quad-form-step-1"><span class="math display">\[
 \begin{align}
   v_{\bullet, 1}
@@ -2557,8 +2961,8 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   \right ) \;
   v_\bullet
 \end{align}
-\qquad(7.35)\]</span></span></p>
-<p>The solution to <a href="#eq-max-quad-form-step-1" class="quarto-xref">Equation&nbsp;<span>7.35</span></a> is well known. The maximal value of <span class="math inline">\(v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet\)</span> is the largest eigenvalue, say <span class="math inline">\(\sigma_1^2\)</span>, of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span>. And the vector <span class="math inline">\(v_{\bullet, 1}\)</span> that achieves that maximal value is the eigenvector corresponding to <span class="math inline">\(\sigma_1^2\)</span>.</p>
+\qquad(7.53)\]</span></span></p>
+<p>The solution to <a href="#eq-max-quad-form-step-1" class="quarto-xref">Equation&nbsp;<span>7.53</span></a> is well known. The maximal value of <span class="math inline">\(v_\bullet^\top \; X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet} \; v_\bullet\)</span> is the largest eigenvalue, say <span class="math inline">\(\sigma_1^2\)</span>, of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span>. And the vector <span class="math inline">\(v_{\bullet, 1}\)</span> that achieves that maximal value is the eigenvector corresponding to <span class="math inline">\(\sigma_1^2\)</span>.</p>
 <p>Having defined <span class="math inline">\(v_{\bullet, 1}\)</span>, we proceed inductively, again with <span class="math inline">\(r\)</span> defined as <span class="math inline">\(r = rank \left ( X_{\bullet, \bullet} \right )\)</span>. Suppose that we have defined an orthonormal set of vectors <span class="math inline">\(v_{\bullet, 1}, \ldots, v_{\bullet, j}\)</span>, where <span class="math inline">\(1 \le j \le r\)</span>. As previously noted, this orthonormal set of vectors spans a <span class="math inline">\(j-\)</span>dimensional <span class="math inline">\(\mathbb{R}^d\)</span> subspace, denoted <span class="math inline">\(\mathcal{R}^{(j)}\)</span>, and also defines an orthogonal projection <span class="math inline">\(P^{(j)}\)</span> from <span class="math inline">\(\mathbb{R}^d\)</span> to <span class="math inline">\(\mathcal{R}^{(j)}\)</span>.</p>
 <p>If <span class="math inline">\(j = r\)</span> we terminate the reconstruction. Otherwise we define the next vector, <span class="math inline">\(v_{\bullet, j + 1}\)</span>, as the unit vector that minimizes <span class="math inline">\(\mathcal{L} (Q^{(j + 1)})\)</span>, where <span class="math inline">\(Q^{(j + 1)} = P^{(j)} \; + \; v_{\bullet} \; v_{\bullet}^\top\)</span>.</p>
 <p><span id="eq-next-row-projection-error-a"><span class="math display">\[
@@ -2581,8 +2985,8 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   &amp; \text{subject to the constraints: } \\ \\
   &amp; \lVert v_\bullet \rVert = 1 \; \text{ and } \; v_\bullet \perp v_{\bullet, \eta} \; \text{ for } \; \eta \le j
 \end{align}
-\qquad(7.36)\]</span></span></p>
-<p>Note that the constraints on <span class="math inline">\(v_\bullet\)</span> ensure that <span class="math inline">\(Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top)\)</span> is an orthogonal projection. Then, abbreviating and expanding <a href="#eq-next-row-projection-error-a" class="quarto-xref">Equation&nbsp;<span>7.36</span></a>, we have:</p>
+\qquad(7.54)\]</span></span></p>
+<p>Note that the constraints on <span class="math inline">\(v_\bullet\)</span> ensure that <span class="math inline">\(Q^{(j + 1)} (v_{\bullet} \; v_{\bullet}^\top)\)</span> is an orthogonal projection. Then, abbreviating and expanding <a href="#eq-next-row-projection-error-a" class="quarto-xref">Equation&nbsp;<span>7.54</span></a>, we have:</p>
 <p><span id="eq-next-row-projection-error-b"><span class="math display">\[
 \begin{align}
   &amp;
@@ -2613,7 +3017,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
       X_{\bullet, \bullet} \;
     v_\bullet
 \end{align}
-\qquad(7.37)\]</span></span></p>
+\qquad(7.55)\]</span></span></p>
 <p>It now follows that</p>
 <p><span id="eq-maximize-quad-form-b"><span class="math display">\[
 \begin{align}
@@ -2631,10 +3035,10 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \text{ and } \;
     v_\bullet \perp v_{\bullet, \eta} \; \text{ for } \eta \le j
 \end{align}
-\qquad(7.38)\]</span></span></p>
+\qquad(7.56)\]</span></span></p>
 <p>Again, this problem of constrained maximization of a quadratic form is well known. The maximum value is <span class="math inline">\(\sigma_{j + 1}^2\)</span>, the eigenvalue of <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> of index <span class="math inline">\(j + 1\)</span> in descending order. The vector <span class="math inline">\(v_{\bullet, j + 1}\)</span> achieving this maximum is the eigenvector corresponding to <span class="math inline">\(\sigma_{j + 1}^2\)</span>.</p>
 <p>This reconstruction process terminates with an orthonormal set of <span class="math inline">\(d-\)</span>dimensional vectors, <span class="math inline">\((v_{\bullet, 1}, \ldots, v_{\bullet, r})\)</span>, that span subspace <span class="math inline">\(\mathcal{R}^{(r)}\)</span> that is spanned by the rows of <span class="math inline">\(X_{\bullet, \bullet}\)</span>.</p>
-<p>Now let <span class="math inline">\(D\)</span> denote the <span class="math inline">\(r \times r\)</span> diagonal matrix <span class="math inline">\(diag(\sigma_1, \ldots, \sigma_r)\)</span>. From <a href="#eq-feature-variance-equals-norm2" class="quarto-xref">Equation&nbsp;<span>7.30</span></a> and <a href="#eq-next-row-projection-error-b" class="quarto-xref">Equation&nbsp;<span>7.37</span></a> we have</p>
+<p>Now let <span class="math inline">\(D\)</span> denote the <span class="math inline">\(r \times r\)</span> diagonal matrix <span class="math inline">\(diag(\sigma_1, \ldots, \sigma_r)\)</span>. From <a href="#eq-feature-variance-equals-norm2" class="quarto-xref">Equation&nbsp;<span>7.48</span></a> and <a href="#eq-next-row-projection-error-b" class="quarto-xref">Equation&nbsp;<span>7.55</span></a> we have</p>
 <p><span id="eq-cov-trace-equals-eigen-sum"><span class="math display">\[
 \begin{align}
   &amp;
@@ -2663,7 +3067,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   &amp;\text{where} \\ \\
   &amp; D = diag(\sigma_1, \ldots, \sigma_r)
 \end{align}
-\qquad(7.39)\]</span></span></p>
+\qquad(7.57)\]</span></span></p>
 <p>That is, the sum of the eigenvalues <span class="math inline">\(\sigma_\eta^2\)</span> is equal to the sum of squared feature-norms, <span class="math inline">\(\lVert x_{\bullet, k} \rVert^2\)</span>.</p>
 </section>
 <section id="matrix-decompositions" class="level3" data-number="7.9.4">
@@ -2680,8 +3084,8 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   &amp;=
   (v_{\bullet, 1}, \ldots, v_{\bullet, r}) \; D^2
 \end{align}
-\qquad(7.40)\]</span></span></p>
-<p>Matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is non-negative definite, which means that it has <span class="math inline">\(d\)</span> non-negative eigenvalues and corresponding eigenvectors. The first <span class="math inline">\(r\)</span> eigenvalues are positive. Arranged in descending order, they are the diagonal elements of <span class="math inline">\(D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)\)</span>. If <span class="math inline">\(r = d\)</span> the matrix is strictly positive-definite, and its complete eigen-decomposition is given by <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.40</span></a>.</p>
+\qquad(7.58)\]</span></span></p>
+<p>Matrix <span class="math inline">\(X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}\)</span> is non-negative definite, which means that it has <span class="math inline">\(d\)</span> non-negative eigenvalues and corresponding eigenvectors. The first <span class="math inline">\(r\)</span> eigenvalues are positive. Arranged in descending order, they are the diagonal elements of <span class="math inline">\(D^2 = diag(\sigma_1^2, \ldots, \sigma_r^2)\)</span>. If <span class="math inline">\(r = d\)</span> the matrix is strictly positive-definite, and its complete eigen-decomposition is given by <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.58</span></a>.</p>
 <p>Suppose now that <span class="math inline">\(r &lt; d\)</span>. Then any unit vector orthogonal to <span class="math inline">\(\mathcal{R}^{(r)}\)</span>, the <span class="math inline">\(d-\)</span>dimensional subspace spanned by <span class="math inline">\((v_{\bullet, 1}, \ldots, v_{\bullet, r})\)</span>, qualifies as an eigenvector (a “null” eigenvector, we’ll say) having an eigenvalue of zero. Therefore we can complement eigenvectors <span class="math inline">\((v_{\bullet, 1}, \ldots, v_{\bullet, r})\)</span> with an orthonormal set of null eigenvectors <span class="math inline">\((v_{\bullet, r + 1}, \ldots, v_{\bullet, d})\)</span>. The combined set of eigenvectors is a complete orthonormal basis for <span class="math inline">\(\mathbb{R}^d\)</span>.</p>
 <p>We thus have two cases to consider: <span class="math inline">\(r &lt; d\)</span>; or <span class="math inline">\(r = d\)</span>. In either case we now have a complete orthonormal basis represented by the <span class="math inline">\(d \times d\)</span> matrix <span class="math inline">\(V = (v_{\bullet, 1}, \ldots, v_{\bullet, d})\)</span>. We delineate the two cases as follows.</p>
 <p><span id="eq-cov-all-eigen-vectors-1"><span class="math display">\[
@@ -2694,7 +3098,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \end{cases} \\
   V &amp;= (V_1, V_2)
 \end{align}
-\qquad(7.41)\]</span></span></p>
+\qquad(7.59)\]</span></span></p>
 <p>We also record the full set of eigenvalues in the <span class="math inline">\(d \times d\)</span> diagonal matrix <span class="math inline">\(\tilde{D}^2\)</span> as follows.</p>
 <p><span id="eq-cov-all-eigen-values-1"><span class="math display">\[
 \begin{align}
@@ -2708,8 +3112,8 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
       D^2 &amp; \text{if } r = d
     \end{cases}
 \end{align}
-\qquad(7.42)\]</span></span></p>
-<p>This enables us to re-express <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.40</span></a> as follows.</p>
+\qquad(7.60)\]</span></span></p>
+<p>This enables us to re-express <a href="#eq-cov-partial-eigen-decomp" class="quarto-xref">Equation&nbsp;<span>7.58</span></a> as follows.</p>
 <p><span id="eq-cov-full-eigen-decomp-1"><span class="math display">\[
 \begin{align}
   \left (
@@ -2719,15 +3123,15 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
   &amp;=
     V \; \tilde{D}^2
 \end{align}
-\qquad(7.43)\]</span></span></p>
-<p>Matrix <span class="math inline">\(V\)</span> is an orthonormal rotation of <span class="math inline">\(\mathbb{R}^d\)</span>, so that <span class="math inline">\(V^\top = V^{-1}\)</span>. Multiplying <a href="#eq-cov-full-eigen-decomp-1" class="quarto-xref">Equation&nbsp;<span>7.43</span></a> on the right by <span class="math inline">\(V^\top\)</span> we obtain:</p>
+\qquad(7.61)\]</span></span></p>
+<p>Matrix <span class="math inline">\(V\)</span> is an orthonormal rotation of <span class="math inline">\(\mathbb{R}^d\)</span>, so that <span class="math inline">\(V^\top = V^{-1}\)</span>. Multiplying <a href="#eq-cov-full-eigen-decomp-1" class="quarto-xref">Equation&nbsp;<span>7.61</span></a> on the right by <span class="math inline">\(V^\top\)</span> we obtain:</p>
 <p><span id="eq-cov-full-eigen-decomp-2"><span class="math display">\[
 \begin{align}
   X_{\bullet, \bullet}^\top \; X_{\bullet, \bullet}
   &amp;=
     V \; \tilde{D}^2 \; V^\top
 \end{align}
-\qquad(7.44)\]</span></span></p>
+\qquad(7.62)\]</span></span></p>
 <p>This last equation can be re-expressed as an eigen-decomposition of the feature covariance matrix:</p>
 <p><span id="eq-cov-full-eigen-decomp-3"><span class="math display">\[
 \begin{align}
@@ -2740,7 +3144,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \right )
     V^\top
 \end{align}
-\qquad(7.45)\]</span></span></p>
+\qquad(7.63)\]</span></span></p>
 </section>
 <section id="principal-components-of-the-feature-matrix" class="level4" data-number="7.9.4.2">
 <h4 data-number="7.9.4.2" class="anchored" data-anchor-id="principal-components-of-the-feature-matrix"><span class="header-section-number">7.9.4.2</span> Principal Components of the Feature Matrix</h4>
@@ -2752,7 +3156,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     X_{\bullet, \bullet} \; v_{\bullet, \eta}
     &amp; \text{ for } \eta \in \{ 1, \ldots, r \}
 \end{align}
-\qquad(7.46)\]</span></span></p>
+\qquad(7.64)\]</span></span></p>
 <p>Note that distinct principal components are orthogonal, and the squared magnitude of <span class="math inline">\(c_{\bullet, \eta}\)</span> is <span class="math inline">\(\sigma_\eta^2\)</span>:</p>
 <p><span id="eq-orthogonal-PCs"><span class="math display">\[
 \begin{align}
@@ -2798,7 +3202,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
       0 &amp; \text{ if } \kappa \ne \eta
     \end{cases}
 \end{align}
-\qquad(7.47)\]</span></span></p>
+\qquad(7.65)\]</span></span></p>
 </section>
 <section id="svd-of-the-feature-matrix" class="level4" data-number="7.9.4.3">
 <h4 data-number="7.9.4.3" class="anchored" data-anchor-id="svd-of-the-feature-matrix"><span class="header-section-number">7.9.4.3</span> SVD of the Feature Matrix</h4>
@@ -2812,7 +3216,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \frac{ c _{\bullet, \eta} }{ \sigma_\eta }
     &amp; \text{ for } \eta \in \{ 1, \ldots, r \}
 \end{align}
-\qquad(7.48)\]</span></span></p>
+\qquad(7.66)\]</span></span></p>
 <p>Since the principal components are pair-wise orthogonal, the unit vectors just defined make up an orthonormal set of <span class="math inline">\(n-\)</span>dimensional vectors. Note that</p>
 <p><span id="eq-svd-1"><span class="math display">\[
 \begin{align}
@@ -2854,7 +3258,7 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \sigma_\eta \;
     v_{\bullet, \eta}^\top
 \end{align}
-\qquad(7.49)\]</span></span></p>
+\qquad(7.67)\]</span></span></p>
 <p>We now define <span class="math inline">\(U_1 = ( u_{\bullet, 1}, \ldots, u_{\bullet, r} )\)</span> to be the <span class="math inline">\(n \times r\)</span> matrix having these <span class="math inline">\(r\)</span> unit vectors as its columns. And we extend, if needed, this set of unit vectors to create an orthonormal basis for <span class="math inline">\(\mathbb{R}^n\)</span>. That is, if <span class="math inline">\(r &lt; n\)</span> then the vector space spanned by the columns of <span class="math inline">\(U_1\)</span> is a proper subspace of <span class="math inline">\(\mathbb{R}^n\)</span>. The orthogonal complement to this subspace has dimension <span class="math inline">\(n - r\)</span>, and thus admits an orthonormal basis, which we label as <span class="math inline">\(( u_{\bullet, r + 1}, \ldots, u_{\bullet, n} )\)</span>. And we define <span class="math inline">\(U_2\)</span> to be the matrix having these vectors as its columns. Finally, we define the <span class="math inline">\(n \times n\)</span> orthogonal matrix <span class="math inline">\(U = ( u_{\bullet, 1}, \ldots, u_{\bullet, n} )\)</span>.</p>
 <p><span id="eq-all-left-eigen-vectors-1"><span class="math display">\[
 \begin{align}
@@ -2866,15 +3270,15 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
     \end{cases} \\
   U &amp;= (U_1, U_2)
 \end{align}
-\qquad(7.50)\]</span></span></p>
-<p>We can now re-express <a href="#eq-svd-1" class="quarto-xref">Equation&nbsp;<span>7.49</span></a> as follows.</p>
+\qquad(7.68)\]</span></span></p>
+<p>We can now re-express <a href="#eq-svd-1" class="quarto-xref">Equation&nbsp;<span>7.67</span></a> as follows.</p>
 <p><span id="eq-svd-2"><span class="math display">\[
 \begin{align}
   U^\top \; X_{\bullet, \bullet}
   &amp;=
     \Sigma \; V^\top
 \end{align}
-\qquad(7.51)\]</span></span></p>
+\qquad(7.69)\]</span></span></p>
 <p>where <span class="math inline">\(\Sigma\)</span> is the following <span class="math inline">\(n \times d\)</span> rectangular diagonal matrix:</p>
 <p><span id="eq-Sigma-defn"><span class="math display">\[
 \begin{align}
@@ -2890,15 +3294,15 @@ Table&nbsp;7.14: White wine quality level: actual versus LDA prediction
       \end{pmatrix} &amp; \text{ if } d &gt; n
     \end{cases}
 \end{align}
-\qquad(7.52)\]</span></span></p>
-<p>Then multiplying <a href="#eq-all-left-eigen-vectors-1" class="quarto-xref">Equation&nbsp;<span>7.50</span></a> on the left by matrix <span class="math inline">\(U\)</span> we obtain:</p>
+\qquad(7.70)\]</span></span></p>
+<p>Then multiplying <a href="#eq-all-left-eigen-vectors-1" class="quarto-xref">Equation&nbsp;<span>7.68</span></a> on the left by matrix <span class="math inline">\(U\)</span> we obtain:</p>
 <p><span id="eq-svd-3"><span class="math display">\[
 \begin{align}
   X_{\bullet, \bullet}
   &amp;=
     U \; \Sigma \; V^\top
 \end{align}
-\qquad(7.53)\]</span></span></p>
+\qquad(7.71)\]</span></span></p>
 <p>This factorization of the feature matrix <span class="math inline">\(X_{\bullet, \bullet}\)</span> is called a <em>singular value decomposition</em> (SVD).</p>
 
 
