@@ -1,0 +1,47 @@
+---
+title: "reduce-dim-sections-2025-11-27-1740"
+format: html
+---
+
+## Supervised or Not {#sec-dim-r-supervised}
+
+[TODO: incorporate this section within "Other Methods" (next section)]
+
+Principal component analysis (PCA) is a prime example of an "unsupervised" method of reducing the column dimension $(d)$ of the feature matrix in order to improve our understanding and modeling of the data.  The term "unsupervised" corresponds to the absence of a response variable (target variable, or label).
+
+If the available data include a response variable, as is the case for linear discriminant analysis (LDA), then the modeling goal is more focused: to determine a function of the feature matrix that closely approximates the response variable.
+
+In the presence of a response variable (or even without one), the modeling process may entail partitioning the available data into three sets for the respective purposes of training, testing, and evaluating (or validating) a model.  But for present purposes, in order to focus on methods from the perspective of linear algebra, we use all available data to train the model.
+
+## Other Methods {#sec-dim-r-other-methods}
+
+[TODO]
+
+Intro: PCA and LDA presented in detail because they are widely applicable and illustrate unsupervised and supervised methods, respectively.
+
+Methods to mention:
+  - logistic regression
+  - Clustering
+  - MDS: multidimensional scaling
+  - SNE: stochastic neighbor embedding
+  - others?
+
+Important distinctions:
+  - supervised versus unsupervised
+  - linear versus non-linear
+  - applicable when d > n
+  - others?
+When to use what?
+Trade-offs?
+
+## Summary {#sec-dim-r-summary}
+
+[TODO]
+
+## Exercises {#sec-dim-r-exercises}
+
+[TODO]
+
+## Appendix A: Matrix Decompositions and PCA {#sec-dim-r-mat-decomp}
+
+[first draft complete]
