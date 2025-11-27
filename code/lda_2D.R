@@ -1329,12 +1329,12 @@ get_ss_points <- function(
     !! enquo(y_group), 
     bbox = bbox)
   
-  # one bbox line segment for each pair of distinct groups
+  # one bbox line-segment for each pair of distinct groups
   bb_segs_tbl <- bb_segs_lst$ bb_segs_tbl
   
   # iseg_tbl: indices of pairs of distinct segments
   iseg_tbl <- bb_segs_tbl |> 
-    # select rows that have a bbox line segment
+    # select rows that have a bbox line-segment
     dplyr::filter(
       ! is.null( x ), 
       ! is.null( y ), 
@@ -1344,7 +1344,7 @@ get_ss_points <- function(
   
   # iseg_tbl: add group labels
   iseg_tbl <- iseg_tbl |> 
-    # 1st line segment
+    # 1st line-segment
     dplyr::left_join(
       y  = bb_segs_tbl |> 
         dplyr::select(1:4), 
@@ -1352,7 +1352,7 @@ get_ss_points <- function(
         ig_1 == ig_1, 
         ig_2 == ig_2 )
     ) |> 
-    # 2nd line segment
+    # 2nd line-segment
     dplyr::left_join(
       y  = bb_segs_tbl |> 
         dplyr::select(1:4), 
@@ -1372,7 +1372,7 @@ get_ss_points <- function(
     ss_pts_tbl <- NULL
   } else {
     
-    # 1st line segment
+    # 1st line-segment
     ss_pts_tbl <- iseg_tbl |> 
       dplyr::left_join(
         y  = bb_segs_tbl, 
@@ -1389,7 +1389,7 @@ get_ss_points <- function(
         ) |> 
       dplyr::select(1:10, seg_1)
     
-    # 2nd line segment
+    # 2nd line-segment
     ss_pts_tbl <- ss_pts_tbl |> 
       dplyr::left_join(
         y  = bb_segs_tbl, 

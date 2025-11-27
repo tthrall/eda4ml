@@ -3141,19 +3141,34 @@ wqual_was <- wqual_z |>
 ```
 
 ```{r}
-#| label: wqual-white-a-s-ss-pts
+#| label: g-bbox-wqual-white-a-s
 
-wqual_was_ss_pts_lst <- wqual_was |> 
-  get_ss_points(alcohol, res_sugar, q_level)
+# initialize plot to obtain bounding box
+g_wqual_was <- wqual_was |> 
+  dplyr::rename(level = q_level) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = alcohol, y = res_sugar, 
+    colour = level, fill = level
+  ))
+bbox_wqual_was <- g_wqual_was |> 
+  extract_ggplot_bbox()
 
 ```
 
 ```{r}
 #| label: wqual-was-bb-segs
 
+# get intersections of bbox segments, etc.
+wqual_was_ss_pts_lst <- wqual_was |> 
+  get_ss_points(
+    alcohol, res_sugar, q_level, 
+    bbox = bbox_wqual_was )
+
+# extract bbox segments from list
 wqual_was_bb_segs_tbl <- 
   wqual_was_ss_pts_lst$ bb_segs_tbl
 
+# prepare labels of bbox segments
 wqual_was_bb_segs_iqlvl <- 
   wqual_was_bb_segs_tbl |> 
   dplyr::select(ig_1, ig_2) |> 
@@ -3161,8 +3176,6 @@ wqual_was_bb_segs_iqlvl <-
   dplyr::mutate(
     iqlvl = paste0("iq_", ig_1, "_", ig_2)
   )
-  
-
 wqual_was_bb_segs_mat <- 
   wqual_was_bb_segs_tbl |> 
   dplyr::select(x:yend) |> 
@@ -3170,28 +3183,48 @@ wqual_was_bb_segs_mat <-
 rownames(wqual_was_bb_segs_mat) <- 
   wqual_was_bb_segs_iqlvl$ iqlvl
 
+# now()
+# [1] "2025-11-27 12:45:46 GMT"
 # wqual_was_bb_segs_mat
 #                 x         y       xend     yend
-# iq_1_2 -0.3508346 -1.017956 -1.7263387 4.331151
-# iq_1_3  1.6096527 -1.017956  0.8229706 4.331151
-# iq_2_3  0.6722320 -1.017956 -0.3959994 4.331151
+# iq_1_2 -0.2820594 -1.285411 -1.7951139 4.598606
+# iq_1_3  1.6489868 -1.285411  0.7836365 4.598606
+# iq_2_3  0.7256436 -1.285411 -0.4494109 4.598606
 
 ```
 
-@fig-wqual-white-a-s shows the resulting data, along with line segments representing linear discrimination between each pair of quality levels (low, medium, high).
+```{r}
+#| label: wqual-was-x-means
+
+# extract group means from list
+wqual_was_x_means <- 
+  wqual_was_ss_pts_lst$ x_means
+
+```
+
+@fig-wqual-white-a-s shows thi subset of the data, along with line segments representing linear discrimination between each pair of quality levels (low, medium, high).  Also shown is the centroid (mean vector) of each quality level.
 
 ```{r}
 #| label: g-wqual-white-a-s
 
 # Construct plot for later display
-
 g_wqual_was <- wqual_was |> 
   dplyr::rename(level = q_level) |> 
   ggplot2::ggplot(mapping = aes(
     x = alcohol, y = res_sugar, 
     colour = level, fill = level
   )) + 
+  # scatter diagram of data points
   ggplot2::geom_point(show.legend = FALSE) + 
+  # group means
+  ggplot2::geom_point(
+    show.legend = FALSE, 
+    data = wqual_was_x_means, 
+    shape = 23, size = 5, 
+    mapping = aes(
+      x = alcohol, y = res_sugar, 
+      colour = "black", fill = q_level
+    ) ) + 
   ggplot2::geom_segment(
     show.legend = FALSE, 
     aes(colour = "black", 
@@ -3218,7 +3251,7 @@ g_wqual_was <- wqual_was |>
 
 ```{r}
 #| label: fig-wqual-white-a-s
-#| fig-cap: "White wine quality per alcohol and sugar z-values.  Shown from left to right are the class boundaries low-medium, low-high, and medium-high."
+#| fig-cap: "White wine quality per alcohol and sugar z-values.  Shown from left to right are the group boundaries low-medium, low-high, and medium-high. Group means are shown as diamond-shapes."
 
 g_wqual_was + 
   ggplot2::labs(
@@ -3263,7 +3296,7 @@ wqual_was_lda_predict <- dplyr::bind_cols(
 
 ```
 
-The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-wqual-was-lda-coefficients.
+The corresponding (`alcohol`, `res_sugar`) coefficients of the eigenvectors (`LD1`, `LD2`) fit by `R` function `MASS::lda()` are shown in @tbl-wqual-was-lda-coefficients.
 
 ```{r}
 #| label: tbl-wqual-was-lda-coefficients
@@ -3280,6 +3313,11 @@ wqual_was_lda_mdl$ fit$ scaling |>
 ```{r}
 #| label: wqual-was-lda-coordinates
 
+# Calculate (LD1, LD2) coordinates:
+
+## 
+#   - of each data point
+## 
 LD_coord_wqual_was <- 
   wqual_was |> 
   dplyr::select(alcohol, res_sugar) |> 
@@ -3292,27 +3330,104 @@ LD_coord_wqual_was <-
     q_level = wqual_was$ q_level
   )
 
+## 
+#   - of each group mean
+## 
+LD_coord_wqual_was_x_means <- 
+  wqual_was_x_means |> 
+  dplyr::select(alcohol, res_sugar) |> 
+  # 3-by-2 tibble: x_means projected onto (LD1, LD2)
+  as.matrix() %*% 
+  wqual_was_lda_mdl$ fit$ scaling |> 
+  tibble::as_tibble() |> 
+  # restore labeling column q_level
+  dplyr::mutate(
+    q_level = wqual_was_x_means$ q_level
+  )
+
+## 
+#   - of each bbox line-segment
+## 
+
+#     - initial point
+LD_coord_bb_xy <- 
+  wqual_was_bb_segs_mat [, c("x", "y")] %*%  
+  # 3-by-2 matrix: (x, y) projected onto (LD1, LD2)
+  wqual_was_lda_mdl$ fit$ scaling
+
+#     - final point
+LD_coord_bb_xyend <- 
+  wqual_was_bb_segs_mat [, c("xend", "yend")] %*%  
+  # 3-by-2 matrix: (xend, yend) projected onto (LD1, LD2)
+  wqual_was_lda_mdl$ fit$ scaling
+
+# re-assemble matrix (not tibble)
+LD_coord_bb_segs <- cbind(
+  LD_coord_bb_xy, LD_coord_bb_xyend )
+colnames(LD_coord_bb_segs) <- 
+  colnames(wqual_was_bb_segs_mat)
+rownames(LD_coord_bb_segs) <- 
+  rownames(wqual_was_bb_segs_mat)
+
 ```
 
 ```{r}
 #| label: g-LD-coord-wqual-was
 
-# Construct plot for subsequent display
-# fig-cap: "White wine quality: (LD1, LD2) coordinates. (Non-negative features produce hard edges.)"
-
+# Construct plot for later display
 g_LD_coord_wqual_was <- LD_coord_wqual_was |> 
   ggplot2::ggplot(mapping = aes(
     x = LD1, y = LD2, 
     colour = q_level, fill = q_level
   )) + 
-  ggplot2::geom_point()
-  
-# g_LD_coord_wqual_was + 
-#   ggplot2::labs(
-#     title = "White wine quality: (LD1, LD2) coordinates"
-#   )
+  # scatter diagram of data points
+  ggplot2::geom_point(show.legend = FALSE) + 
+  # group means
+  ggplot2::geom_point(
+    show.legend = FALSE, 
+    data = LD_coord_wqual_was_x_means, 
+    shape = 23, size = 5, 
+    mapping = aes(
+      x = LD1, y = LD2, 
+      colour = "black", fill = q_level
+    ) ) + 
+  ggplot2::geom_segment(
+    show.legend = FALSE, 
+    aes(colour = "black", fill = q_level, 
+      x    = LD_coord_bb_segs [[1, "x"]], 
+      y    = LD_coord_bb_segs [[1, "y"]], 
+      xend = LD_coord_bb_segs [[1, "xend"]], 
+      yend = LD_coord_bb_segs [[1, "yend"]] ) ) + 
+  ggplot2::geom_segment(
+    show.legend = FALSE, 
+    aes(colour = "black", fill = q_level, 
+      x    = LD_coord_bb_segs [[2, "x"]], 
+      y    = LD_coord_bb_segs [[2, "y"]], 
+      xend = LD_coord_bb_segs [[2, "xend"]], 
+      yend = LD_coord_bb_segs [[2, "yend"]] ) ) + 
+  ggplot2::geom_segment(
+    show.legend = FALSE, 
+    aes(colour = "black", fill = q_level, 
+        x    = LD_coord_bb_segs [[3, "x"]], 
+        y    = LD_coord_bb_segs [[3, "y"]], 
+        xend = LD_coord_bb_segs [[3, "xend"]], 
+        yend = LD_coord_bb_segs [[3, "yend"]] ) )
 
 ```
+
+@fig-LD-coord-wqual-was projects data points, group means, and group boundaries to (`LD1`, `LD2`) coordinates.
+
+```{r}
+#| label: fig-LD-coord-wqual-was
+#| fig-cap: "White wine quality: (LD1, LD2) coordinates.  Group means and boundaries have been rotated along with the data. (Non-negative features produce hard edges.)"
+
+g_LD_coord_wqual_was + 
+  ggplot2::labs(
+    title = "White wine quality: (LD1, LD2) coordinates" )
+
+```
+
+The rotation of (`alcohol`, `res_sugar`) values to (`LD1`, `LD2`) coordinates is an invertible linear transformation, and thus produces pair-wise group boundaries whose discriminatory properties are unchanged.
 
 ```{r}
 #| label: wqual-was-lda-xtabs
