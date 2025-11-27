@@ -2571,7 +2571,105 @@ $$
 \end{align}
 $$ {#eq-delta-k-tilde}
 
-Both $\delta_k (x_\bullet)$ and $\tilde{\delta}_k (\tilde{x}_\bullet)$ are affine functions of their arguments, meaning a linear function plus a constant.  The linear component of $\tilde{\delta}_k (\tilde{x}_\bullet)$, namely $\left < \tilde{\mu}_{\bullet, k}, \; \tilde{x}_\bullet \right >$, can be interpreted as the coordinate of $\tilde{x}_\bullet$ with respect to $\tilde{\mu}_{\bullet, k}$.
+Both $\delta_k (x_\bullet)$ and $\tilde{\delta}_k (\tilde{x}_\bullet)$ are affine functions of their arguments, meaning a linear function plus a constant.  The linear component of $\tilde{\delta}_k (\tilde{x}_\bullet)$, namely $\left < \tilde{\mu}_{\bullet, k}, \; \tilde{x}_\bullet \right >$, is proportional to the projection of $\tilde{x}_\bullet$ onto the direction given by $\tilde{\mu}_{\bullet, k}$.
+
+#### Fisher's Discriminant Criterion
+
+The Bayesian derivation of LDA assumes that feature vectors within each class follow a multivariate Gaussian distribution with a common covariance matrix.  Fisher (1936) arrived at the same discriminant directions from a different perspective—one that does not require distributional assumptions.  Fisher's approach provides valuable geometric insight into the meaning of the eigenvectors computed by `MASS::lda()` and similar software.
+
+**The Central Question.**  Given $K$ classes in $d$-dimensional feature space, Fisher asked: what linear combination $z = a_\bullet^\top x_\bullet$ best separates the classes?  The scalar $z$ is a one-dimensional projection of the observation $x_\bullet$ onto the direction $a_\bullet$.  "Best separation" means that the projected class means should be spread apart while observations within each class should remain tightly clustered around their respective means.
+
+**Within-Class and Between-Class Variation.**  To formalize this notion, we define two covariance-like matrices that partition the total variation of the data.
+
+The *within-class covariance matrix* $W_{\bullet, \bullet}$ is the pooled covariance of observations about their respective class means.  This is the same as the common sample covariance matrix $\hat{C}ov_{\bullet, \bullet}$ that we defined earlier.
+
+$$
+\begin{align}
+  W_{\bullet, \bullet} 
+  &= 
+    \frac{1}{n - K} 
+    \sum_{k = 1}^K
+    \sum_{x_{i, \bullet} \in \mathcal{C}_k} 
+    (x_{i, \bullet}^\top - \mu_{\bullet, k}) \; 
+    (x_{i, \bullet}^\top - \mu_{\bullet, k})^\top
+\end{align}
+$$ {#eq-within-class-cov}
+
+The *between-class covariance matrix* $B_{\bullet, \bullet}$ measures the spread of the class means about the overall mean $\mu_\bullet = \sum_{k=1}^K \pi_k \, \mu_{\bullet, k}$.
+
+$$
+\begin{align}
+  B_{\bullet, \bullet} 
+  &= 
+    \sum_{k = 1}^K 
+    \pi_k \;
+    (\mu_{\bullet, k} - \mu_\bullet) \; 
+    (\mu_{\bullet, k} - \mu_\bullet)^\top
+\end{align}
+$$ {#eq-between-class-cov}
+
+These matrices satisfy the identity: 
+
+$$
+\begin{align}
+  T_{\bullet, \bullet} 
+  &= 
+    W_{\bullet, \bullet} + B_{\bullet, \bullet}
+\end{align}
+$$ {#eq-total-within-between-cov}
+
+where $T_{\bullet, \bullet}$ is the total covariance matrix computed by ignoring class labels.
+
+**Fisher's Criterion.**  When we project onto direction $a_\bullet$, the projected data have between-class variance $a_\bullet^\top B_{\bullet, \bullet} \, a_\bullet$ and within-class variance $a_\bullet^\top W_{\bullet, \bullet} \, a_\bullet$.  Fisher's criterion seeks the direction $a_\bullet$ that maximizes the ratio of between-class to within-class variance:
+
+$$
+\begin{align}
+  \max_{a_\bullet} \;
+  \frac
+    {a_\bullet^\top \; B_{\bullet, \bullet} \; a_\bullet}
+    {a_\bullet^\top \; W_{\bullet, \bullet} \; a_\bullet}
+\end{align}
+$$ {#eq-rayleigh-quotient}
+
+This expression is known as a *Rayleigh quotient*.  Note that scaling $a_\bullet$ by any nonzero constant leaves the ratio unchanged, so we may impose a normalization constraint such as $a_\bullet^\top W_{\bullet, \bullet} \, a_\bullet = 1$.
+
+**Generalized Eigenvalue Problem.**  Maximizing the Rayleigh quotient is equivalent to finding the largest eigenvalue $\lambda$ and corresponding eigenvector $a_\bullet$ of the generalized eigenvalue problem:
+
+$$
+\begin{align}
+  B_{\bullet, \bullet} \; a_\bullet 
+  &= 
+    \lambda \; W_{\bullet, \bullet} \; a_\bullet
+\end{align}
+$$ {#eq-generalized-eigen}
+
+When $W_{\bullet, \bullet}$ is invertible (as is typical when $n > d$), this reduces to the standard eigenvalue problem:
+
+$$
+\begin{align}
+  W_{\bullet, \bullet}^{-1} \; B_{\bullet, \bullet} \; a_\bullet 
+  &= 
+    \lambda \; a_\bullet
+\end{align}
+$$ {#eq-standard-eigen-W-inv-B}
+
+**Successive Discriminant Directions.**  $W_{\bullet, \bullet}^{-1} B_{\bullet, \bullet}$ is a $d \times d$ matrix, but its rank is at most $\min(d, K-1)$.  This is because $B_{\bullet, \bullet}$ has rank at most $K - 1$: the $K$ class means, $\mu_{\bullet, k}$, are subject to the constraint of having $\mu_\bullet$ as their weighted average.  Consequently the class means $\mu_{\bullet, k}$ lie in an affine subspace of dimension at most $K - 1$.
+
+Let $(a_{\bullet, 1}, a_{\bullet, 2}, \ldots, a_{\bullet, r})$ denote the eigenvectors of $W_{\bullet, \bullet}^{-1} B_{\bullet, \bullet}$ corresponding to nonzero eigenvalues $\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_r > 0$, where $r = \text{rank}(B_{\bullet, \bullet}) \le \min(d, K-1)$.  The first eigenvector $a_{\bullet, 1}$ is the direction that maximizes Fisher's criterion.  The second eigenvector $a_{\bullet, 2}$ maximizes the criterion among directions orthogonal (with respect to $W_{\bullet, \bullet}$) to $a_{\bullet, 1}$.  And so on.
+
+These directions are called *Fisher's discriminant coordinates*, *canonical variates*, or simply *linear discriminants*.
+
+**Interpretation of MASS::lda() Output.**  The `R` function `MASS::lda()` computes these discriminant directions.  In its output, the matrix named `scaling` contains the coefficients of these linear combinations.  The columns are labeled "LD1", "LD2", and so forth:
+
+- **LD1**: The first discriminant direction $a_{\bullet, 1}$—the linear combination of features that maximizes between-class separation relative to within-class spread.
+- **LD2**: The second discriminant direction $a_{\bullet, 2}$—the linear combination that is $W$-orthogonal to LD1 and provides the next-best separation.
+- **LD$\ell$**: The $\ell$-th discriminant direction, for $\ell = 1, \ldots, r$.
+
+For binary classification ($K = 2$), there is exactly one discriminant direction, LD1.  For $K = 3$ classes, there are at most two discriminant directions, LD1 and LD2, enabling visualization of the projected data in two dimensions without losing any information relevant to classification.
+
+**Connection to the Gaussian Derivation.**  Although Fisher's derivation makes no distributional assumptions, the resulting discriminant directions coincide with those obtained from the Gaussian/Bayesian approach when class covariances are equal.  The sphering transformation $\tilde{x}_\bullet = Cov_{\bullet, \bullet}^{-1/2} x_\bullet$ introduced in @eq-normalization-wrt-cov plays a key role: in the sphered space, Fisher's criterion reduces to finding principal components of the transformed class means $\tilde{\mu}_{\bullet, k}$.
+
+This equivalence is both theoretically satisfying and practically useful.  The Gaussian framework justifies the classification rule and provides posterior probabilities, while Fisher's perspective offers distribution-free geometric intuition about the discriminant directions.
 
 ### Binary Case: $K = 2$
 
@@ -2744,9 +2842,7 @@ wclr_2D_lda_long <- wclr_2D_lda_predict |>
 
 ```
 
-To illustrate the application of LDA to the wine quality data in a 2D scatter-plot, we initially restrict the set of features to just `density` and `res-sugar` (residual sugar).  In addition, to facilitate the interpretation of the LDA linear discriminant function (`LD1`), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-2D-lda-coefficients. [^homogeneous-coefficients]
-
-[^homogeneous-coefficients]: The table refers to homogeneous coefficients $(c_0, c_1, c_2)$ of the LD1 line, defined to be the subset of $(x_1, x_2)$ points that satisfy the equation $c_0 \; + \; c_1 \; x_1 \; + \; c_2 \; x_2 = 0$.  Unfortunately, the constant coefficient $c_0$ was calculated but not listed in the output.  Note that the two sets of homogeneous coefficients $(c_0, c_1, c_2)$ and $(\kappa c_0, \kappa c_1, \kappa c_2)$ define the same line for any non-zero factor $\kappa$.
+To illustrate the application of LDA to the wine quality data in a 2D scatter-plot, we initially restrict the set of features to just `density` and `res-sugar` (residual sugar).  In addition, to facilitate the interpretation of the LDA linear discriminant function (`LD1`), we re-scale the values of each feature to z-values, obtained by subtracting the mean and dividing by the standard deviation.  The resulting coefficients fit by `R` function `MASS::lda()` are shown in @tbl-2D-lda-coefficients.
 
 ```{r}
 #| label: tbl-2D-lda-coefficients
@@ -3085,8 +3181,9 @@ rownames(wqual_was_bb_segs_mat) <-
 @fig-wqual-white-a-s shows the resulting data, along with line segments representing linear discrimination between each pair of quality levels (low, medium, high).
 
 ```{r}
-#| label: fig-wqual-white-a-s
-#| fig-cap: "White wine quality per alcohol and sugar z-values"
+#| label: g-wqual-white-a-s
+
+# Construct plot for later display
 
 g_wqual_was <- wqual_was |> 
   dplyr::rename(level = q_level) |> 
@@ -3115,12 +3212,18 @@ g_wqual_was <- wqual_was |>
         x    = wqual_was_bb_segs_mat [[3, "x"]], 
         y    = wqual_was_bb_segs_mat [[3, "y"]], 
         xend = wqual_was_bb_segs_mat [[3, "xend"]], 
-        yend = wqual_was_bb_segs_mat [[3, "yend"]] ) ) + 
+        yend = wqual_was_bb_segs_mat [[3, "yend"]] ) )
+
+```
+
+```{r}
+#| label: fig-wqual-white-a-s
+#| fig-cap: "White wine quality per alcohol and sugar z-values.  Shown from left to right are the class boundaries low-medium, low-high, and medium-high."
+
+g_wqual_was + 
   ggplot2::labs(
     title = "White wine quality per alcohol and sugar z-values", 
     subtitle = "(exludes sugar z-values > 5)")
-
-g_wqual_was
 
 ```
 
@@ -3140,14 +3243,15 @@ wqual_was_lda_mdl <-
 ```{r}
 #| label: wqual-was-lda-predict
 
-# tibble of 1 column <fct>: .pred_class (red or white)
+# tibble of 1 column <fct>: .pred_class (low, medium, high)
 wqual_was_lda_class <- wqual_was_lda_mdl |> 
   parsnip::predict.model_fit(
     new_data = wqual_was |> 
       dplyr::select(alcohol, res_sugar), 
     type = "class")
 
-# tibble of 2 columns <dbl>: (.pred_red, .pred_white)
+# tibble of 3 probs <dbl>: 
+# (.pred_low, .pred_medium, .pred_high)
 wqual_was_lda_prob <- wqual_was_lda_mdl |> 
   parsnip::predict.model_fit(
     new_data = wqual_was |> 
@@ -3170,6 +3274,43 @@ wqual_was_lda_mdl$ fit$ scaling |>
   knitr::kable(
     caption = "White wine quality LDA: model coefficients", 
     digits = 2)
+
+```
+
+```{r}
+#| label: wqual-was-lda-coordinates
+
+LD_coord_wqual_was <- 
+  wqual_was |> 
+  dplyr::select(alcohol, res_sugar) |> 
+  # d-by-2 tibble: data projected onto (LD1, LD2)
+  as.matrix() %*% 
+  wqual_was_lda_mdl$ fit$ scaling |> 
+  tibble::as_tibble() |> 
+  # restore labeling column q_level
+  dplyr::mutate(
+    q_level = wqual_was$ q_level
+  )
+
+```
+
+```{r}
+#| label: g-LD-coord-wqual-was
+
+# Construct plot for subsequent display
+# fig-cap: "White wine quality: (LD1, LD2) coordinates. (Non-negative features produce hard edges.)"
+
+g_LD_coord_wqual_was <- LD_coord_wqual_was |> 
+  ggplot2::ggplot(mapping = aes(
+    x = LD1, y = LD2, 
+    colour = q_level, fill = q_level
+  )) + 
+  ggplot2::geom_point()
+  
+# g_LD_coord_wqual_was + 
+#   ggplot2::labs(
+#     title = "White wine quality: (LD1, LD2) coordinates"
+#   )
 
 ```
 
