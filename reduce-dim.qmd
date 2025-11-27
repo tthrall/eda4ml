@@ -2573,8 +2573,6 @@ $$ {#eq-delta-k-tilde}
 
 Both $\delta_k (x_\bullet)$ and $\tilde{\delta}_k (\tilde{x}_\bullet)$ are affine functions of their arguments, meaning a linear function plus a constant.  The linear component of $\tilde{\delta}_k (\tilde{x}_\bullet)$, namely $\left < \tilde{\mu}_{\bullet, k}, \; \tilde{x}_\bullet \right >$, can be interpreted as the coordinate of $\tilde{x}_\bullet$ with respect to $\tilde{\mu}_{\bullet, k}$.
 
-In `R` function `MASS::lda()` and other LDA software, the eigenvectors $(u_{\bullet, 1}, \ldots, u_{\bullet, d})$ are represented as "LD1, LD2, $\ldots$".
-
 ### Binary Case: $K = 2$
 
 When $K = 2$ we have the following binary assignment of $x_\bullet \in \mathbb{R}^d$: 
