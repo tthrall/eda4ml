@@ -3665,7 +3665,184 @@ Throughout, remember that dimension reduction is a means to an end—whether tha
 
 ## Exercises {#sec-dim-r-exercises}
 
-[TODO]
+### Computational Exercises
+
+**Exercise 7.1** (PCA by hand)
+Consider the following $4 \times 2$ data matrix with observations in rows:
+
+$$
+X = \begin{pmatrix}
+2 & 3 \\
+4 & 5 \\
+6 & 7 \\
+8 & 9
+\end{pmatrix}
+$$
+
+(a) Center the matrix by subtracting the column means.
+
+(b) Compute $X^\top X$ (where $X$ now denotes the centered matrix) and find its eigenvalues and eigenvectors.
+
+(c) What proportion of the total variance is captured by the first principal component?
+
+(d) Verify your results using `prcomp()` in R.
+
+**Exercise 7.2** (PCA on US Arrests data) 
+Using the `USArrests` data from the `datasets` package: 
+
+(a) Perform PCA on the four variables (Murder, Assault, Rape, UrbanPop) using `prcomp()` with `scale. = TRUE`.  Why is scaling advisable for these data?
+
+(b) Create a scree plot [^pca-scree-plot-us-arrests] showing the proportion of variance explained by each component.  How many components would you retain?
+
+[^pca-scree-plot-us-arrests]:  A scree plot example analysis is given [here](https://statistics.arabpsychology.com/create-a-scree-plot-in-r-step-by-step/).
+
+(c) Examine the loadings (rotation matrix) for PC1 and PC2.  Which original variables contribute most to each component?  Propose an interpretation.
+
+(d) Create a biplot: [^pca-biplot-us-arrests] Identify states that are outliers along PC1 or PC2 and explain what makes them unusual.
+
+[^pca-biplot-us-arrests]:  A biplot example analysis is given [here](https://statistics.arabpsychology.com/create-a-biplot-in-r-to-visualize-pca-results/#google_vignette).
+
+**Exercise 7.3** (LDA on wine data)
+Using the wine quality data with color (red vs. white) as the response:
+
+(a) Fit an LDA model using `MASS::lda()` with predictors `density` and `alcohol`.  Extract the scaling matrix and interpret the LD1 coefficients.
+
+(b) Compute the projected LD1 scores for all observations.  Create a histogram or density plot of LD1 scores, colored by wine color.  How well does LD1 separate the two classes?
+
+(c) Compare the LDA decision boundary to logistic regression. [^log-reg-via-glm]  Fit a logistic regression model with the same predictors and plot both decision boundaries on a scatter plot of the data.
+
+[^log-reg-via-glm]: The `R` function `stats::glm()` performs logistic regression with the parameter setting `family = binomial`.  See for example @r_doc_HSAUR.
+
+**Exercise 7.4** (LDA with $K = 3$)
+Using the wine quality data, create a three-level quality variable (low, medium, high) as described in the chapter.
+
+(a) Fit an LDA model using predictors `alcohol`, `volatile_acidity`, and `sulphates`.  How many discriminant directions are there?
+
+(b) Extract the LD1 and LD2 scores and create a scatter plot colored by quality level.  How well do the discriminant coordinates separate the three classes?
+
+(c) Compute the training set classification accuracy.  Which quality levels are most often confused?
+
+**Exercise 7.5** (Comparing PCA and LDA directions)
+Using the dry beans data (`beans::beans`), select four numeric features of your choice.
+
+(a) Perform PCA and record the first two principal component directions.
+
+(b) Perform LDA using `class` as the response and record the first two discriminant directions.
+
+(c) Compute the angles between PC1 and LD1, and between PC2 and LD2.  Are the directions similar or quite different?
+
+(d) Create side-by-side scatter plots: one showing the data in (PC1, PC2) coordinates, the other in (LD1, LD2) coordinates, both colored by bean class.  Which representation better separates the classes?  Why might this be?
+
+### Conceptual Exercises
+
+**Exercise 7.6** (Interpreting eigenvalues)
+A PCA of a $100 \times 10$ data matrix yields eigenvalues $(45, 25, 12, 8, 5, 3, 1.5, 0.4, 0.1, 0)$.
+
+(a) What is the rank of the data matrix?
+
+(b) What proportion of variance is explained by the first three principal components?
+
+(c) If you project the data onto the first three principal components, what is the dimension of the resulting representation?
+
+(d) A colleague suggests retaining components until 90% of variance is explained.  How many components would this criterion select?
+
+**Exercise 7.7** (When PCA fails)
+Construct a simple $2D$ example where the first principal component is orthogonal to the direction that best separates two classes.  (Hint: consider two classes with means that differ along one axis, but with much larger variance along the perpendicular axis.)
+
+Sketch the data, the PC1 direction, and the LDA direction.  What does this example illustrate about the difference between unsupervised and supervised dimension reduction?
+
+**Exercise 7.8** (Fisher's criterion)
+For a two-class problem in $d$ dimensions:
+
+(a) Explain in words what the within-class covariance matrix $W$ measures.
+
+(b) Explain in words what the between-class covariance matrix $B$ measures.
+
+(c) Why does maximizing the Rayleigh quotient $a^\top B a / a^\top W a$ yield a direction that is good for classification?
+
+(d) For $K = 2$ classes, the matrix $B$ has rank 1.  Why?  What is the single eigenvector of $W^{-1}B$ in this case?
+
+**Exercise 7.9** (The role of equal covariances)
+LDA assumes that all classes share a common covariance matrix.
+
+(a) If this assumption holds, explain why the decision boundary between any two classes is a hyperplane (linear in $x$).
+
+(b) If the assumption is violated—say, one class has much larger variance than another—how might the LDA decision boundary be suboptimal?  Sketch a 1D example.
+
+(c) What is QDA, and how does it address this issue?
+
+**Exercise 7.10** (Supervised vs. unsupervised)
+For each scenario below, indicate whether you would start with PCA, LDA, or another method, and explain your reasoning.
+
+(a) You have gene expression measurements for 20,000 genes on 200 patients, with no clinical outcome data.  Your goal is to identify groups of patients with similar expression profiles.
+
+(b) You have the same gene expression data, but now you also know which patients responded to a treatment.  Your goal is to find genes predictive of treatment response.
+
+(c) You have images represented as 784-dimensional vectors (28×28 pixels) with digit labels (0–9).  Your goal is to visualize how the digit classes cluster.
+
+(d) You have customer transaction data with 50 features, and you want to reduce dimensionality before applying a classifier.  You have class labels for a training set.
+
+### Theoretical Exercises
+
+**Exercise 7.11** (Orthogonality of principal components)
+Let $v_1$ and $v_2$ be eigenvectors of $X^\top X$ corresponding to distinct eigenvalues $\lambda_1^2$ and $\lambda_2^2$.  Define the principal components $c_1 = X v_1$ and $c_2 = X v_2$.
+
+Prove that $c_1$ and $c_2$ are orthogonal, i.e., $c_1^\top c_2 = 0$.
+
+**Exercise 7.12** (SVD and eigen-decomposition)
+Let $X = U \Sigma V^\top$ be the SVD of an $n \times d$ matrix $X$ with $n > d$.
+
+(a) Show that the columns of $V$ are eigenvectors of $X^\top X$.
+
+(b) Show that the columns of $U$ corresponding to nonzero singular values are eigenvectors of $X X^\top$.
+
+(c) How are the singular values of $X$ related to the eigenvalues of $X^\top X$?
+
+**Exercise 7.13** (Rank of the between-class matrix)
+For $K$ classes with centroids $\mu_1, \ldots, \mu_K$ in $\mathbb{R}^d$, the between-class covariance matrix is
+
+$$
+\begin{align}
+  B 
+  &= 
+    \sum_{k=1}^{K} 
+      \pi_k \, 
+      (\mu_k - \bar{\mu}) \, 
+      (\mu_k - \bar{\mu})^\top
+\end{align}
+$$
+
+where
+
+$$
+\begin{align}
+  \bar{\mu} 
+  &= 
+    \sum_{k=1}^{K} 
+      \pi_k \, 
+      \mu_k
+\end{align}
+$$
+
+is the overall mean.
+
+(a) Show that $B$ can be written as $M^\top D_\pi M$ where $M$ is a $K \times d$ matrix of centered class means and $D_\pi$ is diagonal.
+
+(b) Conclude that $\text{rank}(B) \le K - 1$.  Why is it $K-1$ rather than $K$?
+
+(c) What does this imply about the maximum number of Fisher discriminant directions?
+
+**Exercise 7.14** (Equivalence for $K = 2$)
+For a two-class problem, show that the Fisher discriminant direction is proportional to $W^{-1}(\mu_1 - \mu_2)$.
+
+(Hint: Use the fact that for $K = 2$, the between-class matrix $B$ is proportional to $(\mu_1 - \mu_2)(\mu_1 - \mu_2)^\top$.)
+
+**Exercise 7.15** (Projection preserves classification)
+Let $P_r = V_r V_r^\top$ be the projection matrix onto the subspace spanned by the first $r$ principal components, where $V_r$ is $d \times r$.
+
+(a) Show that projecting the data onto this subspace (i.e., computing $X V_r$) preserves the Euclidean distances between observations up to the discarded variance.
+
+(b) For LDA, suppose we project onto the first $\ell$ discriminant directions.  Argue that this projection preserves all information needed for LDA classification when $\ell = \min(d, K-1)$.
 
 ## Appendix A: Matrix Decompositions and PCA {#sec-dim-r-mat-decomp}
 
