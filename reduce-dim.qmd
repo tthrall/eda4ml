@@ -3607,7 +3607,61 @@ As a practical starting point: begin with PCA for exploratory visualization and 
 
 ## Summary {#sec-dim-r-summary}
 
-[TODO]
+This chapter developed dimension reduction as a tool for understanding and visualizing high-dimensional data.  The central theme throughout has been geometric: we seek low-dimensional subspaces that capture the essential structure of the data, whether that structure is defined by variance, class separation, or other criteria.
+
+### Principal Component Analysis
+
+PCA addresses the question: along which directions do the features vary most?  The answer emerges from the eigen-decomposition of the feature covariance matrix, or equivalently, from the singular value decomposition of the centered feature matrix.
+
+The key results are:
+
+  1. **Principal components** are linear combinations of the original features, defined by the eigenvectors of the covariance matrix.  The first principal component captures the direction of maximum variance; subsequent components capture maximum variance orthogonal to those already found.
+
+  2. **Dimension reduction** is achieved by projecting observations onto the first $r < d$ principal components.  The proportion of total variance retained, $\sum_{j = 1}^{r} \lambda_j^2 / \sum_{k = 1}^{d} \lambda_k^2$, quantifies how much information is preserved.
+
+  3. **The SVD** $X_{\bullet,\bullet} = U \Sigma V^\top$ provides a unified computational framework.  The right singular vectors (columns of $V$) are the principal component directions; the singular values (diagonal of $\Sigma$) are the square roots of the corresponding eigenvalues; and the left singular vectors (columns of $U$), scaled by singular values, give the principal component scores.
+
+PCA is *unsupervised*: it identifies directions of high variance without reference to any response variable.  This makes PCA broadly applicable for exploration, but it provides no guarantee that the directions of maximum variance are relevant for prediction.
+
+### Linear Discriminant Analysis
+
+LDA addresses a different question: along which directions are the classes best separated?  When class labels are available, we can exploit them to find more discriminative projections.
+
+The key results are:
+
+  1. **Bayesian derivation**: Under the assumption that each class follows a multivariate Gaussian distribution with a common covariance matrix, the Bayes-optimal classifier leads to linear discriminant functions $\delta_k (x_\bullet)$.  Classification proceeds by assigning observations to the class with the largest discriminant value.
+
+  2. **Fisher's criterion**: Without assuming Gaussian distributions, Fisher posed the problem of finding linear combinations $z = a_\bullet^\top x_\bullet$ that maximize between-class variance relative to within-class variance.  This leads to the generalized eigenvalue problem $B_{\bullet,\bullet} \, a_\bullet = \lambda \, W_{\bullet,\bullet} \, a_\bullet$.  When $W_{\bullet,\bullet}$ is invertible this is equivalent (at least mathematically if not computationally) to the eigenvalue problem for $W_{\bullet,\bullet}^{-1} B_{\bullet,\bullet}$.
+
+  3. **Discriminant coordinates**: The eigenvectors of $W^{-1}B$ define the Fisher discriminant directions, labeled LD1, LD2, etc., in the output of `MASS::lda()`.  There are at most $\min(d, K-1)$ such directions, since the between-class covariance matrix $B$ has rank at most $K-1$.  When $d \gg K$, LDA can be especially effective at reducing the column dimension.
+
+  4. **Equivalence**: The Gaussian/Bayesian and Fisher approaches yield the same discriminant directions when class covariances are equal—a theoretically satisfying result that connects probabilistic and geometric perspectives.
+
+LDA is *supervised*: it uses class labels to guide dimension reduction.  The resulting low-dimensional projections are optimized for classification, not merely for preserving variance.
+
+### Unifying Themes
+
+Several themes connect PCA and LDA and extend to other dimension reduction methods:
+
+  1. **Eigenvalue problems**: Both PCA and LDA reduce to finding eigenvectors of symmetric matrices—the covariance matrix for PCA, and $W^{-1}B$ for LDA.  The eigenvalues quantify how much of the relevant structure (variance or class separation) each direction captures.
+
+  2. **Linear subspaces**: Both methods seek linear subspaces of the original feature space.  Observations are projected onto these subspaces for visualization or subsequent analysis.  The geometry of orthogonal projection underlies both methods.
+
+  3. **Trade-offs in method selection**: The choice between supervised and unsupervised methods depends on whether labels are available and whether the goal is exploration or prediction.  Between linear and nonlinear methods, the choice depends on whether the underlying structure is approximately linear.  Computational cost, interpretability, and assumptions about the data also guide method selection.
+
+### Practical Workflow
+
+A reasonable approach to dimension reduction in practice:
+
+  1. Begin with PCA to visualize the data and assess its intrinsic dimensionality.  Examine the scree plot to determine the number of components needed to capture most of the variance.
+
+  2. If class labels are available and classification is the goal, apply LDA.  Compare the discriminant directions to the principal components—if they differ substantially, class structure may not align with directions of maximum variance.
+
+  3. If linear methods reveal limited structure, consider nonlinear alternatives such as t-SNE or UMAP for visualization, or kernel methods for modeling.
+
+  4. When $d > n$, regularization becomes essential.  Consider regularized discriminant analysis, penalized regression, or random projections.
+
+Throughout, remember that dimension reduction is a means to an end—whether that end is visualization, interpretability, computational efficiency, or improved prediction.  The "best" method depends on the goal.
 
 ## Exercises {#sec-dim-r-exercises}
 
