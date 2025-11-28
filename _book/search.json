@@ -296,7 +296,7 @@
     "href": "preface.html",
     "title": "Preface",
     "section": "",
-    "text": "This online book is based on the preparatory part of a course on Machine Learning (ML) developed by former colleagues. The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs. The book also aims to follow the content and spirit of exploratory data analysis (EDA).\nInstructors, especially those preparing students for a Masters degree in data science, are invited to copy and modify portions of the book for their own purposes.",
+    "text": "Introduction\nThis online book is based on the preparatory part of a course on Machine Learning (ML) developed by former colleagues. The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs. While using mathematical equations, the book aims to follow the content and spirit of exploratory data analysis (EDA).\nInstructors, especially those preparing students for a Masters degree in data science, are invited to copy and modify portions of the book for their own purposes.",
     "crumbs": [
       "Preface"
     ]
@@ -1751,6 +1751,76 @@
     "crumbs": [
       "Linear Algebra",
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Dimension Reduction</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html",
+    "href": "setup.html",
+    "title": "1  Computational Setup",
+    "section": "",
+    "text": "Computational Setup\nThis chapter describes the computational environment needed to work through the examples and exercises in this book. All code is written in R, and we strongly recommend using RStudio as your integrated development environment.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Computational Setup</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html#software-requirements",
+    "href": "setup.html#software-requirements",
+    "title": "1  Computational Setup",
+    "section": "1.1 Software Requirements",
+    "text": "1.1 Software Requirements\n\n1.1.1 R\nDownload and install R from CRAN. We recommend version 4.3 or later. R is available for Windows, macOS, and Linux.\n\n\n1.1.2 RStudio\nDownload and install RStudio Desktop (the free version). RStudio provides a powerful interface for R programming, including script editing, graphics, package management, and integration with version control.\n\n\n1.1.3 Required R Packages\nInstall the following packages by running this code in your R console:\n# Core packages for data manipulation and visualization\ninstall.packages(c(\n  \"tidyverse\",    # Includes dplyr, ggplot2, tidyr, and friends\n  \"plotly\",       # Interactive 3D graphics\n  \"scatterplot3d\" # Static 3D scatterplots\n))\n\n# Packages for specific analyses\ninstall.packages(c(\n  \"MASS\",         # LDA and other methods\n  \"class\",        # k-NN classification\n  \"e1071\"         # SVM and other ML methods\n))\n\n# Optional: enhanced table display\ninstall.packages(\"kableExtra\")",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Computational Setup</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html#datasets",
+    "href": "setup.html#datasets",
+    "title": "1  Computational Setup",
+    "section": "1.2 Datasets",
+    "text": "1.2 Datasets\n\n1.2.1 Built-in R Datasets\nSeveral datasets used in this book are available from packages that ship with R or are easily installed from CRAN:\n\n\n\n\n\n\n\n\n\nDataset\nPackage\nDescription\nAccess\n\n\n\n\nUSArrests\ndatasets\nViolent crime rates by US state\ndata(USArrests)\n\n\niris\ndatasets\nFisher’s iris flower measurements\ndata(iris)\n\n\nmtcars\ndatasets\nMotor Trend car road tests\ndata(mtcars)\n\n\n\nThe datasets package is loaded automatically when you start R, so these datasets are immediately available.\n\n\n1.2.2 Companion Package: eda4ml\nFor datasets not available in standard R packages, we provide the eda4ml package. This package includes cleaned, documented versions of: - UCI Wine Quality data (red and white wines) - Additional datasets introduced in later chapters\nInstallation from GitHub:\n# Install remotes package if needed\nif (!requireNamespace(\"remotes\", quietly = TRUE)) {\n  install.packages(\"remotes\")\n}\n\n# Install eda4ml package\nremotes::install_github(\"yourusername/eda4ml\")\nOnce installed, access the wine quality data with:\nlibrary(eda4ml)\ndata(wine_red)\ndata(wine_white)\n\n\n1.2.3 Direct Data Access (Alternative)\nIf you prefer not to install the companion package, you can download the wine quality data directly from the UCI Machine Learning Repository:\n# Download wine quality data from UCI\nwine_red &lt;- read.csv(\n  paste0(\"https://archive.ics.uci.edu/ml/\",\n         \"machine-learning-databases/wine-quality/winequality-red.csv\"),\n  sep = \";\"\n)\n\nwine_white &lt;- read.csv(\n  paste0(\"https://archive.ics.uci.edu/ml/\",\n         \"machine-learning-databases/wine-quality/winequality-white.csv\"),\n  sep = \";\"\n)\n\n# Examine the structure\nstr(wine_red)\nThe data use semicolons as delimiters (common in European data sources), hence the sep = \";\" argument.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Computational Setup</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html#accessing-book-materials",
+    "href": "setup.html#accessing-book-materials",
+    "title": "1  Computational Setup",
+    "section": "1.3 Accessing Book Materials",
+    "text": "1.3 Accessing Book Materials\nThe complete source for this book, including all code examples, is available at the GitHub repository:\n\nhttps://github.com/tthrall/eda4ml\n\nYou can browse the code online or clone the repository to your local machine:\ngit clone https://github.com/yourusername/eda4ml.git",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Computational Setup</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html#verifying-your-setup",
+    "href": "setup.html#verifying-your-setup",
+    "title": "1  Computational Setup",
+    "section": "1.4 Verifying Your Setup",
+    "text": "1.4 Verifying Your Setup\nRun the following code to verify that your environment is configured correctly:\n# Check R version\nR.version.string\n\n# Check that key packages load\nlibrary(tidyverse)\nlibrary(MASS)\nlibrary(plotly)\n\n# Verify access to built-in data\ndata(USArrests)\ndim(USArrests)  # Should print: 50 4\n\n# Quick visualization test\nplot(USArrests$Murder, USArrests$Assault,\n     xlab = \"Murder arrests per 100,000\",\n     ylab = \"Assault arrests per 100,000\",\n     main = \"USArrests: Murder vs Assault\")\nIf you see the scatterplot, your basic R setup is working correctly.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Computational Setup</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html#getting-help",
+    "href": "setup.html#getting-help",
+    "title": "1  Computational Setup",
+    "section": "1.5 Getting Help",
+    "text": "1.5 Getting Help\nIf you encounter difficulties:\n\nPackage installation problems: Ensure you have a stable internet connection and try restarting R. On Linux, you may need system libraries for some packages.\nRStudio issues: Check that you have the latest version installed.\nCode errors: Verify that you have copied code exactly, including punctuation. R is case-sensitive.\nData access: If the UCI repository is unavailable, the eda4ml package provides a reliable alternative source for the wine quality data.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Computational Setup</span>"
+    ]
+  },
+  {
+    "objectID": "preface.html#computational-environment",
+    "href": "preface.html#computational-environment",
+    "title": "Preface",
+    "section": "Computational Environment",
+    "text": "Computational Environment\nThis section describes the computational environment needed to work through the examples and exercises in this book. All code is written in R, and we strongly recommend using RStudio as your integrated development environment.\n\nSoftware Requirements\n\nR\nDownload and install R from CRAN. We recommend version 4.3 or later. R is available for Windows, macOS, and Linux.\n\n\nRStudio\nDownload and install RStudio Desktop (the free version). RStudio provides a powerful interface for R programming, including script editing, graphics, package management, and integration with version control.\n\n\nRequired R Packages\nInstall the following packages by running this code in your R console:\n# Core packages for data manipulation and visualization\ninstall.packages(c(\n  \"tidyverse\",    # Includes dplyr, ggplot2, tidyr, and friends\n  \"plotly\",       # Interactive 3D graphics\n  \"scatterplot3d\" # Static 3D scatterplots\n))\n\n# Packages for specific analyses\ninstall.packages(c(\n  \"MASS\",         # LDA and other methods\n  \"class\",        # k-NN classification\n  \"e1071\"         # SVM and other ML methods\n))\n\n# Optional: enhanced table display\ninstall.packages(\"kableExtra\")\n\n\n\nDatasets\n\nBuilt-in R Datasets\nSeveral datasets used in this book are available from packages that ship with R or are easily installed from CRAN:\n\n\n\n\n\n\n\n\n\nDataset\nPackage\nDescription\nAccess\n\n\n\n\nUSArrests\ndatasets\nViolent crime rates by US state\ndata(USArrests)\n\n\niris\ndatasets\nFisher’s iris flower measurements\ndata(iris)\n\n\nmtcars\ndatasets\nMotor Trend car road tests\ndata(mtcars)\n\n\n\nThe datasets package is loaded automatically when you start R, so these datasets are immediately available.\n\n\nCompanion Package: eda4ml\nFor datasets not available in standard R packages, we provide the eda4ml package. This package includes cleaned, documented versions of:\n\nUCI Wine Quality data (red and white wines)\nAdditional datasets introduced in later chapters\n\nInstallation from GitHub:\n# Install remotes package if needed\nif (!requireNamespace(\"remotes\", quietly = TRUE)) {\n  install.packages(\"remotes\")\n}\n\n# Install eda4ml package\nremotes::install_github(\"tthrall/eda4ml\")\nOnce installed, access the wine quality data with:\nlibrary(eda4ml)\ndata(wine_red)\ndata(wine_white)\n\n\nDirect Data Access (Alternative)\nIf you prefer not to install the companion package, you can download the wine quality data directly from the UCI Machine Learning Repository:\n# Download wine quality data from UCI\nwine_red &lt;- read.csv(\n  paste0(\"https://archive.ics.uci.edu/ml/\",\n         \"machine-learning-databases/wine-quality/winequality-red.csv\"),\n  sep = \";\"\n)\n\nwine_white &lt;- read.csv(\n  paste0(\"https://archive.ics.uci.edu/ml/\",\n         \"machine-learning-databases/wine-quality/winequality-white.csv\"),\n  sep = \";\"\n)\n\n# Examine the structure\nstr(wine_red)\nThe data use semicolons as delimiters (common in European data sources), hence the sep = \";\" argument.\n\n\n\nAccessing Book Materials\nThe complete source for this book, including all code examples, is available at the GitHub repository:\n\nhttps://github.com/tthrall/eda4ml\n\nYou can browse the code online or clone the repository to your local machine:\ngit clone https://github.com/tthrall/eda4ml.git\n\n\nVerifying Your Setup\nRun the following code to verify that your environment is configured correctly:\n# Check R version\nR.version.string\n\n# Check that key packages load\nlibrary(tidyverse)\nlibrary(MASS)\nlibrary(plotly)\n\n# Verify access to built-in data\ndata(USArrests)\ndim(USArrests)  # Should print: 50 4\n\n# Quick visualization test\nplot(USArrests$Murder, USArrests$Assault,\n     xlab = \"Murder arrests per 100,000\",\n     ylab = \"Assault arrests per 100,000\",\n     main = \"USArrests: Murder vs Assault\")\nIf you see the scatterplot, your basic R setup is working correctly.\n\n\nGetting Help\nIf you encounter difficulties:\n\nPackage installation problems: Ensure you have a stable internet connection and try restarting R. On Linux, you may need system libraries for some packages.\nRStudio issues: Check that you have the latest version installed.\nCode errors: Verify that you have copied code exactly, including punctuation. R is case-sensitive.\nData access: If the UCI repository is unavailable, the eda4ml package provides a reliable alternative source for the wine quality data.",
+    "crumbs": [
+      "Preface"
     ]
   }
 ]
