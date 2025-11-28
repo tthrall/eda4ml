@@ -3529,7 +3529,9 @@ When the data lie on or near a curved manifold, nonlinear methods may reveal str
 
 ### What Is Preserved?
 
-Different methods optimize different objectives.  That knowledge can help one to decide which methods to use.  Here's a table that may serve as a starting point.
+Dimension reduction methods transform the data to optimize different objectives.  That knowledge can help one to decide which methods to use.  The objective or purpose of a method may be subject to interpretation, but is related to the data properties preserved by the method, which is less subject to interpretation.  Here's a table that may serve as a starting point. [^clustering-versus-dim-reduce]
+
+[^clustering-versus-dim-reduce]: Clustering is an important exploratory technique to enhance one's understanding of the data by partitioning observations.  Clustering and other methods designed to classify or partition observations that do not reduce data dimensions are omitted from @tbl-method-objectives-v0. 
 
 ```{r}
 #| label: method-objectives-v0
@@ -3559,7 +3561,7 @@ method_objectives_tbl <- tibble::tibble(
 
 ```{r}
 #| label: tbl-method-objectives-v0
-#| tbl-cap: "Examples of methods and their objectives (preserved property)."
+#| tbl-cap: "Objectives (preserved property) of some dimension reduction methods."
 
 method_objectives_tbl |> 
   dplyr::select(nm_short, presrv, chr_supvd, chr_lin) |> 
@@ -3570,7 +3572,7 @@ method_objectives_tbl |>
     `Supervised?` = chr_supvd, 
     `Linear?`     = chr_lin ) |> 
   knitr::kable(
-    caption = "Examples of methods and objectives (preserved property)"
+    caption = "Objectives (preserved property) of some dimension reduction methods"
   )
 
 ```
@@ -3591,15 +3593,15 @@ When the number of features exceeds the number of observations, many classical m
 
 No single method dominates in all settings.  The choice depends on:
 
-1. **The goal**: Is the objective visualization, preprocessing for a downstream model, or direct prediction?  t-SNE and UMAP excel at visualization; PCA and PLS are useful for preprocessing; LDA and logistic regression directly produce classifiers.
+  1. **The goal**: Is the objective visualization, preprocessing for a downstream model, or direct prediction?  t-SNE and UMAP excel at visualization; PCA and PLS are useful for preprocessing; LDA and logistic regression directly produce classifiers.
 
-2. **Supervision**: If class labels or a response variable are available, supervised methods generally outperform unsupervised ones for prediction tasks.   However, unsupervised methods like PCA are often used for preprocessing—reducing dimension before applying a supervised classifier—especially when $d$ is large relative to $n$.
+  2. **Supervision**: Unsupervised methods like PCA are inherently descriptive rather than predictive, but are often used to reduce data dimensions as a pre-processing step for subsequent supervised methods.  Such unsupervised dimension reduction may be especially important when $d$ is large relative to $n$.  Even so, it is the supervised methods that are designed for prediction.
 
-3. **Interpretability**: Linear methods yield coefficients that are directly interpretable.  Nonlinear methods may capture more complex structure but are harder to explain.
+  3. **Interpretability**: Linear methods yield coefficients that are directly interpretable.  Nonlinear methods may capture more complex structure but are harder to explain.
 
-4. **Scale**: For very high-dimensional data, computational cost matters.  PCA (via SVD) and random projections scale well; t-SNE and kernel methods can be expensive.
+  4. **Scale**: For very high-dimensional data, computational cost matters.  PCA (via SVD) and random projections scale well; t-SNE and kernel methods can be expensive.
 
-5. **Assumptions**: LDA assumes Gaussian classes with equal covariances; logistic regression relaxes this.  PCA assumes that variance is the relevant measure of information; for heavy-tailed data, robust variants may be preferable.
+  5. **Assumptions**: LDA assumes Gaussian classes with equal covariances; logistic regression relaxes this.  PCA assumes that variance is the relevant measure of information; for heavy-tailed data, robust variants may be preferable.
 
 As a practical starting point: begin with PCA for exploratory visualization and to check for obvious low-dimensional structure.  If class labels are available and the goal is classification, compare LDA and logistic regression.  If linear methods seem inadequate, consider t-SNE or UMAP for visualization and kernel methods or neural networks for modeling.
 
