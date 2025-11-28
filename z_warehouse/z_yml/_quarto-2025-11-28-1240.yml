@@ -1,0 +1,71 @@
+project:
+  type: book
+  output-dir: _book
+author: 
+  - name: "Send comments to: Tony T (tthrall)"
+date: last-modified
+date-format: HH:mm ddd D-MMM-YYYY
+editor: source
+toc: true
+toc-depth: 4
+format:
+  html:
+    respect-user-color-scheme: true
+    theme:
+      - cosmo
+      - brand
+      - darkly
+    toc_float: true
+    code-fold: true
+    code-summary: "Show the code"
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  pdf:
+    documentclass: scrreprt
+  docx: default
+bibliography: eda4ml.bib
+book:
+  title: "EDA for Machine Learning"
+  cover-image: eda4ml.jpg
+  author: "Tony Thrall"
+  date: last-modified
+  date-format: HH:mm ddd D-MMM-YYYY
+  site-url: https://github.com/tthrall/eda4ml/
+  repo-url: https://github.com/tthrall/eda4ml/
+  repo-branch: main
+  repo-actions: [edit, issue]
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - setup.qmd
+    - part: Statistics
+      chapters: 
+        - eda.qmd
+        - conditioning.qmd
+        - clustering.qmd
+        - simulation.qmd
+        - study-design.qmd
+    - part: Linear Algebra
+      chapters: 
+        - la-intro.qmd
+        - reduce-dim.qmd
+    - part: Text Data
+      chapters:
+        - text-analysis.qmd
+        - dirichlet-dstn.qmd
+        - latent-dirichlet-alloc.qmd
+    - part: Time Series Data
+      chapters:
+        - ts-intro.qmd
+        - ts-forecast.qmd
+        - ts-fourier.qmd
+    - part: Graph Theory
+      chapters:
+        - graph-theory.qmd
+    - part: Appendices
+      chapters:
+        - em-algorithm.qmd
+    - summary.qmd
+    - references.qmd
+

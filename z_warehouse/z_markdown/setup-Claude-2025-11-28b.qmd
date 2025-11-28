@@ -1,0 +1,170 @@
+---
+title: "Computational Setup"
+number: false
+---
+
+This chapter describes the computational environment needed to work through
+the examples and exercises in this book. All code is written in R, and we
+strongly recommend using RStudio as your integrated development environment.
+
+## Software Requirements
+
+### R
+
+Download and install R from [CRAN](https://cran.r-project.org/). We recommend
+version 4.3 or later. R is available for Windows, macOS, and Linux.
+
+### RStudio
+
+Download and install [RStudio Desktop](https://posit.co/download/rstudio-desktop/)
+(the free version). RStudio provides a powerful interface for R programming,
+including script editing, graphics, package management, and integration with
+version control.
+
+### Required R Packages
+
+Install the following packages by running this code in your R console:
+
+```r
+# Core packages for data manipulation and visualization
+install.packages(c(
+  "tidyverse",    # Includes dplyr, ggplot2, tidyr, and friends
+  "plotly",       # Interactive 3D graphics
+  "scatterplot3d" # Static 3D scatterplots
+))
+
+# Packages for specific analyses
+install.packages(c(
+  "MASS",         # LDA and other methods
+  "class",        # k-NN classification
+  "e1071"         # SVM and other ML methods
+))
+
+# Optional: enhanced table display
+install.packages("kableExtra")
+```
+
+## Datasets
+
+### Built-in R Datasets
+
+Several datasets used in this book are available from packages that ship with
+R or are easily installed from CRAN:
+
+| Dataset | Package | Description | Access |
+|---------|---------|-------------|--------|
+| `USArrests` | `datasets` | Violent crime rates by US state | `data(USArrests)` |
+| `iris` | `datasets` | Fisher's iris flower measurements | `data(iris)` |
+| `mtcars` | `datasets` | Motor Trend car road tests | `data(mtcars)` |
+
+The `datasets` package is loaded automatically when you start R, so these
+datasets are immediately available.
+
+### Companion Package: eda4ml
+
+For datasets not available in standard R packages, we provide the `eda4ml`
+package. This package includes cleaned, documented versions of:
+
+- UCI Wine Quality data (red and white wines)
+- Additional datasets introduced in later chapters
+
+**Installation from GitHub:**
+
+```r
+# Install remotes package if needed
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+
+# Install eda4ml package
+remotes::install_github("tthrall/eda4ml")
+```
+
+Once installed, access the wine quality data with:
+
+```r
+library(eda4ml)
+data(wine_red)
+data(wine_white)
+```
+
+### Direct Data Access (Alternative)
+
+If you prefer not to install the companion package, you can download the wine
+quality data directly from the UCI Machine Learning Repository:
+
+```r
+# Download wine quality data from UCI
+wine_red <- read.csv(
+  paste0("https://archive.ics.uci.edu/ml/",
+         "machine-learning-databases/wine-quality/winequality-red.csv"),
+  sep = ";"
+)
+
+wine_white <- read.csv(
+  paste0("https://archive.ics.uci.edu/ml/",
+         "machine-learning-databases/wine-quality/winequality-white.csv"),
+  sep = ";"
+)
+
+# Examine the structure
+str(wine_red)
+```
+
+The data use semicolons as delimiters (common in European data sources), hence
+the `sep = ";"` argument.
+
+## Accessing Book Materials
+
+The complete source for this book, including all code examples, is available
+at the GitHub repository:
+ 
+> <https://github.com/tthrall/eda4ml>
+
+You can browse the code online or clone the repository to your local machine:
+
+```bash
+git clone https://github.com/tthrall/eda4ml.git
+```
+
+## Verifying Your Setup
+
+Run the following code to verify that your environment is configured correctly:
+
+```r
+# Check R version
+R.version.string
+
+# Check that key packages load
+library(tidyverse)
+library(MASS)
+library(plotly)
+
+# Verify access to built-in data
+data(USArrests)
+dim(USArrests)  # Should print: 50 4
+
+# Quick visualization test
+plot(USArrests$Murder, USArrests$Assault,
+     xlab = "Murder arrests per 100,000",
+     ylab = "Assault arrests per 100,000",
+     main = "USArrests: Murder vs Assault")
+```
+
+If you see the scatterplot, your basic R setup is working correctly.
+
+## Getting Help
+
+If you encounter difficulties:
+
+1. **Package installation problems**: Ensure you have a stable internet
+   connection and try restarting R. On Linux, you may need system libraries
+   for some packages.
+
+2. **RStudio issues**: Check that you have the latest version installed.
+
+3. **Code errors**: Verify that you have copied code exactly, including
+   punctuation. R is case-sensitive.
+
+4. **Data access**: If the UCI repository is unavailable, the `eda4ml`
+   package provides a reliable alternative source for the wine quality data.
