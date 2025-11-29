@@ -3702,7 +3702,10 @@ Using the `USArrests` data from the `datasets` package:
 
 [^pca-biplot-us-arrests]:  A biplot example analysis is given [here](https://statistics.arabpsychology.com/create-a-biplot-in-r-to-visualize-pca-results/#google_vignette).
 
-**Exercise 7.3** (LDA on wine data)
+**Exercise 7.3** (LDA on wine data) [^wq-data-access]
+
+[^wq-data-access]: As noted in this book's preface, the wine quality data can be obtained from `GitHub` by installing the package `eda4mldata` accompanying the book.  In your Console run the following lines of code: (1) remotes::install_github("tthrall/eda4mldata"); (2) library(eda4mldata); (3) data(wine_quality).  Alternatively, see the Preface to download the data directly from its source.
+
 Using the wine quality data with color (red vs. white) as the response:
 
 (a) Fit an LDA model using `MASS::lda()` with predictors `density` and `alcohol`.  Extract the scaling matrix and interpret the LD1 coefficients.
