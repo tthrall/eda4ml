@@ -59,16 +59,6 @@ conflicted::conflicts_prefer(plotly::layout)
 
 # resolve conflicts with tidymodels packages
 tidymodels_prefer()
-```
-
-```{r}
-#| label: set-seed
-
-# Stabilize simulated data by setting 
-# a seed for random number generation.
-
-seed_eda4ml <- 37L
-set.seed(seed_eda4ml)
 
 ```
 
@@ -76,6 +66,7 @@ set.seed(seed_eda4ml)
 #| label: local-source
 
 source(here("code", "d_ball.R"))
+source(here("code", "eda4ml_set_seed.R"))
 source(here("code", "galton_ht_data.R"))
 source(here("code", "lda_2D.R"))
 # source(here("code", "mnist_file_mgmt.R"))
