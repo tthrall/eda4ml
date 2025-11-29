@@ -82,15 +82,14 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
 }
 
 # Install eda4ml package
-remotes::install_github("tthrall/eda4ml")
+remotes::install_github("tthrall/eda4mldata")
 ```
 
 Once installed, access the wine quality data with:
 
 ```r
-library(eda4ml)
-data(wine_red)
-data(wine_white)
+library(eda4mldata)
+data(wine_quality)
 ```
 
 #### Direct Data Access (Alternative)
