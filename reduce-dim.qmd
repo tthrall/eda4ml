@@ -62,6 +62,17 @@ tidymodels_prefer()
 ```
 
 ```{r}
+#| label: set-seed
+
+# Stabilize simulated data by setting 
+# a seed for random number generation.
+
+seed_eda4ml <- 37L
+set.seed(seed_eda4ml)
+
+```
+
+```{r}
 #| label: local-source
 
 source(here("code", "d_ball.R"))
