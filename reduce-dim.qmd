@@ -63,6 +63,13 @@ tidymodels_prefer()
 ```
 
 ```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
 #| label: local-source
 
 source(here("code", "d_ball.R"))
@@ -77,6 +84,7 @@ source(here("code", "pc_aesthetics.R"))
 source(here("code", "vc_per_state.R"))
 source(here("code", "wine_quality_uci.R"))
 # source(here("code", "z_score.R"))
+
 ```
 
 This chapter addresses the problem of finding and visualizing structure in high-dimensional data.  We begin the discussion with example data sets.
