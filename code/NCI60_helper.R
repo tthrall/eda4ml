@@ -2,7 +2,7 @@
 ###
 #     NCI60_helper.R
 #
-#       Manage NIC60 data from the ISLR2 package.
+#       Manage NCI60 data from the ISLR2 package.
 #       Note: this is NOT the colonCA micro-array data 
 #       from Alon 1999.
 ###
