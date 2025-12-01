@@ -39,11 +39,29 @@ library(tinytex)
 ```
 
 ```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
 #| label: local-source
 
-# source(here("code", "rmse_per_grp.R"))
-# source(here("code", "xtabs_to_jaccard.R"))
-# source(here("code", "gen_circuit.R"))
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
+
 ```
 
 ------------------------------------------------------------------------

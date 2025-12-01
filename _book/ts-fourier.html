@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
 <meta name="author" content="Send comments to: Tony T (tthrall)">
 
 <title>13&nbsp; Time Series Spectrum Analysis – EDA for Machine Learning</title>
@@ -40,10 +39,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -206,7 +205,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -332,12 +331,12 @@ window.Quarto = {
    
   <ul>
   <li><a href="#sec-intro" id="toc-sec-intro" class="nav-link active" data-scroll-target="#sec-intro"><span class="header-section-number">13.1</span> Introduction</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#sunspots" id="toc-sunspots" class="nav-link" data-scroll-target="#sunspots"><span class="header-section-number">13.1.1</span> Sunspots</a></li>
   <li><a href="#average-daily-temperatures" id="toc-average-daily-temperatures" class="nav-link" data-scroll-target="#average-daily-temperatures"><span class="header-section-number">13.1.2</span> Average daily temperatures</a></li>
   </ul></li>
   <li><a href="#sec-math-fmwk" id="toc-sec-math-fmwk" class="nav-link" data-scroll-target="#sec-math-fmwk"><span class="header-section-number">13.2</span> Mathematical Framework</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#data-derived-from-a-random-process" id="toc-data-derived-from-a-random-process" class="nav-link" data-scroll-target="#data-derived-from-a-random-process"><span class="header-section-number">13.2.1</span> Data derived from a random process</a></li>
   <li><a href="#stationarity" id="toc-stationarity" class="nav-link" data-scroll-target="#stationarity"><span class="header-section-number">13.2.2</span> Stationarity</a></li>
   <li><a href="#auto-covariance-function" id="toc-auto-covariance-function" class="nav-link" data-scroll-target="#auto-covariance-function"><span class="header-section-number">13.2.3</span> Auto-covariance function</a></li>
@@ -354,29 +353,37 @@ window.Quarto = {
   <li><a href="#comparison-of-arma-models" id="toc-comparison-of-arma-models" class="nav-link" data-scroll-target="#comparison-of-arma-models"><span class="header-section-number">13.2.14</span> Comparison of ARMA models</a></li>
   </ul></li>
   <li><a href="#sec-finite-FT" id="toc-sec-finite-FT" class="nav-link" data-scroll-target="#sec-finite-FT"><span class="header-section-number">13.3</span> Finite Fourier transform</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">13.3.1</span> Definition</a></li>
   <li><a href="#cramér-representation-1" id="toc-cramér-representation-1" class="nav-link" data-scroll-target="#cramér-representation-1"><span class="header-section-number">13.3.2</span> Cramér representation</a></li>
   <li><a href="#data-windows-and-their-frequency-kernels" id="toc-data-windows-and-their-frequency-kernels" class="nav-link" data-scroll-target="#data-windows-and-their-frequency-kernels"><span class="header-section-number">13.3.3</span> Data windows and their frequency kernels</a></li>
   <li><a href="#asymptotic-normality" id="toc-asymptotic-normality" class="nav-link" data-scroll-target="#asymptotic-normality"><span class="header-section-number">13.3.4</span> Asymptotic normality</a></li>
   </ul></li>
   <li><a href="#sec-spec-est" id="toc-sec-spec-est" class="nav-link" data-scroll-target="#sec-spec-est"><span class="header-section-number">13.4</span> Spectrum Estimation</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#periodogram" id="toc-periodogram" class="nav-link" data-scroll-target="#periodogram"><span class="header-section-number">13.4.1</span> Periodogram</a></li>
   <li><a href="#dft-discrete-fourier-transform" id="toc-dft-discrete-fourier-transform" class="nav-link" data-scroll-target="#dft-discrete-fourier-transform"><span class="header-section-number">13.4.2</span> DFT: Discrete Fourier transform</a></li>
   <li><a href="#smoothed-periodogram" id="toc-smoothed-periodogram" class="nav-link" data-scroll-target="#smoothed-periodogram"><span class="header-section-number">13.4.3</span> Smoothed periodogram</a></li>
   </ul></li>
   <li><a href="#sec-spec-examples" id="toc-sec-spec-examples" class="nav-link" data-scroll-target="#sec-spec-examples"><span class="header-section-number">13.5</span> Examples of Spectrum Analysis</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#sunspots-1" id="toc-sunspots-1" class="nav-link" data-scroll-target="#sunspots-1"><span class="header-section-number">13.5.1</span> Sunspots</a></li>
   <li><a href="#city-temperatures" id="toc-city-temperatures" class="nav-link" data-scroll-target="#city-temperatures"><span class="header-section-number">13.5.2</span> City Temperatures</a></li>
   </ul></li>
   <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">13.6</span> Closing Remarks</a></li>
   <li><a href="#sec-glossary" id="toc-sec-glossary" class="nav-link" data-scroll-target="#sec-glossary"><span class="header-section-number">13.7</span> A: Glossary of Notation</a></li>
   <li><a href="#sec-data-examples" id="toc-sec-data-examples" class="nav-link" data-scroll-target="#sec-data-examples"><span class="header-section-number">13.8</span> B: Data Examples</a>
+  <ul>
+  <li><a href="#sunspot-numbers-monthly-averages-1749---present" id="toc-sunspot-numbers-monthly-averages-1749---present" class="nav-link" data-scroll-target="#sunspot-numbers-monthly-averages-1749---present"><span class="header-section-number">13.8.1</span> Sunspot Numbers: Monthly Averages, 1749 - Present</a>
   <ul class="collapse">
-  <li><a href="#sunspot-numbers-monthly-averages-1749---present" id="toc-sunspot-numbers-monthly-averages-1749---present" class="nav-link" data-scroll-target="#sunspot-numbers-monthly-averages-1749---present"><span class="header-section-number">13.8.1</span> Sunspot Numbers: Monthly Averages, 1749 - Present</a></li>
-  <li><a href="#daily-city-temperatures-1995-2020" id="toc-daily-city-temperatures-1995-2020" class="nav-link" data-scroll-target="#daily-city-temperatures-1995-2020"><span class="header-section-number">13.8.2</span> Daily City Temperatures: 1995-2020</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description"><span class="header-section-number">13.8.1.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives" id="toc-context-questions-and-objectives" class="nav-link" data-scroll-target="#context-questions-and-objectives"><span class="header-section-number">13.8.1.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#daily-city-temperatures-1995-2020" id="toc-daily-city-temperatures-1995-2020" class="nav-link" data-scroll-target="#daily-city-temperatures-1995-2020"><span class="header-section-number">13.8.2</span> Daily City Temperatures: 1995-2020</a>
+  <ul class="collapse">
+  <li><a href="#description-1" id="toc-description-1" class="nav-link" data-scroll-target="#description-1"><span class="header-section-number">13.8.2.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-1" id="toc-context-questions-and-objectives-1" class="nav-link" data-scroll-target="#context-questions-and-objectives-1"><span class="header-section-number">13.8.2.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">13.9</span> References</a></li>
   </ul>
@@ -388,7 +395,6 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-intro.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-fourier.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-ts-fourier" class="quarto-section-identifier"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></h1>
-<p class="subtitle lead">An Introduction</p>
 </div>
 
 
@@ -396,9 +402,8 @@ window.Quarto = {
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
              <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
@@ -406,19 +411,13 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">21:05 Tue 14-Oct-2025</p>
+      <p class="date">18:02 Mon 1-Dec-2025</p>
     </div>
   </div>
   
     
   </div>
   
-<div>
-  <div class="abstract">
-    <div class="block-title">Abstract</div>
-    Introduce the Fourier spectrum of a time series. <br><br>
-  </div>
-</div>
 
 
 </header>

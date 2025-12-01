@@ -38,7 +38,28 @@ library(tidyverse)
 ```
 
 ```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
 #| label: local-source
+
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
 
 source(here("code", "galton_ht_data.R"))
 source(here("code", "mnist_file_mgmt.R"))
@@ -223,14 +244,9 @@ It turns out that the least squares solution $(\hat{\beta}_0, \hat{\beta}_m, \ha
 ### Survey Data: Better Life Index
 
 ```{r}
-#| label: bli-long
-bli_long <- get_bli_long()
-```
-
-```{r}
 #| label: bli-wide
 
-bli_wide <- assert_bli_wide(bli_long)
+bli_wide <- eda4mldata::oecd_bli
 
 # record constants to be used in narrative
 n_bli_loc   <- nrow(bli_wide)

@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
+<meta name="author" content="Send comments to: Tony T (tthrall)">
 
 <title>8&nbsp; Text Analysis – EDA for Machine Learning</title>
 <style>
@@ -74,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -240,7 +240,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -368,19 +368,19 @@ window.Quarto = {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">8.1</span> Introduction</a></li>
   <li><a href="#text-example" id="toc-text-example" class="nav-link" data-scroll-target="#text-example"><span class="header-section-number">8.2</span> Text Example</a></li>
   <li><a href="#larger-text-examples" id="toc-larger-text-examples" class="nav-link" data-scroll-target="#larger-text-examples"><span class="header-section-number">8.3</span> Larger Text Examples</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#jane-austens-novels" id="toc-jane-austens-novels" class="nav-link" data-scroll-target="#jane-austens-novels"><span class="header-section-number">8.3.1</span> Jane Austen’s novels</a></li>
   <li><a href="#the-gutenberg-project" id="toc-the-gutenberg-project" class="nav-link" data-scroll-target="#the-gutenberg-project"><span class="header-section-number">8.3.2</span> The Gutenberg Project</a></li>
   </ul></li>
   <li><a href="#class-exercise" id="toc-class-exercise" class="nav-link" data-scroll-target="#class-exercise"><span class="header-section-number">8.4</span> Class Exercise</a></li>
   <li><a href="#tf-idf-term-frequency---inverse-doc-frequency" id="toc-tf-idf-term-frequency---inverse-doc-frequency" class="nav-link" data-scroll-target="#tf-idf-term-frequency---inverse-doc-frequency"><span class="header-section-number">8.5</span> TF-IDF: Term Frequency - Inverse Doc Frequency</a></li>
   <li><a href="#document-term-matrix-dtm" id="toc-document-term-matrix-dtm" class="nav-link" data-scroll-target="#document-term-matrix-dtm"><span class="header-section-number">8.6</span> Document-Term Matrix (DTM)</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#example-associated-press-articles" id="toc-example-associated-press-articles" class="nav-link" data-scroll-target="#example-associated-press-articles"><span class="header-section-number">8.6.1</span> Example: Associated Press articles</a></li>
   <li><a href="#example-inaugural-addresses-of-us-presidents" id="toc-example-inaugural-addresses-of-us-presidents" class="nav-link" data-scroll-target="#example-inaugural-addresses-of-us-presidents"><span class="header-section-number">8.6.2</span> Example: inaugural addresses of US presidents</a></li>
   </ul></li>
   <li><a href="#topic-models" id="toc-topic-models" class="nav-link" data-scroll-target="#topic-models"><span class="header-section-number">8.7</span> Topic Models</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#latent-dirichlet-allocation-lda" id="toc-latent-dirichlet-allocation-lda" class="nav-link" data-scroll-target="#latent-dirichlet-allocation-lda"><span class="header-section-number">8.7.1</span> Latent Dirichlet allocation (LDA)</a></li>
   <li><a href="#example-associated-press-articles-1" id="toc-example-associated-press-articles-1" class="nav-link" data-scroll-target="#example-associated-press-articles-1"><span class="header-section-number">8.7.2</span> Example: Associated Press articles</a></li>
   </ul></li>
@@ -396,7 +396,6 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-analysis.html">Text Data</a></li><li class="breadcrumb-item"><a href="./text-analysis.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-text-analysis" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></h1>
-<p class="subtitle lead">Part 1, session 2b of Data Mining Intro</p>
 </div>
 
 
@@ -406,26 +405,20 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
+             <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">21:01 Tue 14-Oct-2025</p>
+      <p class="date">17:57 Mon 1-Dec-2025</p>
     </div>
   </div>
   
     
   </div>
   
-<div>
-  <div class="abstract">
-    <div class="block-title">Abstract</div>
-    Introduce basic ideas and methods of text analysis.
-  </div>
-</div>
 
 
 </header>

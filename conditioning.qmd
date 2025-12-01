@@ -25,12 +25,34 @@ library(UsingR)
 ```
 
 ```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
 #| label: local-source
+
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
 
 # previously used functions to load small data sets
 
 # source(here("code", "handedness_data.R"))
 # source(here("code", "rng_tbl.R"))
+
 ```
 
 ------------------------------------------------------------------------

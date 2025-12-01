@@ -28,13 +28,28 @@ library(xts)
 ```
 
 ```{r}
-#| label: local_libraries
+#| label: conflicts-prefer
 
-# library(ugrid)
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
 ```
 
 ```{r}
 #| label: local_source
+
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
 
 # gen_ds_tbl
 # compile a tibble that identifies data sets

@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
+<meta name="author" content="Send comments to: Tony T (tthrall)">
 
 <title>10&nbsp; Latent Dirichlet Allocation – EDA for Machine Learning</title>
 <style>
@@ -94,10 +94,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -260,7 +260,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -386,19 +386,19 @@ window.Quarto = {
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">10.1</span> Introduction</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#text-analysis" id="toc-text-analysis" class="nav-link" data-scroll-target="#text-analysis"><span class="header-section-number">10.1.1</span> Text Analysis</a></li>
   <li><a href="#topic-modelsart-steyvers-griffiths-2007" id="toc-topic-modelsart-steyvers-griffiths-2007" class="nav-link" data-scroll-target="#topic-modelsart-steyvers-griffiths-2007"><span class="header-section-number">10.1.2</span> Topic Models</a></li>
   <li><a href="#lda-method" id="toc-lda-method" class="nav-link" data-scroll-target="#lda-method"><span class="header-section-number">10.1.3</span> LDA Method</a></li>
   </ul></li>
   <li><a href="#book-review-example" id="toc-book-review-example" class="nav-link" data-scroll-target="#book-review-example"><span class="header-section-number">10.2</span> Book Review Example</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">10.2.1</span> Data</a></li>
   <li><a href="#lda-function" id="toc-lda-function" class="nav-link" data-scroll-target="#lda-function"><span class="header-section-number">10.2.2</span> LDA function</a></li>
   <li><a href="#output-interpretation" id="toc-output-interpretation" class="nav-link" data-scroll-target="#output-interpretation"><span class="header-section-number">10.2.3</span> Output interpretation</a></li>
   </ul></li>
   <li><a href="#mathematical-framework" id="toc-mathematical-framework" class="nav-link" data-scroll-target="#mathematical-framework"><span class="header-section-number">10.3</span> Mathematical Framework</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">10.3.1</span> Notation</a></li>
   <li><a href="#generative-model" id="toc-generative-model" class="nav-link" data-scroll-target="#generative-model"><span class="header-section-number">10.3.2</span> Generative Model</a></li>
   <li><a href="#lda-gibbs-algorithm" id="toc-lda-gibbs-algorithm" class="nav-link" data-scroll-target="#lda-gibbs-algorithm"><span class="header-section-number">10.3.3</span> LDA-Gibbs Algorithm</a></li>
@@ -423,14 +423,14 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
+             <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">20:53 Tue 14-Oct-2025</p>
+      <p class="date">18:00 Mon 1-Dec-2025</p>
     </div>
   </div>
   

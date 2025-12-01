@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r libraries}
+```{r CRAN-libraries}
 library(assertthat)
 library(GGally)
 # library(gutenbergr)
@@ -34,8 +34,32 @@ library(tufte)
 
 ```
 
-```{r local_source}
+```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
+#| label: local-source
+
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
+
 source(here("code", "graph_glossary.R"))
+
 ```
 
 ------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
+<meta name="author" content="Send comments to: Tony T (tthrall)">
 
 <title>5&nbsp; Sampling and Study Design – EDA for Machine Learning</title>
 <style>
@@ -39,10 +39,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -205,7 +205,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -332,7 +332,7 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">5.1</span> Introduction</a></li>
   <li><a href="#observational-study-examples" id="toc-observational-study-examples" class="nav-link" data-scroll-target="#observational-study-examples"><span class="header-section-number">5.2</span> Observational Study Examples</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#literary-digest-poll-1936" id="toc-literary-digest-poll-1936" class="nav-link" data-scroll-target="#literary-digest-poll-1936"><span class="header-section-number">5.2.1</span> Literary Digest Poll, 1936</a></li>
   <li><a href="#truman-versus-dewey-1948" id="toc-truman-versus-dewey-1948" class="nav-link" data-scroll-target="#truman-versus-dewey-1948"><span class="header-section-number">5.2.2</span> Truman versus Dewey, 1948</a></li>
   <li><a href="#using-chance-in-surveys" id="toc-using-chance-in-surveys" class="nav-link" data-scroll-target="#using-chance-in-surveys"><span class="header-section-number">5.2.3</span> Using Chance in Surveys</a></li>
@@ -341,7 +341,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#class-exercise" id="toc-class-exercise" class="nav-link" data-scroll-target="#class-exercise"><span class="header-section-number">5.3</span> Class Exercise</a></li>
   <li><a href="#experimental-study-examples" id="toc-experimental-study-examples" class="nav-link" data-scroll-target="#experimental-study-examples"><span class="header-section-number">5.4</span> Experimental Study Examples</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#salk-vaccine-field-trial" id="toc-salk-vaccine-field-trial" class="nav-link" data-scroll-target="#salk-vaccine-field-trial"><span class="header-section-number">5.4.1</span> Salk Vaccine Field Trial</a></li>
   <li><a href="#portacaval-shunt" id="toc-portacaval-shunt" class="nav-link" data-scroll-target="#portacaval-shunt"><span class="header-section-number">5.4.2</span> Portacaval Shunt</a></li>
   <li><a href="#repeated-weighing-of-nb10" id="toc-repeated-weighing-of-nb10" class="nav-link" data-scroll-target="#repeated-weighing-of-nb10"><span class="header-section-number">5.4.3</span> Repeated Weighing of NB10</a></li>
@@ -358,7 +358,6 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./eda.html">Statistics</a></li><li class="breadcrumb-item"><a href="./study-design.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-study-design" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></h1>
-<p class="subtitle lead">Part 1, session 3a of Data Mining Intro</p>
 </div>
 
 
@@ -368,26 +367,20 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
+             <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">20:57 Tue 14-Oct-2025</p>
+      <p class="date">17:53 Mon 1-Dec-2025</p>
     </div>
   </div>
   
     
   </div>
   
-<div>
-  <div class="abstract">
-    <div class="block-title">Abstract</div>
-    Introduce basic ideas and methods in statistical sampling theory and the design of experimental or observational studies. <br><br>
-  </div>
-</div>
 
 
 </header>
@@ -452,7 +445,7 @@ Table&nbsp;5.1: Predicted % for FDR in 1936
 </section>
 <section id="truman-versus-dewey-1948" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="truman-versus-dewey-1948"><span class="header-section-number">5.2.2</span> Truman versus Dewey, 1948</h3>
-<p>Truman was a colorful and effective US president, but he was the underdog in the 1948 elelction. Three major polling organizations covered the election: Crossley for the Hearst newspapers, Gallup (synicated in ~100 newspapers across the country), and Roper for <em>Fortune</em> magazine. By the fall of 1948, all three put Dewey ahead of Truman by 5 or more percentage points. Here are the predicted and actual percentages.</p>
+<p>Truman was a colorful and effective US president, but he was the underdog in the 1948 election. Three major polling organizations covered the election: Crossley for the Hearst newspapers, Gallup (synicated in ~100 newspapers across the country), and Roper for <em>Fortune</em> magazine. By the fall of 1948, all three put Dewey ahead of Truman by 5 or more percentage points. Here are the predicted and actual percentages.</p>
 <div class="cell">
 <div id="tbl-truman-dewey-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -688,7 +681,7 @@ Table&nbsp;5.3: Gallup prediction accuracy: 1952-2004
 <p>Polio has been a devastating, sometimes fatal, disease. The first epidemic in the US was in 1916. In the following years the disease claimed several hundreds of thousands of victims, especially children. By the 1950’s several drugs against polio were in development. The drug developed by Jonas Salk had particularly promising lab results. By 1954 the US government determined the drug should be tested in the field.</p>
 <p>One might ask why a promising drug shouldn’t simply be adopted, rather than field-tested. One problem was that polio incidence varied considerably from year to year. In 1952 there were about 60,000 cases. The following year there were half that number. Had the vaccine been adopted in 1954, any decrease in incidence could well have been ascribed to annual variation, rather than the effectiveness of the vaccine.</p>
 <p>The decision to test rather than adopt a promising drug is a difficult question of medical ethics. For the polio vaccine, there were potential risks in taking the drug, and so the government decided a test was needed to establish whether the benefits of adopting the drug would outweigh the risks.</p>
-<p>The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. AS originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consetn. Children in grades 1 and 3 were used as the controld group (were not vaccinated). The following table shows the results.</p>
+<p>The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. AS originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consent. Children in grades 1 and 3 were used as the controld group (were not vaccinated). The following table shows the results.</p>
 <div class="cell">
 <div id="tbl-salk-nfip" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -734,7 +727,7 @@ Table&nbsp;5.4: Polio rate per 100,000 subjects (NFIP study)
 </div>
 </div>
 <p>Participating public health experts raised several concerns with the NFIP design. Polio can be transmitted by touch, so the incidence of polio infection may vary by grade. Also, parental consent is a potential confounding factor. More highly educated parents are more likely to consent, but their children are at greater risk. (Lower socio-economic status is associated with lower hygiene, and thus a greater chance of early exposure to polio when the mother’s antibodies would be activated, enabling the child to fight off a subsequent infection.) Consequently children of non-consenting parents should not be included in the control group, but rather analyzed separately.</p>
-<p>Consequently a second experiment was conducted in which both the treatment and control group came from the same population of children whose parents consented to vaccination. Those children would be assigned at random either to the treatment (vaccinated) or control (unvaccinated) group. Moreover, this was to be a “double-blind” experiment: the assignment of each participating child would be closely held among the administrators of the experiment, and not shared with participating parents, medical staff responsible for injections (of either the vaccine or a saline solution), or physicians determining whether a paricipating child had or had not contracted polio. Children whose parents did not consent to vaccination would be tracked separately from others. Here are the results of the double-blind experiment.</p>
+<p>Consequently a second experiment was conducted in which both the treatment and control group came from the same population of children whose parents consented to vaccination. Those children would be assigned at random either to the treatment (vaccinated) or control (unvaccinated) group. Moreover, this was to be a “double-blind” experiment: the assignment of each participating child would be closely held among the administrators of the experiment, and not shared with participating parents, medical staff responsible for injections (of either the vaccine or a saline solution), or physicians determining whether a participating child had or had not contracted polio. Children whose parents did not consent to vaccination would be tracked separately from others. Here are the results of the double-blind experiment.</p>
 <div class="cell">
 <div id="tbl-salk-blind" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1313,8 +1306,8 @@ Figure&nbsp;5.2: NB10: z-scores and standard normal curve
 </section>
 <section id="resources" class="level2" data-number="5.7">
 <h2 data-number="5.7" class="anchored" data-anchor-id="resources"><span class="header-section-number">5.7</span> Resources</h2>
-<p>“Statistics, 4/e” by Freedman, Pisani, and Purves ([FPP](https://www.goodreads.com/book/show/147358.Statistics))</p>
-<p>[Sampling Techniques, 3/e](https://www.google.co.uk/books/edition/Sampling_Techniques/8Y4QAQAAIAAJ?hl=en) by William G. Cochran</p>
+<p>“Statistics, 4/e” by Freedman, Pisani, and Purves (<a href="https://www.goodreads.com/book/show/147358.Statistics">FPP</a>)</p>
+<p><a href="https://www.google.co.uk/books/edition/Sampling_Techniques/8Y4QAQAAIAAJ?hl=en">Sampling Techniques, 3/e</a> by William G. Cochran</p>
 
 
 </section>
@@ -1734,8 +1727,8 @@ Figure&nbsp;5.2: NB10: z-scores and standard normal curve
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./la-intro.html" class="pagination-link" aria-label="Some Linear Algebra">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./la-intro.html" class="pagination-link" aria-label="Linear Regression">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

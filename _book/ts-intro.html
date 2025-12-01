@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
 <meta name="author" content="Send comments to: Tony T (tthrall)">
 
 <title>11&nbsp; Time Series Data Analysis – EDA for Machine Learning</title>
@@ -60,10 +59,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -226,7 +225,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -353,34 +352,74 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">11.1</span> Introduction</a></li>
   <li><a href="#natural-science-examples" id="toc-natural-science-examples" class="nav-link" data-scroll-target="#natural-science-examples"><span class="header-section-number">11.2</span> Natural Science Examples</a>
+  <ul>
+  <li><a href="#sunspots-monthly-counts-1749---present" id="toc-sunspots-monthly-counts-1749---present" class="nav-link" data-scroll-target="#sunspots-monthly-counts-1749---present"><span class="header-section-number">11.2.1</span> Sunspots: Monthly Counts, 1749 - Present</a>
   <ul class="collapse">
-  <li><a href="#sunspots-monthly-counts-1749---present" id="toc-sunspots-monthly-counts-1749---present" class="nav-link" data-scroll-target="#sunspots-monthly-counts-1749---present"><span class="header-section-number">11.2.1</span> Sunspots: Monthly Counts, 1749 - Present</a></li>
-  <li><a href="#old-faithful-eruptions" id="toc-old-faithful-eruptions" class="nav-link" data-scroll-target="#old-faithful-eruptions"><span class="header-section-number">11.2.2</span> Old Faithful eruptions</a></li>
-  <li><a href="#climate-change" id="toc-climate-change" class="nav-link" data-scroll-target="#climate-change"><span class="header-section-number">11.2.3</span> Climate Change</a></li>
-  <li><a href="#el-niño-and-fish-population" id="toc-el-niño-and-fish-population" class="nav-link" data-scroll-target="#el-niño-and-fish-population"><span class="header-section-number">11.2.4</span> El Niño and Fish Population</a></li>
-  <li><a href="#predatorprey-interactions" id="toc-predatorprey-interactions" class="nav-link" data-scroll-target="#predatorprey-interactions"><span class="header-section-number">11.2.5</span> Predator–Prey Interactions</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description"><span class="header-section-number">11.2.1.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives" id="toc-context-questions-and-objectives" class="nav-link" data-scroll-target="#context-questions-and-objectives"><span class="header-section-number">11.2.1.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#old-faithful-eruptions" id="toc-old-faithful-eruptions" class="nav-link" data-scroll-target="#old-faithful-eruptions"><span class="header-section-number">11.2.2</span> Old Faithful eruptions</a>
+  <ul class="collapse">
+  <li><a href="#description-1" id="toc-description-1" class="nav-link" data-scroll-target="#description-1"><span class="header-section-number">11.2.2.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-1" id="toc-context-questions-and-objectives-1" class="nav-link" data-scroll-target="#context-questions-and-objectives-1"><span class="header-section-number">11.2.2.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#climate-change" id="toc-climate-change" class="nav-link" data-scroll-target="#climate-change"><span class="header-section-number">11.2.3</span> Climate Change</a>
+  <ul class="collapse">
+  <li><a href="#description-2" id="toc-description-2" class="nav-link" data-scroll-target="#description-2"><span class="header-section-number">11.2.3.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-2" id="toc-context-questions-and-objectives-2" class="nav-link" data-scroll-target="#context-questions-and-objectives-2"><span class="header-section-number">11.2.3.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#el-niño-and-fish-population" id="toc-el-niño-and-fish-population" class="nav-link" data-scroll-target="#el-niño-and-fish-population"><span class="header-section-number">11.2.4</span> El Niño and Fish Population</a>
+  <ul class="collapse">
+  <li><a href="#description-3" id="toc-description-3" class="nav-link" data-scroll-target="#description-3"><span class="header-section-number">11.2.4.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-3" id="toc-context-questions-and-objectives-3" class="nav-link" data-scroll-target="#context-questions-and-objectives-3"><span class="header-section-number">11.2.4.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#predatorprey-interactions" id="toc-predatorprey-interactions" class="nav-link" data-scroll-target="#predatorprey-interactions"><span class="header-section-number">11.2.5</span> Predator–Prey Interactions</a>
+  <ul class="collapse">
+  <li><a href="#description-4" id="toc-description-4" class="nav-link" data-scroll-target="#description-4"><span class="header-section-number">11.2.5.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-4" id="toc-context-questions-and-objectives-4" class="nav-link" data-scroll-target="#context-questions-and-objectives-4"><span class="header-section-number">11.2.5.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#business-and-economic-examples" id="toc-business-and-economic-examples" class="nav-link" data-scroll-target="#business-and-economic-examples"><span class="header-section-number">11.3</span> Business and Economic Examples</a>
+  <ul>
+  <li><a href="#jj-quarterly-earnings" id="toc-jj-quarterly-earnings" class="nav-link" data-scroll-target="#jj-quarterly-earnings"><span class="header-section-number">11.3.1</span> JJ Quarterly Earnings</a>
   <ul class="collapse">
-  <li><a href="#jj-quarterly-earnings" id="toc-jj-quarterly-earnings" class="nav-link" data-scroll-target="#jj-quarterly-earnings"><span class="header-section-number">11.3.1</span> JJ Quarterly Earnings</a></li>
-  <li><a href="#dow-jones-industrial-average" id="toc-dow-jones-industrial-average" class="nav-link" data-scroll-target="#dow-jones-industrial-average"><span class="header-section-number">11.3.2</span> Dow Jones Industrial Average</a></li>
+  <li><a href="#description-5" id="toc-description-5" class="nav-link" data-scroll-target="#description-5"><span class="header-section-number">11.3.1.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-5" id="toc-context-questions-and-objectives-5" class="nav-link" data-scroll-target="#context-questions-and-objectives-5"><span class="header-section-number">11.3.1.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#dow-jones-industrial-average" id="toc-dow-jones-industrial-average" class="nav-link" data-scroll-target="#dow-jones-industrial-average"><span class="header-section-number">11.3.2</span> Dow Jones Industrial Average</a>
+  <ul class="collapse">
+  <li><a href="#description-6" id="toc-description-6" class="nav-link" data-scroll-target="#description-6"><span class="header-section-number">11.3.2.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-6" id="toc-context-questions-and-objectives-6" class="nav-link" data-scroll-target="#context-questions-and-objectives-6"><span class="header-section-number">11.3.2.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#signal-processing-examples" id="toc-signal-processing-examples" class="nav-link" data-scroll-target="#signal-processing-examples"><span class="header-section-number">11.4</span> Signal Processing Examples</a>
+  <ul>
+  <li><a href="#fmri-imaging" id="toc-fmri-imaging" class="nav-link" data-scroll-target="#fmri-imaging"><span class="header-section-number">11.4.1</span> fMRI Imaging</a>
   <ul class="collapse">
-  <li><a href="#fmri-imaging" id="toc-fmri-imaging" class="nav-link" data-scroll-target="#fmri-imaging"><span class="header-section-number">11.4.1</span> fMRI Imaging</a></li>
-  <li><a href="#speech-recording" id="toc-speech-recording" class="nav-link" data-scroll-target="#speech-recording"><span class="header-section-number">11.4.2</span> Speech Recording</a></li>
-  <li><a href="#earthquakes-and-explosions" id="toc-earthquakes-and-explosions" class="nav-link" data-scroll-target="#earthquakes-and-explosions"><span class="header-section-number">11.4.3</span> Earthquakes and Explosions</a></li>
+  <li><a href="#description-7" id="toc-description-7" class="nav-link" data-scroll-target="#description-7"><span class="header-section-number">11.4.1.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-7" id="toc-context-questions-and-objectives-7" class="nav-link" data-scroll-target="#context-questions-and-objectives-7"><span class="header-section-number">11.4.1.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#speech-recording" id="toc-speech-recording" class="nav-link" data-scroll-target="#speech-recording"><span class="header-section-number">11.4.2</span> Speech Recording</a>
+  <ul class="collapse">
+  <li><a href="#description-8" id="toc-description-8" class="nav-link" data-scroll-target="#description-8"><span class="header-section-number">11.4.2.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-8" id="toc-context-questions-and-objectives-8" class="nav-link" data-scroll-target="#context-questions-and-objectives-8"><span class="header-section-number">11.4.2.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
+  <li><a href="#earthquakes-and-explosions" id="toc-earthquakes-and-explosions" class="nav-link" data-scroll-target="#earthquakes-and-explosions"><span class="header-section-number">11.4.3</span> Earthquakes and Explosions</a>
+  <ul class="collapse">
+  <li><a href="#description-9" id="toc-description-9" class="nav-link" data-scroll-target="#description-9"><span class="header-section-number">11.4.3.1</span> Description</a></li>
+  <li><a href="#context-questions-and-objectives-9" id="toc-context-questions-and-objectives-9" class="nav-link" data-scroll-target="#context-questions-and-objectives-9"><span class="header-section-number">11.4.3.2</span> Context: Questions and Objectives</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#mathematical-framework" id="toc-mathematical-framework" class="nav-link" data-scroll-target="#mathematical-framework"><span class="header-section-number">11.5</span> Mathematical Framework</a></li>
   <li><a href="#operations-on-time-series" id="toc-operations-on-time-series" class="nav-link" data-scroll-target="#operations-on-time-series"><span class="header-section-number">11.6</span> Operations on Time Series</a></li>
   <li><a href="#data-analysis-objectives-methods" id="toc-data-analysis-objectives-methods" class="nav-link" data-scroll-target="#data-analysis-objectives-methods"><span class="header-section-number">11.7</span> Data Analysis Objectives &amp; Methods</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#decision-support" id="toc-decision-support" class="nav-link" data-scroll-target="#decision-support"><span class="header-section-number">11.7.1</span> Decision Support</a></li>
   <li><a href="#scientific-understanding" id="toc-scientific-understanding" class="nav-link" data-scroll-target="#scientific-understanding"><span class="header-section-number">11.7.2</span> Scientific Understanding</a></li>
   <li><a href="#overlap" id="toc-overlap" class="nav-link" data-scroll-target="#overlap"><span class="header-section-number">11.7.3</span> Overlap</a></li>
   </ul></li>
   <li><a href="#detecting-serial-correlation" id="toc-detecting-serial-correlation" class="nav-link" data-scroll-target="#detecting-serial-correlation"><span class="header-section-number">11.8</span> Detecting Serial Correlation</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#statistical-tests" id="toc-statistical-tests" class="nav-link" data-scroll-target="#statistical-tests"><span class="header-section-number">11.8.1</span> Statistical Tests</a></li>
   <li><a href="#autocorrelation-and-estimator-variance" id="toc-autocorrelation-and-estimator-variance" class="nav-link" data-scroll-target="#autocorrelation-and-estimator-variance"><span class="header-section-number">11.8.2</span> Autocorrelation and Estimator Variance</a></li>
   <li><a href="#effective-sample-size-ess" id="toc-effective-sample-size-ess" class="nav-link" data-scroll-target="#effective-sample-size-ess"><span class="header-section-number">11.8.3</span> Effective Sample Size (ESS)</a></li>
@@ -397,7 +436,6 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-intro.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-intro.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-ts-intro" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></h1>
-<p class="subtitle lead">An Overview</p>
 </div>
 
 
@@ -405,9 +443,8 @@ window.Quarto = {
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
              <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
@@ -415,19 +452,13 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">21:06 Tue 14-Oct-2025</p>
+      <p class="date">18:02 Mon 1-Dec-2025</p>
     </div>
   </div>
   
     
   </div>
   
-<div>
-  <div class="abstract">
-    <div class="block-title">Abstract</div>
-    Introduce data examples in which successive observations are statistically dependent. Discuss corresponding data analysis methods. <br><br>
-  </div>
-</div>
 
 
 </header>

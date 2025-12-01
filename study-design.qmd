@@ -35,10 +35,29 @@ library(tufte)
 ```
 
 ```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
 #| label: local-source
 
-# source(here("code", "rmse_per_grp.R"))
-# source(here("code", "xtabs_to_jaccard.R"))
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
+
 ```
 
 ------------------------------------------------------------------------
@@ -113,7 +132,7 @@ Moral: a large sample size alone does not guarantee accuracy. Ask yourself how t
 
 ### Truman versus Dewey, 1948
 
-Truman was a colorful and effective US president, but he was the underdog in the 1948 elelction. Three major polling organizations covered the election: Crossley for the Hearst newspapers, Gallup (synicated in \~100 newspapers across the country), and Roper for *Fortune* magazine. By the fall of 1948, all three put Dewey ahead of Truman by 5 or more percentage points. Here are the predicted and actual percentages.
+Truman was a colorful and effective US president, but he was the underdog in the 1948 election. Three major polling organizations covered the election: Crossley for the Hearst newspapers, Gallup (synicated in \~100 newspapers across the country), and Roper for *Fortune* magazine. By the fall of 1948, all three put Dewey ahead of Truman by 5 or more percentage points. Here are the predicted and actual percentages.
 
 ```{r}
 #| label: truman-dewey-tbl
@@ -228,7 +247,7 @@ One might ask why a promising drug shouldn't simply be adopted, rather than fiel
 
 The decision to test rather than adopt a promising drug is a difficult question of medical ethics. For the polio vaccine, there were potential risks in taking the drug, and so the government decided a test was needed to establish whether the benefits of adopting the drug would outweigh the risks.
 
-The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. AS originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consetn. Children in grades 1 and 3 were used as the controld group (were not vaccinated). The following table shows the results.
+The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. AS originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consent. Children in grades 1 and 3 were used as the controld group (were not vaccinated). The following table shows the results.
 
 ```{r}
 #| label: salk-blind
@@ -287,7 +306,7 @@ salk_nfip |> knitr::kable(
 
 Participating public health experts raised several concerns with the NFIP design. Polio can be transmitted by touch, so the incidence of polio infection may vary by grade. Also, parental consent is a potential confounding factor. More highly educated parents are more likely to consent, but their children are at greater risk. (Lower socio-economic status is associated with lower hygiene, and thus a greater chance of early exposure to polio when the mother's antibodies would be activated, enabling the child to fight off a subsequent infection.) Consequently children of non-consenting parents should not be included in the control group, but rather analyzed separately.
 
-Consequently a second experiment was conducted in which both the treatment and control group came from the same population of children whose parents consented to vaccination. Those children would be assigned at random either to the treatment (vaccinated) or control (unvaccinated) group. Moreover, this was to be a "double-blind" experiment: the assignment of each participating child would be closely held among the administrators of the experiment, and not shared with participating parents, medical staff responsible for injections (of either the vaccine or a saline solution), or physicians determining whether a paricipating child had or had not contracted polio. Children whose parents did not consent to vaccination would be tracked separately from others. Here are the results of the double-blind experiment.
+Consequently a second experiment was conducted in which both the treatment and control group came from the same population of children whose parents consented to vaccination. Those children would be assigned at random either to the treatment (vaccinated) or control (unvaccinated) group. Moreover, this was to be a "double-blind" experiment: the assignment of each participating child would be closely held among the administrators of the experiment, and not shared with participating parents, medical staff responsible for injections (of either the vaccine or a saline solution), or physicians determining whether a participating child had or had not contracted polio. Children whose parents did not consent to vaccination would be tracked separately from others. Here are the results of the double-blind experiment.
 
 ```{r}
 #| label: tbl-salk-blind
@@ -684,6 +703,6 @@ Our sample average of 405 micrograms probably deviates from the actual deficit o
 
 ## Resources
 
-"Statistics, 4/e" by Freedman, Pisani, and Purves (\[FPP\](https://www.goodreads.com/book/show/147358.Statistics))
+"Statistics, 4/e" by Freedman, Pisani, and Purves ([FPP](https://www.goodreads.com/book/show/147358.Statistics))
 
-\[Sampling Techniques, 3/e\](https://www.google.co.uk/books/edition/Sampling_Techniques/8Y4QAQAAIAAJ?hl=en) by William G. Cochran
+[Sampling Techniques, 3/e](https://www.google.co.uk/books/edition/Sampling_Techniques/8Y4QAQAAIAAJ?hl=en) by William G. Cochran

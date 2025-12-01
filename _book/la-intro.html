@@ -432,7 +432,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">11:36 Sun 2-Nov-2025</p>
+      <p class="date">18:23 Mon 1-Dec-2025</p>
     </div>
   </div>
   
@@ -612,20 +612,20 @@ Table&nbsp;6.2: Better Life Index (BLI)
 </figcaption>
 <div aria-describedby="tbl-bli-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 42 × 26
-  code  country     CG_SENG CG_VOTO EQ_AIRP EQ_WATER ES_EDUA ES_EDUEX ES_STCS
-  &lt;chr&gt; &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-1 AUS   Australia       2.7      92     6.7       92      84       20     499
-2 AUT   Austria         1.3      76    12.2       92      86       17     491
-3 BEL   Belgium         2        88    12.8       79      80       19     500
-4 BRA   Brazil          2.2      80    11.7       70      57       16     400
-5 CAN   Canada          2.9      68     7.1       90      92       17     517
-6 CHE   Switzerland     2.3      45    10.1       96      89       17     498
-# ℹ 36 more rows
-# ℹ 17 more variables: HO_HISH &lt;dbl&gt;, HS_LEB &lt;dbl&gt;, HS_SFRH &lt;dbl&gt;,
-#   IW_HADI &lt;dbl&gt;, IW_HNFW &lt;dbl&gt;, JE_EMPL &lt;dbl&gt;, JE_LMIS &lt;dbl&gt;, JE_LTUR &lt;dbl&gt;,
-#   JE_PEARN &lt;dbl&gt;, PS_FSAFEN &lt;dbl&gt;, PS_REPH &lt;dbl&gt;, SC_SNTWS &lt;dbl&gt;,
-#   SW_LIFS &lt;dbl&gt;, WL_EWLH &lt;dbl&gt;, WL_TNOW &lt;dbl&gt;, HO_BASE &lt;dbl&gt;, HO_NUMR &lt;dbl&gt;</code></pre>
+<pre><code># A tibble: 36 × 26
+  code  country  HO_BASE HO_HISH HO_NUMR IW_HADI IW_HNFW JE_EMPL JE_LMIS JE_LTUR
+  &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 AUS   Austral…     1.1      20     2.3   31588   47657      72     4.8    1.08
+2 AUT   Austria      1        21     1.6   31173   49887      72     3.9    1.19
+3 BEL   Belgium      2        21     2.2   28307   83876      62     5      3.88
+4 BRA   Brazil       6.7      21     1.6   11664    6844      67     4.6    1.97
+5 CAN   Canada       0.2      21     2.5   29365   67913      72     6.4    0.9 
+6 CHL   Chile        9.4      18     1.2   14533   17733      62     4.4    1.59
+# ℹ 30 more rows
+# ℹ 16 more variables: JE_PEARN &lt;dbl&gt;, SC_SNTWS &lt;dbl&gt;, ES_EDUA &lt;dbl&gt;,
+#   ES_STCS &lt;dbl&gt;, ES_EDUEX &lt;dbl&gt;, EQ_AIRP &lt;dbl&gt;, EQ_WATER &lt;dbl&gt;,
+#   CG_SENG &lt;dbl&gt;, CG_VOTO &lt;dbl&gt;, HS_LEB &lt;dbl&gt;, HS_SFRH &lt;dbl&gt;, SW_LIFS &lt;dbl&gt;,
+#   PS_FSAFEN &lt;dbl&gt;, PS_REPH &lt;dbl&gt;, WL_EWLH &lt;dbl&gt;, WL_TNOW &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </figure>
@@ -954,7 +954,7 @@ Table&nbsp;6.4: BLI Component Indicators
 \qquad(6.8)\]</span></span></p>
 <p>We now have more explanatory variables than in the previous example, a fact that merits some comment.</p>
 <p>On the one hand, the approach to determining least-squares regression coefficients <span class="math inline">\(\hat{\beta}_0, \ldots, \hat{\beta}_d\)</span> is unchanged. We project the response vector, now <span class="math inline">\(L_\bullet\)</span>, onto the space spanned by the constant vector <span class="math inline">\(1_\bullet\)</span> along with the explanatory variables, that is onto the space spanned by <span class="math inline">\((1_\bullet, C_{\bullet, 1}, \ldots, C_{\bullet, d})\)</span>. The fitted coefficients yield a function of the explanatory variables that forms a regression hyperplane of dimension 23 that passes through a cloud of data points, <span class="math inline">\((C_{\bullet, 1}, \ldots, C_{\bullet, d}, L_\bullet)\)</span>, in a space of dimension 24.</p>
-<p>On the other hand, we are now estimating 24 regression coefficients based on observations from just 42 countries. From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients. From the perspective of numerical linear algebra, the vector of fitted coefficients <span class="math inline">\((\hat{\beta}_0, \ldots, \hat{\beta}_d)\)</span> is less stable (more sensitive to error in the data) than it was in the previous example.</p>
+<p>On the other hand, we are now estimating 24 regression coefficients based on observations from just 36 countries. From a statistical perspective, this paucity of observations relative to the number of estimates leads to large standard errors for the set of estimated coefficients. From the perspective of numerical linear algebra, the vector of fitted coefficients <span class="math inline">\((\hat{\beta}_0, \ldots, \hat{\beta}_d)\)</span> is less stable (more sensitive to error in the data) than it was in the previous example.</p>
 </section>
 <section id="mnist-images-of-handwritten-digits" class="level3" data-number="6.1.3">
 <h3 data-number="6.1.3" class="anchored" data-anchor-id="mnist-images-of-handwritten-digits"><span class="header-section-number">6.1.3</span> MNIST: Images of Handwritten Digits</h3>

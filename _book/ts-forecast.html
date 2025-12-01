@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
 <meta name="author" content="Send comments to: Tony T (tthrall)">
 
 <title>12&nbsp; Time Series Forecasting – EDA for Machine Learning</title>
@@ -40,10 +39,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -206,7 +205,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -333,40 +332,54 @@ window.Quarto = {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">12.1</span> Introduction</a></li>
   <li><a href="#mathematical-framework" id="toc-mathematical-framework" class="nav-link" data-scroll-target="#mathematical-framework"><span class="header-section-number">12.2</span> Mathematical Framework</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#data-derived-from-a-random-process" id="toc-data-derived-from-a-random-process" class="nav-link" data-scroll-target="#data-derived-from-a-random-process"><span class="header-section-number">12.2.1</span> Data derived from a random process</a></li>
   <li><a href="#stationarity" id="toc-stationarity" class="nav-link" data-scroll-target="#stationarity"><span class="header-section-number">12.2.2</span> Stationarity</a></li>
   <li><a href="#acf-autocorrelation-function" id="toc-acf-autocorrelation-function" class="nav-link" data-scroll-target="#acf-autocorrelation-function"><span class="header-section-number">12.2.3</span> ACF: autocorrelation function</a></li>
   <li><a href="#pacf-partial-autocorrelation-function" id="toc-pacf-partial-autocorrelation-function" class="nav-link" data-scroll-target="#pacf-partial-autocorrelation-function"><span class="header-section-number">12.2.4</span> PACF: partial autocorrelation function</a></li>
   </ul></li>
   <li><a href="#operations-on-time-series" id="toc-operations-on-time-series" class="nav-link" data-scroll-target="#operations-on-time-series"><span class="header-section-number">12.3</span> Operations on Time Series</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#transformation-of-each-observation" id="toc-transformation-of-each-observation" class="nav-link" data-scroll-target="#transformation-of-each-observation"><span class="header-section-number">12.3.1</span> Transformation of Each Observation</a></li>
-  <li><a href="#smoothing" id="toc-smoothing" class="nav-link" data-scroll-target="#smoothing"><span class="header-section-number">12.3.2</span> Smoothing</a></li>
+  <li><a href="#smoothing" id="toc-smoothing" class="nav-link" data-scroll-target="#smoothing"><span class="header-section-number">12.3.2</span> Smoothing</a>
+  <ul class="collapse">
+  <li><a href="#running-average" id="toc-running-average" class="nav-link" data-scroll-target="#running-average"><span class="header-section-number">12.3.2.1</span> Running Average</a></li>
+  <li><a href="#exponential-smoothing" id="toc-exponential-smoothing" class="nav-link" data-scroll-target="#exponential-smoothing"><span class="header-section-number">12.3.2.2</span> Exponential Smoothing</a></li>
+  </ul></li>
   <li><a href="#differences-of-successive-observations" id="toc-differences-of-successive-observations" class="nav-link" data-scroll-target="#differences-of-successive-observations"><span class="header-section-number">12.3.3</span> Differences of Successive Observations</a></li>
   <li><a href="#seasonal-differencing" id="toc-seasonal-differencing" class="nav-link" data-scroll-target="#seasonal-differencing"><span class="header-section-number">12.3.4</span> Seasonal Differencing</a></li>
   <li><a href="#integration-restoring-differenced-data" id="toc-integration-restoring-differenced-data" class="nav-link" data-scroll-target="#integration-restoring-differenced-data"><span class="header-section-number">12.3.5</span> Integration: Restoring Differenced Data</a></li>
   <li><a href="#filtering" id="toc-filtering" class="nav-link" data-scroll-target="#filtering"><span class="header-section-number">12.3.6</span> Filtering</a></li>
   </ul></li>
   <li><a href="#model-components" id="toc-model-components" class="nav-link" data-scroll-target="#model-components"><span class="header-section-number">12.4</span> Model Components</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#covariates-and-trend" id="toc-covariates-and-trend" class="nav-link" data-scroll-target="#covariates-and-trend"><span class="header-section-number">12.4.1</span> Covariates and Trend</a></li>
-  <li><a href="#auto-regression-ar" id="toc-auto-regression-ar" class="nav-link" data-scroll-target="#auto-regression-ar"><span class="header-section-number">12.4.2</span> Auto-regression (AR)</a></li>
-  <li><a href="#moving-average-ma" id="toc-moving-average-ma" class="nav-link" data-scroll-target="#moving-average-ma"><span class="header-section-number">12.4.3</span> Moving Average (MA)</a></li>
+  <li><a href="#auto-regression-ar" id="toc-auto-regression-ar" class="nav-link" data-scroll-target="#auto-regression-ar"><span class="header-section-number">12.4.2</span> Auto-regression (AR)</a>
+  <ul class="collapse">
+  <li><a href="#polynomial-representation" id="toc-polynomial-representation" class="nav-link" data-scroll-target="#polynomial-representation"><span class="header-section-number">12.4.2.1</span> Polynomial representation</a></li>
+  <li><a href="#ar1" id="toc-ar1" class="nav-link" data-scroll-target="#ar1"><span class="header-section-number">12.4.2.2</span> AR(1)</a></li>
+  <li><a href="#arp" id="toc-arp" class="nav-link" data-scroll-target="#arp"><span class="header-section-number">12.4.2.3</span> AR(p)</a></li>
+  </ul></li>
+  <li><a href="#moving-average-ma" id="toc-moving-average-ma" class="nav-link" data-scroll-target="#moving-average-ma"><span class="header-section-number">12.4.3</span> Moving Average (MA)</a>
+  <ul class="collapse">
+  <li><a href="#invertibility" id="toc-invertibility" class="nav-link" data-scroll-target="#invertibility"><span class="header-section-number">12.4.3.1</span> Invertibility</a></li>
+  <li><a href="#ma1" id="toc-ma1" class="nav-link" data-scroll-target="#ma1"><span class="header-section-number">12.4.3.2</span> MA(1)</a></li>
+  <li><a href="#maq" id="toc-maq" class="nav-link" data-scroll-target="#maq"><span class="header-section-number">12.4.3.3</span> MA(q)</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#armap-q" id="toc-armap-q" class="nav-link" data-scroll-target="#armap-q"><span class="header-section-number">12.5</span> ARMA(p, q)</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#co-prime-polynomials" id="toc-co-prime-polynomials" class="nav-link" data-scroll-target="#co-prime-polynomials"><span class="header-section-number">12.5.1</span> Co-prime Polynomials</a></li>
   <li><a href="#causal-form" id="toc-causal-form" class="nav-link" data-scroll-target="#causal-form"><span class="header-section-number">12.5.2</span> Causal Form</a></li>
   <li><a href="#inverted-form" id="toc-inverted-form" class="nav-link" data-scroll-target="#inverted-form"><span class="header-section-number">12.5.3</span> Inverted Form</a></li>
   </ul></li>
   <li><a href="#linear-predictors" id="toc-linear-predictors" class="nav-link" data-scroll-target="#linear-predictors"><span class="header-section-number">12.6</span> Linear Predictors</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#problem-statement" id="toc-problem-statement" class="nav-link" data-scroll-target="#problem-statement"><span class="header-section-number">12.6.1</span> Problem Statement</a></li>
   <li><a href="#linear-equations" id="toc-linear-equations" class="nav-link" data-scroll-target="#linear-equations"><span class="header-section-number">12.6.2</span> Linear Equations</a></li>
   </ul></li>
   <li><a href="#arma-forecastingtxt-arma-forecasting" id="toc-arma-forecastingtxt-arma-forecasting" class="nav-link" data-scroll-target="#arma-forecastingtxt-arma-forecasting"><span class="header-section-number">12.7</span> ARMA Forecasting</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#notation-and-assumptions" id="toc-notation-and-assumptions" class="nav-link" data-scroll-target="#notation-and-assumptions"><span class="header-section-number">12.7.1</span> Notation and Assumptions</a></li>
   <li><a href="#predicted-variable" id="toc-predicted-variable" class="nav-link" data-scroll-target="#predicted-variable"><span class="header-section-number">12.7.2</span> Predicted Variable</a></li>
   <li><a href="#predictor-causal-form" id="toc-predictor-causal-form" class="nav-link" data-scroll-target="#predictor-causal-form"><span class="header-section-number">12.7.3</span> Predictor: Causal Form</a></li>
@@ -377,18 +390,30 @@ window.Quarto = {
   <li><a href="#recruitment-forecast" id="toc-recruitment-forecast" class="nav-link" data-scroll-target="#recruitment-forecast"><span class="header-section-number">12.7.8</span> Recruitment Forecast</a></li>
   </ul></li>
   <li><a href="#non-stationary-models" id="toc-non-stationary-models" class="nav-link" data-scroll-target="#non-stationary-models"><span class="header-section-number">12.8</span> Non-Stationary Models</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#arimap-d-q" id="toc-arimap-d-q" class="nav-link" data-scroll-target="#arimap-d-q"><span class="header-section-number">12.8.1</span> ARIMA(p, d, q)</a></li>
   <li><a href="#random-walk-with-drift" id="toc-random-walk-with-drift" class="nav-link" data-scroll-target="#random-walk-with-drift"><span class="header-section-number">12.8.2</span> Random Walk with Drift</a></li>
   <li><a href="#sec-EWMA" id="toc-sec-EWMA" class="nav-link" data-scroll-target="#sec-EWMA"><span class="header-section-number">12.8.3</span> EWMA Example</a></li>
-  <li><a href="#sec-ETS" id="toc-sec-ETS" class="nav-link" data-scroll-target="#sec-ETS"><span class="header-section-number">12.8.4</span> ETS</a></li>
-  <li><a href="#seasonal-arima-models-txt-sarima-models" id="toc-seasonal-arima-models-txt-sarima-models" class="nav-link" data-scroll-target="#seasonal-arima-models-txt-sarima-models"><span class="header-section-number">12.8.5</span> Seasonal ARIMA Models </a></li>
+  <li><a href="#sec-ETS" id="toc-sec-ETS" class="nav-link" data-scroll-target="#sec-ETS"><span class="header-section-number">12.8.4</span> ETS</a>
+  <ul class="collapse">
+  <li><a href="#ets-intro" id="toc-ets-intro" class="nav-link" data-scroll-target="#ets-intro"><span class="header-section-number">12.8.4.1</span> ETS Intro</a></li>
+  <li><a href="#level-component" id="toc-level-component" class="nav-link" data-scroll-target="#level-component"><span class="header-section-number">12.8.4.2</span> Level component</a></li>
+  <li><a href="#trend-component" id="toc-trend-component" class="nav-link" data-scroll-target="#trend-component"><span class="header-section-number">12.8.4.3</span> Trend component</a></li>
+  <li><a href="#seasonal-component" id="toc-seasonal-component" class="nav-link" data-scroll-target="#seasonal-component"><span class="header-section-number">12.8.4.4</span> Seasonal component</a></li>
+  <li><a href="#ets-model-designation" id="toc-ets-model-designation" class="nav-link" data-scroll-target="#ets-model-designation"><span class="header-section-number">12.8.4.5</span> ETS model designation</a></li>
+  </ul></li>
+  <li><a href="#seasonal-arima-models-txt-sarima-models" id="toc-seasonal-arima-models-txt-sarima-models" class="nav-link" data-scroll-target="#seasonal-arima-models-txt-sarima-models"><span class="header-section-number">12.8.5</span> Seasonal ARIMA Models </a>
+  <ul class="collapse">
+  <li><a href="#pure-seasonal-arma-model" id="toc-pure-seasonal-arma-model" class="nav-link" data-scroll-target="#pure-seasonal-arma-model"><span class="header-section-number">12.8.5.1</span> Pure Seasonal ARMA model</a></li>
+  <li><a href="#mixed-seasonal-arma-model" id="toc-mixed-seasonal-arma-model" class="nav-link" data-scroll-target="#mixed-seasonal-arma-model"><span class="header-section-number">12.8.5.2</span> Mixed Seasonal ARMA Model</a></li>
+  <li><a href="#sarima-model" id="toc-sarima-model" class="nav-link" data-scroll-target="#sarima-model"><span class="header-section-number">12.8.5.3</span> SARIMA Model</a></li>
+  </ul></li>
   <li><a href="#co2-example-txt-cardox-xmpl" id="toc-co2-example-txt-cardox-xmpl" class="nav-link" data-scroll-target="#co2-example-txt-cardox-xmpl"><span class="header-section-number">12.8.6</span> CO2 Example </a></li>
   </ul></li>
   <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">12.9</span> Closing Remarks</a></li>
   <li><a href="#a-glossary-of-math-symbols" id="toc-a-glossary-of-math-symbols" class="nav-link" data-scroll-target="#a-glossary-of-math-symbols"><span class="header-section-number">12.10</span> A: Glossary of Math Symbols</a></li>
   <li><a href="#b-data-examples" id="toc-b-data-examples" class="nav-link" data-scroll-target="#b-data-examples"><span class="header-section-number">12.11</span> B: Data Examples</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#hare-and-lynx-populations" id="toc-hare-and-lynx-populations" class="nav-link" data-scroll-target="#hare-and-lynx-populations"><span class="header-section-number">12.11.1</span> Hare and Lynx Populations</a></li>
   <li><a href="#jj-quarterly-earnings" id="toc-jj-quarterly-earnings" class="nav-link" data-scroll-target="#jj-quarterly-earnings"><span class="header-section-number">12.11.2</span> JJ Quarterly Earnings</a></li>
   <li><a href="#global-temperatures" id="toc-global-temperatures" class="nav-link" data-scroll-target="#global-temperatures"><span class="header-section-number">12.11.3</span> Global Temperatures</a></li>
@@ -407,7 +432,6 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-intro.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-forecast.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-ts-forecasting" class="quarto-section-identifier"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></h1>
-<p class="subtitle lead">An Introduction</p>
 </div>
 
 
@@ -415,9 +439,8 @@ window.Quarto = {
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
              <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
@@ -425,19 +448,13 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">21:03 Tue 14-Oct-2025</p>
+      <p class="date">18:02 Mon 1-Dec-2025</p>
     </div>
   </div>
   
     
   </div>
   
-<div>
-  <div class="abstract">
-    <div class="block-title">Abstract</div>
-    Introduce models used to forecast time series. <br><br>
-  </div>
-</div>
 
 
 </header>
@@ -1211,7 +1228,7 @@ Figure&nbsp;12.1: Global temperatures: 5-year moving average
 <h2 data-number="12.6" class="anchored" data-anchor-id="linear-predictors"><span class="header-section-number">12.6</span> Linear Predictors</h2>
 <section id="problem-statement" class="level3" data-number="12.6.1">
 <h3 data-number="12.6.1" class="anchored" data-anchor-id="problem-statement"><span class="header-section-number">12.6.1</span> Problem Statement</h3>
-<p>Let <span class="math inline">\(X(\cdot)\)</span> be a stationary process, whose <span class="math inline">\(T\)</span> time indices, <span class="math inline">\(\tau_T\)</span>, begin with <span class="math inline">\(t_0\)</span> and end with <span class="math inline">\(t_f\)</span> per <a href="ts-fourier.html#eq-tau-T" class="quarto-xref">Equation&nbsp;<span>12.2</span></a>.</p>
+<p>Let <span class="math inline">\(X(\cdot)\)</span> be a stationary process, whose <span class="math inline">\(T\)</span> time indices, <span class="math inline">\(\tau_T\)</span>, begin with <span class="math inline">\(t_0\)</span> and end with <span class="math inline">\(t_f\)</span> per <a href="ts-fourier.html#eq-tau-T" class="quarto-xref">Equation&nbsp;<span>13.2</span></a>.</p>
 <p>For <span class="math inline">\(u \ge 1\)</span> let <span class="math inline">\(\hat{X} (u | \tau_T)\)</span> denote the <em>linear least squares predictor</em> of <span class="math inline">\(X(u + t_f)\)</span> as an affine function of <span class="math inline">\(\{ X(t) \}_{t \in \tau_T}\)</span>.</p>
 <p><span id="eq-linear-predictor-defn"><span class="math display">\[
 \begin{align}
