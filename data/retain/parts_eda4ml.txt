@@ -1,0 +1,8 @@
+idx_0	title
+0	Front Matter
+1	Statistics
+2	Linear Algebra
+3	Text Data
+4	Time Series Data
+5	Graph Theory
+6	Back Matter

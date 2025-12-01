@@ -1,0 +1,110 @@
+idx_1	idx_2	title	l_0	l_1	n_l
+1	1	Heights of Fathers and Sons	35	108	74
+1	2	Class Exercise: Diamond Data	109	119	11
+1	3	Class Exercise: General Social Survey Data	120	132	13
+1	4	Discussion: what should EDA mean?	133	225	93
+1	5	Team Exercises	226	235	10
+1	6	Resources	236	250	15
+2	1	Heights of Fathers and Sons	38	145	108
+2	2	Z-Scores: transforming data values to standard units	146	346	201
+2	3	Class Exercise: Diamond Data	347	357	11
+2	4	Simulating Random Variables	358	397	40
+2	5	Cautionary Remarks	398	485	88
+2	6	Statistical Independence	486	1042	557
+2	7	Entropy	1043	1202	160
+2	8	Team Exercises	1203	1218	16
+2	9	Resources	1219	1236	18
+3	1	Initial Remarks	41	52	12
+3	2	US Colleges	53	123	71
+3	3	Class Exercise	124	127	4
+3	4	Grouping Variables	128	488	361
+3	5	K-means Clustering	489	828	340
+3	6	Other clustering algorithms	829	842	14
+3	7	Team Exercises	843	848	6
+3	8	Resources	849	860	12
+4	1	Introduction	47	55	9
+4	2	Generating Random Numbers from a Given Distribution	56	143	88
+4	3	Example Application	144	168	25
+4	4	Class Exercise	169	172	4
+4	5	Monte Carlo Simulation	173	364	192
+4	6	Markov Chain Monte Carlo (MCMC)	365	666	302
+4	7	Team Exercises	667	678	12
+4	8	Resources	679	690	12
+5	1	Introduction	46	77	32
+5	2	Observational Study Examples	78	216	139
+5	3	Class Exercise	217	220	4
+5	4	Experimental Study Examples	221	602	382
+5	5	Accuracy of the Sample Average	603	676	74
+5	6	Team Exercises	677	684	8
+5	7	Resources	685	690	6
+6	1	Data Examples	58	485	428
+6	2	Notation	486	554	69
+6	3	Geometry	555	1204	650
+6	4	Column versus Row Visualization	1205	1837	633
+6	5	Summary	1838	1845	8
+6	6	Exercises	1846	2018	173
+7	1	Data Examples	92	466	375
+7	2	Dimensionality: Curse and Blessing	467	497	31
+7	3	PCA: Principal Component Analysis	498	1518	1021
+7	4	LDA: Linear Discriminant Analysis	1519	3497	1979
+7	5	Other Methods	3498	3617	120
+7	6	Summary	3618	3675	58
+7	7	Exercises	3676	3859	184
+7	8	Appendix A: Matrix Decompositions and PCA	3860	4514	655
+8	1	Introduction	48	51	4
+8	2	Text Example	52	113	62
+8	3	Larger Text Examples	114	304	191
+8	4	Class Exercise	305	308	4
+8	5	TF-IDF: Term Frequency - Inverse Doc Frequency	309	373	65
+8	6	Document-Term Matrix (DTM)	374	484	111
+8	7	Topic Models	485	659	175
+8	8	Additional Aspects of Text Analysis	660	672	13
+8	9	Team Exercises	673	682	10
+8	10	Resources	683	696	14
+9	1	Background	51	58	8
+9	2	The Multinomial Distribution	59	139	81
+9	3	Bayesian Inference	140	243	104
+9	4	The Dirichlet Probability Distribution	244	306	63
+9	5	References	307	308	2
+10	1	Introduction	49	71	23
+10	2	Book Review Example	72	767	696
+10	3	Mathematical Framework	768	876	109
+10	4	Concluding Remarks	877	880	4
+10	5	References	881	882	2
+11	1	Introduction	81	92	12
+11	2	Natural Science Examples	93	313	221
+11	3	Business and Economic Examples	314	368	55
+11	4	Signal Processing Examples	369	466	98
+11	5	Mathematical Framework	467	567	101
+11	6	Operations on Time Series	568	675	108
+11	7	Data Analysis Objectives & Methods	676	729	54
+11	8	Detecting Serial Correlation	730	884	155
+11	9	Closing Remarks	885	995	111
+11	10	Glossary of Math Symbols	996	1046	51
+11	11	References	1047	1048	2
+12	1	Introduction	82	87	6
+12	2	Mathematical Framework	88	336	249
+12	3	Operations on Time Series	337	543	207
+12	4	Model Components	544	979	436
+12	5	ARMA(p, q)	980	1073	94
+12	6	Linear Predictors	1074	1155	82
+12	7	ARMA Forecasting	1156	1621	466
+12	8	Non-Stationary Models	1622	2457	836
+12	9	Closing Remarks	2458	2572	115
+12	10	A: Glossary of Math Symbols	2573	2671	99
+12	11	B: Data Examples	2672	2831	160
+12	12	References	2832	2833	2
+13	1	Introduction	154	173	20
+13	2	Mathematical Framework	174	818	645
+13	3	Finite Fourier transform	819	900	82
+13	4	Spectrum Estimation	901	1058	158
+13	5	Examples of Spectrum Analysis	1059	1340	282
+13	6	Closing Remarks	1341	1344	4
+13	7	A: Glossary of Notation	1345	1449	105
+13	8	B: Data Examples	1450	1507	58
+13	9	References	1508	1509	2
+14	1	Types of Data in which Graphs Arise	47	66	20
+14	2	Glossary of Basic Terms	67	83	17
+14	3	Properties	84	286	203
+14	4	Algorithms: General	287	457	171
+14	5	Algorithms: Clustering	458	530	73

@@ -1,0 +1,28 @@
+script	data_mgmt	pkg_src	include	dt_complete
+d_ball.R				
+eda4ml_set_seed.R				
+f_divergence.R				
+galton_ht_data.R	TRUE	HistData	FALSE	
+gen_circuit.R				
+gen_ds_tbl.R				
+get_ref_materials.R				
+graph_glossary.R				
+handedness_data.R	TRUE		TRUE	30-Nov-2025
+interval_grid.R				
+lda_2D.R				
+manage_refs.R	TRUE		FALSE	
+mnist_file_mgmt.R	TRUE		TRUE	30-Nov-2025
+NCI60_helper.R	TRUE	ISLR2	FALSE	
+oecd_bli.R	TRUE	OECD	TRUE	30-Nov-2025
+olympic_running.R	TRUE		TRUE	30-Nov-2025
+pc_aesthetics.R				
+pgram_grid.R				
+rmse_per_grp.R				
+rng_tbl.R				
+spectrum_helpers.R				
+text_helpers.R				
+tibble_transpose.R				
+vc_per_state.R	TRUE	datasets	FALSE	
+wine_quality_uci.R	TRUE		TRUE	29-Nov-2025
+xtabs_to_jaccard.R				
+z_score.R				
