@@ -1,0 +1,547 @@
+---
+title: "Sampling and Study Design"
+subtitle: "Why *how* you collect data matters more than *how much*"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: dark
+    slide-number: true
+    preview-links: auto
+    incremental: false
+    code-fold: false
+    echo: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(knitr)
+```
+
+# Opening
+
+## The Big Data Paradox
+
+If we have millions of records, why does sampling theory matter?
+
+. . .
+
+**Answer**: As soon as you ask "what would happen if..." you're generalizing beyond your data.
+
+. . .
+
+::: {.callout-note}
+## ML Connection
+Training data should be a *sample* from the deployment environment.
+:::
+
+::: {.notes}
+This is the key insight for a data science audience. Even "big data" is a sample from some larger process. The question is whether it's a *representative* sample.
+:::
+
+## Chapter Roadmap
+
+1. **Observational studies**: Learning from data you didn't generate
+2. **Experimental studies**: Learning from conditions you control  
+3. **Quantifying uncertainty**: When can we trust our estimates?
+
+::: {.notes}
+Instructor note: This chapter draws heavily from Freedman, Pisani, and Purves (FPP). The examples are classic but the lessons are timeless.
+:::
+
+# Observational Studies
+
+## Literary Digest, 1936: The Largest Poll in History
+
+```{r}
+#| label: lit-digest-tbl
+#| echo: false
+
+lit_digest_tbl <- tibble::tribble(
+  ~Source, ~`FDR Predicted %`, 
+  "Literary Digest (n = 2.4 million)", 43L, 
+  "Gallup prediction of Digest", 44L, 
+  "Gallup prediction of election (n = 50,000)", 56L, 
+  "Actual election result", 62L
+)
+
+lit_digest_tbl |> knitr::kable()
+```
+
+. . .
+
+**The Digest's error of 19 percentage points is the largest in polling history.**
+
+::: {.notes}
+Pause here to let the numbers sink in. 2.4 million respondents got it catastrophically wrong. 50,000 got it roughly right. This sets up the key lesson.
+:::
+
+## What Went Wrong?
+
+The Digest sampled from:
+
+- Automobile registrations
+- Telephone directories
+- Magazine subscription lists
+
+. . .
+
+In 1936, these **skewed wealthy**—and wealthy voters favored Landon.
+
+. . .
+
+::: {.callout-warning}
+## Selection Bias
+The sampling frame excluded the population of interest.
+:::
+
+::: {.callout-note}
+## ML Connection
+If your training data excludes a subpopulation, your model won't serve them.
+:::
+
+## Truman vs. Dewey, 1948: Quota Sampling Fails
+
+```{r}
+#| label: truman-dewey-tbl
+#| echo: false
+
+truman_dewey_tbl <- tibble::tribble(
+  ~Source, ~Truman, ~Dewey, ~Thurmond, ~Wallace, 
+  "Crossley", 45L, 50L, 2L, 3L, 
+  "Gallup", 44L, 50L, 2L, 4L, 
+  "Roper", 38L, 53L, 5L, 4L, 
+  "**Actual result**", 50L, 45L, 3L, 2L
+)
+
+truman_dewey_tbl |> knitr::kable()
+```
+
+. . .
+
+All three major polls predicted Dewey by 5+ points. All three were wrong.
+
+::: {.notes}
+This is the famous "Dewey Defeats Truman" headline moment. Ask the class if they've seen the photo of Truman holding that newspaper.
+:::
+
+## Quota Sampling: The Problem
+
+**Quota sampling**: Match sample demographics to population demographics.
+
+- Interviewers given quotas: X women, Y employed, Z from each region...
+- Otherwise free to choose subjects
+
+. . .
+
+**The hidden bias**: Interviewers chose "convenient" subjects within quotas—who tended to vote Republican.
+
+::: {.notes}
+The key insight is that there are many factors influencing voting, and you can't control for all of them with quotas. Interviewers unconsciously selected people who were easier to interview.
+:::
+
+## Probability Sampling
+
+**Key insight**: Too many known and unknown factors to control them all.
+
+. . .
+
+**Solution**: Let *chance* create a representative sample.
+
+. . .
+
+**Simple random sampling**: Every individual has a known, equal probability of selection.
+
+. . .
+
+::: {.callout-tip}
+## Hallmark of Probability Sampling
+The probability of including any given individual can be calculated *in advance*.
+:::
+
+## Practical Probability Sampling
+
+Simple random sampling is often impractical (cost, logistics).
+
+. . .
+
+**Multi-stage cluster sampling**:
+
+1. Randomly select regions
+2. Within regions, randomly select towns
+3. Within towns, randomly select precincts
+4. Within precincts, randomly select households
+
+. . .
+
+**Key features preserved**:
+
+- No interviewer discretion in subject selection
+- Prescribed procedure involving planned use of chance
+
+## Post-1948: Probability Sampling Works
+
+```{r}
+#| label: us-elections-tbl
+#| echo: false
+
+us_elections_48_04 <- tibble::tribble(
+  ~Year, ~`Sample Size`, ~Winner, ~`Gallup %`, ~`Actual %`, ~Error, 
+  1952, 5385, "Eisenhower", 51.0, 55.1, -4.1,  
+  1960, 8015, "Kennedy", 51.0, 49.7, 1.3,  
+  1976, 3439, "Carter", 48.0, 50.1, -2.1,  
+  1984, 3456, "Reagan", 59.0, 58.8, 0.2,  
+  2000, 3571, "Bush", 48.0, 47.9, 0.1, 
+  2004, 2014, "Bush", 49.0, 50.6, -1.6
+)
+
+us_elections_48_04 |> knitr::kable(digits = 1)
+```
+
+Errors mostly within ±3 percentage points—with samples of 2,000-8,000, not millions.
+
+::: {.notes}
+This is a subset of the full table in the textbook. The point is the contrast with the Literary Digest: *smaller* samples with *probability* sampling beat *huge* samples with biased sampling.
+:::
+
+## UC Berkeley Admissions: When "Significance" Doesn't Apply
+
+- Data included *all* applicants in 1973 (not a sample)
+- Standard statistical formulas assume probability sampling
+- If data aren't from a probability sample, **standard errors don't apply**
+
+. . .
+
+::: {.callout-note}
+## ML Connection
+Your test set is a sample; your deployment data may not be from the same distribution.
+:::
+
+::: {.notes}
+This is a subtle but important point. Many ML practitioners compute confidence intervals on test metrics, but if the test set isn't representative of deployment, those intervals are meaningless.
+:::
+
+# Experimental Studies
+
+## Why Experiment?
+
+**Observational data**: Subjects choose their own "treatment"
+
+. . .
+
+**Confounding**: Factors that affect both treatment choice *and* outcome
+
+. . .
+
+**Experiment**: Researcher assigns treatment, *breaking* confounding
+
+::: {.notes}
+Draw a simple DAG on the board if you have time: Confounder → Treatment → Outcome, with Confounder also → Outcome. Randomization breaks the Confounder → Treatment arrow.
+:::
+
+## Salk Vaccine Trial: NFIP Design
+
+```{r}
+#| label: salk-nfip
+#| echo: false
+
+salk_nfip <- tibble::tribble(
+  ~Grade, ~Group, ~Size, ~`Polio Rate (per 100k)`, 
+  "2", "Vaccinated (consent)", "225,000", 25, 
+  "1, 3", "Control", "725,000", 54, 
+  "2", "No consent", "125,000", 44
+)
+
+salk_nfip |> knitr::kable()
+```
+
+. . .
+
+**Problems**:
+
+- Grade might affect polio transmission
+- Consent might be confounded with risk factors
+
+## Salk Vaccine Trial: Double-Blind Design
+
+```{r}
+#| label: salk-blind
+#| echo: false
+
+salk_blind <- tibble::tribble(
+  ~Group, ~Size, ~`Polio Rate (per 100k)`, 
+  "Vaccinated", "200,000", 28, 
+  "Placebo control", "200,000", 71, 
+  "No consent", "350,000", 46
+)
+
+salk_blind |> knitr::kable()
+```
+
+. . .
+
+**Key insight**: Non-consent group had *lower* rate than placebo group.
+
+Consent itself was confounded with risk!
+
+::: {.notes}
+Higher SES parents were more likely to consent, but their children were at higher risk (less early exposure → less natural immunity). This is a beautiful example of confounding that only became visible with proper randomization.
+:::
+
+## Double-Blind Design: Why It Matters
+
+**Randomization**: Consenting parents' children assigned to vaccine *or placebo* by chance
+
+**Blinding**: Neither parents, doctors, nor evaluators knew assignment
+
+. . .
+
+This eliminates:
+
+- Selection bias in treatment assignment
+- Unconscious bias in outcome measurement
+
+## The Portacaval Shunt: Design Determines Conclusions
+
+```{r}
+#| label: portacaval-tbl
+#| echo: false
+
+portacaval_tbl <- tibble::tribble(
+  ~`Study Design`, ~`Marked Enthusiasm`, ~Moderate, ~None,
+  "No controls", 24, 7, 1, 
+  "Controls, not randomized", 10, 3, 2, 
+  "Randomized controlled", 0, 1, 3 
+)
+
+portacaval_tbl |> knitr::kable()
+```
+
+. . .
+
+The **same surgery** looked beneficial or useless depending on study design.
+
+::: {.notes}
+This is one of the most striking tables in all of statistics. 75% of uncontrolled studies were enthusiastic; 0% of randomized studies were. The surgery doesn't work, but bad study design made it look like it did.
+:::
+
+## The Mechanism of Bias
+
+```{r}
+#| label: shunt-survival
+#| echo: false
+
+shunt_survival <- tibble::tribble(
+  ~Design, ~`Surgery Survival %`, ~`Control Survival %`, 
+  "Randomized", 60, 60, 
+  "Non-randomized", 60, 45
+)
+
+shunt_survival |> knitr::kable()
+```
+
+. . .
+
+Surgery patients: ~60% survival in both study types
+
+Control patients: 60% (randomized) vs 45% (non-randomized)
+
+. . .
+
+**Non-randomized studies used sicker patients as controls.**
+
+::: {.callout-note}
+## ML Connection
+If treatment/control groups differ systematically, you're measuring the *group difference*, not the treatment effect.
+:::
+
+## Experimental Design Principles
+
+1. **Randomization**: Breaks confounding
+2. **Control group**: Provides counterfactual  
+3. **Blinding**: Prevents unconscious bias in measurement
+
+. . .
+
+::: {.callout-note}
+## ML Connection
+A/B tests are randomized controlled experiments. Observational "causal" claims require strong assumptions.
+:::
+
+# Measurement and Uncertainty
+
+## NB10: Precision Measurement
+
+**NB10**: A standard weight, nominally 10 grams
+
+**Study**: 100 measurements under identical conditions at the National Bureau of Standards
+
+```{r}
+#| label: NB10-data
+#| echo: false
+
+NB10_long <- here::here(
+  "data", "retain", "NB10_long.txt"
+) |> 
+  readr::read_tsv()
+```
+
+```{r}
+#| label: fig-NB10
+#| echo: false
+#| fig-height: 4
+
+NB10_long |>
+  ggplot(aes(x = deficit)) +
+  geom_histogram(bins = 20, fill = "coral", color = "white") +
+  labs(
+    title = "NB10: Micrograms Below 10 Grams",
+    x = "Deficit (micrograms)",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+::: {.notes}
+This is simulated data matching the chapter's description. The actual NB10 data from NBS shows essentially this pattern.
+:::
+
+## Bias vs. Chance Error
+
+Each measurement = **true value** + **bias** + **chance error**
+
+. . .
+
+- **Chance error**: Varies randomly, averages toward zero
+- **Bias**: Systematic, does *not* average out
+
+. . .
+
+NB10 is **biased**: It weighs ~405 μg less than 10g
+
+. . .
+
+::: {.callout-note}
+## ML Connection
+Model error = _bias_ + variance
+:::
+
+## How Accurate is the Sample Average?
+
+$$\text{SE of mean} = \frac{\text{SD}}{\sqrt{n}}$$
+
+. . .
+
+For NB10:
+
+$$\text{SE} = \frac{6.5}{\sqrt{100}} = 0.65 \text{ micrograms}$$
+
+. . .
+
+Our estimate of 405 μg is probably within ~2 μg of the true value.
+
+. . .
+
+::: {.callout-tip}
+## Key Insight
+Uncertainty shrinks with $\sqrt{n}$, not $n$.
+:::
+
+## Outliers and Non-Normality
+
+```{r}
+#| label: fig-NB10-zscore
+#| echo: false
+#| fig-height: 4
+
+NB10_z <- NB10_long |> 
+  dplyr::mutate(
+    z = ( deficit - mean(deficit)) / sd(deficit) )
+
+NB10_z |>
+  ggplot(aes(x = z)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 20, 
+                 fill = "steelblue", color = "white", alpha = 0.7) +
+  stat_function(fun = dnorm, color = "red", linewidth = 1) +
+  labs(
+    title = "NB10: Z-Scores with Standard Normal Curve",
+    x = "Z-score",
+    y = "Density"
+  ) +
+  theme_minimal()
+```
+
+Measurements at z ≈ ±5 would be ~1 in a million under normality.
+
+**Even careful measurement processes produce non-normal tails.**
+
+::: {.callout-note}
+## ML Connection
+Don't assume normality. **Look at your data.**
+:::
+
+# Synthesis
+
+## Core Principles for Data Scientists
+
+1. **How data are collected determines what conclusions are valid**
+
+2. Sample size without representative sampling is worthless
+
+3. Observational data cannot establish causation without strong assumptions
+
+4. Randomized experiments are the gold standard for causal claims
+
+5. **All estimates have uncertainty—quantify it**
+
+## Looking Ahead: ML Implications
+
+- **Train/validation/test splits** are sampling problems
+
+- **Distribution shift**: Deployment ≠ training distribution
+
+- **Fairness**: If subgroups are undersampled, models underperform for them
+
+- **Causal ML**: When can observational data support causal claims?
+
+::: {.notes}
+These are the bridges to later ML material. Each of these could be a full lecture in its own right.
+:::
+
+## Discussion Questions
+
+1. What modern datasets might have Literary Digest-style selection bias?
+
+2. When is a randomized experiment unethical or impractical?
+
+3. How would you detect distribution shift between training and deployment?
+
+::: {.notes}
+Use these for class discussion or as take-home reflection questions.
+:::
+
+# Appendix: Instructor Notes {visibility="uncounted"}
+
+## Timing Guide {visibility="uncounted"}
+
+| Section | Slides | Suggested Time |
+|---------|--------|----------------|
+| Opening | 1-3 | 5 min |
+| Observational Studies | 4-10 | 20 min |
+| Experimental Studies | 11-16 | 20 min |
+| Measurement/Uncertainty | 17-20 | 15 min |
+| Synthesis | 21-23 | 10 min |
+
+**Total**: ~70 minutes with discussion
+
+## Customization Options {visibility="uncounted"}
+
+**For shorter sessions** (45 min): Cut slides 9, 20
+
+**For longer sessions**: Expand slides 5, 13, 15 with more discussion
+
+**For ML-focused audience**: Add more examples to "ML Connection" callouts
+
+**For statistics-focused audience**: Show the mathematical derivations from the textbook

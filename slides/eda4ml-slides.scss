@@ -1,0 +1,58 @@
+/*-- scss:defaults --*/
+
+// Colors - based on dark theme with blue accents
+$body-bg: #1a1a2e;
+$body-color: #eaeaea;
+$link-color: #4fc3f7;
+$code-block-bg: #16213e;
+
+// Fonts
+$presentation-heading-font: 'Source Sans Pro', sans-serif;
+$presentation-font-size-root: 36px;
+
+// Callout customization
+$callout-color-note: #4fc3f7;
+$callout-color-tip: #66bb6a;
+$callout-color-warning: #ffa726;
+
+/*-- scss:rules --*/
+
+// Tighten callout boxes for slides
+.callout {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  font-size: 0.85em;
+}
+
+.callout-title {
+  font-size: 0.9em;
+}
+
+// Reduce table padding for better fit
+table {
+  font-size: 0.8em;
+}
+
+th, td {
+  padding: 0.3em 0.6em;
+}
+
+// Ensure code fits
+pre code {
+  font-size: 0.75em;
+}
+
+// Tighten list spacing
+.reveal ul, .reveal ol {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+.reveal li {
+  margin-bottom: 0.2em;
+}
+
+// Speaker notes styling
+.notes {
+  font-size: 0.8em;
+}
