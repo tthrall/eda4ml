@@ -58,7 +58,7 @@ library(tidyverse)
 conflicted::conflicts_prefer(plotly::layout)
 
 # resolve conflicts with tidymodels packages
-tidymodels_prefer()
+tidymodels::tidymodels_prefer()
 
 ```
 
