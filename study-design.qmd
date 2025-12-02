@@ -131,6 +131,15 @@ lit_digest_tbl <- tibble::tribble(
   "Gallup re election", 56L, 
   "election result", 62L
 )
+
+# save file just once
+save_file <- FALSE
+if (save_file) {
+  lit_digest_tbl |> 
+    write_tsv(here::here(
+      "data", "retain", "lit_digest.txt"
+    ))
+}
 ```
 
 ```{r}
@@ -166,6 +175,15 @@ truman_dewey_tbl <- tibble::tribble(
   "Roper", 38L, 53L, 5L, 4L, 
   "election result", 50L, 45L, 3L, 2L
 )
+
+# save file just once
+save_file <- FALSE
+if (save_file) {
+  truman_dewey_tbl |> 
+    write_tsv(here::here(
+      "data", "retain", "truman_dewey.txt"
+    ))
+}
 ```
 
 ```{r}
@@ -241,6 +259,15 @@ us_elections_48_04 <- tibble::tribble(
     .cols = c(year, n), 
     .fns  = as.integer
   ))
+
+# save file just once
+save_file <- FALSE
+if (save_file) {
+  us_elections_48_04 |> 
+    write_tsv(here::here(
+      "data", "retain", "us_elections_48_04.txt"
+    ))
+}
 ```
 
 ```{r}
@@ -444,7 +471,7 @@ First, a brief explanation of standard weights. Stores weigh merchandise on scal
 
 This chain of comparisons ends at the International Prototype Kilogram (for short, The Kilogram), a platinum-iridium weight held at the International Bureau of Weights and Measures near Paris. By international treaty (The Treaty of the Meter, 1875) “one kilogram” was defined to be the weight of this object under standard conditions. All other weights are determined relative to The Kilogram. For instance, The Pound = 0.4539237 of The Kilogram.
 
-Each country that signed the Treaty of the Meter got a national prototype kilogram, whose exact weight had been determined as accurately as possible relative to The Kilogram. These prototypes were distributed by lot, and the United States got Kilogram #20. The values of all the U.S. national standards are determined relative to K20
+Each country that signed the Treaty of the Meter got a national prototype kilogram, whose exact weight had been determined as accurately as possible relative to The Kilogram. These prototypes were distributed by lot, and the United States got Kilogram #20. The values of all the U.S. national standards are determined relative to K20.
 
 In the US, accuracy in weighing at the supermarket ultimately depends on the accuracy of the calibration work by NBS/NIST. One basic issue is reproducibility: if a measurement is repeated, how much will it change? We will discuss the results for one such weight, called NB 10, whose nominal value is 10 grams (about the weight of two nickels). In fact, the people who manufactured NB 10 tried to make it weigh 10 grams and missed by a little. NB 10 was acquired by NBS around 1940, and they’ve weighed it many times since then. We'll look at 100 of these measurements, which were made in the same room, on the same apparatus, by the same technicians. Every effort was made to follow the same procedure each time. All the factors known to affect the results, like air pressure or temperature, were kept as constant as possible.
 
