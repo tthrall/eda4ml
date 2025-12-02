@@ -21,7 +21,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -347,8 +367,9 @@ window.Quarto = {
   <li><a href="#repeated-weighing-of-nb10" id="toc-repeated-weighing-of-nb10" class="nav-link" data-scroll-target="#repeated-weighing-of-nb10"><span class="header-section-number">5.4.3</span> Repeated Weighing of NB10</a></li>
   </ul></li>
   <li><a href="#accuracy-of-the-sample-average" id="toc-accuracy-of-the-sample-average" class="nav-link" data-scroll-target="#accuracy-of-the-sample-average"><span class="header-section-number">5.5</span> Accuracy of the Sample Average</a></li>
-  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">5.6</span> Team Exercises</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">5.7</span> Resources</a></li>
+  <li><a href="#the-role-of-eda" id="toc-the-role-of-eda" class="nav-link" data-scroll-target="#the-role-of-eda"><span class="header-section-number">5.6</span> The Role of EDA</a></li>
+  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">5.7</span> Team Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">5.8</span> Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/study-design.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -374,7 +395,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">17:53 Mon 1-Dec-2025</p>
+      <p class="date">11:39 Tue 2-Dec-2025</p>
     </div>
   </div>
   
@@ -389,9 +410,30 @@ window.Quarto = {
 <hr>
 <section id="introduction" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.1</span> Introduction</h2>
-<p>This session introduces some basic ideas and methods in statistical sampling theory and the design of experimental or observational studies. We follow the book “Statistics, 4/e” by Freedman, Pisani, and Purves (<a href="https://www.goodreads.com/book/show/147358.Statistics">FPP</a>).</p>
+<p>This chapter introduces some basic ideas and methods in statistical sampling theory and the design of experimental or observational studies. We follow the book “Statistics, 4/e” by Freedman, Pisani, and Purves (<a href="https://www.goodreads.com/book/show/147358.Statistics">FPP</a>).</p>
 <p>As our world becomes evermore connected digitally, the available data of interest may seem either to encompass the entire population of interest (e.g., online behavior of consumers), or else to be highly focused (e.g., the purchasing history of a particular customer). At these extremes the notion of a sample from a population might seem irrelevant. But sampling theory becomes relevant as soon as we transition from describing the data on hand to asking how current phenomena might change under various scenarios.</p>
 <p>We begin with examples of observational and experimental studies, and review some sampling strategies under practical constraints.</p>
+<p>Although these historical examples precede the current rapid development of machine learning (ML) and artificial intelligence (AI), the lessons they bear are highly relevant to the development and deployment of algorithms.</p>
+<p>The capabilities of an ML system are bound by the quality of the data used to train, test, and evaluate it. The historical examples address the following issues.</p>
+<ul>
+<li>Do the model-development data generalize to the deployment environment?
+<ul>
+<li>Do data collection mechanisms give assurance?</li>
+<li>Do the data give the right weights to intended use cases?</li>
+<li>How much do features and labels change over time?</li>
+</ul></li>
+<li>How reliable are the labels used to develop the model?
+<ul>
+<li>What protocol is used to develop labels?</li>
+<li>How are the competing goals of label reliability and relevance balanced?</li>
+</ul></li>
+<li>How will the performance of the deployed model be monitored?
+<ul>
+<li>How are data-processing steps implemented and documented?</li>
+<li>How will model-drift be monitored?</li>
+</ul></li>
+</ul>
+<p>These concerns are central to <em>machine learning operations</em> (MLOps), an emerging discipline that extends DevOps principles to the full model lifecycle <span class="citation" data-cites="Mucci_Stryker_2025">(<a href="references.html#ref-Mucci_Stryker_2025" role="doc-biblioref">Mucci and Stryker 2025</a>)</span>. MLOps emphasizes that model performance depends not only on algorithm selection, but on the entire pipeline from data acquisition through deployment and monitoring. The historical examples in this chapter illustrate how foundational issues in study design—issues that predate ML by decades—remain decisive for modern algorithmic systems.</p>
 </section>
 <section id="observational-study-examples" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="observational-study-examples"><span class="header-section-number">5.2</span> Observational Study Examples</h2>
@@ -442,6 +484,19 @@ Table&nbsp;5.1: Predicted % for FDR in 1936
 </div>
 <p>As it turned out, Roosevelt won by a landslide: 62% versus 38%. The <em>Digest’s</em> error of nearly 20 percentage points is the largest in history by a major poll. What went wrong?</p>
 <p>Moral: a large sample size alone does not guarantee accuracy. Ask yourself how the sample was chosen.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <em>Digest</em> poll illustrates <em>selection bias</em>: the sample systematically differed from the population in ways that affected the outcome of interest. In ML terms, the training data did not represent the deployment environment. A model trained on <em>Digest</em> respondents would have learned patterns (e.g., political preferences of car and telephone owners) that fail to generalize to the broader electorate.</p>
+</div>
+</div>
 </section>
 <section id="truman-versus-dewey-1948" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="truman-versus-dewey-1948"><span class="header-section-number">5.2.2</span> Truman versus Dewey, 1948</h3>
@@ -505,6 +560,19 @@ Table&nbsp;5.2: Predicted % per candidate in 1948
 <p>The three polling organizations used <em>quota sampling</em>. That is, in an effort to construct samples representative of all voters, the polling organizations ensured that sample percentages of women, men, employed, unemployed, and so on, exactly matched known population percentages.</p>
 <p>Interviewers were given prescribed numbers of voters to interview in each category, and were otherwise unconstrained in their choice of subjects to interview.</p>
 <p>The problem is that there are many factors that influence voting, and many of them cannot be known in advance of the election. In addition, allowing the interviewers to select their subjects (constrained only by certain demographic quotas to be fulfilled) may introduce an unwitting bias, namely toward those whom the interviewers find easier to include. As it happened, quota sampling produced a bias toward those subjects who voted Republican.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Quota sampling attempted to match the sample to the population on observable features (gender, employment status, etc.), but missed latent factors that influenced voting. This is analogous to stratified sampling on measured covariates while ignoring unmeasured confounders. In ML practice, ensuring that training data covers the relevant <em>feature space</em> is necessary but not sufficient; the joint distribution of features and labels must also match deployment conditions.</p>
+</div>
+</div>
 </section>
 <section id="using-chance-in-surveys" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="using-chance-in-surveys"><span class="header-section-number">5.2.3</span> Using Chance in Surveys</h3>
@@ -774,6 +842,19 @@ Table&nbsp;5.5: Polio rate per 100,000 subjects (double-blind study)
 <li>enlisting experts to identify potential confounding factors is essential to good experimental design;</li>
 <li>double-blind experiments are often required to avoid potential unwitting bias in treatment-control assignments or the determination of experimental outcomes.</li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The double-blind protocol ensured that neither the subjects nor the evaluators knew treatment assignments—eliminating a source of systematic bias in the labels (polio diagnosis). In supervised ML, analogous rigor is needed in annotation protocols: annotators should not have access to information that could bias their labels. The NFIP’s initial design, where consent status was confounded with treatment, mirrors <em>label leakage</em>—a situation where the label-generation process is contaminated by information that would not be available at prediction time.</p>
+</div>
+</div>
 </section>
 <section id="portacaval-shunt" class="level3" data-number="5.4.2">
 <h3 data-number="5.4.2" class="anchored" data-anchor-id="portacaval-shunt"><span class="header-section-number">5.4.2</span> Portacaval Shunt</h3>
@@ -861,6 +942,19 @@ Table&nbsp;5.7: Survival rate per (design, assignment)
 </div>
 </div>
 <p>In both types of studies, the surgeons seem to have used similar criteria to select patients eligible for surgery. Indeed, the survival rates for the surgery group are about the same in both kinds of studies. So, what was the crucial difference? With the randomized controlled experiments, the controls were similar in general health to the surgery patients. With the poorly controlled studies, there was a tendency to exclude sicker patients from the surgery group and use them as controls. That explains the bias in favor of surgery.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The portacaval studies demonstrate how non-randomized comparisons can produce misleading results. In ML terms, this is analogous to evaluating a model on a test set that is not exchangeable with the training set—for instance, when healthier patients are systematically routed to treatment (or to training data) while sicker patients end up in controls (or the test set). The resulting performance metrics overstate the model’s true effectiveness. Randomized train/test splits, stratified appropriately, guard against this bias.</p>
+</div>
+</div>
 </section>
 <section id="repeated-weighing-of-nb10" class="level3" data-number="5.4.3">
 <h3 data-number="5.4.3" class="anchored" data-anchor-id="repeated-weighing-of-nb10"><span class="header-section-number">5.4.3</span> Repeated Weighing of NB10</h3>
@@ -1234,6 +1328,24 @@ Figure&nbsp;5.2: NB10: z-scores and standard normal curve
 <li>A small proportion of outlying values are possible even from the most careful measurement process. These outliers strongly influence the calculated mean and standard deviation of the data.</li>
 <li>One should consider the possibility that a measurement system is biased. In this case, each measurement can be represented as the sum of three terms: the actual (unknown) value + bias + chance error.</li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The NB10 measurements illustrate two issues that carry directly into ML:</p>
+<ol type="1">
+<li><p><strong>Systematic bias</strong>: The weight’s true value differs from its nominal value by a consistent amount (~405 µg). In ML, analogous biases arise when labels are systematically shifted from ground truth—for example, when human annotators consistently over- or under-estimate a quantity.</p></li>
+<li><p><strong>Non-normal errors</strong>: Even under highly controlled conditions, the error distribution has heavier tails than the normal distribution (outliers at indices #86 and #94). ML systems trained on data with such outliers may be unduly influenced by them unless robust methods are employed.</p></li>
+</ol>
+<p>These measurement-level concerns propagate through any downstream model. EDA’s role is to detect such issues before they compromise model training.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="accuracy-of-the-sample-average" class="level2" data-number="5.5">
@@ -1296,27 +1408,44 @@ Figure&nbsp;5.2: NB10: z-scores and standard normal curve
 \qquad(5.6)\]</span></span></p>
 <p>Our sample average of 405 micrograms probably deviates from the actual deficit of NB10 by no more 2 micrograms or so.</p>
 </section>
-<section id="team-exercises" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">5.6</span> Team Exercises</h2>
+<section id="the-role-of-eda" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="the-role-of-eda"><span class="header-section-number">5.6</span> The Role of EDA</h2>
+<p>Exploratory data analysis occupies a critical position between study design and model development. The study design determines what data <em>could</em> be collected and how representative it <em>should</em> be; EDA reveals what was <em>actually</em> collected and whether the design intentions were achieved.</p>
+<p>For ML practitioners, EDA answers questions such as:</p>
+<ul>
+<li>Does the feature distribution in the training data match the expected deployment distribution?</li>
+<li>Are there systematic patterns in missing data that could bias the model?</li>
+<li>Do the labels exhibit the reliability implied by the labeling protocol?</li>
+<li>Are there outliers or anomalies that warrant investigation before model fitting?</li>
+</ul>
+<p>The examples in this chapter—from the <em>Literary Digest</em> poll to the NB10 measurements—show that study design flaws are often invisible until the data are examined. No algorithm can overcome a fundamentally flawed data collection process; EDA is the diagnostic step that reveals whether the data support the intended use of the model.</p>
+</section>
+<section id="team-exercises" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">5.7</span> Team Exercises</h2>
 <ol type="1">
 <li><p>A teaching assistant gives a quiz to his section. There are 10 questions on the quiz and no part credit is given. After grading the papers, the TA writes down for each student the number of questions the student got right and the number wrong. The average number of right answers is 6.4 with an SD of 2.0. The average number of wrong answers is [?] with an SD of [?]. Fill in the blanks, or do you need the data? Explain briefly.</p></li>
 <li><p>A large, representative sample of Americans was studied by the Public Health Service, in the Health and Nutrition Examination Survey (HANES2). The percentage of respondents who were left-handed decreased steadily with age, from 10% at 20 years to 4% at 70. “The data show that many people change from left-handed to right-handed as they get older.” True or false? Why? If false, how do you explain the pattern in the data?</p></li>
 <li><p>For a certain group of women, the 25th percentile of height is 62.2 inches and the 75th percentile is 65.8 inches. The histogram follows the normal curve. Find the 90th percentile of the height distribution.</p></li>
 </ol>
 </section>
-<section id="resources" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="resources"><span class="header-section-number">5.7</span> Resources</h2>
+<section id="resources" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="resources"><span class="header-section-number">5.8</span> Resources</h2>
 <p>“Statistics, 4/e” by Freedman, Pisani, and Purves (<a href="https://www.goodreads.com/book/show/147358.Statistics">FPP</a>)</p>
 <p><a href="https://www.google.co.uk/books/edition/Sampling_Techniques/8Y4QAQAAIAAJ?hl=en">Sampling Techniques, 3/e</a> by William G. Cochran</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Mucci_Stryker_2025" class="csl-entry" role="listitem">
+Mucci, Tim, and Cole Stryker. 2025. <span>“What Is MLOps?”</span> <em>IBM</em>, November. <a href="https://www.ibm.com/think/topics/mlops">https://www.ibm.com/think/topics/mlops</a>.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn1"><p>Gallup and others used quota sampling in pre-election surveys from 1936 though 1948. Interviewers consistently chose a disproportionate number of people who wound up voting Republican, but until 1948, a close election, the Democratic lead was larger than this oversampling of Republicans.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>On the other hand, if a percentage or average is known to vary across identifiable subsets (strata) of the population, then <em>stratified sampling</em> can yield more accurate estimates than simple random sampling.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>Each interviewer is given a prescribed protocol for selecting a an eligible voter within the household (e.g., oldest eligible female, if present, or else youngest eligible male), with these prescriptions possibly varying among interviewers.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Each interviewer is given a prescribed protocol for selecting an eligible voter within the household (e.g., oldest eligible female, if present, or else youngest eligible male), with these prescriptions possibly varying among interviewers.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

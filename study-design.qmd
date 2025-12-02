@@ -64,11 +64,28 @@ source(here("code", "eda4ml_set_seed.R"))
 
 ## Introduction
 
-This session introduces some basic ideas and methods in statistical sampling theory and the design of experimental or observational studies. We follow the book "Statistics, 4/e" by Freedman, Pisani, and Purves ([FPP](https://www.goodreads.com/book/show/147358.Statistics)).
+This chapter introduces some basic ideas and methods in statistical sampling theory and the design of experimental or observational studies. We follow the book "Statistics, 4/e" by Freedman, Pisani, and Purves ([FPP](https://www.goodreads.com/book/show/147358.Statistics)).
 
 As our world becomes evermore connected digitally, the available data of interest may seem either to encompass the entire population of interest (e.g., online behavior of consumers), or else to be highly focused (e.g., the purchasing history of a particular customer). At these extremes the notion of a sample from a population might seem irrelevant. But sampling theory becomes relevant as soon as we transition from describing the data on hand to asking how current phenomena might change under various scenarios.
 
 We begin with examples of observational and experimental studies, and review some sampling strategies under practical constraints.
+
+Although these historical examples precede the current rapid development of machine learning (ML) and artificial intelligence (AI), the lessons they bear are highly relevant to the development and deployment of algorithms.
+
+The capabilities of an ML system are bound by the quality of the data used to train, test, and evaluate it.  The historical examples address the following issues.
+
+  - Do the model-development data generalize to the deployment environment?
+    - Do data collection mechanisms give assurance?
+    - Do the data give the right weights to intended use cases?
+    - How much do features and labels change over time?
+  - How reliable are the labels used to develop the model?
+    - What protocol is used to develop labels?
+    - How are the competing goals of label reliability and relevance balanced? 
+  - How will the performance of the deployed model be monitored?
+    - How are data-processing steps implemented and documented?
+    - How will model-drift be monitored?
+
+These concerns are central to *machine learning operations* (MLOps), an emerging discipline that extends DevOps principles to the full model lifecycle [@Mucci_Stryker_2025]. MLOps emphasizes that model performance depends not only on algorithm selection, but on the entire pipeline from data acquisition through deployment and monitoring. The historical examples in this chapter illustrate how foundational issues in study design—issues that predate ML by decades—remain decisive for modern algorithmic systems.
 
 ```{r}
 #| label: example-FPP-page
@@ -130,6 +147,11 @@ As it turned out, Roosevelt won by a landslide: 62% versus 38%. The *Digest's* e
 
 Moral: a large sample size alone does not guarantee accuracy. Ask yourself how the sample was chosen.
 
+::: {.callout-note}
+## ML Connection
+The *Digest* poll illustrates *selection bias*: the sample systematically differed from the population in ways that affected the outcome of interest. In ML terms, the training data did not represent the deployment environment. A model trained on *Digest* respondents would have learned patterns (e.g., political preferences of car and telephone owners) that fail to generalize to the broader electorate.
+:::
+
 ### Truman versus Dewey, 1948
 
 Truman was a colorful and effective US president, but he was the underdog in the 1948 election. Three major polling organizations covered the election: Crossley for the Hearst newspapers, Gallup (synicated in \~100 newspapers across the country), and Roper for *Fortune* magazine. By the fall of 1948, all three put Dewey ahead of Truman by 5 or more percentage points. Here are the predicted and actual percentages.
@@ -165,6 +187,11 @@ The problem is that there are many factors that influence voting, and many of th
 
 [^1]: Gallup and others used quota sampling in pre-election surveys from 1936 though 1948. Interviewers consistently chose a disproportionate number of people who wound up voting Republican, but until 1948, a close election, the Democratic lead was larger than this oversampling of Republicans.
 
+::: {.callout-note}
+## ML Connection
+Quota sampling attempted to match the sample to the population on observable features (gender, employment status, etc.), but missed latent factors that influenced voting. This is analogous to stratified sampling on measured covariates while ignoring unmeasured confounders. In ML practice, ensuring that training data covers the relevant *feature space* is necessary but not sufficient; the joint distribution of features and labels must also match deployment conditions.
+:::
+
 ### Using Chance in Surveys
 
 Since 1948 polling organizations have adopted some form of *probability sampling*. The idea is that there are too many known and unknown factors that influence voting to control for them all. Therefore it is better to choose subjects at random, allowing chance to provide a sample that approximately represents the population (with better approximation for larger sample sizes).
@@ -177,7 +204,7 @@ When little is known about a population, simple random sampling yields more accu
 
 Instead, polling organizations often use *multi-stage cluster sampling*. As an example, from 1952 to 1984 the Gallup organization partitioned the 50 states into four regions: Northeast, South, Midwest, and West. In each region, towns are selected at random; within each town, wards are selected at random; within each ward, precincts are selected at random; and fnally within each precinct, households are selected at random. Then the eligible voters present in the household (cluster) are interviewed.[^3] At each stage, random selection may be weighted, e.g., by population size.
 
-[^3]: Each interviewer is given a prescribed protocol for selecting a an eligible voter within the household (e.g., oldest eligible female, if present, or else youngest eligible male), with these prescriptions possibly varying among interviewers.
+[^3]: Each interviewer is given a prescribed protocol for selecting an eligible voter within the household (e.g., oldest eligible female, if present, or else youngest eligible male), with these prescriptions possibly varying among interviewers.
 
 Probability sampling of any type has two important features:
 
@@ -324,6 +351,11 @@ Key points:
 -   enlisting experts to identify potential confounding factors is essential to good experimental design;
 -   double-blind experiments are often required to avoid potential unwitting bias in treatment-control assignments or the determination of experimental outcomes.
 
+::: {.callout-note}
+## ML Connection
+The double-blind protocol ensured that neither the subjects nor the evaluators knew treatment assignments—eliminating a source of systematic bias in the labels (polio diagnosis). In supervised ML, analogous rigor is needed in annotation protocols: annotators should not have access to information that could bias their labels. The NFIP's initial design, where consent status was confounded with treatment, mirrors *label leakage*—a situation where the label-generation process is contaminated by information that would not be available at prediction time.
+:::
+
 ### Portacaval Shunt
 
 In some cases of cirrhosis of the liver, the patient may start to hemorrhage and bleed to death. One treatment involves surgery to redirect the flow of blood through a portacaval shunt. The operation to create the shunt is long and hazardous. Do the benefits outweigh the risks? The effectiveness of this surgery has been evaluated in 51 studies, summarized in the following table.
@@ -398,6 +430,11 @@ shunt_survival |> knitr::kable(
 ```
 
 In both types of studies, the surgeons seem to have used similar criteria to select patients eligible for surgery. Indeed, the survival rates for the surgery group are about the same in both kinds of studies. So, what was the crucial difference? With the randomized controlled experiments, the controls were similar in general health to the surgery patients. With the poorly controlled studies, there was a tendency to exclude sicker patients from the surgery group and use them as controls. That explains the bias in favor of surgery.
+
+::: {.callout-note}
+## ML Connection
+The portacaval studies demonstrate how non-randomized comparisons can produce misleading results. In ML terms, this is analogous to evaluating a model on a test set that is not exchangeable with the training set—for instance, when healthier patients are systematically routed to treatment (or to training data) while sicker patients end up in controls (or the test set). The resulting performance metrics overstate the model's true effectiveness. Randomized train/test splits, stratified appropriately, guard against this bias.
+:::
 
 ### Repeated Weighing of NB10
 
@@ -619,6 +656,17 @@ Key points:
 -   A small proportion of outlying values are possible even from the most careful measurement process. These outliers strongly influence the calculated mean and standard deviation of the data.
 -   One should consider the possibility that a measurement system is biased. In this case, each measurement can be represented as the sum of three terms: the actual (unknown) value + bias + chance error.
 
+::: {.callout-note}
+## ML Connection
+The NB10 measurements illustrate two issues that carry directly into ML:
+
+1. **Systematic bias**: The weight's true value differs from its nominal value by a consistent amount (~405 µg). In ML, analogous biases arise when labels are systematically shifted from ground truth—for example, when human annotators consistently over- or under-estimate a quantity.
+
+2. **Non-normal errors**: Even under highly controlled conditions, the error distribution has heavier tails than the normal distribution (outliers at indices #86 and #94). ML systems trained on data with such outliers may be unduly influenced by them unless robust methods are employed.
+
+These measurement-level concerns propagate through any downstream model. EDA's role is to detect such issues before they compromise model training.
+:::
+
 ## Accuracy of the Sample Average
 
 The last example showed that NB10, nominally weighing 10 grams, actually weighs a bit less, namely, about 405 micrograms less than 10 grams. Of course a new batch of measurements of NB10 might yield an average deficit differing a bit from 405 micrograms. Just how different might that new average be? Here is a quick review of the mathematical answer to that question.
@@ -692,6 +740,19 @@ $$
 $$ {#eq-std-error-calc}
 
 Our sample average of 405 micrograms probably deviates from the actual deficit of NB10 by no more 2 micrograms or so.
+
+## The Role of EDA
+
+Exploratory data analysis occupies a critical position between study design and model development. The study design determines what data *could* be collected and how representative it *should* be; EDA reveals what was *actually* collected and whether the design intentions were achieved.
+
+For ML practitioners, EDA answers questions such as:
+
+- Does the feature distribution in the training data match the expected deployment distribution?
+- Are there systematic patterns in missing data that could bias the model?
+- Do the labels exhibit the reliability implied by the labeling protocol?
+- Are there outliers or anomalies that warrant investigation before model fitting?
+
+The examples in this chapter—from the *Literary Digest* poll to the NB10 measurements—show that study design flaws are often invisible until the data are examined. No algorithm can overcome a fundamentally flawed data collection process; EDA is the diagnostic step that reveals whether the data support the intended use of the model.
 
 ## Team Exercises
 
