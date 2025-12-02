@@ -1,0 +1,5 @@
+source	FDR_prediction
+Digest	43
+Gallup re Digest	44
+Gallup re election	56
+election result	62

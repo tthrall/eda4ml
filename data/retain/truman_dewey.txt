@@ -1,0 +1,5 @@
+source	Truman	Dewey	Thrumond	Wallace
+Crossley	45	50	2	3
+Gallup	44	50	2	4
+Roper	38	53	5	4
+election result	50	45	3	2
