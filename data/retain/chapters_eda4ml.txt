@@ -1,19 +1,20 @@
 idx_0	idx_1	title	file	n_l
-0			index.qmd	
-0			preface.qmd	
-1	1	Exploratory Data Analysis	eda.qmd	250
-1	2	Conditional Distributions	conditioning.qmd	1236
-1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	860
-1	4	Statistical Simulation	simulation.qmd	690
-1	5	Sampling and Study Design	study-design.qmd	690
-2	6	Linear Regression	la-intro.qmd	2018
-2	7	Dimension Reduction	reduce-dim.qmd	4514
-3	8	Text Analysis	text-analysis.qmd	696
-3	9	The Dirichlet Distribution	dirichlet-dstn.qmd	308
-3	10	Latent Dirichlet Allocation	latent-dirichlet-alloc.qmd	882
-4	11	Time Series Data Analysis	ts-intro.qmd	1048
-4	12	Time Series Forecasting	ts-forecast.qmd	2833
-4	13	Time Series Spectrum Analysis	ts-fourier.qmd	1509
-5	14	Graph Theory for Machine Learning	graph-theory.qmd	530
-6		A: EM Algorithm	em-algorithm.qmd	568
-6		Summary	summary.qmd	260
+0	NA		index.qmd	7
+0	NA		preface.qmd	174
+1	1	Exploratory Data Analysis	eda.qmd	269
+1	2	Conditional Distributions	conditioning.qmd	1257
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	881
+1	4	Statistical Simulation	simulation.qmd	709
+1	5	Sampling and Study Design	study-design.qmd	769
+2	6	Linear Regression	la-intro.qmd	2033
+2	7	Dimension Reduction	reduce-dim.qmd	4515
+3	8	Text Analysis	text-analysis.qmd	716
+3	9	The Dirichlet Distribution	dirichlet-dstn.qmd	325
+3	10	Latent Dirichlet Allocation	latent-dirichlet-alloc.qmd	903
+4	11	Time Series Data Analysis	ts-intro.qmd	1062
+4	12	Time Series Forecasting	ts-forecast.qmd	2847
+4	13	Time Series Spectrum Analysis	ts-fourier.qmd	1523
+5	14	Graph Theory for Machine Learning	graph-theory.qmd	553
+6	NA	EM: the Expectation-Maximization Algorithm	em-algorithm.qmd	585
+6	NA	Summary	summary.qmd	259
+6	NA	References	references.qmd	4

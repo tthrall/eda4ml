@@ -1,110 +1,154 @@
 idx_1	idx_2	title	l_0	l_1	n_l
-1	1	Heights of Fathers and Sons	35	108	74
-1	2	Class Exercise: Diamond Data	109	119	11
-1	3	Class Exercise: General Social Survey Data	120	132	13
-1	4	Discussion: what should EDA mean?	133	225	93
-1	5	Team Exercises	226	235	10
-1	6	Resources	236	250	15
-2	1	Heights of Fathers and Sons	38	145	108
-2	2	Z-Scores: transforming data values to standard units	146	346	201
-2	3	Class Exercise: Diamond Data	347	357	11
-2	4	Simulating Random Variables	358	397	40
-2	5	Cautionary Remarks	398	485	88
-2	6	Statistical Independence	486	1042	557
-2	7	Entropy	1043	1202	160
-2	8	Team Exercises	1203	1218	16
-2	9	Resources	1219	1236	18
-3	1	Initial Remarks	41	52	12
-3	2	US Colleges	53	123	71
-3	3	Class Exercise	124	127	4
-3	4	Grouping Variables	128	488	361
-3	5	K-means Clustering	489	828	340
-3	6	Other clustering algorithms	829	842	14
-3	7	Team Exercises	843	848	6
-3	8	Resources	849	860	12
-4	1	Introduction	47	55	9
-4	2	Generating Random Numbers from a Given Distribution	56	143	88
-4	3	Example Application	144	168	25
-4	4	Class Exercise	169	172	4
-4	5	Monte Carlo Simulation	173	364	192
-4	6	Markov Chain Monte Carlo (MCMC)	365	666	302
-4	7	Team Exercises	667	678	12
-4	8	Resources	679	690	12
-5	1	Introduction	46	77	32
-5	2	Observational Study Examples	78	216	139
-5	3	Class Exercise	217	220	4
-5	4	Experimental Study Examples	221	602	382
-5	5	Accuracy of the Sample Average	603	676	74
-5	6	Team Exercises	677	684	8
-5	7	Resources	685	690	6
-6	1	Data Examples	58	485	428
-6	2	Notation	486	554	69
-6	3	Geometry	555	1204	650
-6	4	Column versus Row Visualization	1205	1837	633
-6	5	Summary	1838	1845	8
-6	6	Exercises	1846	2018	173
-7	1	Data Examples	92	466	375
-7	2	Dimensionality: Curse and Blessing	467	497	31
-7	3	PCA: Principal Component Analysis	498	1518	1021
-7	4	LDA: Linear Discriminant Analysis	1519	3497	1979
-7	5	Other Methods	3498	3617	120
-7	6	Summary	3618	3675	58
-7	7	Exercises	3676	3859	184
-7	8	Appendix A: Matrix Decompositions and PCA	3860	4514	655
-8	1	Introduction	48	51	4
-8	2	Text Example	52	113	62
-8	3	Larger Text Examples	114	304	191
-8	4	Class Exercise	305	308	4
-8	5	TF-IDF: Term Frequency - Inverse Doc Frequency	309	373	65
-8	6	Document-Term Matrix (DTM)	374	484	111
-8	7	Topic Models	485	659	175
-8	8	Additional Aspects of Text Analysis	660	672	13
-8	9	Team Exercises	673	682	10
-8	10	Resources	683	696	14
-9	1	Background	51	58	8
-9	2	The Multinomial Distribution	59	139	81
-9	3	Bayesian Inference	140	243	104
-9	4	The Dirichlet Probability Distribution	244	306	63
-9	5	References	307	308	2
-10	1	Introduction	49	71	23
-10	2	Book Review Example	72	767	696
-10	3	Mathematical Framework	768	876	109
-10	4	Concluding Remarks	877	880	4
-10	5	References	881	882	2
-11	1	Introduction	81	92	12
-11	2	Natural Science Examples	93	313	221
-11	3	Business and Economic Examples	314	368	55
-11	4	Signal Processing Examples	369	466	98
-11	5	Mathematical Framework	467	567	101
-11	6	Operations on Time Series	568	675	108
-11	7	Data Analysis Objectives & Methods	676	729	54
-11	8	Detecting Serial Correlation	730	884	155
-11	9	Closing Remarks	885	995	111
-11	10	Glossary of Math Symbols	996	1046	51
-11	11	References	1047	1048	2
-12	1	Introduction	82	87	6
-12	2	Mathematical Framework	88	336	249
-12	3	Operations on Time Series	337	543	207
-12	4	Model Components	544	979	436
-12	5	ARMA(p, q)	980	1073	94
-12	6	Linear Predictors	1074	1155	82
-12	7	ARMA Forecasting	1156	1621	466
-12	8	Non-Stationary Models	1622	2457	836
-12	9	Closing Remarks	2458	2572	115
-12	10	A: Glossary of Math Symbols	2573	2671	99
-12	11	B: Data Examples	2672	2831	160
-12	12	References	2832	2833	2
-13	1	Introduction	154	173	20
-13	2	Mathematical Framework	174	818	645
-13	3	Finite Fourier transform	819	900	82
-13	4	Spectrum Estimation	901	1058	158
-13	5	Examples of Spectrum Analysis	1059	1340	282
-13	6	Closing Remarks	1341	1344	4
-13	7	A: Glossary of Notation	1345	1449	105
-13	8	B: Data Examples	1450	1507	58
-13	9	References	1508	1509	2
-14	1	Types of Data in which Graphs Arise	47	66	20
-14	2	Glossary of Basic Terms	67	83	17
-14	3	Properties	84	286	203
-14	4	Algorithms: General	287	457	171
-14	5	Algorithms: Clustering	458	530	73
+1	1	Heights of Fathers and Sons	55	128	74
+1	2	Class Exercise: Diamond Data	129	139	11
+1	3	Class Exercise: General Social Survey Data	140	152	13
+1	4	Discussion: what should EDA mean?	153	245	93
+1	5	Team Exercises	246	255	10
+1	6	Resources	256	269	14
+2	1	Heights of Fathers and Sons	60	167	108
+2	2	Z-Scores: transforming data values to standard units	168	368	201
+2	3	Class Exercise: Diamond Data	369	379	11
+2	4	Simulating Random Variables	380	419	40
+2	5	Cautionary Remarks	420	507	88
+2	6	Statistical Independence	508	1064	557
+2	7	Entropy	1065	1224	160
+2	8	Team Exercises	1225	1240	16
+2	9	Resources	1241	1257	17
+3	1	Initial Remarks	63	74	12
+3	2	US Colleges	75	145	71
+3	3	Class Exercise	146	149	4
+3	4	Grouping Variables	150	510	361
+3	5	K-means Clustering	511	850	340
+3	6	Other clustering algorithms	851	864	14
+3	7	Team Exercises	865	870	6
+3	8	Resources	871	881	11
+4	1	Introduction	67	75	9
+4	2	Generating Random Numbers from a Given Distribution	76	163	88
+4	3	Example Application	164	188	25
+4	4	Class Exercise	189	192	4
+4	5	Monte Carlo Simulation	193	384	192
+4	6	Markov Chain Monte Carlo (MCMC) [^book-mcmc-peng]	385	686	302
+4	7	Team Exercises	687	698	12
+4	8	Resources	699	709	11
+5	1	Introduction	65	113	49
+5	2	Observational Study Examples	114	150	37
+5	3	ML Connection	151	190	40
+5	4	ML Connection	191	262	72
+5	5	Class Exercise	263	266	4
+5	6	Experimental Study Examples	267	354	88
+5	7	ML Connection	355	434	80
+5	8	ML Connection	435	659	225
+5	9	ML Connection	660	669	10
+5	10	Accuracy of the Sample Average	670	743	74
+5	11	The Role of EDA	744	756	13
+5	12	Team Exercises	757	764	8
+5	13	Resources	765	769	5
+6	1	Data Examples	79	501	423
+6	2	Notation	502	570	69
+6	3	Geometry	571	1220	650
+6	4	Column versus Row Visualization	1221	1303	83
+6	5		1304	1305	2
+6	6		1306	1322	17
+6	7		1323	1324	2
+6	8		1325	1334	10
+6	9		1335	1336	2
+6	10		1337	1374	38
+6	11		1375	1376	2
+6	12		1377	1559	183
+6	13		1560	1561	2
+6	14		1562	1597	36
+6	15		1598	1599	2
+6	16		1600	1613	14
+6	17		1614	1615	2
+6	18		1616	1631	16
+6	19		1632	1633	2
+6	20		1634	1689	56
+6	21		1690	1691	2
+6	22		1692	1709	18
+6	23		1710	1711	2
+6	24		1712	1725	14
+6	25		1726	1727	2
+6	26		1728	1743	16
+6	27		1744	1745	2
+6	28		1746	1768	23
+6	29		1769	1770	2
+6	30		1771	1803	33
+6	31		1804	1805	2
+6	32		1806	1853	48
+6	33	Summary	1854	1861	8
+6	34	Exercises	1862	2033	172
+7	1	Data Examples	92	357	266
+7	2		358	359	2
+7	3		360	466	107
+7	4	Dimensionality: Curse and Blessing	467	497	31
+7	5	PCA: Principal Component Analysis	498	1518	1021
+7	6	LDA: Linear Discriminant Analysis	1519	2750	1232
+7	7		2751	2752	2
+7	8		2753	3327	575
+7	9		3328	3329	2
+7	10		3330	3342	13
+7	11		3343	3344	2
+7	12		3345	3357	13
+7	13		3358	3359	2
+7	14		3360	3497	138
+7	15	Other Methods	3498	3617	120
+7	16	Summary	3618	3675	58
+7	17	Exercises	3676	3859	184
+7	18	Appendix A: Matrix Decompositions and PCA	3860	4515	656
+8	1	Introduction	69	72	4
+8	2	Text Example	73	134	62
+8	3	Larger Text Examples	135	325	191
+8	4	Class Exercise	326	329	4
+8	5	TF-IDF: Term Frequency - Inverse Doc Frequency	330	394	65
+8	6	Document-Term Matrix (DTM)	395	505	111
+8	7	Topic Models	506	680	175
+8	8	Additional Aspects of Text Analysis	681	693	13
+8	9	Team Exercises	694	703	10
+8	10	Resources	704	716	13
+9	1	Background	69	76	8
+9	2	The Multinomial Distribution	77	157	81
+9	3	Bayesian Inference	158	261	104
+9	4	The Dirichlet Probability Distribution	262	324	63
+9	5	References	325	325	1
+10	1	Introduction	71	93	23
+10	2	Book Review Example	94	789	696
+10	3	Mathematical Framework	790	898	109
+10	4	Concluding Remarks	899	902	4
+10	5	References	903	903	1
+11	1	Introduction	96	107	12
+11	2	Natural Science Examples	108	328	221
+11	3	Business and Economic Examples	329	383	55
+11	4	Signal Processing Examples	384	481	98
+11	5	Mathematical Framework	482	582	101
+11	6	Operations on Time Series	583	690	108
+11	7	Data Analysis Objectives & Methods	691	744	54
+11	8	Detecting Serial Correlation	745	899	155
+11	9	Closing Remarks	900	1010	111
+11	10	Glossary of Math Symbols	1011	1061	51
+11	11	References	1062	1062	1
+12	1	Introduction	97	102	6
+12	2	Mathematical Framework	103	351	249
+12	3	Operations on Time Series	352	558	207
+12	4	Model Components	559	994	436
+12	5	ARMA(p, q)	995	1088	94
+12	6	Linear Predictors	1089	1170	82
+12	7	ARMA Forecasting[^txt-ARMA-forecasting]	1171	1636	466
+12	8	Non-Stationary Models	1637	2472	836
+12	9	Closing Remarks	2473	2587	115
+12	10	A: Glossary of Math Symbols	2588	2686	99
+12	11	B: Data Examples	2687	2846	160
+12	12	References	2847	2847	1
+13	1	Introduction	169	188	20
+13	2	Mathematical Framework	189	833	645
+13	3	Finite Fourier transform	834	915	82
+13	4	Spectrum Estimation	916	1073	158
+13	5	Examples of Spectrum Analysis	1074	1355	282
+13	6	Closing Remarks	1356	1359	4
+13	7	A: Glossary of Notation	1360	1464	105
+13	8	B: Data Examples	1465	1522	58
+13	9	References	1523	1523	1
+14	1	Types of Data in which Graphs Arise	71	90	20
+14	2	Glossary of Basic Terms	91	107	17
+14	3	Properties	108	310	203
+14	4	Algorithms: General	311	481	171
+14	5	Algorithms: Clustering	482	553	72

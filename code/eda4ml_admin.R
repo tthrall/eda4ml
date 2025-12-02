@@ -17,7 +17,7 @@
 #' three tibbles describing the book structure: parts, chapters, and sections.
 #'
 #' @param quarto_yml Path to _quarto.yml file (default: "_quarto.yml")
-#' @param book_dir   Directory containing chapter .qmd files (default: ".")
+#' @param book_dir   Directory containing chapter .qmd files (default: NULL)
 #'
 #' @return A named list of three tibbles:
 #'   - parts:    (idx_0, title)
@@ -285,11 +285,11 @@ update_contents <- function(
     mutate(across(c(idx_1, idx_2, l_0, l_1, n_l), as.integer))
   
   # ── Return named list ─────────────────────────────────────────────────────
-  list(
+  return(list(
     parts    = parts_tbl,
     chapters = chapters_tbl,
     sections = sections_tbl
-  )
+  ))
 }
 
 ##
@@ -299,36 +299,50 @@ update_contents <- function(
 ## 
 #' Write contents tibbles to TSV files
 #'
-#' @param contents List returned by update_contents()
-#' @param out_dir  Output directory (default: ".")
+#' @param contents List returned by update_contents() (default: NULL)
+#' @param out_dir  Output directory (default: NULL)
 #' @param prefix   File name prefix (default: "")
 #' @param suffix   File name suffix before .txt (default: "_eda4ml")
 #'
-#' @return Invisible NULL; writes three .txt files
+#' @return list of file-paths to three written TSV (.txt) files
 
-write_contents <- function(contents, 
-                           out_dir = ".", 
-                           prefix  = "", 
-                           suffix  = "_eda4ml") {
-  
+write_contents <- function(
+    contents = NULL, 
+    out_dir  = NULL, 
+    prefix   = "", 
+    suffix   = "_eda4ml"
+) {
+  require(here)
   require(readr)
   
-  readr::write_tsv(
-    contents$parts,
-    file.path(out_dir, paste0(prefix, "parts", suffix, ".txt"))
+  if (is.null(contents)) {
+    contents <- update_contents()
+  }
+  
+  if (is.null(out_dir)) {
+    out_dir <- here::here("data", "retain")
+  }
+  
+  fp_lst <- list(
+    parts = 
+      file.path( 
+        out_dir, 
+        paste0(prefix, "parts", suffix, ".txt") ), 
+    chapters = 
+      file.path( 
+        out_dir, 
+        paste0(prefix, "chapters", suffix, ".txt") ), 
+    sections = 
+      file.path( 
+        out_dir, 
+        paste0(prefix, "sections", suffix, ".txt") )
   )
   
-  readr::write_tsv(
-    contents$chapters,
-    file.path(out_dir, paste0(prefix, "chapters", suffix, ".txt"))
-  )
+  contents$ parts    |> readr::write_tsv( fp_lst [["parts"]] )
+  contents$ chapters |> readr::write_tsv( fp_lst [["chapters"]] )
+  contents$ sections |> readr::write_tsv( fp_lst [["sections"]] )
   
-  readr::write_tsv(
-    contents$sections,
-    file.path(out_dir, paste0(prefix, "sections", suffix, ".txt"))
-  )
-  
-  invisible(NULL)
+  return(fp_lst)
 }
 
 
