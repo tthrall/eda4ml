@@ -14,15 +14,15 @@
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/eda.html</loc>
-    <lastmod>2025-12-01T17:45:03.845Z</lastmod>
+    <lastmod>2025-12-04T15:06:42.846Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/conditioning.html</loc>
-    <lastmod>2025-10-14T19:43:44.924Z</lastmod>
+    <lastmod>2025-12-04T14:12:26.543Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/graph-theory.html</loc>
-    <lastmod>2025-12-01T18:03:27.554Z</lastmod>
+    <lastmod>2025-12-03T15:37:48.292Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/preface.html</loc>
@@ -38,19 +38,19 @@
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/text-analysis.html</loc>
-    <lastmod>2025-12-01T17:57:22.964Z</lastmod>
+    <lastmod>2025-12-03T16:00:03.576Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/clustering.html</loc>
-    <lastmod>2025-10-14T19:42:31.661Z</lastmod>
+    <lastmod>2025-12-04T10:28:31.488Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/simulation.html</loc>
-    <lastmod>2025-10-14T19:55:20.838Z</lastmod>
+    <lastmod>2025-12-04T14:40:07.015Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/study-design.html</loc>
-    <lastmod>2025-12-02T17:27:04.357Z</lastmod>
+    <lastmod>2025-12-02T20:56:10.644Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/tthrall/eda4ml/dirichlet-dstn.html</loc>
@@ -83,5 +83,9 @@
   <url>
     <loc>https://github.com/tthrall/eda4ml/setup.html</loc>
     <lastmod>2025-11-28T13:25:05.863Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/tthrall/eda4ml/info-theory.html</loc>
+    <lastmod>2025-12-04T14:40:17.549Z</lastmod>
   </url>
 </urlset>

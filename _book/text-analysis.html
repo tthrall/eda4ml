@@ -384,7 +384,13 @@ window.Quarto = {
   <li><a href="#latent-dirichlet-allocation-lda" id="toc-latent-dirichlet-allocation-lda" class="nav-link" data-scroll-target="#latent-dirichlet-allocation-lda"><span class="header-section-number">8.7.1</span> Latent Dirichlet allocation (LDA)</a></li>
   <li><a href="#example-associated-press-articles-1" id="toc-example-associated-press-articles-1" class="nav-link" data-scroll-target="#example-associated-press-articles-1"><span class="header-section-number">8.7.2</span> Example: Associated Press articles</a></li>
   </ul></li>
-  <li><a href="#additional-aspects-of-text-analysis" id="toc-additional-aspects-of-text-analysis" class="nav-link" data-scroll-target="#additional-aspects-of-text-analysis"><span class="header-section-number">8.8</span> Additional Aspects of Text Analysis</a></li>
+  <li><a href="#beyond-word-counts-modern-approaches" id="toc-beyond-word-counts-modern-approaches" class="nav-link" data-scroll-target="#beyond-word-counts-modern-approaches"><span class="header-section-number">8.8</span> Beyond Word Counts: Modern Approaches</a>
+  <ul>
+  <li><a href="#sentiment-analysis" id="toc-sentiment-analysis" class="nav-link" data-scroll-target="#sentiment-analysis"><span class="header-section-number">8.8.1</span> Sentiment Analysis</a></li>
+  <li><a href="#word-embeddings" id="toc-word-embeddings" class="nav-link" data-scroll-target="#word-embeddings"><span class="header-section-number">8.8.2</span> Word Embeddings</a></li>
+  <li><a href="#transformers-and-large-language-models" id="toc-transformers-and-large-language-models" class="nav-link" data-scroll-target="#transformers-and-large-language-models"><span class="header-section-number">8.8.3</span> Transformers and Large Language Models</a></li>
+  <li><a href="#implications-for-machine-learning" id="toc-implications-for-machine-learning" class="nav-link" data-scroll-target="#implications-for-machine-learning"><span class="header-section-number">8.8.4</span> Implications for Machine Learning</a></li>
+  </ul></li>
   <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">8.9</span> Team Exercises</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">8.10</span> Resources</a></li>
   </ul>
@@ -412,7 +418,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">17:57 Mon 1-Dec-2025</p>
+      <p class="date">16:00 Wed 3-Dec-2025</p>
     </div>
   </div>
   
@@ -427,7 +433,8 @@ window.Quarto = {
 <hr>
 <section id="introduction" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">8.1</span> Introduction</h2>
-<p>This session highlights some basic ideas and methods that underpin a rapidly advancing field. We follow the online book by Silge and Robinson cited below and use their R package <code>tidytext</code>. The authors emphasize the “tidy” formatting of data (i.e., as key-value pairs) along with a set of R packages sharing this approach, collectively called the R <code>tidyverse</code>.</p>
+<p>This session highlights some basic ideas and methods that underpin a rapidly advancing field. We follow the online book by Silge and Robinson cited below and use their <code>R</code> package <code>tidytext</code>. The authors emphasize the “tidy” formatting of data (i.e., as key-value pairs) along with a set of <code>R</code> packages sharing this approach, collectively called the <code>tidyverse</code>.</p>
+<p>When exploring a new text corpus, a systematic approach helps reveal structure and guide subsequent analysis. Start by tokenizing the text and examining word frequency distributions—what words dominate, and do they make sense given the source? Remove stop words and re-examine. Compute tf-idf to identify terms that distinguish documents within the corpus. For larger collections, consider topic models to discover latent themes. Throughout, visualize and iterate: unexpected patterns often point to data quality issues (encoding errors, boilerplate text) or genuine insights worth pursuing. The methods in this chapter provide a toolkit for this exploratory process.</p>
 </section>
 <section id="text-example" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="text-example"><span class="header-section-number">8.2</span> Text Example</h2>
@@ -524,6 +531,7 @@ window.Quarto = {
 16    28 signifying</code></pre>
 </div>
 </div>
+<p>Another common preprocessing step is <em>stemming</em> or <em>lemmatization</em>—reducing words to a common root form. Stemming applies simple rules to strip suffixes: “running”, “runs”, and “ran” all become “run”. Lemmatization uses vocabulary knowledge to find true root forms: “better” becomes “good”. These techniques can improve analysis by grouping related words, though they may obscure meaningful distinctions. The <code>tidytext</code> workflow doesn’t include built-in stemming, but packages such as <code>SnowballC</code> and <code>textstem</code> provide these capabilities. We won’t use stemming in this chapter, but you should know the option exists.</p>
 </section>
 <section id="larger-text-examples" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="larger-text-examples"><span class="header-section-number">8.3</span> Larger Text Examples</h2>
@@ -650,44 +658,44 @@ Table&nbsp;8.2: H.G. Wells: frequent (non-stop) words
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: right;">3524</td>
+<td style="text-align: left;">time</td>
+<td style="text-align: right;">461</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">time</td>
-<td style="text-align: right;">454</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">people</td>
 <td style="text-align: right;">302</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">door</td>
 <td style="text-align: right;">260</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">heard</td>
 <td style="text-align: right;">249</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">black</td>
 <td style="text-align: right;">232</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">stood</td>
 <td style="text-align: right;">229</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">white</td>
-<td style="text-align: right;">222</td>
-</tr>
 <tr class="odd">
+<td style="text-align: left;">white</td>
+<td style="text-align: right;">224</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">hand</td>
 <td style="text-align: right;">218</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">kemp</td>
 <td style="text-align: right;">213</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">eyes</td>
+<td style="text-align: right;">210</td>
 </tr>
 </tbody>
 </table>
@@ -827,17 +835,33 @@ Table&nbsp;8.3: Jane Austen: max tf-idf word per book
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb10" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (topicmodels_loaded) {</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">"AssociatedPress"</span>, <span class="at">package =</span> <span class="st">"topicmodels"</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># AssociatedPress</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># &lt;&lt;DocumentTermMatrix (documents: 2246, terms: 10473)&gt;&gt;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Non-/sparse entries: 302031/23220327</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sparsity           : 99%</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Maximal term length: 18</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Weighting          : term frequency (tf)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Associated Press data in tidy format (from eda4mldata)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Original source: topicmodels::AssociatedPress</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &lt;&lt;DocumentTermMatrix (documents: 2246, terms: 10473)&gt;&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Non-/sparse entries: 302031/23220327</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sparsity           : 99%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Maximal term length: 18</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Weighting          : term frequency (tf)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>ap_tidy <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>ap_tidy</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ap_tidy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 302,031 × 3
+   document term       count
+      &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
+ 1        1 adding         1
+ 2        1 adult          2
+ 3        1 ago            1
+ 4        1 alcohol        1
+ 5        1 allegedly      1
+ 6        1 allen          1
+ 7        1 apparently     2
+ 8        1 appeared       1
+ 9        1 arrested       1
+10        1 assault        1
+# ℹ 302,021 more rows</code></pre>
+</div>
 </div>
 <p>This Associated Press DTM consists of 2246 documents (rows) and 10473 terms (columns), with 99% of the potential (document, term) pairings having zero instances (and thus excluded from the sparse matrix).</p>
 </section>
@@ -847,8 +871,8 @@ Table&nbsp;8.3: Jane Austen: max tf-idf word per book
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb11" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">data</span>(<span class="st">"data_corpus_inaugural"</span>, <span class="at">package =</span> <span class="st">"quanteda"</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">head</span>(<span class="fu">docvars</span>(data_corpus_inaugural), <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">data</span>(<span class="st">"data_corpus_inaugural"</span>, <span class="at">package =</span> <span class="st">"quanteda"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">head</span>(<span class="fu">docvars</span>(data_corpus_inaugural), <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Year  President FirstName                 Party
@@ -864,10 +888,10 @@ Table&nbsp;8.3: Jane Austen: max tf-idf word per book
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb13" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>some_presidential_tokens <span class="ot">&lt;-</span> data_corpus_inaugural <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">corpus_subset</span>(Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1861</span>L, <span class="dv">1933</span>L, <span class="dv">1961</span>L)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tokens</span>()</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>some_presidential_tokens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>some_presidential_tokens <span class="ot">&lt;-</span> data_corpus_inaugural <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">corpus_subset</span>(Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1861</span>L, <span class="dv">1933</span>L, <span class="dv">1961</span>L)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tokens</span>()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>some_presidential_tokens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tokens consisting of 3 documents and 4 docvars.
@@ -892,9 +916,9 @@ Table&nbsp;8.3: Jane Austen: max tf-idf word per book
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb15" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>presidential_dfm <span class="ot">&lt;-</span> some_presidential_tokens <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  quanteda<span class="sc">::</span><span class="fu">dfm</span>()</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>presidential_dfm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>presidential_dfm <span class="ot">&lt;-</span> some_presidential_tokens <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  quanteda<span class="sc">::</span><span class="fu">dfm</span>()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>presidential_dfm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Document-feature matrix of: 3 documents, 1,746 features (56.62% sparse) and 4 docvars.
@@ -910,9 +934,9 @@ docs             fellow-citizens  of the united states : in compliance with  a
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb17" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>presidential_tbl <span class="ot">&lt;-</span> presidential_dfm <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  tidytext<span class="sc">::</span><span class="fu">tidy</span>()</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>presidential_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>presidential_tbl <span class="ot">&lt;-</span> presidential_dfm <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  tidytext<span class="sc">::</span><span class="fu">tidy</span>()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>presidential_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,272 × 3
@@ -952,21 +976,12 @@ docs             fellow-citizens  of the united states : in compliance with  a
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb19" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (topicmodels_loaded) {</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  ap_lda <span class="ot">&lt;-</span> AssociatedPress <span class="sc">|&gt;</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">LDA</span>(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">k =</span> <span class="dv">2</span>, </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># set a seed so that the output of the model is predictable</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">1234</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  ap_lda</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20" data-lst-cap=""><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LDA model with k = 2 topics, fitted using:</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   topicmodels::LDA(AssociatedPress, k = 2, control = list(seed = 1234))</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pre-computed results provided by eda4mldata::ap_topics</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>A LDA_VEM topic model with 2 topics.</code></pre>
 </div>
-</div>
-<p>We now construct (topic, term) probabilities (called <span class="math inline">\(\beta\)</span> in the LDA literature).</p>
+<p>We now examine (topic, term) probabilities (called <span class="math inline">\(\beta\)</span> in the LDA literature).</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20,946 × 3
@@ -1025,19 +1040,38 @@ Figure&nbsp;8.2: Log2 ratio of beta in topic 2 / topic 1
 <p>This figure further supports the earlier conjecture that topics 1 and 2 pertain to business and politics, respectively.</p>
 </section>
 </section>
-<section id="additional-aspects-of-text-analysis" class="level2" data-number="8.8">
-<h2 data-number="8.8" class="anchored" data-anchor-id="additional-aspects-of-text-analysis"><span class="header-section-number">8.8</span> Additional Aspects of Text Analysis</h2>
-<p>We’ve only touched on a few basic ideas and methods underpinning text analysis. Additional topics (on both the analysis and generation of text) include the following (which vary in complexity).</p>
+<section id="beyond-word-counts-modern-approaches" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="beyond-word-counts-modern-approaches"><span class="header-section-number">8.8</span> Beyond Word Counts: Modern Approaches</h2>
+<p>The methods presented in this chapter treat words as discrete tokens and documents as sparse vectors of word counts. This <em>bag-of-words</em> paradigm has proven remarkably useful, but it has limitations. The phrase “not good” scores the same as “good” in a word-count analysis. Synonyms like “excellent” and “superb” appear as unrelated as “excellent” and “potato.” And two documents using entirely different vocabulary to discuss the same topic will show no similarity at all.</p>
+<p>Extensions such as <em>n-grams</em>—sequences of <span class="math inline">\(n\)</span> consecutive words—can capture phrases like “New York” or “machine learning” that single-token analysis misses. But more fundamental advances have come from learning <em>dense, continuous</em> representations that capture semantic relationships. Rather than representing a word as a sparse vector with a single 1 among thousands of zeros, these methods represent words (and sentences, and documents) as dense vectors of perhaps 100–300 real numbers. This shift from sparse to dense representation enables capabilities that word-count methods cannot achieve.</p>
+<section id="sentiment-analysis" class="level3" data-number="8.8.1">
+<h3 data-number="8.8.1" class="anchored" data-anchor-id="sentiment-analysis"><span class="header-section-number">8.8.1</span> Sentiment Analysis</h3>
+<p>Sentiment analysis assigns emotional valence to text—determining whether a passage expresses positive, negative, or neutral sentiment, and sometimes identifying specific emotions such as anger, joy, or fear. The simplest approaches use <em>lexicons</em>: curated lists of words with associated sentiment scores. The AFINN lexicon assigns numeric scores (e.g., “excellent” = +3, “terrible” = −3); the Bing lexicon classifies words as simply positive or negative; the NRC lexicon associates words with emotions like trust, anticipation, or sadness.</p>
+<p>Lexicon-based sentiment analysis is straightforward to implement—the <code>tidytext</code> package provides access to these lexicons via <code>get_sentiments()</code>—but inherits the limitations of word-count methods. More sophisticated approaches use machine learning to account for context, negation, and sarcasm. Applications include analyzing product reviews, monitoring social media, and understanding customer feedback.</p>
+<p>For details on sentiment lexicons and their use in <code>R</code>, see Silge and Robinson’s <a href="https://www.tidytextmining.com/sentiment">Text Mining with R: Sentiment Analysis</a>.</p>
+</section>
+<section id="word-embeddings" class="level3" data-number="8.8.2">
+<h3 data-number="8.8.2" class="anchored" data-anchor-id="word-embeddings"><span class="header-section-number">8.8.2</span> Word Embeddings</h3>
+<p>Word embeddings represent words as dense vectors learned from large text corpora. The key insight is that words appearing in similar contexts should have similar representations. A neural network trained on millions of sentences learns vectors such that semantically related words are geometrically close: “king” and “queen” are nearby, as are “Paris” and “France.”</p>
+<p>More remarkably, semantic <em>relationships</em> become geometric relationships. The vector from “man” to “woman” is approximately parallel to the vector from “king” to “queen,” enabling analogical reasoning through vector arithmetic. This property emerges from the training process without explicit supervision.</p>
+<p>From the perspective of this book, word embeddings are dimension reduction applied to vocabulary. A one-hot encoding of 50,000 words produces 50,000-dimensional sparse vectors; word embeddings compress this to perhaps 300 dimensions while preserving (and revealing) semantic structure (see <a href="reduce-dim.html" class="quarto-xref"><span>Chapter 7</span></a>). Three widely-used methods are:</p>
 <ul>
-<li>n-grams: phrases of <span class="math inline">\(n\)</span> consecutive words</li>
-<li>word networks (as graphs)</li>
-<li>sentiment analysis</li>
-<li>clustering, categorization, and prediction</li>
-<li>word embedding (as real-valued vectors)</li>
-<li>specialized tokenizers, stemming</li>
-<li>non-English human languages (including machine translation)</li>
-<li>large language models (LLMs)</li>
+<li><a href="https://arxiv.org/abs/1301.3781">Word2Vec</a> (Mikolov et al., 2013): Learns embeddings by predicting words from their context (or vice versa)</li>
+<li><a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> (Pennington et al., 2014): Learns embeddings from global word co-occurrence statistics</li>
+<li><a href="https://fasttext.cc/">FastText</a> (Bojanowski et al., 2017): Extends Word2Vec by incorporating subword information, enabling embeddings for words not seen during training</li>
 </ul>
+</section>
+<section id="transformers-and-large-language-models" class="level3" data-number="8.8.3">
+<h3 data-number="8.8.3" class="anchored" data-anchor-id="transformers-and-large-language-models"><span class="header-section-number">8.8.3</span> Transformers and Large Language Models</h3>
+<p>Word embeddings assign each word a single vector regardless of context—“bank” has the same representation whether discussing rivers or finance. <em>Transformer</em> architectures, introduced in 2017, produce context-sensitive representations. The same word receives different vectors depending on surrounding words, capturing polysemy and contextual nuance.</p>
+<p>Transformers are the foundation of modern large language models (LLMs) such as GPT and BERT. These models, trained on vast text corpora, power applications including text generation, question answering, summarization, and translation. The field is evolving rapidly; capabilities that seemed futuristic a few years ago are now routine.</p>
+</section>
+<section id="implications-for-machine-learning" class="level3" data-number="8.8.4">
+<h3 data-number="8.8.4" class="anchored" data-anchor-id="implications-for-machine-learning"><span class="header-section-number">8.8.4</span> Implications for Machine Learning</h3>
+<p>These modern representations serve as features for downstream ML tasks. Text classification (spam detection, topic categorization, sentiment prediction), document clustering, and semantic search all benefit from dense representations that capture meaning rather than just word occurrence.</p>
+<p>Text can also be represented as networks, with words as nodes and co-occurrence or syntactic relationships as edges, enabling the graph-based methods discussed in <span class="quarto-unresolved-ref">?sec-graph-theory</span>.</p>
+<p>The exploratory techniques from this chapter—examining vocabulary, term frequencies, document-term matrices, and topic structure—remain valuable even when using modern methods. Understanding what words appear, how often, and in what combinations provides insight that informs modeling decisions. As with other data types, exploration precedes modeling.</p>
+</section>
 </section>
 <section id="team-exercises" class="level2" data-number="8.9">
 <h2 data-number="8.9" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">8.9</span> Team Exercises</h2>

@@ -52,9 +52,116 @@ source(here("code", "eda4ml_set_seed.R"))
 
 ------------------------------------------------------------------------
 
-## Heights of Fathers and Sons
+## What is Exploratory Data Analysis?
 
-In 1885 Sir Francis Galton examined the heights of parents and their children to determine the strength of evidence to support height as a hereditary trait. Galton's subsequent protege, Karl Pearson (who went on in 1911 to form the world's first statistics department at University College London) followed up with an analysis of the heights of fathers and sons.
+Exploratory Data Analysis (EDA) is an approach to data analysis advocated by [John Tukey](https://en.wikipedia.org/wiki/John_Tukey), a leading American statistician of the 20th century. In his 1977 book of the same name, Tukey argued that statisticians had become too focused on formal inference—hypothesis tests, confidence intervals, p-values—at the expense of simply *looking at data*. EDA is the corrective: an emphasis on visualization, summary, and the iterative development of questions about what the data might reveal.
+
+Tukey contrasted EDA with what he called "confirmatory data analysis" (CDA). Confirmatory analysis begins with a hypothesis and asks whether the data support or refute it. Exploratory analysis begins with data and asks what patterns, anomalies, or relationships might be present. The difference is one of emphasis rather than exclusion: a complete analysis typically involves both exploration and confirmation, and EDA includes models suggested by data.
+
+For students of machine learning, EDA serves several purposes:
+
+- **Understanding the data before modeling.** What variables are available? What are their types (numeric, categorical, text, date)? How are they distributed? Are there missing values, outliers, or obvious errors? Answers to these questions inform every subsequent modeling decision.
+
+- **Generating hypotheses.** Patterns discovered during exploration become candidates for formal modeling. A scatter plot might suggest a linear relationship; a histogram might reveal a bimodal distribution requiring separate treatment of subgroups.
+
+- **Diagnosing models.** After fitting a model, EDA methods help assess whether the model captures the structure in the data. Residual plots, for example, can reveal systematic patterns that the model has missed.
+
+- **Communicating findings.** Visualizations and summaries developed during exploration often become the basis for communicating results to stakeholders who may not follow the technical details of model fitting.
+
+EDA is not a single technique but a mindset: a willingness to look at data from multiple angles, to transform variables, to compare subgroups, and above all to ask questions.
+
+## Data as a Sample from a Population
+
+A useful mental model for EDA treats the data at hand as a *sample* drawn from a larger *population*. The population is the complete set of cases we care about—all possible customers, all manufacturing runs, all images of a certain type. The sample is the subset we actually observe.
+
+This framing matters because our goal is usually to learn something about the population, not just to describe the sample. When we compute a sample mean or fit a regression line, we hope these quantities approximate corresponding population quantities. EDA helps us assess whether the sample is likely to support such generalizations: Is the sample large enough? Are there subgroups that behave differently? Are there outliers that might distort our summaries?
+
+Even when the distinction between sample and population is blurry—as when we have data on all transactions in a database—the population framing remains useful. We can think of the observed data as a sample from a hypothetical population of transactions that *could have occurred* under similar conditions, and ask whether patterns in the data reflect stable features of the underlying process.
+
+## Central Value and Dispersion
+
+Two fundamental questions arise for any numeric variable:
+
+1. **What is a typical value?** This is the question of *central tendency* or *location*.
+2. **How spread out are the values?** This is the question of *dispersion* or *scale*.
+
+Each question admits multiple answers, and the choice among them is itself an exploratory decision.
+
+### Measures of Central Tendency
+
+The **arithmetic mean** (average) is the sum of values divided by the count:
+
+$$
+\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
+$$
+
+The mean has attractive mathematical properties—it minimizes the sum of squared deviations—but it is sensitive to extreme values. A single outlier can shift the mean substantially.
+
+The **median** is the middle value when observations are sorted. Half the observations fall below the median, half above. The median is *robust*: it is largely unaffected by outliers. For skewed distributions (e.g., income, home prices), the median often provides a more representative "typical" value than the mean.
+
+The **mode** is the most frequently occurring value. For continuous data, the mode is often estimated as the peak of a density estimate. A distribution may have multiple modes, suggesting the presence of distinct subgroups.
+
+### Measures of Dispersion
+
+The **standard deviation** measures the typical distance of observations from the mean:
+
+$$
+s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}
+$$
+
+Like the mean, the standard deviation is sensitive to outliers—extreme values inflate the squared deviations.
+
+The **interquartile range** (IQR) is the difference between the 75th percentile (third quartile, Q3) and the 25th percentile (first quartile, Q1). The IQR measures the spread of the middle 50% of the data and, like the median, is robust to outliers.
+
+The **range** (maximum minus minimum) is simple but highly sensitive to outliers.
+
+### Choosing Among Summaries
+
+The choice between mean and median, or between standard deviation and IQR, depends on the distribution's shape and the analyst's purpose. For symmetric distributions without outliers, mean and median are similar, and the standard deviation is a natural measure of spread. For skewed distributions or data with outliers, the median and IQR provide more stable summaries.
+
+EDA often involves computing *both* sets of summaries and comparing them. A large discrepancy between mean and median, for example, signals skewness or outliers and warrants further investigation.
+
+## Questions Drive the Analysis
+
+EDA is fundamentally *question-driven*. The analyst brings questions to the data, and the data suggest new questions in return. This iterative cycle distinguishes exploration from rote application of a fixed procedure.
+
+Some questions are standard starting points for any data set:
+
+- What is the distribution of each variable? Is it symmetric or skewed? Unimodal or multimodal?
+- Are there outliers or unusual values? Might these be data errors?
+- Are there missing values? In which variables, and how many?
+- How are pairs of variables related? Are there correlations, clusters, or other patterns?
+
+Other questions arise from domain knowledge or the specific purpose of the analysis:
+
+- For the father-son height data we will examine shortly: Do sons tend to be taller than their fathers? Does the relationship between father and son height vary across the range of heights?
+- For diamond pricing data: Which characteristics (carat, cut, color, clarity) most influence price? Are there interactions among these factors?
+
+The ability to formulate good questions is a skill developed through practice. A useful heuristic is to ask: *What would I need to know to make a decision or take an action?* The answer often points toward the most valuable lines of inquiry.
+
+## EDA Throughout the Modeling Process
+
+Although EDA is often presented as the "first step" in data analysis, exploratory methods remain valuable throughout the modeling process:
+
+- **Before modeling:** Understand variable distributions, detect data quality issues, identify relationships that might inform feature engineering.
+
+- **During modeling:** Compare candidate models, understand why one specification outperforms another, identify observations that are difficult to predict.
+
+- **After modeling:** Examine residuals for systematic patterns, assess whether model assumptions are met, explore how predictions vary across subgroups.
+
+In machine learning workflows, EDA informs decisions at every stage: which features to include, how to handle missing data, whether to transform variables, how to split data for validation, and how to interpret model outputs. The exploratory mindset—always asking "what does the data show?"—is as important as any specific technique.
+
+## Example: Heights of Fathers and Sons
+
+We now illustrate EDA with a classic data set: the heights of fathers and their adult sons, collected in the late 19th and early 20th centuries.
+
+### Historical Context
+
+In 1885, Sir Francis Galton examined the heights of parents and their children to investigate whether height was hereditary. Galton's protégé Karl Pearson—who in 1911 founded the world's first university statistics department at University College London—followed up with a larger study of fathers and sons. The data we examine here derive from Pearson's work.
+
+This data set is historically significant not only for its role in establishing the heritability of height, but also for introducing concepts that remain central to statistics: correlation, regression, and the phenomenon Galton called "regression toward mediocrity" (now "regression to the mean").
+
+### First Look: A Scatter Plot
 
 ```{r}
 #| label: father-son-ht
@@ -64,21 +171,35 @@ father_son_ht <- UsingR::father.son |>
   rename(father = fheight, son = sheight)
 ```
 
+The data contain `r nrow(father_son_ht)` father-son pairs. Here is a scatter plot of their heights:
+
 ```{r}
-#| label: fig-father-son-ht
-#| fig-cap: "Heights in inches of (father, son) pairs"
+#| label: fig-father-son-scatter
+#| fig-cap: "Heights in inches of father-son pairs"
 
 g_father_son_ht <- father_son_ht |> 
   ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
-  ggplot2::geom_point() + 
-  ggplot2::labs(title = "Heights of (father, son) pairs")
+  ggplot2::geom_point(alpha = 0.4) + 
+  ggplot2::labs(
+    title = "Heights of Father-Son Pairs",
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  )
 
 g_father_son_ht
 ```
 
-In the scatter diagram above, each point represents the respective heights of a father-son pair. The density of points in the middle range of heights obscures individual points.
+Several features are immediately apparent:
 
-Here is another view of the same data obtained by grouping father heights into successive intervals (each one labeled by its mid-point) and then constructing a box-plot of sons' heights within each interval.
+- There is a positive association: taller fathers tend to have taller sons.
+- The relationship is roughly linear, though with substantial scatter.
+- The density of points in the middle range makes individual observations hard to distinguish. (We have added transparency to the points to partially address this.)
+
+This single visualization has already answered one question (Is there an association?) and raised others (How strong is the association? What is the typical deviation from the trend?).
+
+### Conditional Distributions: Box Plots by Father's Height
+
+To see how the distribution of sons' heights varies with father's height, we can group fathers into height intervals and construct box plots:
 
 ```{r}
 #| label: f-mpt
@@ -94,124 +215,117 @@ father_son_ht <- father_son_ht |>
 
 ```{r}
 #| label: fig-f-mpt
-#| fig-cap: "Range of son's height for given height of father"
+#| fig-cap: "Distribution of son's height for each interval of father's height"
 
 g_f_mpt <- father_son_ht |> 
-  dplyr::filter(! is.na(f_mpt)) |> 
+  dplyr::filter(!is.na(f_mpt)) |> 
   ggplot2::ggplot(mapping = aes(
     x = f_mpt |> as_factor(), 
     y = son
   )) + 
   ggplot2::geom_boxplot() + 
-  ggplot2::labs(title = "Son heights per father's height") + 
-  ggplot2::xlab("father's height rounded to nearest odd inch") + 
-  ggplot2::ylab("son's height in inches")
+  ggplot2::labs(
+    title = "Son's Height by Father's Height",
+    x = "Father's height (rounded to nearest odd inch)",
+    y = "Son's height (inches)"
+  )
 g_f_mpt
 ```
 
+Each box plot shows the distribution of sons' heights for fathers in a two-inch interval. The boxes display the median (central line), interquartile range (box), and outliers (individual points). We observe:
+
+- The median son's height increases as father's height increases—confirming the positive association.
+- The spread (IQR) is roughly similar across groups.
+- There are a few outliers, particularly among sons of shorter fathers.
+
+This visualization shows *conditional distributions*: the distribution of one variable (son's height) given values of another (father's height). Conditional distributions are a central concept in statistics and machine learning, and we will explore them in depth in @sec-conditioning.
+
+### Summary Statistics by Group
+
 ```{r}
 #| label: tbl-son-per-f-mpt
-#| tbl-cap: "Heights of sons grouped by father's height"
+#| tbl-cap: "Summary statistics for sons' heights by father's height interval"
 
 son_per_f_mpt <- father_son_ht |>    
-  dplyr::group_by(f_ivl, f_mpt) |>    
+  dplyr::filter(!is.na(f_mpt)) |>
+  dplyr::group_by(f_mpt) |>    
   dplyr::summarise(     
-    s_count = n(),      
-    s_min   = min(son, na.rm = TRUE),      
-    s_max   = max(son, na.rm = TRUE),      
-    s_avg   = mean(son, na.rm = TRUE)
+    n       = n(),
+    min     = min(son, na.rm = TRUE),
+    median  = median(son, na.rm = TRUE),
+    mean    = mean(son, na.rm = TRUE),
+    max     = max(son, na.rm = TRUE),
+    sd      = sd(son, na.rm = TRUE)
   ) 
-son_per_f_mpt |> print(digits = 1)
+son_per_f_mpt |> 
+  knitr::kable(
+    digits = 1,
+    col.names = c("Father height", "n", "Min", "Median", "Mean", "Max", "SD")
+  )
 ```
 
-Galton noted that in general sons were taller than fathers, with extremely tall or short fathers corresponding to not quite so extremely tall or short sons, respectively. This observation led Galton to coin the term "regression toward mediocrity", or (more politely) "regression toward the mean".
+The table confirms what the box plots showed visually. Notice that the mean and median are close within each group, suggesting roughly symmetric conditional distributions. The standard deviations are similar across groups (around 2.5-2.8 inches), indicating that the *spread* of sons' heights does not depend strongly on father's height.
 
-## Class Exercise: Diamond Data
+### Comparing Fathers and Sons Overall
 
-Team up with a classmate and load the diamond data provided by R package ggplot2. How many rows of data are there? How many columns? What questions occur to you about the data? How might you address those questions? Take 15 minutes to prepare to report out to the class.
-
-```{r}
-#| label: diamonds
-
-# make your own copy of the diamond data
-diamonds <- ggplot2::diamonds
-```
-
-## Class Exercise: General Social Survey Data
-
-The [General Social Survey](https://gss.norc.org/) is a long-running US survey conducted by the independent research organization NORC at the University of Chicago. The survey consists of thousands of questions designed to monitor changes in social characteristics and attitudes in the US. In R package forcats, Hadley Wickham formed the data set gss_cat consisting of just a few columns to illustrate the challenges one encounters when working with categorical (non-numeric) variables ("factors").
-
-Team up with a classmate and load the gss_cat data-set provided by R package forcats. How many rows of data are there? How many columns? What questions occur to you about the data? How might you address those questions? Take 15 minutes to prepare to report out to the class.
-
-```{r}
-#| label: gss-cat
-
-# make your own copy of the survey data 
-gss_cat <- forcats::gss_cat
-```
-
-## Discussion: what should EDA mean?
-
-Exploratory Data Analysis (EDA) is an approach to data analysis advocated by [John Tukey](https://en.wikipedia.org/wiki/John_Tukey), a leading American statistician of the 20th century. The approach contrasts with what Tukey called "confirmatory analysis", that is, a focus on probability models of data-generation along with the estimation or testing of model parameters. The difference is one of emphasis: EDA includes models suggested by data, but with an emphasis on understanding current and potential data sets.
-
-The exploration is led by one's questions about the data. Relevant questions may or may not be obvious (or given). Variables may or may not be readily categorized as "response variables" versus "predictor variables". The ability to develop and recognize relevant questions is an important skill largely gained through experience.
-
-Important EDA outcomes include
-
--   the discovery of unanticipated data patterns, and
-
--   proposals to examine tentative answers suggested by the current data, perhaps using a new data set designed for this purpose.
-
-EDA methods are used within the context of confirmatory analysis to examine the data for errors not encompassed by the models under study (e.g., errors in data transcription or transmission), or to search for other departures from model assumptions.
-
-EDA methods can be broadly understood as the methods of descriptive statistics: data summaries (graphical or tabular) intended to enhance our understanding of the data. EDA differs from descriptive statistics in a reliance on the questions of the data analyst and a readiness to examine various transformations of the data.
-
-As an example, here are some ways we might address the question of how, if at all, the heights of fathers and sons differ in the data presented above.
+Are sons generally taller than their fathers? To address this question, we can compare the marginal distributions:
 
 ```{r}
 #| label: height-per-fs
 
 # render "father" and "son" as levels of factor "fs"
 height_per_fs <- father_son_ht |> 
-  # continue to identify father-son pairs
   dplyr::mutate(idx = 1:nrow(father_son_ht)) |>
   dplyr::select(idx, father, son) |> 
   tidyr::pivot_longer(
     cols = c(father, son), 
-    names_to = "fs", 
+    names_to = "generation", 
     values_to = "height"
   )
 ```
 
 ```{r}
 #| label: fig-ht-per-fs
-#| fig-cap: "Overall, the sons are taller"
+#| fig-cap: "Distribution of heights for fathers and sons"
 
 g_ht_per_fs <- height_per_fs |> 
-  ggplot2::ggplot(mapping = aes(x = fs |> as_factor(), y = height)) + 
+  ggplot2::ggplot(mapping = aes(x = generation, y = height)) + 
   ggplot2::geom_boxplot() + 
-  ggplot2::labs(title = "Sons are generally taller than fathers") + 
-  ggplot2::xlab("") + 
-  ggplot2::ylab("height in inches")
+  ggplot2::labs(
+    title = "Height Distribution: Fathers vs. Sons",
+    x = "",
+    y = "Height (inches)"
+  )
 g_ht_per_fs
 ```
 
 ```{r}
 #| label: tbl-ht-per-fs
-#| tbl-cap: "Height distribution: fathers and sons"
+#| tbl-cap: "Height distribution summary: fathers and sons"
 
-fs_smy <- height_per_fs |> dplyr::select(fs, height) |>
-  group_by(fs) |> 
+fs_smy <- height_per_fs |> 
+  dplyr::select(generation, height) |>
+  group_by(generation) |> 
   summarise(
-    min = min(height), 
-    mid = median(height), 
-    avg = mean(height), 
-    max = max(height)
+    n      = n(),
+    min    = min(height), 
+    median = median(height), 
+    mean   = mean(height), 
+    max    = max(height),
+    sd     = sd(height)
   )
-fs_smy |> print(digits = 1)
+fs_smy |> 
+  knitr::kable(
+    digits = 1,
+    col.names = c("Generation", "n", "Min", "Median", "Mean", "Max", "SD")
+  )
 ```
 
-The box-plot and table above show that, on average, sons are about an inch taller than fathers. Here's a histogram of the difference in heights (son minus father) across father-son pairs.
+Sons are, on average, about one inch taller than their fathers. The standard deviations are similar, so the *shape* of the distribution has not changed much—just the location.
+
+### Paired Differences
+
+Because each son is matched to his father, we can examine the *within-pair* differences directly:
 
 ```{r}
 #| label: s-minus-f
@@ -222,48 +336,182 @@ father_son_ht <- father_son_ht |>
 
 ```{r}
 #| label: fig-s-minus-f
-#| fig-cap: "Histogram of son's height minus father's height"
+#| fig-cap: "Distribution of height differences (son minus father)"
 
 g_s_minus_f <- father_son_ht |> 
   ggplot2::ggplot(mapping = aes(x = s_minus_f)) + 
-  ggplot2::geom_histogram() + 
-  ggplot2::labs(title = "Difference of son's height minus father's height") + 
-  ggplot2::xlab("height difference in inches: son's minus father's")
+  ggplot2::geom_histogram(binwidth = 1, color = "white") + 
+  ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "red") + 
+  ggplot2::labs(
+    title = "Son's Height Minus Father's Height",
+    x = "Height difference (inches)",
+    y = "Count"
+  )
 g_s_minus_f
 ```
 
 ```{r}
 #| label: tbl-s-minus-f
-#| tbl-cap: "Summary stats: son's height minus father's height"
+#| tbl-cap: "Summary statistics for height differences"
 
-father_son_ht$s_minus_f |> 
-  summary() |> 
-  print(digits = 1)
+diff_smy <- father_son_ht |>
+  summarise(
+    n      = n(),
+    min    = min(s_minus_f),
+    median = median(s_minus_f),
+    mean   = mean(s_minus_f),
+    max    = max(s_minus_f),
+    sd     = sd(s_minus_f)
+  )
+diff_smy |>
+  knitr::kable(
+    digits = 1,
+    col.names = c("n", "Min", "Median", "Mean", "Max", "SD")
+  )
 ```
 
-The summary of individual differences in height (son minus father) strengthens the previous aggregate summaries: the distribution of son's height minus father's height is fairly symmetric around a difference of about one inch.
+The histogram is roughly symmetric and centered slightly above zero. The mean difference is about one inch, consistent with our earlier findings. The dashed red line at zero helps us see that while most sons are taller than their fathers, a substantial minority are shorter.
+
+### Regression to the Mean
+
+Galton observed something subtle in data like these: extremely tall fathers tend to have sons who are tall, but not *quite* as extreme. Similarly, extremely short fathers tend to have sons who are short, but not quite as extreme. The sons' heights "regress" toward the overall mean.
+
+This is not because tall fathers have some genetic tendency to produce less-tall offspring. Rather, it is a statistical phenomenon that arises whenever two variables are correlated but not perfectly so. We will explore regression to the mean, and its mathematical basis, in @sec-conditioning.
+
+### A Note on Showing Code
+
+The visualizations above were created using R and the ggplot2 package. Throughout this book, we generally hide the code to keep the focus on concepts. However, seeing *how* visualizations are constructed is itself part of learning EDA. Here is the code for the scatter plot:
+ 
+```{r}
+#| label: fig-father-son-scatter-with-code
+#| fig-cap: "Heights of father-son pairs (code shown)"
+#| echo: true
+#| eval: false
+
+father_son_ht |> 
+  ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
+  ggplot2::geom_point(alpha = 0.4) + 
+  ggplot2::labs(
+    title = "Heights of Father-Son Pairs",
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  )
+```
+
+The pattern is: start with data, specify aesthetic mappings (which variables map to which visual properties), add geometric objects (points, lines, bars), and customize labels. This "grammar of graphics" approach, implemented in ggplot2, provides a flexible framework for constructing visualizations.
+
+## Class Exercise: Diamond Data
+
+The ggplot2 package includes a data set of prices and attributes for nearly 54,000 diamonds. This exercise gives you practice formulating and addressing EDA questions.
+
+```{r}
+#| label: diamonds
+
+diamonds <- ggplot2::diamonds
+```
+
+Team up with a classmate. Load the diamond data and spend 20 minutes exploring it. Here are some guiding questions:
+
+**Understanding the data:**
+
+- How many observations (rows) are there? How many variables (columns)?
+- What are the variable names? Which are numeric, which are categorical?
+- For categorical variables: how many levels does each have? What are they?
+
+**Distributions:**
+
+- What is the distribution of price? Is it symmetric or skewed? Are there outliers?
+- What is the distribution of carat (weight)? How does it relate to price?
+- For categorical variables like cut, color, and clarity: what are the frequencies of each level?
+
+**Relationships:**
+
+- Which variables appear to be associated with price?
+- Are any of the predictor variables correlated with each other?
+
+**Potential questions for modeling:**
+
+- If you wanted to predict diamond price, which variables would you include?
+- Are there any data quality issues that might affect modeling?
+
+Prepare to report one interesting finding to the class.
+
+## Class Exercise: General Social Survey Data
+
+The [General Social Survey](https://gss.norc.org/) (GSS) is a long-running US survey conducted by NORC at the University of Chicago. It tracks changes in American social attitudes and demographics. The forcats package includes a subset of GSS data (gss_cat) useful for practicing with categorical variables.
+
+```{r}
+#| label: gss-cat
+
+gss_cat <- forcats::gss_cat
+```
+
+Team up with a classmate. Load the gss_cat data and spend 20 minutes exploring it. Here are some guiding questions:
+
+**Understanding the data:**
+
+- How many observations and variables are there?
+- What years are covered? How many respondents per year?
+- What categorical variables are included? How many levels does each have?
+
+**Distributions:**
+
+- What is the distribution of age? Of TV hours watched?
+- What are the most common responses for marital status? Religion? Political party?
+
+**Relationships:**
+
+- Does TV watching vary by age? By marital status?
+- How has the distribution of religious affiliation changed over the years covered?
+- Are there associations between political party and other variables?
+
+**Challenges with categorical data:**
+
+- Are there categories with very few observations? How might this affect analysis?
+- Are there categories that might reasonably be combined?
+
+Prepare to report one interesting finding to the class.
+
+## Looking Ahead
+
+This chapter has introduced EDA as a question-driven approach to understanding data. The remaining chapters of Part 1 develop specific tools and concepts:
+
+**@sec-conditioning: Conditional Distributions.** We return to the father-son data and examine the "graph of averages"—the conditional mean of son's height given father's height. This leads to the regression line, a linear approximation to the conditional mean, and to formal measures of association including the correlation coefficient.
+
+**@sec-clustering: Clustering.** When data have many variables, we may want to organize observations into groups (clusters) that are similar to each other. Clustering is EDA in higher dimensions: an unsupervised method for discovering structure without predefined categories.
+
+**@sec-simulation: Statistical Simulation.** Simulation allows us to explore "what if" scenarios and to understand the variability inherent in random processes. We use simulation to build intuition about sampling distributions and to assess the robustness of our conclusions.
+
+**@sec-study-design: Sampling and Study Design.** The quality of our data depends on how it was collected. We examine principles of sampling and experimental design, and consider how study design affects the conclusions we can draw.
+
+**@sec-info-theory: Information Theory.** As a coda to Part 1, we introduce entropy, mutual information, and related concepts from information theory. These provide an alternative framework for measuring association and uncertainty—one that underlies many machine learning algorithms.
+
+Throughout these chapters, the EDA mindset remains central: look at the data, ask questions, and let the data guide your understanding.
 
 ## Team Exercises
 
-1.  Response versus predictor variables: for each of the data sets presented above, propose one or more variables as response variables. How, if at all, might someone else argue for a different choice? What should we mean by "response" and "predictor" variables? Describe a situation in which this distinction would not be suitable.
+1. **Response versus predictor variables.** For the father-son height data, which variable would you designate as the "response" and which as the "predictor"? Could a reasonable argument be made for the reverse? What do "response" and "predictor" mean in this context? Describe a situation where this distinction would not apply.
 
-2.  Regression to the mean: the discussion of father-son heights uses the phrase "extremely tall or short fathers corresponding to not quite so extremely tall or short sons, respectively". How would you formulate the meaning of that phrase? Do the data demonstrate this phenomenon?
+2. **Regression to the mean.** Galton observed that extremely tall or short fathers tend to have sons who are not quite so extreme. Using the summary table of sons' heights by father's height, can you see evidence of this phenomenon? How would you quantify it?
 
-3.  Diamond data: propose a question for the diamond data, and then try to address that question. What (if anything) did you learn from this task?
+3. **Diamond data exploration.** Choose one relationship in the diamond data (e.g., price vs. carat, or price vs. cut) and explore it using at least two different visualizations. What do the visualizations reveal? Do they suggest any hypotheses for further investigation?
 
-4.  Survey data: propose a question for the gss_cat data, and then try to address that question. What (if anything) did you learn from this task?
+4. **Survey data exploration.** Using the gss_cat data, investigate how one variable has changed over time (across the years in the data set). What patterns do you observe? What questions does this raise?
+
+5. **Misleading summaries.** Find or construct an example where summary statistics (mean, standard deviation, correlation) give a misleading impression of the data. What visualization would reveal the true structure? (Hint: Anscombe's quartet, which we will encounter in @sec-conditioning, is one famous example.)
 
 ## Resources
 
-[Hands-On Programming in R](https://rstudio-education.github.io/hopr/), by [Garrett Grolemund](https://education.rstudio.com/author/garrett/)
+[Exploratory Data Analysis](https://www.goodreads.com/book/show/527129.Exploratory_Data_Analysis) by John W. Tukey — the original 1977 book that established EDA as a field.
 
+[R for Data Science (2e)](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund — a modern introduction to data science in R, with extensive coverage of EDA and visualization.
 
-[simpleR](https://github.com/buruzaemon/simpleR) Using R for Introductory Statistics., by [John Verzani](https://www.math.csi.cuny.edu/~verzani/)
+[Hands-On Programming with R](https://rstudio-education.github.io/hopr/) by Garrett Grolemund — an introduction to R programming.
 
-[R for Data Science (2e)](https://r4ds.hadley.nz/), by [Hadley Wickham](https://hadley.nz/), [Mine Çetinkaya-Rundel](https://mine-cr.com/), and [Garrett Grolemund](https://education.rstudio.com/author/garrett/)
+[ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/) by Hadley Wickham — the definitive guide to the visualization package used throughout this book.
 
-RPubs - [Diamonds Dataset](https://rpubs.com/Davo2812/1102821)
+[Exploratory data analysis](https://en.wikipedia.org/wiki/Exploratory_data_analysis) — Wikipedia overview.
 
-NORC's General Social Survey ([GSS](https://gss.norc.org/us/en/gss/about-the-gss.html))
+[Diamonds Dataset](https://rpubs.com/Davo2812/1102821) — RPubs exploration of the diamonds data.
 
-[EDA](https://en.wikipedia.org/wiki/Exploratory_data_analysis): Exploratory data analysis - Wikipedia
+[General Social Survey (GSS)](https://gss.norc.org/) — NORC's survey homepage.

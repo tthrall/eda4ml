@@ -1,4 +1,4 @@
-# Graph Theory for Machine Learning {sec-graph-theory}
+# Graph Theory for Machine Learning {#sec-graph-theory}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(

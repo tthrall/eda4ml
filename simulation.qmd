@@ -77,7 +77,7 @@ Statistical simulation generates random data from specified distributions in ord
 
 As mentioned in an earlier session, the R `stats` package provides random number generators for commonly used probability distributions. For each random number generator the package also provides the probability density function (for continuous distributions) or the probability mass function (for discrete distributions), along with cumulative versions (incomplete integrals or sums), and the inverse of the cumulative versions, the quantile functions. The naming convention is illustrated by the uniform distribution over a finite interval (unit interval by default).[^art-Rrng]
 
-[^art-Rrng]: See @Rrng.
+[^art-Rrng]: See @r_doc_rng.
 
 -   `dunif()` density at a given point $x$
 -   `punif()` cumulative probability, that $X \le x$

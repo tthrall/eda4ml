@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 
 library(assertthat)
 library(GGally)
-library(gutenbergr)
 library(here)
 library(ISLR2)
 library(janeaustenr)
@@ -28,11 +27,7 @@ library(tidyverse)
 library(tinytex)
 library(tm)
 library(tokenizers)
-# library(topicmodels)
 library(tufte)
-
-# package topic models available?
-topicmodels_loaded <- require(topicmodels)
 
 ```
 
@@ -68,7 +63,9 @@ source(here("code", "xtabs_to_jaccard.R"))
 
 ## Introduction
 
-This session highlights some basic ideas and methods that underpin a rapidly advancing field. We follow the online book by Silge and Robinson cited below and use their R package `tidytext`. The authors emphasize the "tidy" formatting of data (i.e., as key-value pairs) along with a set of R packages sharing this approach, collectively called the R `tidyverse`.
+This session highlights some basic ideas and methods that underpin a rapidly advancing field. We follow the online book by Silge and Robinson cited below and use their `R` package `tidytext`. The authors emphasize the "tidy" formatting of data (i.e., as key-value pairs) along with a set of `R` packages sharing this approach, collectively called the `tidyverse`.
+
+When exploring a new text corpus, a systematic approach helps reveal structure and guide subsequent analysis. Start by tokenizing the text and examining word frequency distributions—what words dominate, and do they make sense given the source? Remove stop words and re-examine. Compute tf-idf to identify terms that distinguish documents within the corpus. For larger collections, consider topic models to discover latent themes. Throughout, visualize and iterate: unexpected patterns often point to data quality issues (encoding errors, boilerplate text) or genuine insights worth pursuing. The methods in this chapter provide a toolkit for this exploratory process.
 
 ## Text Example
 
@@ -131,6 +128,8 @@ sf_tokens_xsw <- sf_token_tbl |>
   )
 sf_tokens_xsw
 ```
+
+Another common preprocessing step is *stemming* or *lemmatization*—reducing words to a common root form. Stemming applies simple rules to strip suffixes: "running", "runs", and "ran" all become "run". Lemmatization uses vocabulary knowledge to find true root forms: "better" becomes "good". These techniques can improve analysis by grouping related words, though they may obscure meaningful distinctions. The `tidytext` workflow doesn't include built-in stemming, but packages such as `SnowballC` and `textstem` provide these capabilities. We won't use stemming in this chapter, but you should know the option exists.
 
 ## Larger Text Examples
 
@@ -241,40 +240,8 @@ Among these novels, here are the most frequently used words (again excluding sto
 ```{r}
 #| label: hgwells-lines
 
-hgwells_lines <- NULL
+hgwells_lines <- eda4mldata::hgwells
 
-# load file as tibble by one of these methods
-uncl_download <- FALSE
-load_rda      <- FALSE
-read_tsv      <- TRUE
-
-if (uncl_download) {
-  hgwells_lines <- gutenberg_download(
-    gutenberg_id = hgwells_books$ id)
-} else {
-  if (load_rda) {
-    load(here::here("data", "rda", "hgwells.rda"))
-    hgwells_lines <- hgwells
-    rm(hgwells)
-  } else {
-    if (read_tsv) {
-      hgwells_lines <- readr::read_tsv(here::here(
-        "data", "retain", "hgwells_lines.txt"
-      ))
-    }
-  }
-}
-
-# save as text file only as needed
-save_file <- FALSE
-if (
-  save_file && 
-  (! is.null(hgwells_lines))
-) {
-  hgwells_lines |> readr::write_tsv(here::here(
-      "data", "retain", "hgwells_lines.txt"
-    ))
-}
 ```
 
 ```{r}
@@ -425,16 +392,16 @@ As an example, here's a description of Associated Press newspaper articles inclu
 #| lst-cap: ""
 #| echo: true
 
-if (topicmodels_loaded) {
-  data("AssociatedPress", package = "topicmodels")
-}
-
-# AssociatedPress
+# Associated Press data in tidy format (from eda4mldata)
+# Original source: topicmodels::AssociatedPress
 # <<DocumentTermMatrix (documents: 2246, terms: 10473)>>
 # Non-/sparse entries: 302031/23220327
 # Sparsity           : 99%
 # Maximal term length: 18
 # Weighting          : term frequency (tf)
+
+ap_tidy <- eda4mldata::ap_tidy
+ap_tidy
 ```
 
 This Associated Press DTM consists of 2246 documents (rows) and 10473 terms (columns), with 99% of the potential (document, term) pairings having zero instances (and thus excluded from the sparse matrix).
@@ -527,68 +494,18 @@ To illustrate, we'll apply function `LDA()` to the data set (DTM) `AssociatedPre
 #| lst-cap: ""
 #| echo: true
 
-if (topicmodels_loaded) {
-  ap_lda <- AssociatedPress |> 
-    LDA(
-      k = 2, 
-      # set a seed so that the output of the model is predictable
-      control = list(seed = 1234)
-    )
-  ap_lda
-}
+# LDA model with k = 2 topics, fitted using:
+#   topicmodels::LDA(AssociatedPress, k = 2, control = list(seed = 1234))
+# Pre-computed results provided by eda4mldata::ap_topics
 ```
 
-We now construct (topic, term) probabilities (called $\beta$ in the LDA literature).
+We now examine (topic, term) probabilities (called $\beta$ in the LDA literature).
 
 ```{r}
 #| label: ap-topics
 
-# TODO: overcome error generated by tidy(ap_lda)
-# in the meantime, patch as follows
-
-if (topicmodels_loaded) {
-  beta_mat           <- ap_lda@beta
-  colnames(beta_mat) <- ap_lda@terms
-  rownames(beta_mat) <- paste0("topic_", 1:2)
-  
-  beta_tbl           <- beta_mat |> 
-    as_tibble(rownames = "topic") |> 
-    dplyr::mutate(topic = 1:2)
-  
-  beta_long          <- beta_tbl |> 
-    tidyr::pivot_longer(
-      cols      = - topic, 
-      names_to  = "term", 
-      values_to = "ln_prob"
-    ) |> 
-    dplyr::arrange(term)
-  
-  ap_topics <- beta_long |> 
-    dplyr::mutate(
-      beta = exp(ln_prob)
-    ) |> 
-    dplyr::select(- ln_prob)
-  
-} else {
-  # read in previously saved file
-  ap_topics <- read_tsv(here(
-    "data", "retain", "ap_topics.txt"
-  ))
-}
-
+ap_topics <- eda4mldata::ap_topics
 ap_topics |> print(digits = 2)
-```
-
-```{r}
-#| label: save-ap-topics
-
-# save as text file just once
-save_file <- FALSE
-if (save_file) {
-  ap_topics |> write_tsv(
-    here("data", "retain", "ap_topics.txt")
-  )
-}
 ```
 
 Here are the most probable terms for each of the two constructed topics, along with their probabilities (beta), shown as a bar chart.
@@ -678,18 +595,45 @@ g_beta_ratio_wide
 
 This figure further supports the earlier conjecture that topics 1 and 2 pertain to business and politics, respectively.
 
-## Additional Aspects of Text Analysis
+## Beyond Word Counts: Modern Approaches
 
-We've only touched on a few basic ideas and methods underpinning text analysis. Additional topics (on both the analysis and generation of text) include the following (which vary in complexity).
+The methods presented in this chapter treat words as discrete tokens and documents as sparse vectors of word counts. This *bag-of-words* paradigm has proven remarkably useful, but it has limitations. The phrase "not good" scores the same as "good" in a word-count analysis. Synonyms like "excellent" and "superb" appear as unrelated as "excellent" and "potato." And two documents using entirely different vocabulary to discuss the same topic will show no similarity at all.
 
--   n-grams: phrases of $n$ consecutive words
--   word networks (as graphs)
--   sentiment analysis
--   clustering, categorization, and prediction
--   word embedding (as real-valued vectors)
--   specialized tokenizers, stemming
--   non-English human languages (including machine translation)
--   large language models (LLMs)
+Extensions such as *n-grams*—sequences of $n$ consecutive words—can capture phrases like "New York" or "machine learning" that single-token analysis misses. But more fundamental advances have come from learning *dense, continuous* representations that capture semantic relationships. Rather than representing a word as a sparse vector with a single 1 among thousands of zeros, these methods represent words (and sentences, and documents) as dense vectors of perhaps 100–300 real numbers. This shift from sparse to dense representation enables capabilities that word-count methods cannot achieve.
+
+### Sentiment Analysis
+
+Sentiment analysis assigns emotional valence to text—determining whether a passage expresses positive, negative, or neutral sentiment, and sometimes identifying specific emotions such as anger, joy, or fear. The simplest approaches use *lexicons*: curated lists of words with associated sentiment scores. The AFINN lexicon assigns numeric scores (e.g., "excellent" = +3, "terrible" = −3); the Bing lexicon classifies words as simply positive or negative; the NRC lexicon associates words with emotions like trust, anticipation, or sadness.
+
+Lexicon-based sentiment analysis is straightforward to implement—the `tidytext` package provides access to these lexicons via `get_sentiments()`—but inherits the limitations of word-count methods. More sophisticated approaches use machine learning to account for context, negation, and sarcasm. Applications include analyzing product reviews, monitoring social media, and understanding customer feedback.
+
+For details on sentiment lexicons and their use in `R`, see Silge and Robinson's [Text Mining with R: Sentiment Analysis](https://www.tidytextmining.com/sentiment).
+
+### Word Embeddings
+
+Word embeddings represent words as dense vectors learned from large text corpora. The key insight is that words appearing in similar contexts should have similar representations. A neural network trained on millions of sentences learns vectors such that semantically related words are geometrically close: "king" and "queen" are nearby, as are "Paris" and "France."
+
+More remarkably, semantic *relationships* become geometric relationships. The vector from "man" to "woman" is approximately parallel to the vector from "king" to "queen," enabling analogical reasoning through vector arithmetic. This property emerges from the training process without explicit supervision.
+
+From the perspective of this book, word embeddings are dimension reduction applied to vocabulary. A one-hot encoding of 50,000 words produces 50,000-dimensional sparse vectors; word embeddings compress this to perhaps 300 dimensions while preserving (and revealing) semantic structure (see @sec-reduce-dim). Three widely-used methods are:
+
+- [Word2Vec](https://arxiv.org/abs/1301.3781) (Mikolov et al., 2013): Learns embeddings by predicting words from their context (or vice versa)
+- [GloVe](https://nlp.stanford.edu/projects/glove/) (Pennington et al., 2014): Learns embeddings from global word co-occurrence statistics
+- [FastText](https://fasttext.cc/) (Bojanowski et al., 2017): Extends Word2Vec by incorporating subword information, enabling embeddings for words not seen during training
+
+### Transformers and Large Language Models
+
+Word embeddings assign each word a single vector regardless of context—"bank" has the same representation whether discussing rivers or finance. *Transformer* architectures, introduced in 2017, produce context-sensitive representations. The same word receives different vectors depending on surrounding words, capturing polysemy and contextual nuance.
+
+Transformers are the foundation of modern large language models (LLMs) such as GPT and BERT. These models, trained on vast text corpora, power applications including text generation, question answering, summarization, and translation. The field is evolving rapidly; capabilities that seemed futuristic a few years ago are now routine.
+
+### Implications for Machine Learning
+
+These modern representations serve as features for downstream ML tasks. Text classification (spam detection, topic categorization, sentiment prediction), document clustering, and semantic search all benefit from dense representations that capture meaning rather than just word occurrence.
+
+Text can also be represented as networks, with words as nodes and co-occurrence or syntactic relationships as edges, enabling the graph-based methods discussed in @sec-graph-theory.
+
+The exploratory techniques from this chapter—examining vocabulary, term frequencies, document-term matrices, and topic structure—remain valuable even when using modern methods. Understanding what words appear, how often, and in what combinations provides insight that informs modeling decisions. As with other data types, exploration precedes modeling.
 
 ## Team Exercises
 

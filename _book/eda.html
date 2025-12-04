@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -71,6 +106,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -162,6 +226,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -176,13 +246,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
   </div>
 </li>
       </ul>
@@ -199,19 +269,19 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
   </div>
 </li>
       </ul>
@@ -228,19 +298,19 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -257,7 +327,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
   </div>
 </li>
       </ul>
@@ -274,7 +344,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,7 +352,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -301,12 +371,32 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#heights-of-fathers-and-sons" id="toc-heights-of-fathers-and-sons" class="nav-link active" data-scroll-target="#heights-of-fathers-and-sons"><span class="header-section-number">1.1</span> Heights of Fathers and Sons</a></li>
-  <li><a href="#class-exercise-diamond-data" id="toc-class-exercise-diamond-data" class="nav-link" data-scroll-target="#class-exercise-diamond-data"><span class="header-section-number">1.2</span> Class Exercise: Diamond Data</a></li>
-  <li><a href="#class-exercise-general-social-survey-data" id="toc-class-exercise-general-social-survey-data" class="nav-link" data-scroll-target="#class-exercise-general-social-survey-data"><span class="header-section-number">1.3</span> Class Exercise: General Social Survey Data</a></li>
-  <li><a href="#discussion-what-should-eda-mean" id="toc-discussion-what-should-eda-mean" class="nav-link" data-scroll-target="#discussion-what-should-eda-mean"><span class="header-section-number">1.4</span> Discussion: what should EDA mean?</a></li>
-  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">1.5</span> Team Exercises</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">1.6</span> Resources</a></li>
+  <li><a href="#what-is-exploratory-data-analysis" id="toc-what-is-exploratory-data-analysis" class="nav-link active" data-scroll-target="#what-is-exploratory-data-analysis"><span class="header-section-number">1.1</span> What is Exploratory Data Analysis?</a></li>
+  <li><a href="#data-as-a-sample-from-a-population" id="toc-data-as-a-sample-from-a-population" class="nav-link" data-scroll-target="#data-as-a-sample-from-a-population"><span class="header-section-number">1.2</span> Data as a Sample from a Population</a></li>
+  <li><a href="#central-value-and-dispersion" id="toc-central-value-and-dispersion" class="nav-link" data-scroll-target="#central-value-and-dispersion"><span class="header-section-number">1.3</span> Central Value and Dispersion</a>
+  <ul>
+  <li><a href="#measures-of-central-tendency" id="toc-measures-of-central-tendency" class="nav-link" data-scroll-target="#measures-of-central-tendency"><span class="header-section-number">1.3.1</span> Measures of Central Tendency</a></li>
+  <li><a href="#measures-of-dispersion" id="toc-measures-of-dispersion" class="nav-link" data-scroll-target="#measures-of-dispersion"><span class="header-section-number">1.3.2</span> Measures of Dispersion</a></li>
+  <li><a href="#choosing-among-summaries" id="toc-choosing-among-summaries" class="nav-link" data-scroll-target="#choosing-among-summaries"><span class="header-section-number">1.3.3</span> Choosing Among Summaries</a></li>
+  </ul></li>
+  <li><a href="#questions-drive-the-analysis" id="toc-questions-drive-the-analysis" class="nav-link" data-scroll-target="#questions-drive-the-analysis"><span class="header-section-number">1.4</span> Questions Drive the Analysis</a></li>
+  <li><a href="#eda-throughout-the-modeling-process" id="toc-eda-throughout-the-modeling-process" class="nav-link" data-scroll-target="#eda-throughout-the-modeling-process"><span class="header-section-number">1.5</span> EDA Throughout the Modeling Process</a></li>
+  <li><a href="#example-heights-of-fathers-and-sons" id="toc-example-heights-of-fathers-and-sons" class="nav-link" data-scroll-target="#example-heights-of-fathers-and-sons"><span class="header-section-number">1.6</span> Example: Heights of Fathers and Sons</a>
+  <ul>
+  <li><a href="#historical-context" id="toc-historical-context" class="nav-link" data-scroll-target="#historical-context"><span class="header-section-number">1.6.1</span> Historical Context</a></li>
+  <li><a href="#first-look-a-scatter-plot" id="toc-first-look-a-scatter-plot" class="nav-link" data-scroll-target="#first-look-a-scatter-plot"><span class="header-section-number">1.6.2</span> First Look: A Scatter Plot</a></li>
+  <li><a href="#conditional-distributions-box-plots-by-fathers-height" id="toc-conditional-distributions-box-plots-by-fathers-height" class="nav-link" data-scroll-target="#conditional-distributions-box-plots-by-fathers-height"><span class="header-section-number">1.6.3</span> Conditional Distributions: Box Plots by Father’s Height</a></li>
+  <li><a href="#summary-statistics-by-group" id="toc-summary-statistics-by-group" class="nav-link" data-scroll-target="#summary-statistics-by-group"><span class="header-section-number">1.6.4</span> Summary Statistics by Group</a></li>
+  <li><a href="#comparing-fathers-and-sons-overall" id="toc-comparing-fathers-and-sons-overall" class="nav-link" data-scroll-target="#comparing-fathers-and-sons-overall"><span class="header-section-number">1.6.5</span> Comparing Fathers and Sons Overall</a></li>
+  <li><a href="#paired-differences" id="toc-paired-differences" class="nav-link" data-scroll-target="#paired-differences"><span class="header-section-number">1.6.6</span> Paired Differences</a></li>
+  <li><a href="#regression-to-the-mean" id="toc-regression-to-the-mean" class="nav-link" data-scroll-target="#regression-to-the-mean"><span class="header-section-number">1.6.7</span> Regression to the Mean</a></li>
+  <li><a href="#a-note-on-showing-code" id="toc-a-note-on-showing-code" class="nav-link" data-scroll-target="#a-note-on-showing-code"><span class="header-section-number">1.6.8</span> A Note on Showing Code</a></li>
+  </ul></li>
+  <li><a href="#class-exercise-diamond-data" id="toc-class-exercise-diamond-data" class="nav-link" data-scroll-target="#class-exercise-diamond-data"><span class="header-section-number">1.7</span> Class Exercise: Diamond Data</a></li>
+  <li><a href="#class-exercise-general-social-survey-data" id="toc-class-exercise-general-social-survey-data" class="nav-link" data-scroll-target="#class-exercise-general-social-survey-data"><span class="header-section-number">1.8</span> Class Exercise: General Social Survey Data</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">1.9</span> Looking Ahead</a></li>
+  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">1.10</span> Team Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">1.11</span> Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/eda.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -332,7 +422,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">17:45 Mon 1-Dec-2025</p>
+      <p class="date">15:06 Thu 4-Dec-2025</p>
     </div>
   </div>
   
@@ -345,25 +435,122 @@ ul.task-list li input[type="checkbox"] {
 
 
 <hr>
-<section id="heights-of-fathers-and-sons" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="heights-of-fathers-and-sons"><span class="header-section-number">1.1</span> Heights of Fathers and Sons</h2>
-<p>In 1885 Sir Francis Galton examined the heights of parents and their children to determine the strength of evidence to support height as a hereditary trait. Galton’s subsequent protege, Karl Pearson (who went on in 1911 to form the world’s first statistics department at University College London) followed up with an analysis of the heights of fathers and sons.</p>
+<section id="what-is-exploratory-data-analysis" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="what-is-exploratory-data-analysis"><span class="header-section-number">1.1</span> What is Exploratory Data Analysis?</h2>
+<p>Exploratory Data Analysis (EDA) is an approach to data analysis advocated by <a href="https://en.wikipedia.org/wiki/John_Tukey">John Tukey</a>, a leading American statistician of the 20th century. In his 1977 book of the same name, Tukey argued that statisticians had become too focused on formal inference—hypothesis tests, confidence intervals, p-values—at the expense of simply <em>looking at data</em>. EDA is the corrective: an emphasis on visualization, summary, and the iterative development of questions about what the data might reveal.</p>
+<p>Tukey contrasted EDA with what he called “confirmatory data analysis” (CDA). Confirmatory analysis begins with a hypothesis and asks whether the data support or refute it. Exploratory analysis begins with data and asks what patterns, anomalies, or relationships might be present. The difference is one of emphasis rather than exclusion: a complete analysis typically involves both exploration and confirmation, and EDA includes models suggested by data.</p>
+<p>For students of machine learning, EDA serves several purposes:</p>
+<ul>
+<li><p><strong>Understanding the data before modeling.</strong> What variables are available? What are their types (numeric, categorical, text, date)? How are they distributed? Are there missing values, outliers, or obvious errors? Answers to these questions inform every subsequent modeling decision.</p></li>
+<li><p><strong>Generating hypotheses.</strong> Patterns discovered during exploration become candidates for formal modeling. A scatter plot might suggest a linear relationship; a histogram might reveal a bimodal distribution requiring separate treatment of subgroups.</p></li>
+<li><p><strong>Diagnosing models.</strong> After fitting a model, EDA methods help assess whether the model captures the structure in the data. Residual plots, for example, can reveal systematic patterns that the model has missed.</p></li>
+<li><p><strong>Communicating findings.</strong> Visualizations and summaries developed during exploration often become the basis for communicating results to stakeholders who may not follow the technical details of model fitting.</p></li>
+</ul>
+<p>EDA is not a single technique but a mindset: a willingness to look at data from multiple angles, to transform variables, to compare subgroups, and above all to ask questions.</p>
+</section>
+<section id="data-as-a-sample-from-a-population" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="data-as-a-sample-from-a-population"><span class="header-section-number">1.2</span> Data as a Sample from a Population</h2>
+<p>A useful mental model for EDA treats the data at hand as a <em>sample</em> drawn from a larger <em>population</em>. The population is the complete set of cases we care about—all possible customers, all manufacturing runs, all images of a certain type. The sample is the subset we actually observe.</p>
+<p>This framing matters because our goal is usually to learn something about the population, not just to describe the sample. When we compute a sample mean or fit a regression line, we hope these quantities approximate corresponding population quantities. EDA helps us assess whether the sample is likely to support such generalizations: Is the sample large enough? Are there subgroups that behave differently? Are there outliers that might distort our summaries?</p>
+<p>Even when the distinction between sample and population is blurry—as when we have data on all transactions in a database—the population framing remains useful. We can think of the observed data as a sample from a hypothetical population of transactions that <em>could have occurred</em> under similar conditions, and ask whether patterns in the data reflect stable features of the underlying process.</p>
+</section>
+<section id="central-value-and-dispersion" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="central-value-and-dispersion"><span class="header-section-number">1.3</span> Central Value and Dispersion</h2>
+<p>Two fundamental questions arise for any numeric variable:</p>
+<ol type="1">
+<li><strong>What is a typical value?</strong> This is the question of <em>central tendency</em> or <em>location</em>.</li>
+<li><strong>How spread out are the values?</strong> This is the question of <em>dispersion</em> or <em>scale</em>.</li>
+</ol>
+<p>Each question admits multiple answers, and the choice among them is itself an exploratory decision.</p>
+<section id="measures-of-central-tendency" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="measures-of-central-tendency"><span class="header-section-number">1.3.1</span> Measures of Central Tendency</h3>
+<p>The <strong>arithmetic mean</strong> (average) is the sum of values divided by the count:</p>
+<p><span class="math display">\[
+\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
+\]</span></p>
+<p>The mean has attractive mathematical properties—it minimizes the sum of squared deviations—but it is sensitive to extreme values. A single outlier can shift the mean substantially.</p>
+<p>The <strong>median</strong> is the middle value when observations are sorted. Half the observations fall below the median, half above. The median is <em>robust</em>: it is largely unaffected by outliers. For skewed distributions (e.g., income, home prices), the median often provides a more representative “typical” value than the mean.</p>
+<p>The <strong>mode</strong> is the most frequently occurring value. For continuous data, the mode is often estimated as the peak of a density estimate. A distribution may have multiple modes, suggesting the presence of distinct subgroups.</p>
+</section>
+<section id="measures-of-dispersion" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="measures-of-dispersion"><span class="header-section-number">1.3.2</span> Measures of Dispersion</h3>
+<p>The <strong>standard deviation</strong> measures the typical distance of observations from the mean:</p>
+<p><span class="math display">\[
+s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}
+\]</span></p>
+<p>Like the mean, the standard deviation is sensitive to outliers—extreme values inflate the squared deviations.</p>
+<p>The <strong>interquartile range</strong> (IQR) is the difference between the 75th percentile (third quartile, Q3) and the 25th percentile (first quartile, Q1). The IQR measures the spread of the middle 50% of the data and, like the median, is robust to outliers.</p>
+<p>The <strong>range</strong> (maximum minus minimum) is simple but highly sensitive to outliers.</p>
+</section>
+<section id="choosing-among-summaries" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="choosing-among-summaries"><span class="header-section-number">1.3.3</span> Choosing Among Summaries</h3>
+<p>The choice between mean and median, or between standard deviation and IQR, depends on the distribution’s shape and the analyst’s purpose. For symmetric distributions without outliers, mean and median are similar, and the standard deviation is a natural measure of spread. For skewed distributions or data with outliers, the median and IQR provide more stable summaries.</p>
+<p>EDA often involves computing <em>both</em> sets of summaries and comparing them. A large discrepancy between mean and median, for example, signals skewness or outliers and warrants further investigation.</p>
+</section>
+</section>
+<section id="questions-drive-the-analysis" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="questions-drive-the-analysis"><span class="header-section-number">1.4</span> Questions Drive the Analysis</h2>
+<p>EDA is fundamentally <em>question-driven</em>. The analyst brings questions to the data, and the data suggest new questions in return. This iterative cycle distinguishes exploration from rote application of a fixed procedure.</p>
+<p>Some questions are standard starting points for any data set:</p>
+<ul>
+<li>What is the distribution of each variable? Is it symmetric or skewed? Unimodal or multimodal?</li>
+<li>Are there outliers or unusual values? Might these be data errors?</li>
+<li>Are there missing values? In which variables, and how many?</li>
+<li>How are pairs of variables related? Are there correlations, clusters, or other patterns?</li>
+</ul>
+<p>Other questions arise from domain knowledge or the specific purpose of the analysis:</p>
+<ul>
+<li>For the father-son height data we will examine shortly: Do sons tend to be taller than their fathers? Does the relationship between father and son height vary across the range of heights?</li>
+<li>For diamond pricing data: Which characteristics (carat, cut, color, clarity) most influence price? Are there interactions among these factors?</li>
+</ul>
+<p>The ability to formulate good questions is a skill developed through practice. A useful heuristic is to ask: <em>What would I need to know to make a decision or take an action?</em> The answer often points toward the most valuable lines of inquiry.</p>
+</section>
+<section id="eda-throughout-the-modeling-process" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="eda-throughout-the-modeling-process"><span class="header-section-number">1.5</span> EDA Throughout the Modeling Process</h2>
+<p>Although EDA is often presented as the “first step” in data analysis, exploratory methods remain valuable throughout the modeling process:</p>
+<ul>
+<li><p><strong>Before modeling:</strong> Understand variable distributions, detect data quality issues, identify relationships that might inform feature engineering.</p></li>
+<li><p><strong>During modeling:</strong> Compare candidate models, understand why one specification outperforms another, identify observations that are difficult to predict.</p></li>
+<li><p><strong>After modeling:</strong> Examine residuals for systematic patterns, assess whether model assumptions are met, explore how predictions vary across subgroups.</p></li>
+</ul>
+<p>In machine learning workflows, EDA informs decisions at every stage: which features to include, how to handle missing data, whether to transform variables, how to split data for validation, and how to interpret model outputs. The exploratory mindset—always asking “what does the data show?”—is as important as any specific technique.</p>
+</section>
+<section id="example-heights-of-fathers-and-sons" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="example-heights-of-fathers-and-sons"><span class="header-section-number">1.6</span> Example: Heights of Fathers and Sons</h2>
+<p>We now illustrate EDA with a classic data set: the heights of fathers and their adult sons, collected in the late 19th and early 20th centuries.</p>
+<section id="historical-context" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="historical-context"><span class="header-section-number">1.6.1</span> Historical Context</h3>
+<p>In 1885, Sir Francis Galton examined the heights of parents and their children to investigate whether height was hereditary. Galton’s protégé Karl Pearson—who in 1911 founded the world’s first university statistics department at University College London—followed up with a larger study of fathers and sons. The data we examine here derive from Pearson’s work.</p>
+<p>This data set is historically significant not only for its role in establishing the heritability of height, but also for introducing concepts that remain central to statistics: correlation, regression, and the phenomenon Galton called “regression toward mediocrity” (now “regression to the mean”).</p>
+</section>
+<section id="first-look-a-scatter-plot" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="first-look-a-scatter-plot"><span class="header-section-number">1.6.2</span> First Look: A Scatter Plot</h3>
+<p>The data contain 1078 father-son pairs. Here is a scatter plot of their heights:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-father-son-ht" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-father-son-scatter" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-father-son-ht-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="eda_files/figure-html/fig-father-son-ht-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-father-son-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="eda_files/figure-html/fig-father-son-scatter-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-father-son-ht-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.1: Heights in inches of (father, son) pairs
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-father-son-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: Heights in inches of father-son pairs
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>In the scatter diagram above, each point represents the respective heights of a father-son pair. The density of points in the middle range of heights obscures individual points.</p>
-<p>Here is another view of the same data obtained by grouping father heights into successive intervals (each one labeled by its mid-point) and then constructing a box-plot of sons’ heights within each interval.</p>
+<p>Several features are immediately apparent:</p>
+<ul>
+<li>There is a positive association: taller fathers tend to have taller sons.</li>
+<li>The relationship is roughly linear, though with substantial scatter.</li>
+<li>The density of points in the middle range makes individual observations hard to distinguish. (We have added transparency to the points to partially address this.)</li>
+</ul>
+<p>This single visualization has already answered one question (Is there an association?) and raised others (How strong is the association? What is the typical deviation from the trend?).</p>
+</section>
+<section id="conditional-distributions-box-plots-by-fathers-height" class="level3" data-number="1.6.3">
+<h3 data-number="1.6.3" class="anchored" data-anchor-id="conditional-distributions-box-plots-by-fathers-height"><span class="header-section-number">1.6.3</span> Conditional Distributions: Box Plots by Father’s Height</h3>
+<p>To see how the distribution of sons’ heights varies with father’s height, we can group fathers into height intervals and construct box plots:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-f-mpt" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -372,59 +559,136 @@ Figure&nbsp;1.1: Heights in inches of (father, son) pairs
 <img src="eda_files/figure-html/fig-f-mpt-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.2: Range of son’s height for given height of father
+Figure&nbsp;1.2: Distribution of son’s height for each interval of father’s height
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
+<p>Each box plot shows the distribution of sons’ heights for fathers in a two-inch interval. The boxes display the median (central line), interquartile range (box), and outliers (individual points). We observe:</p>
+<ul>
+<li>The median son’s height increases as father’s height increases—confirming the positive association.</li>
+<li>The spread (IQR) is roughly similar across groups.</li>
+<li>There are a few outliers, particularly among sons of shorter fathers.</li>
+</ul>
+<p>This visualization shows <em>conditional distributions</em>: the distribution of one variable (son’s height) given values of another (father’s height). Conditional distributions are a central concept in statistics and machine learning, and we will explore them in depth in <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>.</p>
+</section>
+<section id="summary-statistics-by-group" class="level3" data-number="1.6.4">
+<h3 data-number="1.6.4" class="anchored" data-anchor-id="summary-statistics-by-group"><span class="header-section-number">1.6.4</span> Summary Statistics by Group</h3>
+<div class="cell">
 <div id="tbl-son-per-f-mpt" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-son-per-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1.1: Heights of sons grouped by father’s height
+Table&nbsp;1.1: Summary statistics for sons’ heights by father’s height interval
 </figcaption>
 <div aria-describedby="tbl-son-per-f-mpt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 9 × 6
-# Groups:   f_ivl [9]
-  f_ivl   f_mpt s_count s_min s_max s_avg
-  &lt;fct&gt;   &lt;dbl&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 (58,60]    59       4  63.9  65.2  64.7
-2 (60,62]    61      16  60.8  69.1  65.5
-3 (62,64]    63      77  58.5  74.3  66.3
-4 (64,66]    65     208  59.8  74.7  67.5
-5 (66,68]    67     276  59.8  75.7  68.2
-6 (68,70]    69     275  62.2  78.4  69.5
-7 (70,72]    71     152  61.2  78.2  70.2
-8 (72,74]    73      63  66.7  77.2  71.4
-9 (74,76]    75       7  69.0  74.3  71.6</code></pre>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Father height</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">Min</th>
+<th style="text-align: right;">Median</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Max</th>
+<th style="text-align: right;">SD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">63.9</td>
+<td style="text-align: right;">64.9</td>
+<td style="text-align: right;">64.7</td>
+<td style="text-align: right;">65.2</td>
+<td style="text-align: right;">0.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">60.8</td>
+<td style="text-align: right;">65.6</td>
+<td style="text-align: right;">65.5</td>
+<td style="text-align: right;">69.1</td>
+<td style="text-align: right;">2.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">58.5</td>
+<td style="text-align: right;">66.5</td>
+<td style="text-align: right;">66.3</td>
+<td style="text-align: right;">74.3</td>
+<td style="text-align: right;">2.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">208</td>
+<td style="text-align: right;">59.8</td>
+<td style="text-align: right;">67.4</td>
+<td style="text-align: right;">67.5</td>
+<td style="text-align: right;">74.7</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">276</td>
+<td style="text-align: right;">59.8</td>
+<td style="text-align: right;">68.2</td>
+<td style="text-align: right;">68.2</td>
+<td style="text-align: right;">75.7</td>
+<td style="text-align: right;">2.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">275</td>
+<td style="text-align: right;">62.2</td>
+<td style="text-align: right;">69.2</td>
+<td style="text-align: right;">69.5</td>
+<td style="text-align: right;">78.4</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">152</td>
+<td style="text-align: right;">61.2</td>
+<td style="text-align: right;">70.1</td>
+<td style="text-align: right;">70.2</td>
+<td style="text-align: right;">78.2</td>
+<td style="text-align: right;">2.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">66.7</td>
+<td style="text-align: right;">71.3</td>
+<td style="text-align: right;">71.4</td>
+<td style="text-align: right;">77.2</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">69.0</td>
+<td style="text-align: right;">71.4</td>
+<td style="text-align: right;">71.6</td>
+<td style="text-align: right;">74.3</td>
+<td style="text-align: right;">1.9</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
 </div>
-<p>Galton noted that in general sons were taller than fathers, with extremely tall or short fathers corresponding to not quite so extremely tall or short sons, respectively. This observation led Galton to coin the term “regression toward mediocrity”, or (more politely) “regression toward the mean”.</p>
+</div>
+<p>The table confirms what the box plots showed visually. Notice that the mean and median are close within each group, suggesting roughly symmetric conditional distributions. The standard deviations are similar across groups (around 2.5-2.8 inches), indicating that the <em>spread</em> of sons’ heights does not depend strongly on father’s height.</p>
 </section>
-<section id="class-exercise-diamond-data" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="class-exercise-diamond-data"><span class="header-section-number">1.2</span> Class Exercise: Diamond Data</h2>
-<p>Team up with a classmate and load the diamond data provided by R package ggplot2. How many rows of data are there? How many columns? What questions occur to you about the data? How might you address those questions? Take 15 minutes to prepare to report out to the class.</p>
-</section>
-<section id="class-exercise-general-social-survey-data" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="class-exercise-general-social-survey-data"><span class="header-section-number">1.3</span> Class Exercise: General Social Survey Data</h2>
-<p>The <a href="https://gss.norc.org/">General Social&nbsp;Survey</a> is a long-running US&nbsp;survey&nbsp;conducted by the independent research organization NORC at the University of Chicago. The survey consists of thousands of questions designed to monitor changes in social characteristics and attitudes in the US. In R package forcats, Hadley Wickham formed the data set gss_cat consisting of just a few columns to illustrate the challenges one encounters when working with categorical (non-numeric) variables (“factors”).</p>
-<p>Team up with a classmate and load the gss_cat data-set provided by R package forcats. How many rows of data are there? How many columns? What questions occur to you about the data? How might you address those questions? Take 15 minutes to prepare to report out to the class.</p>
-</section>
-<section id="discussion-what-should-eda-mean" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="discussion-what-should-eda-mean"><span class="header-section-number">1.4</span> Discussion: what should EDA mean?</h2>
-<p>Exploratory Data Analysis (EDA) is an approach to data analysis advocated by <a href="https://en.wikipedia.org/wiki/John_Tukey">John Tukey</a>, a leading American statistician of the 20th century. The approach contrasts with what Tukey called “confirmatory analysis”, that is, a focus on probability models of data-generation along with the estimation or testing of model parameters. The difference is one of emphasis: EDA includes models suggested by data, but with an emphasis on understanding current and potential data sets.</p>
-<p>The exploration is led by one’s questions about the data. Relevant questions may or may not be obvious (or given). Variables may or may not be readily categorized as “response variables” versus “predictor variables”. The ability to develop and recognize relevant questions is an important skill largely gained through experience.</p>
-<p>Important EDA outcomes include</p>
-<ul>
-<li><p>the discovery of unanticipated data patterns, and</p></li>
-<li><p>proposals to examine tentative answers suggested by the current data, perhaps using a new data set designed for this purpose.</p></li>
-</ul>
-<p>EDA methods are used within the context of confirmatory analysis to examine the data for errors not encompassed by the models under study (e.g., errors in data transcription or transmission), or to search for other departures from model assumptions.</p>
-<p>EDA methods can be broadly understood as the methods of descriptive statistics: data summaries (graphical or tabular) intended to enhance our understanding of the data. EDA differs from descriptive statistics in a reliance on the questions of the data analyst and a readiness to examine various transformations of the data.</p>
-<p>As an example, here are some ways we might address the question of how, if at all, the heights of fathers and sons differ in the data presented above.</p>
+<section id="comparing-fathers-and-sons-overall" class="level3" data-number="1.6.5">
+<h3 data-number="1.6.5" class="anchored" data-anchor-id="comparing-fathers-and-sons-overall"><span class="header-section-number">1.6.5</span> Comparing Fathers and Sons Overall</h3>
+<p>Are sons generally taller than their fathers? To address this question, we can compare the marginal distributions:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-ht-per-fs" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -433,29 +697,63 @@ Table&nbsp;1.1: Heights of sons grouped by father’s height
 <img src="eda_files/figure-html/fig-ht-per-fs-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ht-per-fs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.3: Overall, the sons are taller
+Figure&nbsp;1.3: Distribution of heights for fathers and sons
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
+<div class="cell">
 <div id="tbl-ht-per-fs" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ht-per-fs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1.2: Height distribution: fathers and sons
+Table&nbsp;1.2: Height distribution summary: fathers and sons
 </figcaption>
 <div aria-describedby="tbl-ht-per-fs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 5
-  fs       min   mid   avg   max
-  &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 father  59.0  67.8  67.7  75.4
-2 son     58.5  68.6  68.7  78.4</code></pre>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Generation</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">Min</th>
+<th style="text-align: right;">Median</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Max</th>
+<th style="text-align: right;">SD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">1078</td>
+<td style="text-align: right;">59.0</td>
+<td style="text-align: right;">67.8</td>
+<td style="text-align: right;">67.7</td>
+<td style="text-align: right;">75.4</td>
+<td style="text-align: right;">2.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">son</td>
+<td style="text-align: right;">1078</td>
+<td style="text-align: right;">58.5</td>
+<td style="text-align: right;">68.6</td>
+<td style="text-align: right;">68.7</td>
+<td style="text-align: right;">78.4</td>
+<td style="text-align: right;">2.8</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
 </div>
-<p>The box-plot and table above show that, on average, sons are about an inch taller than fathers. Here’s a histogram of the difference in heights (son minus father) across father-son pairs.</p>
+</div>
+<p>Sons are, on average, about one inch taller than their fathers. The standard deviations are similar, so the <em>shape</em> of the distribution has not changed much—just the location.</p>
+</section>
+<section id="paired-differences" class="level3" data-number="1.6.6">
+<h3 data-number="1.6.6" class="anchored" data-anchor-id="paired-differences"><span class="header-section-number">1.6.6</span> Paired Differences</h3>
+<p>Because each son is matched to his father, we can examine the <em>within-pair</em> differences directly:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-s-minus-f" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -464,44 +762,158 @@ Table&nbsp;1.2: Height distribution: fathers and sons
 <img src="eda_files/figure-html/fig-s-minus-f-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s-minus-f-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.4: Histogram of son’s height minus father’s height
+Figure&nbsp;1.4: Distribution of height differences (son minus father)
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
+<div class="cell">
 <div id="tbl-s-minus-f" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-s-minus-f-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1.3: Summary stats: son’s height minus father’s height
+Table&nbsp;1.3: Summary statistics for height differences
 </figcaption>
 <div aria-describedby="tbl-s-minus-f-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   -9.0    -0.9     1.0     1.0     2.7    11.2 </code></pre>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">Min</th>
+<th style="text-align: right;">Median</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">Max</th>
+<th style="text-align: right;">SD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1078</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11.2</td>
+<td style="text-align: right;">2.8</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
 </div>
-<p>The summary of individual differences in height (son minus father) strengthens the previous aggregate summaries: the distribution of son’s height minus father’s height is fairly symmetric around a difference of about one inch.</p>
+</div>
+<p>The histogram is roughly symmetric and centered slightly above zero. The mean difference is about one inch, consistent with our earlier findings. The dashed red line at zero helps us see that while most sons are taller than their fathers, a substantial minority are shorter.</p>
 </section>
-<section id="team-exercises" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">1.5</span> Team Exercises</h2>
+<section id="regression-to-the-mean" class="level3" data-number="1.6.7">
+<h3 data-number="1.6.7" class="anchored" data-anchor-id="regression-to-the-mean"><span class="header-section-number">1.6.7</span> Regression to the Mean</h3>
+<p>Galton observed something subtle in data like these: extremely tall fathers tend to have sons who are tall, but not <em>quite</em> as extreme. Similarly, extremely short fathers tend to have sons who are short, but not quite as extreme. The sons’ heights “regress” toward the overall mean.</p>
+<p>This is not because tall fathers have some genetic tendency to produce less-tall offspring. Rather, it is a statistical phenomenon that arises whenever two variables are correlated but not perfectly so. We will explore regression to the mean, and its mathematical basis, in <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>.</p>
+</section>
+<section id="a-note-on-showing-code" class="level3" data-number="1.6.8">
+<h3 data-number="1.6.8" class="anchored" data-anchor-id="a-note-on-showing-code"><span class="header-section-number">1.6.8</span> A Note on Showing Code</h3>
+<p>The visualizations above were created using R and the ggplot2 package. Throughout this book, we generally hide the code to keep the focus on concepts. However, seeing <em>how</em> visualizations are constructed is itself part of learning EDA. Here is the code for the scatter plot:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>father_son_ht <span class="sc">|&gt;</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> father, <span class="at">y =</span> son)) <span class="sc">+</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Heights of Father-Son Pairs"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Father's height (inches)"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Son's height (inches)"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The pattern is: start with data, specify aesthetic mappings (which variables map to which visual properties), add geometric objects (points, lines, bars), and customize labels. This “grammar of graphics” approach, implemented in ggplot2, provides a flexible framework for constructing visualizations.</p>
+</section>
+</section>
+<section id="class-exercise-diamond-data" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="class-exercise-diamond-data"><span class="header-section-number">1.7</span> Class Exercise: Diamond Data</h2>
+<p>The ggplot2 package includes a data set of prices and attributes for nearly 54,000 diamonds. This exercise gives you practice formulating and addressing EDA questions.</p>
+<p>Team up with a classmate. Load the diamond data and spend 20 minutes exploring it. Here are some guiding questions:</p>
+<p><strong>Understanding the data:</strong></p>
+<ul>
+<li>How many observations (rows) are there? How many variables (columns)?</li>
+<li>What are the variable names? Which are numeric, which are categorical?</li>
+<li>For categorical variables: how many levels does each have? What are they?</li>
+</ul>
+<p><strong>Distributions:</strong></p>
+<ul>
+<li>What is the distribution of price? Is it symmetric or skewed? Are there outliers?</li>
+<li>What is the distribution of carat (weight)? How does it relate to price?</li>
+<li>For categorical variables like cut, color, and clarity: what are the frequencies of each level?</li>
+</ul>
+<p><strong>Relationships:</strong></p>
+<ul>
+<li>Which variables appear to be associated with price?</li>
+<li>Are any of the predictor variables correlated with each other?</li>
+</ul>
+<p><strong>Potential questions for modeling:</strong></p>
+<ul>
+<li>If you wanted to predict diamond price, which variables would you include?</li>
+<li>Are there any data quality issues that might affect modeling?</li>
+</ul>
+<p>Prepare to report one interesting finding to the class.</p>
+</section>
+<section id="class-exercise-general-social-survey-data" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="class-exercise-general-social-survey-data"><span class="header-section-number">1.8</span> Class Exercise: General Social Survey Data</h2>
+<p>The <a href="https://gss.norc.org/">General Social Survey</a> (GSS) is a long-running US survey conducted by NORC at the University of Chicago. It tracks changes in American social attitudes and demographics. The forcats package includes a subset of GSS data (gss_cat) useful for practicing with categorical variables.</p>
+<p>Team up with a classmate. Load the gss_cat data and spend 20 minutes exploring it. Here are some guiding questions:</p>
+<p><strong>Understanding the data:</strong></p>
+<ul>
+<li>How many observations and variables are there?</li>
+<li>What years are covered? How many respondents per year?</li>
+<li>What categorical variables are included? How many levels does each have?</li>
+</ul>
+<p><strong>Distributions:</strong></p>
+<ul>
+<li>What is the distribution of age? Of TV hours watched?</li>
+<li>What are the most common responses for marital status? Religion? Political party?</li>
+</ul>
+<p><strong>Relationships:</strong></p>
+<ul>
+<li>Does TV watching vary by age? By marital status?</li>
+<li>How has the distribution of religious affiliation changed over the years covered?</li>
+<li>Are there associations between political party and other variables?</li>
+</ul>
+<p><strong>Challenges with categorical data:</strong></p>
+<ul>
+<li>Are there categories with very few observations? How might this affect analysis?</li>
+<li>Are there categories that might reasonably be combined?</li>
+</ul>
+<p>Prepare to report one interesting finding to the class.</p>
+</section>
+<section id="looking-ahead" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">1.9</span> Looking Ahead</h2>
+<p>This chapter has introduced EDA as a question-driven approach to understanding data. The remaining chapters of Part 1 develop specific tools and concepts:</p>
+<p><strong><a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>: Conditional Distributions.</strong> We return to the father-son data and examine the “graph of averages”—the conditional mean of son’s height given father’s height. This leads to the regression line, a linear approximation to the conditional mean, and to formal measures of association including the correlation coefficient.</p>
+<p><strong><a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a>: Clustering.</strong> When data have many variables, we may want to organize observations into groups (clusters) that are similar to each other. Clustering is EDA in higher dimensions: an unsupervised method for discovering structure without predefined categories.</p>
+<p><strong><a href="simulation.html" class="quarto-xref"><span>Chapter 4</span></a>: Statistical Simulation.</strong> Simulation allows us to explore “what if” scenarios and to understand the variability inherent in random processes. We use simulation to build intuition about sampling distributions and to assess the robustness of our conclusions.</p>
+<p><strong><a href="study-design.html" class="quarto-xref"><span>Chapter 5</span></a>: Sampling and Study Design.</strong> The quality of our data depends on how it was collected. We examine principles of sampling and experimental design, and consider how study design affects the conclusions we can draw.</p>
+<p><strong><a href="info-theory.html" class="quarto-xref"><span>Chapter 6</span></a>: Information Theory.</strong> As a coda to Part 1, we introduce entropy, mutual information, and related concepts from information theory. These provide an alternative framework for measuring association and uncertainty—one that underlies many machine learning algorithms.</p>
+<p>Throughout these chapters, the EDA mindset remains central: look at the data, ask questions, and let the data guide your understanding.</p>
+</section>
+<section id="team-exercises" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">1.10</span> Team Exercises</h2>
 <ol type="1">
-<li><p>Response versus predictor variables: for each of the data sets presented above, propose one or more variables as response variables. How, if at all, might someone else argue for a different choice? What should we mean by “response” and “predictor” variables? Describe a situation in which this distinction would not be suitable.</p></li>
-<li><p>Regression to the mean: the discussion of father-son heights uses the phrase “extremely tall or short fathers corresponding to not quite so extremely tall or short sons, respectively”. How would you formulate the meaning of that phrase? Do the data demonstrate this phenomenon?</p></li>
-<li><p>Diamond data: propose a question for the diamond data, and then try to address that question. What (if anything) did you learn from this task?</p></li>
-<li><p>Survey data: propose a question for the gss_cat data, and then try to address that question. What (if anything) did you learn from this task?</p></li>
+<li><p><strong>Response versus predictor variables.</strong> For the father-son height data, which variable would you designate as the “response” and which as the “predictor”? Could a reasonable argument be made for the reverse? What do “response” and “predictor” mean in this context? Describe a situation where this distinction would not apply.</p></li>
+<li><p><strong>Regression to the mean.</strong> Galton observed that extremely tall or short fathers tend to have sons who are not quite so extreme. Using the summary table of sons’ heights by father’s height, can you see evidence of this phenomenon? How would you quantify it?</p></li>
+<li><p><strong>Diamond data exploration.</strong> Choose one relationship in the diamond data (e.g., price vs.&nbsp;carat, or price vs.&nbsp;cut) and explore it using at least two different visualizations. What do the visualizations reveal? Do they suggest any hypotheses for further investigation?</p></li>
+<li><p><strong>Survey data exploration.</strong> Using the gss_cat data, investigate how one variable has changed over time (across the years in the data set). What patterns do you observe? What questions does this raise?</p></li>
+<li><p><strong>Misleading summaries.</strong> Find or construct an example where summary statistics (mean, standard deviation, correlation) give a misleading impression of the data. What visualization would reveal the true structure? (Hint: Anscombe’s quartet, which we will encounter in <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>, is one famous example.)</p></li>
 </ol>
 </section>
-<section id="resources" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="resources"><span class="header-section-number">1.6</span> Resources</h2>
-<p><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming in R</a>, by <a href="https://education.rstudio.com/author/garrett/">Garrett Grolemund</a></p>
-<p><a href="https://github.com/buruzaemon/simpleR">simpleR</a> Using R for Introductory Statistics., by <a href="https://www.math.csi.cuny.edu/~verzani/">John Verzani</a></p>
-<p><a href="https://r4ds.hadley.nz/">R for Data Science (2e)</a>, by <a href="https://hadley.nz/">Hadley Wickham</a>, <a href="https://mine-cr.com/">Mine Çetinkaya-Rundel</a>, and <a href="https://education.rstudio.com/author/garrett/">Garrett Grolemund</a></p>
-<p>RPubs - <a href="https://rpubs.com/Davo2812/1102821">Diamonds Dataset</a></p>
-<p>NORC’s General Social Survey (<a href="https://gss.norc.org/us/en/gss/about-the-gss.html">GSS</a>)</p>
-<p><a href="https://en.wikipedia.org/wiki/Exploratory_data_analysis">EDA</a>: Exploratory data analysis - Wikipedia</p>
+<section id="resources" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="resources"><span class="header-section-number">1.11</span> Resources</h2>
+<p><a href="https://www.goodreads.com/book/show/527129.Exploratory_Data_Analysis">Exploratory Data Analysis</a> by John W. Tukey — the original 1977 book that established EDA as a field.</p>
+<p><a href="https://r4ds.hadley.nz/">R for Data Science (2e)</a> by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund — a modern introduction to data science in R, with extensive coverage of EDA and visualization.</p>
+<p><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming with R</a> by Garrett Grolemund — an introduction to R programming.</p>
+<p><a href="https://ggplot2-book.org/">ggplot2: Elegant Graphics for Data Analysis</a> by Hadley Wickham — the definitive guide to the visualization package used throughout this book.</p>
+<p><a href="https://en.wikipedia.org/wiki/Exploratory_data_analysis">Exploratory data analysis</a> — Wikipedia overview.</p>
+<p><a href="https://rpubs.com/Davo2812/1102821">Diamonds Dataset</a> — RPubs exploration of the diamonds data.</p>
+<p><a href="https://gss.norc.org/">General Social Survey (GSS)</a> — NORC’s survey homepage.</p>
 
 
 </section>

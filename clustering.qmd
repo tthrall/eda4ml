@@ -874,7 +874,7 @@ Some methods of note are [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) (Density
 
 [K-means clustering with tidy data principles – tidymodels](https://www.tidymodels.org/learn/statistics/k-means/)
 
-[k-means • tidyclust](https://tidyclust.tidymodels.org/articles/k_means.html)
+[tidyclust::k_means](https://tidyclust.tidymodels.org/articles/k_means.html)
 
 [Cluster analysis - Wikipedia](https://en.wikipedia.org/wiki/Cluster_analysis)
 
