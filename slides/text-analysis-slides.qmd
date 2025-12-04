@@ -1,0 +1,752 @@
+---
+title: "Text Analysis"
+subtitle: "Chapter 8: EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    transition: fade
+    slide-number: true
+    chalkboard: true
+    smaller: false
+    scrollable: false
+    code-fold: false
+    code-summary: "Show code"
+    reference-location: document
+    fig-align: center
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## Why Analyze Text?
+
+::: {.incremental}
+- Social media posts, customer reviews, survey responses
+- News articles, scientific papers, legal documents
+- Emails, chat logs, transcripts
+- Historical archives, literary corpora
+:::
+
+. . .
+
+**Challenge**: Text is *unstructured*—how do we extract quantitative insights?
+
+::: {.notes}
+Text data is everywhere and growing exponentially. The challenge is converting unstructured language into structured features we can analyze and model.
+:::
+
+---
+
+## EDA for Text: A Systematic Approach
+
+::: {.incremental}
+1. **Tokenize**: Break text into meaningful units (words)
+2. **Examine frequencies**: What words dominate? Do they make sense?
+3. **Compute tf-idf**: Find distinctive terms
+4. **Consider topic models**: Discover latent themes
+5. **Iterate**: Unexpected patterns → data issues or insights
+:::
+
+. . .
+
+The methods in this chapter provide a toolkit for exploring text corpora.
+
+::: {.notes}
+This mirrors our general EDA philosophy: look at the data systematically before modeling. Text just requires different tools.
+:::
+
+---
+
+## The Iterative Process
+
+Text analysis is rarely linear—findings prompt refinement:
+
+. . .
+
+| You notice... | So you... |
+|---------------|-----------|
+| Strange tokens (URLs, "©", "n't") | Clean source data, re-tokenize |
+| Domain words dominating ("said" in news) | Expand stop word list |
+| "run/running/runs" fragmenting | Consider stemming |
+| Topics too coarse or noisy | Adjust k, refine vocabulary |
+
+. . .
+
+Each pass deepens understanding of the corpus.
+
+::: {.notes}
+This is the heart of EDA—iterating between analysis and data preparation. The first pass is never the last pass.
+:::
+
+---
+
+## What is a Token?
+
+A **token** is a meaningful unit of text for analysis.
+
+. . .
+
+Most commonly: a *word*
+
+. . .
+
+But could also be:
+
+- Characters
+- Sentences
+- n-grams (phrases of *n* consecutive words)
+- Subword units
+
+::: {.notes}
+The choice of token affects everything downstream. Words are the default, but other choices make sense for certain applications.
+:::
+
+---
+
+## Tokenization: The Basic Idea
+
+**Raw text**:
+
+> "Life's but a walking shadow, a poor player / That struts and frets his hour upon the stage"
+
+. . .
+
+**Tokenized**:
+
+| Line | Word |
+|------|------|
+| 24 | life's |
+| 24 | but |
+| 24 | a |
+| 24 | walking |
+| 24 | shadow |
+| ... | ... |
+
+::: {.notes}
+Tokenization converts flowing prose into a table we can manipulate. Each row is one token with metadata about where it came from.
+:::
+
+---
+
+## Stop Words
+
+**Stop words**: Common words that provide structure but little meaning
+
+. . .
+
+*a, an, the, and, or, but, is, are, was, were, to, of, in, for, on, with, ...*
+
+. . .
+
+**Before removal**: 37 tokens from Macbeth passage
+
+**After removal**: 12 tokens
+
+. . .
+
+| Remaining words |
+|-----------------|
+| life's, walking, shadow, poor, player, struts, frets, hour, stage, tale, idiot, sound, fury, signifying |
+
+::: {.notes}
+Stop word removal is standard but not always appropriate. In some analyses, function words carry important signals about authorship or style.
+:::
+
+---
+
+## Stemming and Lemmatization
+
+**Problem**: "running", "runs", "ran" are the same concept
+
+. . .
+
+**Stemming**: Apply rules to strip suffixes
+
+- running → run
+- studies → studi (imperfect!)
+
+. . .
+
+**Lemmatization**: Use vocabulary knowledge for true roots
+
+- better → good
+- ran → run
+
+. . .
+
+We won't implement these, but you should know they exist.
+
+::: {.notes}
+R packages like SnowballC and textstem provide these capabilities. The tradeoff: grouping related words vs. losing meaningful distinctions.
+:::
+
+---
+
+## Counting Words
+
+The simplest analysis: *how often does each word appear?*
+
+. . .
+
+**Jane Austen's novels** (top 10, excluding stop words):
+
+| Word | Count |
+|------|-------|
+| miss | 1,855 |
+| time | 1,337 |
+| fanny | 1,134 |
+| dear | 990 |
+| lady | 945 |
+| sir | 806 |
+| day | 797 |
+| emma | 786 |
+| sister | 727 |
+| house | 699 |
+
+::: {.notes}
+Character names, social titles, and domestic settings dominate. This immediately tells us something about the content.
+:::
+
+---
+
+## Austen vs. Wells: Two Vocabularies
+
+:::: {.columns}
+::: {.column width="50%"}
+**Jane Austen**
+
+| Word | Count |
+|------|-------|
+| miss | 1,855 |
+| time | 1,337 |
+| fanny | 1,134 |
+| dear | 990 |
+| lady | 945 |
+| sir | 806 |
+| day | 797 |
+| emma | 786 |
+| sister | 727 |
+| house | 699 |
+:::
+
+::: {.column width="50%"}
+**H.G. Wells**
+
+| Word | Count |
+|------|-------|
+| time | 456 |
+| people | 306 |
+| man | 285 |
+| kemp | 220 |
+| door | 214 |
+| black | 204 |
+| hand | 200 |
+| moreau | 192 |
+| stood | 181 |
+| night | 175 |
+:::
+::::
+
+::: {.notes}
+Social world (miss, dear, lady, sir) vs. physical world (door, hand, black, night). Character names appear in both, but the surrounding vocabulary differs dramatically.
+:::
+
+---
+
+## The Problem with Raw Counts
+
+Common words dominate *every* document.
+
+. . .
+
+If we're comparing documents, raw frequency doesn't tell us what's *distinctive*.
+
+. . .
+
+We need a measure that balances:
+
+- **Frequency within a document** (this word matters here)
+- **Rarity across the corpus** (this word is unusual)
+
+::: {.notes}
+This motivates tf-idf, one of the most useful tools in text analysis.
+:::
+
+---
+
+## Class Exercise
+
+**Task**: Team up and devise a way to compare word frequencies in Austen and Wells.
+
+. . .
+
+Consider:
+
+- What words are shared most frequently?
+- What words appear in one author but not the other?
+- Should stop words be included or excluded?
+
+. . .
+
+*20 minutes to prepare a brief report*
+
+::: {.notes}
+This exercise gets students thinking about comparison before introducing tf-idf as a formal solution.
+:::
+
+---
+
+## TF-IDF: The Intuition
+
+**Term Frequency (tf)**: How often does this word appear in *this* document?
+
+. . .
+
+**Inverse Document Frequency (idf)**: How rare is this word across *all* documents?
+
+. . .
+
+**TF-IDF**: Multiply them together
+
+$$\text{tf-idf}(t, d) = \text{tf}(t, d) \times \log\left(\frac{N}{n_t}\right)$$
+
+. . .
+
+High tf-idf → word is *frequent here* but *rare elsewhere*
+
+::: {.notes}
+The logarithm dampens the idf term so that very rare words don't completely dominate.
+:::
+
+---
+
+## TF-IDF: What It Captures
+
+| High tf-idf | Low tf-idf |
+|-------------|------------|
+| Words distinctive to this document | Common words appearing everywhere |
+| Character names, key concepts | Stop words, generic vocabulary |
+| "What makes this text special?" | "Background noise" |
+
+::: {.notes}
+TF-IDF is a way of automatically finding the most informative words without having to hand-curate a list.
+:::
+
+---
+
+## Austen: Most Distinctive Word Per Novel
+
+| Novel | Top tf-idf word |
+|-------|-----------------|
+| Sense & Sensibility | elinor |
+| Pride & Prejudice | darcy |
+| Mansfield Park | fanny |
+| Emma | emma |
+| Northanger Abbey | catherine |
+| Persuasion | anne |
+
+. . .
+
+**Protagonist names!** TF-IDF finds what distinguishes each book automatically.
+
+::: {.notes}
+This is a nice validation—tf-idf discovers meaningful structure without any prior knowledge of the novels.
+:::
+
+---
+
+## Document-Term Matrix (DTM)
+
+A different view of the same data:
+
+. . .
+
+|  | word₁ | word₂ | word₃ | ... | wordₖ |
+|--|-------|-------|-------|-----|-------|
+| doc₁ | 3 | 0 | 1 | ... | 0 |
+| doc₂ | 0 | 5 | 0 | ... | 2 |
+| doc₃ | 1 | 1 | 4 | ... | 0 |
+
+. . .
+
+- Rows = documents
+- Columns = terms (vocabulary)
+- Values = counts (or tf-idf weights)
+
+::: {.notes}
+This matrix representation is what most ML algorithms expect. The tidy format is better for exploration; the matrix format is better for modeling.
+:::
+
+---
+
+## Sparsity
+
+A corpus with 2,246 documents and 10,473 unique terms:
+
+. . .
+
+**Potential entries**: 2,246 × 10,473 = **23.5 million**
+
+. . .
+
+**Non-zero entries**: 302,031
+
+. . .
+
+**Sparsity**: 99%
+
+. . .
+
+Most (document, term) pairs have zero occurrences → *sparse matrix* representation saves memory.
+
+::: {.notes}
+This is why specialized data structures exist for text data. You can't store millions of zeros efficiently in a regular matrix.
+:::
+
+---
+
+## Tidy ↔ Matrix: Two Views
+
+:::: {.columns}
+::: {.column width="50%"}
+**Tidy format**
+
+| document | term | count |
+|----------|------|-------|
+| 1 | adding | 1 |
+| 1 | adult | 2 |
+| 1 | ago | 1 |
+| ... | ... | ... |
+
+*Good for exploration*
+:::
+
+::: {.column width="50%"}
+**Matrix format**
+
+|  | adding | adult | ago | ... |
+|--|--------|-------|-----|-----|
+| 1 | 1 | 2 | 1 | ... |
+| 2 | 0 | 0 | 3 | ... |
+
+*Good for modeling*
+:::
+::::
+
+. . .
+
+Convert with `tidy()` and `cast_dtm()` / `cast_dfm()`
+
+::: {.notes}
+The tidytext package makes it easy to move between these formats. Explore in tidy, model in matrix.
+:::
+
+---
+
+## Topic Models: Unsupervised Discovery
+
+**Problem**: We have thousands of documents with no labels.
+
+. . .
+
+**Question**: What are they *about*?
+
+. . .
+
+**Topic modeling**: Automatically discover latent themes
+
+- No pre-defined categories
+- Algorithms find structure in word co-occurrence
+
+::: {.notes}
+This is unsupervised learning applied to text—similar to clustering for numeric data.
+:::
+
+---
+
+## LDA: Latent Dirichlet Allocation
+
+Two key assumptions:
+
+. . .
+
+1. **Every document is a mixture of topics**
+
+   "Document 1 is 90% politics, 10% sports"
+
+. . .
+
+2. **Every topic is a mixture of words**
+
+   "Politics topic: president, congress, government, vote, ..."
+
+. . .
+
+Topics can **overlap**—words like "budget" might appear in multiple topics.
+
+::: {.notes}
+LDA is a generative probabilistic model. The math is substantial, but the intuition is accessible.
+:::
+
+---
+
+## Example: Associated Press Articles
+
+2,246 news articles from 1988
+
+. . .
+
+Fit a 2-topic model:
+
+. . .
+
+**What topics emerge?**
+
+::: {.notes}
+This is a classic example from the topic modeling literature. Two topics is artificial but illustrative.
+:::
+
+---
+
+## AP Articles: Top Terms Per Topic
+
+:::: {.columns}
+::: {.column width="50%"}
+**Topic 1**
+
+| Term | Prob |
+|------|------|
+| percent | .029 |
+| million | .019 |
+| billion | .017 |
+| company | .014 |
+| market | .012 |
+| stock | .009 |
+:::
+
+::: {.column width="50%"}
+**Topic 2**
+
+| Term | Prob |
+|------|------|
+| government | .017 |
+| soviet | .015 |
+| president | .013 |
+| people | .012 |
+| police | .010 |
+| state | .009 |
+:::
+::::
+
+**Topic 1**: Business | **Topic 2**: Politics
+
+::: {.notes}
+The algorithm discovered meaningful categories without being told what to look for. Note "new" appears in both—topics overlap.
+:::
+
+---
+
+## Comparing Topics: Log Ratio
+
+Which terms most *distinguish* topics?
+
+. . .
+
+$$\log_2\left(\frac{\beta_2}{\beta_1}\right)$$
+
+. . .
+
+- **Positive**: More probable in Topic 2 (politics)
+- **Negative**: More probable in Topic 1 (business)
+
+::: {.notes}
+This visualization makes topic differences crisp. Terms near zero belong equally to both topics.
+:::
+
+---
+
+## Log Ratio: Business vs. Politics Terms
+
+| More Business (Topic 1) | More Politics (Topic 2) |
+|-------------------------|-------------------------|
+| stock | democratic |
+| prices | government |
+| trading | military |
+| earnings | senate |
+| oil | congress |
+| index | republican |
+| dollar | officials |
+| rates | soviet |
+| shares | bush |
+| bank | party |
+
+::: {.notes}
+This confirms our interpretation: Topic 1 is financial/economic news, Topic 2 is political news.
+:::
+
+---
+
+## Beyond Word Counts
+
+So far: words as discrete tokens, documents as sparse vectors
+
+. . .
+
+**Limitations**:
+
+- "not good" ≈ "good" (no negation)
+- "excellent" and "superb" look unrelated
+- No semantic similarity
+
+. . .
+
+Modern approaches learn **dense, continuous representations** that capture meaning.
+
+::: {.notes}
+This is where the field has moved in the past decade. The basic EDA techniques still matter, but modeling has transformed.
+:::
+
+---
+
+## Sentiment Analysis
+
+Assign emotional valence to text: positive, negative, neutral
+
+. . .
+
+**Lexicon approach**: Look up words in curated lists
+
+| Lexicon | Scoring |
+|---------|---------|
+| AFINN | Numeric (−5 to +5) |
+| Bing | Binary (positive/negative) |
+| NRC | Emotions (joy, anger, fear, ...) |
+
+. . .
+
+Simple but inherits bag-of-words limitations: "not good" scores as positive.
+
+::: {.notes}
+Sentiment analysis is widely used for product reviews, social media monitoring, customer feedback. More sophisticated methods use ML to account for context.
+:::
+
+---
+
+## Word Embeddings
+
+Words as **dense vectors** (100–300 dimensions) learned from large corpora
+
+. . .
+
+Key insight: *words in similar contexts have similar vectors*
+
+. . .
+
+"king" and "queen" are close; "Paris" and "France" are close
+
+. . .
+
+**Analogy via arithmetic**:
+
+$$\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$$
+
+::: {.notes}
+This is dimension reduction applied to vocabulary—compressing 50,000-dimensional one-hot vectors to 300 dimensions while preserving semantic structure.
+:::
+
+---
+
+## Embedding Methods
+
+| Method | Key Idea |
+|--------|----------|
+| **Word2Vec** | Predict words from context (or vice versa) |
+| **GloVe** | Learn from global co-occurrence statistics |
+| **FastText** | Include subword info (handles rare words) |
+
+. . .
+
+Pre-trained embeddings are freely available for many languages.
+
+::: {.notes}
+Students don't need to train these from scratch—pre-trained models exist. The conceptual insight is what matters at this level.
+:::
+
+---
+
+## Transformers and LLMs
+
+**Limitation of embeddings**: "bank" has one vector regardless of context
+
+. . .
+
+**Transformers** (2017): Context-sensitive representations
+
+- Same word → different vectors depending on surrounding words
+- Captures polysemy and nuance
+
+. . .
+
+Foundation of **GPT**, **BERT**, and modern LLMs
+
+. . .
+
+*Rapidly evolving field*
+
+::: {.notes}
+This is the current frontier. Capabilities that seemed futuristic a few years ago are now routine.
+:::
+
+---
+
+## Implications for Machine Learning
+
+Text representations become **features** for:
+
+- Classification (spam, sentiment, topic)
+- Clustering (document organization)
+- Search (semantic similarity)
+
+. . .
+
+Text can also be represented as **networks** (words as nodes, co-occurrence as edges)
+
+. . .
+
+**EDA still matters**: Understanding vocabulary, frequencies, and patterns informs modeling decisions.
+
+::: {.notes}
+Even with modern deep learning methods, the exploratory techniques from this chapter remain valuable for understanding your data before modeling.
+:::
+
+---
+
+## Resources
+
+- [Text Mining with R](https://www.tidytextmining.com/) — Silge & Robinson
+- [CRAN Task View: NLP](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html)
+- [GloVe](https://nlp.stanford.edu/projects/glove/) — Stanford NLP
+- [FastText](https://fasttext.cc/) — Meta AI
+- [LDA paper](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) — Blei, Ng, Jordan (2003)
+
+::: {.notes}
+Point students to these for deeper exploration. The Silge & Robinson book is particularly accessible and uses the same tidytext approach from the chapter.
+:::
+
+---
+
+## Summary
+
+::: {.incremental}
+- **Tokenization** converts text to analyzable units
+- **Word frequencies** reveal content; **tf-idf** finds distinctive terms
+- **Document-term matrices** connect tidy exploration to ML pipelines
+- **Topic models** discover latent structure without labels
+- **Modern methods** learn dense representations capturing semantics
+- **EDA principles apply**: explore systematically before modeling
+:::
+
+::: {.notes}
+The chapter gives students a toolkit for text EDA and situates it in the broader ML landscape.
+:::
