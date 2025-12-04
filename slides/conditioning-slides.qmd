@@ -1,0 +1,606 @@
+---
+title: "Conditional Distributions"
+subtitle: "EDA for Machine Learning"
+author: "Chapter 2"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    incremental: false
+    toc: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(knitr)
+library(tidyverse)
+library(UsingR)
+
+father_son_ht <- UsingR::father.son |> 
+
+  tibble::as_tibble() |> 
+  dplyr::rename(father = fheight, son = sheight) |>
+  dplyr::mutate(
+    f_ivl = cut(father, seq(58, 76, 2)), 
+    f_mpt = (2 * ceiling(father/2)) - 1
+  )
+
+fs_moments <- father_son_ht |> 
+  dplyr::summarise(
+    f_avg = mean(father, na.rm = TRUE), 
+    s_avg = mean(son, na.rm = TRUE), 
+    f_sd  = sd(father, na.rm = TRUE), 
+    s_sd  = sd(son, na.rm = TRUE), 
+    r     = cor(father, son)
+  )
+```
+
+# Conditional Distributions
+
+## The Central Question
+
+Given information about one variable, what can we say about another?
+
+. . .
+
+**Example:** If we know a father's height, what can we predict about his son's height?
+
+. . .
+
+This leads to the concept of **conditional distributions**.
+
+## Father-Son Heights: Review
+
+```{r}
+#| label: fig-scatter-review
+#| fig-cap: "Heights of father-son pairs"
+
+father_son_ht |> 
+  ggplot2::ggplot(ggplot2::aes(x = father, y = son)) + 
+  ggplot2::geom_point(alpha = 0.4) + 
+  ggplot2::labs(
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Conditional Distribution of Son's Height
+
+```{r}
+#| label: fig-conditional-boxplot
+#| fig-cap: "Son's height distribution for each father height interval"
+
+father_son_ht |> 
+  dplyr::filter(!is.na(f_mpt)) |> 
+  ggplot2::ggplot(ggplot2::aes(x = forcats::as_factor(f_mpt), y = son)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::labs(
+    x = "Father's height (nearest odd inch)",
+    y = "Son's height (inches)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Conditional Expectation
+
+The **conditional expectation** $E(Y | X)$ is the average value of $Y$ given $X$.
+
+. . .
+
+```{r}
+#| label: tbl-conditional-means
+#| tbl-cap: "Average son's height per father's height interval"
+
+father_son_ht |>    
+  dplyr::filter(!is.na(f_mpt)) |>
+  dplyr::group_by(f_mpt) |>    
+  dplyr::summarise(     
+    n     = dplyr::n(),
+    s_avg = mean(son, na.rm = TRUE)
+  ) |> 
+  knitr::kable(
+    digits = 1,
+    col.names = c("Father height", "n", "Mean son height")
+  )
+```
+
+## The Graph of Averages
+
+```{r}
+#| label: fig-graph-of-averages
+#| fig-cap: "Conditional mean of son's height given father's height"
+
+s_stats_per_f_mpt <- father_son_ht |>    
+  dplyr::filter(!is.na(f_mpt)) |>
+  dplyr::group_by(f_mpt) |>    
+  dplyr::summarise(     
+    s_count = dplyr::n(),
+    s_avg   = mean(son, na.rm = TRUE)
+  ) |>
+  dplyr::ungroup()
+
+s_stats_per_f_mpt |> 
+  ggplot2::ggplot(ggplot2::aes(x = f_mpt, y = s_avg)) + 
+  ggplot2::geom_line(linewidth = 1) + 
+  ggplot2::geom_point(size = sqrt(s_stats_per_f_mpt$s_count), shape = 18) + 
+  ggplot2::labs(
+    x = "Father's height (inches)",
+    y = "Average son's height (inches)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Key Observation
+
+The graph of averages is approximately **linear**.
+
+. . .
+
+This suggests we can approximate the conditional expectation with a straight line.
+
+. . .
+
+→ The **regression line**
+
+# Z-Scores and Standard Units
+
+## Standardizing Variables
+
+To compare variables on different scales, convert to **standard units** (z-scores):
+
+$$Z_x = \frac{X - \mu_x}{\sigma_x}$$
+
+. . .
+
+**Interpretation:** Number of standard deviations above or below the mean.
+
+## Sample Z-Scores
+
+In practice, we use sample estimates:
+
+$$\hat{Z}_x(x_k) = \frac{x_k - \bar{x}}{s_x}$$
+
+. . .
+
+where $\bar{x}$ is the sample mean and $s_x$ is the sample standard deviation.
+
+# Two Lines Through the Data
+
+## The SD Line
+
+The **SD line** passes through the point of averages with slope $\frac{s_y}{s_x}$:
+
+$$y = \bar{y} + \frac{s_y}{s_x}(x - \bar{x})$$
+
+. . .
+
+Equivalently: $\hat{Z}_y = \hat{Z}_x$
+
+. . .
+
+**Property:** Minimizes sum of squared *perpendicular* distances to points.
+
+## The Regression Line
+
+The **regression line** has slope $r \cdot \frac{s_y}{s_x}$:
+
+$$y = \bar{y} + r \frac{s_y}{s_x}(x - \bar{x})$$
+
+. . .
+
+Equivalently: $\hat{Z}_y = r \cdot \hat{Z}_x$
+
+. . .
+
+**Property:** Minimizes sum of squared *vertical* distances to points.
+
+## Comparing the Two Lines
+
+```{r}
+#| label: fig-two-lines
+#| fig-cap: "Regression line (blue) vs SD line (red)"
+
+SD_slope <- fs_moments$s_sd / fs_moments$f_sd
+R_slope  <- fs_moments$r * SD_slope
+
+father_son_ht |> 
+  ggplot2::ggplot(ggplot2::aes(x = father, y = son)) + 
+  ggplot2::geom_point(alpha = 0.3) + 
+  ggplot2::geom_abline(
+    slope = SD_slope, 
+    intercept = fs_moments$s_avg - SD_slope * fs_moments$f_avg, 
+    linetype = "dashed", linewidth = 1.5, color = "red"
+  ) + 
+  ggplot2::geom_abline(
+    slope = R_slope, 
+    intercept = fs_moments$s_avg - R_slope * fs_moments$f_avg, 
+    linetype = "solid", linewidth = 1.5, color = "steelblue"
+  ) + 
+  ggplot2::labs(
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Why the Difference?
+
+Both lines pass through $(\bar{x}, \bar{y})$.
+
+. . .
+
+The regression line is **less steep** because $|r| \le 1$.
+
+. . .
+
+This is the mathematical basis of **regression to the mean**.
+
+## The Correlation Coefficient
+
+$$r = \frac{1}{n-1} \sum_{k=1}^{n} \hat{Z}_x(x_k) \cdot \hat{Z}_y(y_k)$$
+
+. . .
+
+**Properties:**
+
+- $-1 \le r \le 1$
+- $r = \pm 1$ only if points fall exactly on a line
+- $r = 0$ means no *linear* association
+
+## Father-Son Correlation
+
+```{r}
+#| label: tbl-fs-moments
+
+tibble::tibble(
+  Statistic = c("Father mean", "Son mean", "Father SD", "Son SD", "Correlation r"),
+  Value = c(
+    round(fs_moments$f_avg, 1),
+    round(fs_moments$s_avg, 1),
+    round(fs_moments$f_sd, 2),
+    round(fs_moments$s_sd, 2),
+    round(fs_moments$r, 2)
+  )
+) |> knitr::kable()
+```
+
+. . .
+
+With $r \approx 0.5$, the regression line has about half the slope of the SD line.
+
+# Regression Residuals
+
+## Fitted Values and Residuals
+
+For each observation:
+
+- **Fitted value:** $\hat{y}_k = \bar{y} + r \frac{s_y}{s_x}(x_k - \bar{x})$
+- **Residual:** $e_k = y_k - \hat{y}_k$
+
+. . .
+
+Residuals measure how far each point falls from the regression line.
+
+## Distribution of Residuals
+
+```{r}
+#| label: fig-residuals
+#| fig-cap: "Histogram of regression residuals"
+
+lm_fs <- stats::lm(son ~ father, data = father_son_ht)
+
+father_son_ht |> 
+  dplyr::mutate(residual = stats::residuals(lm_fs)) |>
+  ggplot2::ggplot(ggplot2::aes(x = residual)) + 
+  ggplot2::geom_histogram(binwidth = 0.5, fill = "steelblue", color = "white") + 
+  ggplot2::labs(
+    x = "Residual (inches)",
+    y = "Count"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Residuals Should Be...
+
+- Centered around zero ✓
+- Roughly symmetric ✓
+- No pattern when plotted against $x$ or $\hat{y}$
+
+. . .
+
+Patterns in residuals suggest the model is missing something.
+
+# The Bivariate Normal
+
+## A Special Case
+
+If $(X, Y)$ follows a **bivariate normal** distribution:
+
+. . .
+
+- The conditional distribution $Y | X$ is normal
+- The conditional mean $E(Y|X)$ is exactly the regression line
+- The conditional SD is $\sigma_y \sqrt{1 - r^2}$
+
+. . .
+
+Father-son heights are well approximated by a bivariate normal.
+
+## Variance Reduction
+
+Conditioning on $X$ reduces the variance of $Y$:
+
+$$\text{Var}(Y|X) = \sigma_y^2 (1 - r^2)$$
+
+. . .
+
+For father-son data with $r \approx 0.5$:
+
+$$\sqrt{1 - r^2} \approx 0.87$$
+
+. . .
+
+Knowing father's height reduces son's height SD by about 13%.
+
+# Cautionary Tales
+
+## Robust Statistics
+
+The mean and SD are sensitive to outliers.
+
+. . .
+
+**Alternatives:**
+
+| Sensitive | Robust |
+|-----------|--------|
+| Mean | Median |
+| Standard deviation | IQR |
+
+. . .
+
+The regression line inherits this sensitivity.
+
+## Anscombe's Quartet
+
+Four data sets with **identical** summary statistics:
+
+- Same means, SDs, and correlation
+- Same regression line
+
+. . .
+
+Yet the data look completely different!
+
+## Anscombe's Quartet: The Data
+
+```{r}
+#| label: fig-anscombe
+#| fig-cap: "Four data sets with identical regression statistics"
+
+anscombe_long <- datasets::anscombe |>
+  tibble::as_tibble() |>
+  dplyr::mutate(idx = dplyr::row_number()) |>
+  tidyr::pivot_longer(
+    cols = -idx,
+    names_to = c(".value", "group"),
+    names_pattern = "(.)(.)"
+  )
+
+anscombe_long |>
+  ggplot2::ggplot(ggplot2::aes(x = x, y = y)) +
+  ggplot2::geom_point(size = 2) +
+  ggplot2::geom_smooth(method = "lm", se = FALSE, color = "steelblue") +
+  ggplot2::facet_wrap(~group, ncol = 4) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## The Lesson
+
+**Always visualize your data!**
+
+. . .
+
+Summary statistics can hide:
+
+- Nonlinear relationships
+- Outliers
+- Clusters
+- Data errors
+
+# Statistical Independence
+
+## Definition
+
+Random variables $(X, Y)$ are **independent** if:
+
+$$P(X \in A, Y \in B) = P(X \in A) \cdot P(Y \in B)$$
+
+for all sets $A$ and $B$.
+
+. . .
+
+**Implication:** Knowing $X$ tells you nothing about $Y$.
+
+## Independence and Correlation
+
+If $(X, Y)$ are independent, then $r = 0$.
+
+. . .
+
+**But the converse is false!**
+
+. . .
+
+$r = 0$ only means no *linear* association.
+
+Variables can be dependent but uncorrelated.
+
+## Testing Independence: Categorical Variables
+
+For categorical variables, use the **chi-squared test**.
+
+. . .
+
+**Idea:** Compare observed counts to expected counts under independence.
+
+$$\chi^2 = \sum_{j,k} \frac{(O_{jk} - E_{jk})^2}{E_{jk}}$$
+
+## Example: Handedness and Sex
+
+```{r}
+#| label: tbl-handedness
+
+hs_tbl <- tibble::tribble(
+    ~handedness, ~male, ~female,
+    "right",  934L, 1070L,
+    "left",   113L,   92L,
+    "ambi",    20L,    8L
+  )
+
+hs_tbl |> knitr::kable()
+```
+
+. . .
+
+Is handedness independent of sex?
+
+## Chi-Squared Test Result
+
+```{r}
+#| label: chi-sq-test
+
+hs_matrix <- hs_tbl |> 
+  dplyr::select(male, female) |> 
+  as.matrix()
+
+hs_chi_sq <- stats::chisq.test(hs_matrix)
+```
+
+$\chi^2 =$ `r round(hs_chi_sq$statistic, 1)`, df = `r hs_chi_sq$parameter`, p-value = `r round(hs_chi_sq$p.value, 4)`
+
+. . .
+
+**Conclusion:** Strong evidence against independence.
+
+Males are more likely to be left-handed or ambidextrous.
+
+# Simpson's Paradox
+
+## UC Berkeley Admissions (1973)
+
+```{r}
+#| label: tbl-ucb-overall
+
+tibble::tibble(
+  Sex = c("Male", "Female"),
+  `Admission Rate` = c("44.5%", "30.4%")
+) |> knitr::kable()
+```
+
+. . .
+
+This looks like clear evidence of bias against women.
+
+## But Wait...
+
+```{r}
+#| label: tbl-ucb-by-dept
+
+tibble::tibble(
+  Dept = c("A", "B", "C", "D", "E", "F"),
+  `Male %` = c(62, 63, 37, 33, 28, 6),
+  `Female %` = c(82, 68, 34, 35, 24, 7)
+) |> knitr::kable()
+```
+
+. . .
+
+Four of six departments admitted women at **higher** rates!
+
+## What Happened?
+
+Women applied disproportionately to departments with **low overall admission rates**.
+
+. . .
+
+Department is a **confounding variable**.
+
+. . .
+
+The aggregate pattern reverses when we condition on department.
+
+## Simpson's Paradox: The Lesson
+
+A pattern in aggregated data can **reverse** when data are disaggregated by a relevant variable.
+
+. . .
+
+Always ask: Is there a confounding variable I'm missing?
+
+# Measures of Association
+
+## What We've Covered
+
+| Variables | Measure |
+|-----------|---------|
+| Both continuous | Correlation $r$ |
+| Both categorical | Chi-squared $\chi^2$ |
+
+. . .
+
+Both measure departure from independence.
+
+## Looking Ahead
+
+**Information theory** provides an alternative framework:
+
+- Entropy
+- Mutual information
+- KL divergence
+
+. . .
+
+These capture **nonlinear** relationships that correlation might miss.
+
+→ Chapter 6
+
+# Summary
+
+## Chapter 2: Key Takeaways
+
+1. **Conditional distributions** show how one variable varies given another
+2. The **graph of averages** can be approximated by the **regression line**
+3. **Correlation** measures linear association; $r = 0$ doesn't mean independence
+4. **Always visualize** — summary statistics can deceive (Anscombe)
+5. **Simpson's paradox** reminds us to look for confounders
+
+## Key Formulas
+
+| Concept | Formula |
+|---------|---------|
+| Z-score | $\hat{Z}_x = \frac{x - \bar{x}}{s_x}$ |
+| Regression line | $\hat{Z}_y = r \cdot \hat{Z}_x$ |
+| Correlation | $r = \frac{1}{n-1}\sum \hat{Z}_x \hat{Z}_y$ |
+| Chi-squared | $\chi^2 = \sum \frac{(O - E)^2}{E}$ |
+
+## Team Exercises
+
+1. Simulate bivariate normal variables
+2. Find another example of Simpson's paradox
+3. Construct dependent variables with $r = 0$
+
+## Resources
+
+- Freedman, Pisani, Purves: *Statistics* (4e)
+- Bickel et al.: "Sex Bias in Graduate Admissions" (1975)
+- Wikipedia: Simpson's paradox
