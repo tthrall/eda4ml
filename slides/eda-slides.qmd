@@ -1,0 +1,464 @@
+---
+title: "Exploratory Data Analysis"
+subtitle: "EDA for Machine Learning"
+author: "Chapter 1"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    incremental: false
+    toc: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(knitr)
+library(tidyverse)
+library(UsingR)
+
+father_son_ht <- UsingR::father.son |> 
+  as_tibble() |> 
+  rename(father = fheight, son = sheight)
+```
+
+# What is EDA?
+
+## Exploratory Data Analysis
+
+**John Tukey (1977):** Statisticians had become too focused on formal inference at the expense of simply *looking at data*.
+
+. . .
+
+EDA is the corrective:
+
+- Visualization
+- Summary
+- Iterative development of questions
+
+## EDA vs. Confirmatory Analysis
+
+| Confirmatory | Exploratory |
+|--------------|-------------|
+| Begins with a hypothesis | Begins with data |
+| Asks: do data support or refute? | Asks: what patterns are present? |
+| Tests pre-specified claims | Generates new hypotheses |
+
+. . .
+
+A complete analysis typically involves **both**.
+
+## Why EDA Matters for ML
+
+1. **Understanding data before modeling**
+   - Variable types, distributions, missing values, outliers
+
+2. **Generating hypotheses**
+   - Patterns become candidates for formal modeling
+
+3. **Diagnosing models**
+   - Residual plots reveal what models miss
+
+4. **Communicating findings**
+   - Visualizations convey results to stakeholders
+
+## EDA is a Mindset
+
+> A willingness to look at data from multiple angles, to transform variables, to compare subgroups, and above all to **ask questions**.
+
+# Foundational Concepts
+
+## Data as Sample from Population
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Population**
+
+The complete set of cases we care about
+
+- All possible customers
+- All manufacturing runs
+- All images of a certain type
+:::
+
+::: {.column width="50%"}
+**Sample**
+
+The subset we actually observe
+
+- Our goal: learn about the population
+- EDA helps assess whether the sample supports generalization
+:::
+
+::::
+
+## Central Value: Two Approaches
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Mean (Average)**
+
+$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
+
+- Minimizes sum of squared deviations
+- Sensitive to outliers
+:::
+
+::: {.column width="50%"}
+**Median**
+
+Middle value when sorted
+
+- Half above, half below
+- Robust to outliers
+- Often better for skewed data
+:::
+
+::::
+
+## Dispersion: Two Approaches
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Standard Deviation**
+
+$$s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}$$
+
+- Typical distance from mean
+- Sensitive to outliers
+:::
+
+::: {.column width="50%"}
+**Interquartile Range (IQR)**
+
+$$\text{IQR} = Q_3 - Q_1$$
+
+- Spread of middle 50%
+- Robust to outliers
+:::
+
+::::
+
+## Choosing Among Summaries
+
+**Key insight:** Compute *both* and compare.
+
+. . .
+
+Large discrepancy between mean and median signals:
+
+- Skewness, or
+- Outliers
+
+. . .
+
+→ Warrants further investigation
+
+## Questions Drive the Analysis
+
+**Standard starting questions:**
+
+- What is the distribution of each variable?
+- Are there outliers or unusual values?
+- Are there missing values?
+- How are pairs of variables related?
+
+. . .
+
+**Domain-specific questions** arise from context and purpose.
+
+## EDA Throughout Modeling
+
+| Stage | EDA Role |
+|-------|----------|
+| **Before** | Understand distributions, detect quality issues |
+| **During** | Compare models, identify difficult cases |
+| **After** | Examine residuals, check assumptions |
+
+# Example: Father-Son Heights
+
+## Historical Context
+
+**Francis Galton (1885):** Investigated whether height is hereditary
+
+**Karl Pearson:** Founded first statistics department (UCL, 1911); collected father-son height data
+
+. . .
+
+This data set introduced:
+
+- Correlation
+- Regression
+- "Regression to the mean"
+
+## The Data
+
+```{r}
+#| label: data-summary
+
+tibble::tibble(
+  Statistic = c("Number of pairs", "Father mean height", "Son mean height"),
+  Value = c(
+    nrow(father_son_ht),
+    paste0(round(mean(father_son_ht$father), 1), " inches"),
+    paste0(round(mean(father_son_ht$son), 1), " inches")
+  )
+) |> knitr::kable()
+```
+
+## First Look: Scatter Plot
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "Heights of father-son pairs"
+
+father_son_ht |> 
+  ggplot2::ggplot(aes(x = father, y = son)) + 
+  ggplot2::geom_point(alpha = 0.4) + 
+  ggplot2::labs(
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## What the Scatter Plot Reveals
+
+- **Positive association:** Taller fathers → taller sons
+- **Roughly linear** relationship
+- **Substantial scatter** around the trend
+- **Density in middle** makes individual points hard to see
+
+. . .
+
+One visualization → one question answered, new questions raised
+
+## Conditional Distributions
+
+```{r}
+#| label: fig-boxplot
+#| fig-cap: "Son's height by father's height interval"
+
+father_son_ht |> 
+  dplyr::mutate(f_mpt = (2 * ceiling(father/2)) - 1) |>
+  dplyr::filter(!is.na(f_mpt)) |> 
+  ggplot2::ggplot(aes(x = as_factor(f_mpt), y = son)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::labs(
+    x = "Father's height (nearest odd inch)",
+    y = "Son's height (inches)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## What the Box Plots Reveal
+
+- **Median increases** with father's height
+- **Spread (IQR) similar** across groups
+- A few **outliers** among sons of shorter fathers
+
+. . .
+
+This shows the **conditional distribution** of son's height given father's height.
+
+→ Central concept in Chapter 2
+
+## Are Sons Taller Than Fathers?
+
+```{r}
+#| label: fig-compare
+#| fig-cap: "Comparing height distributions"
+
+height_per_fs <- father_son_ht |> 
+  dplyr::mutate(idx = row_number()) |>
+  dplyr::select(idx, father, son) |> 
+  tidyr::pivot_longer(
+    cols = c(father, son), 
+    names_to = "generation", 
+    values_to = "height"
+  )
+
+height_per_fs |> 
+  ggplot2::ggplot(aes(x = generation, y = height)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::labs(x = "", y = "Height (inches)") +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Summary: Fathers vs. Sons
+
+```{r}
+#| label: tbl-compare
+
+height_per_fs |> 
+  dplyr::group_by(generation) |> 
+  dplyr::summarise(
+    n = n(),
+    mean = mean(height),
+    median = median(height),
+    sd = sd(height)
+  ) |>
+  knitr::kable(
+    digits = 1, 
+    col.names = c("Generation", "n", "Mean", "Median", "SD")
+  )
+```
+
+. . .
+
+Sons are about **one inch taller** on average.
+
+## Paired Differences
+
+```{r}
+#| label: fig-diff
+#| fig-cap: "Distribution of son's height minus father's height"
+
+father_son_ht |> 
+  dplyr::mutate(diff = son - father) |>
+  ggplot2::ggplot(aes(x = diff)) + 
+  ggplot2::geom_histogram(binwidth = 1, fill = "steelblue", color = "white") + 
+  ggplot2::geom_vline(
+    xintercept = 0, linetype = "dashed", 
+    color = "red", linewidth = 1
+  ) + 
+  ggplot2::labs(x = "Height difference (inches)", y = "Count") +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Regression to the Mean
+
+**Galton's observation:**
+
+> Extremely tall fathers tend to have sons who are tall, but *not quite as extreme*.
+
+. . .
+
+This is a **statistical phenomenon**, not a genetic one.
+
+It arises whenever two variables are correlated but not perfectly so.
+
+. . .
+
+→ Explored mathematically in Chapter 2
+
+# The Practice of EDA
+
+## Showing Your Work
+
+Throughout this book, code is generally hidden.
+
+. . .
+
+But seeing *how* visualizations are constructed is part of learning EDA:
+
+```{r}
+#| label: ggplot-demo-code
+#| echo: true
+#| eval: false
+
+father_son_ht |> 
+  ggplot2::ggplot(aes(x = father, y = son)) + 
+  ggplot2::geom_point(alpha = 0.4) + 
+  ggplot2::labs(
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  )
+```
+
+## The Grammar of Graphics
+
+1. Start with **data**
+2. Specify **aesthetic mappings** (variables → visual properties)
+3. Add **geometric objects** (points, lines, bars)
+4. Customize **labels** and appearance
+
+. . .
+
+This framework (ggplot2) provides flexibility for constructing visualizations.
+
+## Class Exercises
+
+**Diamond Data** (ggplot2::diamonds)
+
+- ~54,000 diamonds with price and attributes
+- Explore distributions, relationships, predictors of price
+
+. . .
+
+**General Social Survey** (forcats::gss_cat)
+
+- US survey tracking social attitudes
+- Practice with categorical variables
+- Explore changes over time
+
+## Guiding Questions for Any Data Set
+
+1. How many observations? Variables?
+2. What are the variable types?
+3. What are the distributions?
+4. Are there missing values? Outliers?
+5. What relationships exist between variables?
+6. What would I need to know to make a decision?
+
+# Looking Ahead
+
+## Part 1: Foundations of EDA
+
+| Chapter | Topic |
+|---------|-------|
+| 2 | Conditional Distributions |
+| 3 | Clustering |
+| 4 | Statistical Simulation |
+| 5 | Sampling and Study Design |
+| 6 | Information Theory |
+
+## Key Themes
+
+- **Conditional distributions** underlie regression and classification
+- **Clustering** exemplifies EDA in higher dimensions
+- **Simulation** builds intuition about variability
+- **Study design** determines what conclusions are valid
+- **Information theory** provides vocabulary for ML
+
+## The EDA Mindset
+
+> Look at the data, ask questions, and let the data guide your understanding.
+
+. . .
+
+This mindset remains central throughout the book.
+
+# Summary
+
+## Chapter 1: Key Takeaways
+
+1. **EDA is question-driven** exploration of data
+2. **Central value and dispersion** have multiple implementations
+3. **Data = sample from population** frames our inferences
+4. **Multiple views** of the same data reveal different patterns
+5. **EDA continues throughout** the modeling process
+
+## Resources
+
+- Tukey (1977): *Exploratory Data Analysis*
+- Wickham et al.: *R for Data Science* (r4ds.hadley.nz)
+- Wickham: *ggplot2: Elegant Graphics for Data Analysis*
+
+## Team Exercises
+
+1. Response vs. predictor variables
+2. Regression to the mean: evidence in the data?
+3. Diamond data: explore one relationship with two visualizations
+4. Survey data: investigate change over time
+5. Find/construct an example of misleading summaries
