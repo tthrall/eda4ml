@@ -1,0 +1,175 @@
+conditioning-review-2025-12-01
+
+book contents as of 2025-12-01:
+
+idx_0	idx_1	file	title	n_l
+1	1	eda.qmd	Exploratory Data Analysis	250
+1	2	conditioning.qmd	Conditional Distributions	1236
+1	3	clustering.qmd	Clustering: EDA in Higher Dimensions	860
+1	4	simulation.qmd	Statistical Simulation	690
+1	5	study-design.qmd	Sampling and Study Design	690
+2	6	la-intro.qmd	Linear Regression	2018
+2	7	reduce-dim.qmd	Dimension Reduction	4514
+3	8	text-analysis.qmd	Text Analysis	696
+3	9	dirichlet-dstn.qmd	The Dirichlet Distribution	308
+3	10	latent-dirichlet-alloc.qmd	Latent Dirichlet Allocation	882
+4	11	ts-intro.qmd	Time Series Data Analysis	1048
+4	12	ts-forecast.qmd	Time Series Forecasting	2833
+4	13	ts-fourier.qmd	Time Series Spectrum Analysis	1509
+5	14	graph-theory.qmd	Graph Theory for Machine Learning	530
+6		em-algorithm.qmd	A: EM Algorithm	568
+
+TT: 
+Excellent comments.  I've attached `conditioning.qmd`.
+
+Claude: 
+## Chapter 2: Conditional Distributions
+
+**Lines:** 1,236 | **Sections:** 9
+
+---
+
+### 1. Core Concept
+
+This chapter introduces _conditional distributions_ as the central organizing concept for understanding relationships between variables. The chapter then extends this to:
+
+- Z-scores and standardization
+- Simple linear regression (SD line vs. regression line)
+- Statistical independence and measures of association
+- Information-theoretic concepts (entropy, mutual information, KL divergence)
+
+The implicit theme: how does knowing the value of one variable change our knowledge about another?
+
+---
+
+### 2. Key Skills
+
+Students should be able to:
+
+- Transform variables to standard units (z-scores)
+- Distinguish between the SD line and regression line, and explain why they differ
+- Interpret regression residuals and fitted values
+- Apply the chi-squared test for independence of categorical variables
+- Recognize Simpson's paradox and explain it using conditional distributions
+- Calculate entropy for discrete distributions
+- Compute mutual information and explain its relationship to independence
+- Define KL divergence and interpret its meaning
+
+---
+
+### 3. Mathematical Prerequisites
+
+**Substantial:**
+
+- Basic probability (conditional probability, independence)
+- Summation notation and logarithms
+- Sample statistics (mean, variance, correlation)
+- Familiarity with the normal distribution
+
+**Helpful but not essential:**
+
+- Calculus (for understanding continuous distributions)
+- Linear algebra (for understanding regression geometry)
+
+This chapter represents a significant jump in mathematical sophistication from Chapter 1.
+
+---
+
+### 4. Structure Assessment
+
+|Section|Lines|Purpose|
+|---|---|---|
+|Heights of Fathers and Sons|108|Motivating example (repeated from Ch 1)|
+|Z-Scores|201|Standardization, SD line, regression line, normal distribution|
+|Class Exercise: Diamonds|11|Brief prompt|
+|Simulating Random Variables|40|Reference table for R functions|
+|Cautionary Remarks|88|Robust statistics, Anscombe Quartet|
+|Statistical Independence|557|Definition, chi-squared test, Simpson's paradox|
+|Entropy|160|Shannon entropy, mutual information, KL divergence|
+|Team Exercises|16|Practice problems|
+|Resources|18|External links|
+
+**Observations:**
+
+1. **This chapter tries to do too much.** It covers at least four distinct topics that could each be their own chapter:
+    - Standardization and the regression line
+    - Chi-squared tests and Simpson's paradox
+    - Entropy and information theory
+    - Simulation (which feels orphaned here)
+2. **The "Conditional Distributions" title is misleading.** The chapter is really about _measures of association_ and _statistical dependence_, with conditional distributions as one tool among many.
+3. **The father-son example is overused.** It appears in Chapter 1 and again here. While continuity is good, this repetition dilutes the freshness of the example.
+4. **The entropy section is powerful but feels tacked on.** The transition from Simpson's paradox to entropy is abrupt. The information-theoretic material (entropy, MI, KL divergence) is excellent but deserves its own dedicated treatment—especially given its importance in ML (decision trees, cross-entropy loss, variational inference).
+5. **The "Simulating Random Variables" section is misplaced.** A table of R functions doesn't fit the conceptual flow. This belongs in Chapter 4 (Simulation) or an appendix.
+6. **Code remains hidden.** As with Chapter 1, students don't see how any of this is computed.
+
+---
+
+### 5. EDA Connection
+
+**Mixed.** The chapter contains good EDA examples:
+
+- The Anscombe Quartet is a perfect EDA lesson ("look at your data!")
+- Simpson's paradox demonstrates why conditioning matters
+- The residual analysis for regression is classic EDA
+
+However, the information theory section (entropy, MI, KL) is presented abstractly without showing how these tools are _used_ in EDA. For example:
+
+- Mutual information can guide feature selection
+- KL divergence can compare distributions visually
+- Entropy can quantify "surprise" in data
+
+These applications are not shown.
+
+---
+
+### 6. Knox Handoff
+
+This chapter provides essential foundations for ML:
+
+|Concept|ML Application|
+|---|---|
+|Regression line|Linear models, baseline predictions|
+|Chi-squared test|Feature selection for categorical variables|
+|Simpson's paradox|Caution about aggregated metrics, importance of stratification|
+|Entropy|Decision tree splitting criteria, information gain|
+|KL divergence|Loss functions (cross-entropy), variational inference|
+|Mutual information|Feature selection, neural network analysis|
+
+**The connection is implicit but strong.** Adding explicit forward references would help students see why this material matters.
+
+---
+
+### 7. Revision Notes
+
+**High priority:**
+
+1. **Split this chapter.** Consider:
+    - Chapter 2A: Standardization, regression, residuals (the "linear" story)
+    - Chapter 2B: Independence, chi-squared tests, Simpson's paradox (the "categorical" story)
+    - Chapter 2C: Entropy and information theory (or fold into a later chapter on trees/classification)
+2. **Move simulation content** to Chapter 4 (Statistical Simulation).
+3. **Add explicit ML connections.** For entropy, show how it's used in decision tree splitting. For KL divergence, mention its role in cross-entropy loss.
+4. **Show some code.** The chi-squared test and entropy calculations would benefit from visible code.
+
+**Medium priority:**
+
+5. **Tighten the father-son example.** Either develop it more deeply here (and less in Chapter 1) or use a fresh dataset.
+6. **Add visual intuition for information theory.** The "20 questions" game is good, but a Venn diagram showing H(X), H(Y), H(X,Y), and MI(X,Y) would help.
+7. **Clarify the chapter title.** "Measures of Association" or "Statistical Dependence" might be more accurate than "Conditional Distributions."
+
+**Low priority:**
+
+8. **Add Simpson's paradox to exercises.** Currently exercise 2 asks students to find their own example—good, but a worked second example in the text would reinforce the concept.
+9. **Fix incomplete labels** (e.g., `tbl-cap: "XXX"` appears multiple times).
+
+---
+
+### Summary
+
+Chapter 2 is mathematically rich and covers essential material for ML, but it's overloaded. The information theory section is particularly valuable but needs better integration. Splitting this chapter into 2–3 focused pieces would improve flow and retention.
+
+The Simpson's paradox example is outstanding and should be preserved as a centerpiece of the "why EDA matters" argument.
+
+---
+
+Ready for Chapter 3 (`clustering.qmd`) when you are.

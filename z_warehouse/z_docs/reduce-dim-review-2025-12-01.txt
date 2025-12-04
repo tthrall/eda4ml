@@ -1,0 +1,166 @@
+reduce-dim-review-2025-12-01
+
+book contents as of 2025-12-01:
+
+idx_0	idx_1	file	title	n_l
+1	1	eda.qmd	Exploratory Data Analysis	250
+1	2	conditioning.qmd	Conditional Distributions	1236
+1	3	clustering.qmd	Clustering: EDA in Higher Dimensions	860
+1	4	simulation.qmd	Statistical Simulation	690
+1	5	study-design.qmd	Sampling and Study Design	690
+2	6	la-intro.qmd	Linear Regression	2018
+2	7	reduce-dim.qmd	Dimension Reduction	4514
+3	8	text-analysis.qmd	Text Analysis	696
+3	9	dirichlet-dstn.qmd	The Dirichlet Distribution	308
+3	10	latent-dirichlet-alloc.qmd	Latent Dirichlet Allocation	882
+4	11	ts-intro.qmd	Time Series Data Analysis	1048
+4	12	ts-forecast.qmd	Time Series Forecasting	2833
+4	13	ts-fourier.qmd	Time Series Spectrum Analysis	1509
+5	14	graph-theory.qmd	Graph Theory for Machine Learning	530
+6		em-algorithm.qmd	A: EM Algorithm	568
+
+
+## Chapter 7: Dimension Reduction — Review
+
+**File**: reduce-dim.qmd | **Lines**: 4,516 | **Sections**: 15+
+
+---
+
+### Core Concept
+
+Finding low-dimensional structure in high-dimensional data through PCA (variance maximization) and LDA (class separation maximization). The chapter develops both methods from first principles, emphasizing eigenvalue problems as the unifying mathematical framework.
+
+---
+
+### Key Skills
+
+- Visualize high-dimensional data (scatter matrices, 3D plots)
+- Perform and interpret PCA (loadings, scores, variance explained)
+- Understand SVD and its relationship to PCA
+- Perform and interpret LDA (discriminant functions, Fisher's criterion)
+- Choose between supervised and unsupervised methods
+- Evaluate dimension reduction (scree plots, classification accuracy)
+
+---
+
+### Mathematical Prerequisites
+
+**Substantial.** Requires: eigenvalues/eigenvectors, matrix decompositions, multivariate normal distribution, Bayes' theorem, quadratic forms. This is the most mathematically demanding chapter in the book.
+
+---
+
+### Structure Assessment
+
+**Comprehensive but very long.** At 4,516 lines (24% of the book), this chapter attempts to cover:
+
+|Topic|Approximate Lines|
+|---|---|
+|Data examples|90-600|
+|PCA intuition and examples|600-1500|
+|PCA terminology and theory|844-1200|
+|LDA 1D derivation|1800-2270|
+|LDA multivariate|2270-3400|
+|Other methods survey|3400-3620|
+|Summary|3618-3675|
+|Exercises|3676-3860|
+|Appendix: SVD derivation|3860-4516|
+
+The chapter is thorough but could overwhelm students. The SVD appendix alone (650+ lines of dense mathematics) could be a separate document.
+
+---
+
+### Strengths
+
+1. **Excellent visualizations**: Interactive plotly 3D plots, loading bar charts, scree plots. These make abstract concepts concrete.
+2. **Real datasets throughout**: USArrests, wine quality, dry beans. Students see PCA/LDA applied to meaningful data.
+3. **Dual derivation of LDA** (lines 1800-2650): Both the Bayesian/Gaussian approach and Fisher's geometric approach, with proof of equivalence. This is graduate-level exposition done well.
+4. **Summary section** (lines 3618-3675): Excellent synthesis of PCA vs. LDA, supervised vs. unsupervised, linear vs. nonlinear.
+5. **Comprehensive exercises** (lines 3676-3860): Mix of computational, conceptual, and theoretical problems. Exercise 7.10 (choosing methods) is particularly good for developing judgment.
+6. **Uses your `eda4mldata` package** (line 68): Demonstrates the package in action
+7. **Practical workflow section** (lines 3662-3675): Actionable guidance for practitioners
+
+---
+
+### Weaknesses
+
+1. **Length**: 4,516 lines is simply too long for a single chapter. Students will struggle to maintain focus.
+2. **Code still hidden** (line 8): The PCA and LDA implementations are invisible to students
+3. **LDA derivation very dense**: Lines 1900-2400 present page after page of equations without pausing for intuition or examples
+4. **Missing simple examples**: Before diving into USArrests, a 2D toy example where PCA can be visualized completely would help
+5. **Other methods section too brief** (lines 3400-3620): t-SNE, UMAP, kernel PCA are mentioned but not demonstrated. Either expand or remove.
+6. **No in-class exercises**: Continues the pattern from Chapter 6
+7. **Typo** (line 153): "calcuated" → "calculated"
+
+---
+
+### EDA Connection
+
+**Strong.** The opening sections explicitly frame dimension reduction as EDA: "Data analysis often begins with an exploration... The exploration becomes more difficult as the dimensions of the data set increase" (line 122-123). The scatter plot matrices and 3D visualizations are classic EDA.
+
+---
+
+### Knox Handoff (ML Preparation)
+
+**Excellent.** This chapter provides the linear algebra foundation for:
+
+- Regularized regression (eigenvalue shrinkage)
+- Neural network autoencoders (nonlinear PCA)
+- Gaussian mixture models (generalization of LDA assumptions)
+- Spectral clustering
+- Kernel methods
+
+The connection to classification (LDA → logistic regression → neural networks) is implicit but strong.
+
+---
+
+### Revision Recommendations
+
+**HIGH PRIORITY**
+
+1. **Split the chapter**:
+    - Chapter 7a: PCA (data examples, intuition, computation, interpretation) ~2000 lines
+    - Chapter 7b: LDA and supervised dimension reduction ~1500 lines
+    - Appendix: SVD derivation ~700 lines (separate document or optional reading)
+2. **Show code** for at least:
+    - `prcomp()` usage
+    - Extracting and interpreting loadings
+    - `MASS::lda()` usage
+    - Plotting principal component scores
+3. **Add simple toy example**: 2D data with clear principal axes before USArrests. Students should be able to draw PCA by hand before seeing it computed.
+4. **Break up LDA derivation**: Add figures, worked examples, and interpretive pauses between dense equation blocks
+
+**MEDIUM PRIORITY**
+
+5. **Either expand or remove "Other Methods" section**: The current treatment of t-SNE, UMAP, etc. is too brief to be useful
+6. **Add in-class exercises**: Team activities for exploring PCA loadings, comparing LDA to logistic regression
+7. **Fix typo** (line 153)
+
+**LOW PRIORITY**
+
+8. **Add bias-variance perspective**: PCA reduces variance at the cost of potential bias; connect to ML model selection
+9. **Consider wine quality for exercises**: Your `eda4mldata::wine_quality` dataset could replace or supplement the exercises
+
+---
+
+### Overall Assessment
+
+**This is an excellent but overstuffed chapter.** The mathematical content is rigorous and the exposition is generally clear. The problem is volume: 4,516 lines covering PCA, LDA, SVD derivation, and a survey of nonlinear methods is too much for students to absorb.
+
+The chapter's greatest strength—comprehensive treatment of the linear algebra foundations—is also its weakness. By trying to be a complete reference, it risks losing students who need a more gradual introduction.
+
+**Recommendation**: Split into two chapters plus an optional appendix. This would make each piece more digestible while preserving the excellent content.
+
+---
+
+## Part 2 Summary (Chapters 6-7)
+
+|Chapter|Lines|Status|Main Issues|
+|---|---|---|---|
+|6. Linear Regression|2,018|Good shape|Move multinomial logistic, show code|
+|7. Dimension Reduction|4,516|**Needs splitting**|Too long, split into PCA/LDA chapters|
+
+Together these chapters provide an excellent linear algebra foundation for ML, but Chapter 7's length is a significant structural problem.
+
+---
+
+Ready for Part 3 (Text Data) when you are—Chapters 8-10.

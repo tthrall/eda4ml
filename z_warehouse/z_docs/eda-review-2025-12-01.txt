@@ -1,0 +1,135 @@
+eda-review-2025-12-01
+
+book contents as of 2025-12-01:
+
+idx_0	idx_1	file	title	n_l
+1	1	eda.qmd	Exploratory Data Analysis	250
+1	2	conditioning.qmd	Conditional Distributions	1236
+1	3	clustering.qmd	Clustering: EDA in Higher Dimensions	860
+1	4	simulation.qmd	Statistical Simulation	690
+1	5	study-design.qmd	Sampling and Study Design	690
+2	6	la-intro.qmd	Linear Regression	2018
+2	7	reduce-dim.qmd	Dimension Reduction	4514
+3	8	text-analysis.qmd	Text Analysis	696
+3	9	dirichlet-dstn.qmd	The Dirichlet Distribution	308
+3	10	latent-dirichlet-alloc.qmd	Latent Dirichlet Allocation	882
+4	11	ts-intro.qmd	Time Series Data Analysis	1048
+4	12	ts-forecast.qmd	Time Series Forecasting	2833
+4	13	ts-fourier.qmd	Time Series Spectrum Analysis	1509
+5	14	graph-theory.qmd	Graph Theory for Machine Learning	530
+6		em-algorithm.qmd	A: EM Algorithm	568
+
+
+TT: 
+I've attached `eda.qmd`.  Thanks!
+
+Claude: 
+## Chapter 1: Exploratory Data Analysis
+
+**Lines:** 250 | **Sections:** 6
+
+---
+
+### 1. Core Concept
+
+This chapter introduces EDA as a _mindset_ rather than a fixed set of techniques—contrasting Tukey's exploratory approach with confirmatory (model-based) analysis. The key message: let questions drive the analysis, remain open to unexpected patterns, and use visualization and summary statistics to understand data before modeling.
+
+---
+
+### 2. Key Skills
+
+Students should be able to:
+
+- Articulate the difference between exploratory and confirmatory analysis
+- Use scatter plots, box plots, and histograms to examine distributions and relationships
+- Compute and interpret basic summary statistics (mean, median, min, max)
+- Formulate questions about an unfamiliar dataset
+- Recognize "regression to the mean" as a phenomenon
+
+---
+
+### 3. Mathematical Prerequisites
+
+Minimal:
+
+- Basic descriptive statistics (mean, median, quartiles)
+- Familiarity with scatter plots and histograms
+- No calculus, linear algebra, or probability theory required
+
+This chapter is accessible to students with limited mathematical background.
+
+---
+
+### 4. Structure Assessment
+
+|Section|Lines|Purpose|
+|---|---|---|
+|Heights of Fathers and Sons|74|Motivating example|
+|Class Exercise: Diamonds|11|Brief prompt|
+|Class Exercise: GSS|13|Brief prompt|
+|Discussion: What is EDA?|93|Conceptual framework|
+|Team Exercises|10|Practice prompts|
+|Resources|15|External links|
+
+**Observations:**
+
+- **Ordering issue**: The Tukey/EDA discussion (Section 4) comes _after_ two class exercises and a worked example. Students encounter "EDA" in practice before understanding what it is. Consider moving the conceptual discussion earlier—perhaps immediately after the opening example, or even before it.
+- **Code visibility**: All code is hidden (`echo = FALSE`). For an introductory chapter, this may be appropriate to focus on concepts. However, if students are expected to _do_ EDA, they need to see how the visualizations are constructed. Consider showing code for at least one example.
+- **Exercise depth**: The class exercises are very brief ("load data, what questions occur to you?"). Students new to EDA may flounder without more scaffolding. Consider adding guiding questions or a worked example of the question-formulation process.
+- **The father-son example is effective**: It naturally introduces scatter plots, conditional distributions (box plots by father height), and the historical origin of "regression." This is a strong pedagogical choice.
+
+---
+
+### 5. EDA Connection
+
+**Strong.** This chapter is explicitly _about_ EDA and models the exploratory mindset well. The father-son example demonstrates:
+
+- Multiple views of the same data (scatter plot → grouped box plots → histogram of differences)
+- Summary tables to quantify visual impressions
+- Historical context (Galton, Pearson, regression to the mean)
+
+**Opportunity**: The discussion of EDA vs. confirmatory analysis could be strengthened with a concrete example of how the same dataset might be approached differently under each paradigm.
+
+---
+
+### 6. Knox Handoff
+
+This chapter sets philosophical groundwork but doesn't directly prepare students for specific ML methods. The connection could be made more explicit:
+
+- EDA as the _first step_ in any ML pipeline (before feature engineering, model selection)
+- The father-son data naturally leads to linear regression (Chapter 6)
+- Diamonds data is often used for regression examples
+
+**Suggestion**: Add a brief forward reference: "In later chapters, we'll see how EDA informs the choice of ML models and helps diagnose model failures."
+
+---
+
+### 7. Revision Notes
+
+**High priority:**
+
+1. **Restructure for clarity**: Move the "What is EDA?" discussion to Section 1 or 2, so students have conceptual framing before diving into examples.
+2. **Show some code**: Reveal the R code for at least one visualization (e.g., the grouped box plot) so students see _how_ to do EDA, not just the results.
+3. **Scaffold the exercises**: The class exercises are too open-ended for beginners. Add prompts like:
+    - "How many levels does each categorical variable have?"
+    - "What is the distribution of prices? Are there outliers?"
+    - "Which variables might predict price?"
+
+**Medium priority:**
+
+4. **Connect to ML pipeline**: Add a paragraph explaining where EDA fits in the broader workflow (data → EDA → feature engineering → modeling → evaluation → interpretation).
+5. **Add a "non-example"**: Show what _bad_ analysis looks like—jumping straight to modeling without exploring the data—to reinforce why EDA matters.
+
+**Low priority:**
+
+6. **Modernize resources**: The resource list is good but could include more recent references (e.g., the `skimr` package for quick summaries, or the `DataExplorer` package for automated EDA reports).
+
+---
+
+### Summary
+
+Chapter 1 is a solid conceptual introduction that establishes the EDA philosophy through a well-chosen historical example. The main structural issue is that the _definition_ of EDA comes too late. For Masters students, the exercises need more scaffolding, and showing R code would better serve the practical goals of the course.
+
+---
+
+Ready for Chapter 2 (`conditioning.qmd`) when you are.

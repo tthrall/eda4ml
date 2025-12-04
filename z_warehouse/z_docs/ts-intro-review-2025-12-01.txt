@@ -1,0 +1,116 @@
+ts-intro-review-2025-12-01
+
+book contents as of 2025-12-01:
+
+idx_0	idx_1	file	title	n_l
+1	1	eda.qmd	Exploratory Data Analysis	250
+1	2	conditioning.qmd	Conditional Distributions	1236
+1	3	clustering.qmd	Clustering: EDA in Higher Dimensions	860
+1	4	simulation.qmd	Statistical Simulation	690
+1	5	study-design.qmd	Sampling and Study Design	690
+2	6	la-intro.qmd	Linear Regression	2018
+2	7	reduce-dim.qmd	Dimension Reduction	4514
+3	8	text-analysis.qmd	Text Analysis	696
+3	9	dirichlet-dstn.qmd	The Dirichlet Distribution	308
+3	10	latent-dirichlet-alloc.qmd	Latent Dirichlet Allocation	882
+4	11	ts-intro.qmd	Time Series Data Analysis	1048
+4	12	ts-forecast.qmd	Time Series Forecasting	2833
+4	13	ts-fourier.qmd	Time Series Spectrum Analysis	1509
+5	14	graph-theory.qmd	Graph Theory for Machine Learning	530
+6		em-algorithm.qmd	A: EM Algorithm	568
+
+TT: 
+Alright! Let me throw the time series chapters at you. I've attached `ts-intro.qmd`, `ts-forecast.qmd`, and `ts-fourier.qmd`.
+
+Claude: 
+## Chapter 11: Time Series Data Analysis — Review
+
+**File**: ts-intro.qmd | **Lines**: 1,048 | **Sections**: 12
+
+---
+
+### Core Concept
+
+Survey of time series data types and contexts: natural science (sunspots, climate, predator-prey), business/economics (earnings, stock indices), and signal processing (fMRI, speech, seismology). Introduces stationarity, autocorrelation, and effective sample size.
+
+---
+
+### Key Skills
+
+- Recognize time series data structures and contexts
+- Understand second-order stationarity
+- Compute and interpret autocorrelation functions
+- Recognize the impact of autocorrelation on variance estimation
+- Calculate effective sample size (ESS)
+
+---
+
+### Mathematical Prerequisites
+
+**Moderate.** Requires covariance, correlation, expectation operators, summation notation. The MA(1) variance derivation (lines 780-843) is more demanding but clearly worked through.
+
+---
+
+### Structure Assessment
+
+**Well-organized survey chapter:**
+
+|Section|Lines|Content|
+|---|---|---|
+|Introduction|81-92|Time vs. frequency domain framing|
+|Natural Science Examples|93-312|Sunspots, Old Faithful, climate, El Niño, predator-prey|
+|Business/Economic Examples|314-367|J&J earnings, DJIA|
+|Signal Processing Examples|369-465|fMRI, speech, earthquakes|
+|Mathematical Framework|467-883|Stationarity, ACF, variance of sample mean, ESS|
+|Closing Remarks|885-894|Resources and next steps|
+|Glossary|996-1045|Notation reference|
+
+The "example-first" structure is pedagogically sound—students see diverse applications before the mathematics.
+
+---
+
+### Strengths
+
+1. **Excellent example diversity**: Natural science, business, signal processing contexts show breadth of time series applications
+2. **Context sections for each example**: "Questions and Objectives" paragraphs (lines 111-114, 150-154, etc.) explain _why_ we analyze each dataset
+3. **Effective sample size derivation** (lines 846-883): Clear demonstration that ignoring autocorrelation leads to incorrect variance estimates—a crucial practical point
+4. **Glossary of notation** (lines 996-1045): Comprehensive reference for mathematical symbols
+5. **Good resource links** (lines 891-894): Points to Shumway & Stoffer textbook, CRAN Task View, astsa tutorials
+6. **Old Faithful as point process** (lines 122-124): Distinguishes regular time series from event data
+
+---
+
+### Weaknesses
+
+1. **Code hidden** (line 8): Students don't see `astsa::tsplot()`, `ts()`, or data manipulation code
+2. **No exercises**: Unlike other chapters, no team exercises or end-of-chapter problems
+3. **Heavy overlap with Chapter 12**: The Mathematical Framework section (lines 467-600) is nearly identical to ts-forecast.qmd lines 88-220. This duplication should be consolidated.
+4. **Missing EDA framing**: The chapter shows plots but doesn't explicitly discuss exploratory strategies for time series (what to look for, diagnostic plots, etc.)
+5. **Stationarity testing not mentioned**: Students should know tests exist (ADF, KPSS) even if not implemented here
+
+---
+
+### EDA Connection
+
+**Strong visually, weak explicitly.** The many time series plots are EDA, but the chapter doesn't frame them that way. A paragraph on "when you encounter a new time series, examine: trend, seasonality, autocorrelation structure, outliers" would help.
+
+---
+
+### Revision Recommendations
+
+**HIGH PRIORITY**
+
+1. **Eliminate duplication with Chapter 12**: The stationarity/ACF material appears in both chapters. Either consolidate in Chapter 11 (intro) and reference forward, or move entirely to Chapter 12.
+2. **Add exercises**: At minimum, 3-4 conceptual questions about recognizing time series patterns
+3. **Show some code**: At least `tsplot()` and basic `ts()` object creation
+
+**MEDIUM PRIORITY**
+
+4. **Add EDA framing paragraph**: "When exploring a new time series, examine..."
+5. **Mention stationarity tests**: Brief note that formal tests exist
+
+**LOW PRIORITY**
+
+6. **Add cross-references**: Note that forecasting (Chapter 12) and spectral analysis (Chapter 13) follow
+
+---
