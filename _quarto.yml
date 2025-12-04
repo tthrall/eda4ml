@@ -45,6 +45,7 @@ book:
         - clustering.qmd
         - simulation.qmd
         - study-design.qmd
+        - info-theory.qmd
     - part: Linear Algebra
       chapters: 
         - la-intro.qmd
