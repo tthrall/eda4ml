@@ -18,6 +18,8 @@ format:
 
 library(tidyverse)
 library(knitr)
+
+# TODO: Capitalize surnames in political polling tables
 library(eda4mldata)
 ```
 

@@ -48,6 +48,7 @@ library(tufte)
 ```{r}
 #| label: local-libraries
 
+# TODO: Capitalize surnames in political polling tables
 library(eda4mldata)
 
 ```
@@ -631,6 +632,7 @@ The next figure shows the deficits expressed in standard units. The histogram ha
 
 ```{r}
 #| label: NB10-z-score
+#| echo: true
 
 NB10_z_score <- NB10_long |> 
   dplyr::mutate(
@@ -640,6 +642,7 @@ NB10_z_score <- NB10_long |>
 
 ```{r}
 #| label: NB10-normal-approx
+#| echo: true
 
 NB10_normal_approx <- tibble::tibble(
   z = seq(
