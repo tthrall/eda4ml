@@ -21,6 +21,8 @@ library(GGally)
 library(here)
 library(ISLR2)
 library(latex2exp)
+# library(mlr3measures)
+# library(pracma)
 library(tidyverse)
 library(tinytex)
 library(UsingR)
@@ -58,26 +60,17 @@ source(here("code", "xtabs_to_jaccard.R"))
 
 ------------------------------------------------------------------------
 
-## Introduction
+## Initial Remarks
 
-When we encounter a new data set with many variables, our first challenge is simplification. With two or three variables, we can make scatterplots. But what about ten variables? Fifty? We cannot visualize high-dimensional data directly, so we need other strategies.
+In the context of machine learning, "unsupervised learning" encompasses algorithms designed to seek patterns in data, with minimal required guidance from the user, and without the benefit of a response variable (or a set of observation "labels") to be approximated by functions of predictor variables. Most but not all of these algorithms are designed for high-dimensional data, that is, data with many variables (columns).
 
-**Clustering** offers one such strategy: group observations that have similar profiles across many variables, then explore these groups. This approach is firmly in the spirit of exploratory data analysis (EDA). We are not testing hypotheses or optimizing a loss function against known labels—we are looking for unanticipated patterns in the data.
+This approach is in the spirit of exploratory data analysis (EDA), which is practically forced upon us when we come across a new data set (and can remain essential throughout the life-cycle of a project). On the one hand, EDA has no sharp measures of success that we are driven to optimize, so one might say that we're strolling through the data, taking in the scenery. On the other hand, we are looking for unanticipated patterns in the data, and therefore it is useful to record just what patterns we do anticipate, conjecture, or wonder about.
 
-In machine learning terminology, clustering is an example of **unsupervised learning**: algorithms that seek structure in data without the benefit of a response variable or observation labels. Most unsupervised methods are designed for high-dimensional settings where direct visualization fails.
+In our previous sessions we have reviewed some ways of looking at one or two variables at a time. When we are presented with a new data set having many variables, it is useful to simplify the data in some way to help us form a first impression.
 
-::: {.callout-note}
-## The EDA mindset
+One way is to look for a few functions of the many variables that somehow carry much of the original information. The prime method for doing so is principal component analysis (PCA), where the functions are linear and capture much of the variation in the data. We'll come back to PCA in subsequent sessions.
 
-Clustering shares EDA's exploratory character:
-
-- There is no single "correct" answer
-- Results depend on choices we make (distance metric, number of clusters, algorithm)
-- Interpretation requires domain knowledge
-- The goal is insight, not prediction
-:::
-
-In this chapter we'll discuss how to group observations having similar profiles. We begin with manual grouping to build intuition, then introduce K-means clustering as an algorithmic approach, and conclude with a brief look at alternative methods.
+In this session we'll discuss another way to simplify the data, namely, to group observations having similar profiles (patterns in the values of the variables). Such clustering methods are currently of great interest in both science and industry, giving rise to a number of new clustering methods.
 
 ## US Colleges
 
@@ -152,19 +145,7 @@ college_vars_tbl |> knitr::kable(
 
 ## Class Exercise
 
-Team up with a classmate and make your own copy of the `ISLR2::College` data. Spend 15 minutes exploring the data and preparing to report out to the class. Consider the following questions to guide your exploration:
-
-::: {.callout-tip}
-## Guiding questions
-
-1. **Composition:** How many private vs. public schools are in the data?
-2. **Scale:** What is the range of `Expend` (expenditure per student)? How does this compare to the range of `Grad.Rate`?
-3. **Association:** Which numeric variables appear to be correlated? Use `GGally::ggpairs()` on a subset of variables.
-4. **Expectations:** Based on your domain knowledge, what groupings would you expect to find among colleges? Elite vs. non-elite? Large vs. small? Research-focused vs. teaching-focused?
-5. **Questions:** What questions about colleges might clustering help answer?
-:::
-
-Record your observations and conjectures. Which of these could be addressed by the available variables?
+Team up with a classmate and make your own copy of the `ISLR2::College` data. Record your questions and conjectures about the data. Which of these could be addressed by the set of data variables? Take 15 minutes to prepare to report out to the class.
 
 ## Grouping Variables
 
@@ -337,53 +318,74 @@ So how well do the groups constructed above perform against these criteria? We w
 
 ### Standardizing variables
 
-The following table shows the range (minimum, maximum) of each numeric variable in the college data.
+The following table lists the mean, standard deviation, and coefficient of variation $(cv = \frac{sd}{mean})$ per variable. The variables having the largest mean value are listed first.
 
 ```{r}
-#| label: college-ranges
+#| label: college-moments
 
-# calculate range of each numeric variable
-college_ranges <- college_factors |> 
+# calculate unconditional mean and sd of each numeric variable
+
+college_means <- college_factors |> 
   # remove original non-numeric variables
   dplyr::select(- college_name, - Private) |> 
   # remove grouping variables
   dplyr::select(- top_10_fct, - expend_fct, - grp_lbl) |> 
+  # vector of mean values per group
   dplyr::summarise(dplyr::across(
     .cols = tidyselect::everything(), 
-    .fns  = list(
-      min = ~ min(.x, na.rm = TRUE),
-      max = ~ max(.x, na.rm = TRUE)
-    )
+    .fns  = ~ mean(.x, na.rm = TRUE)
   )) |> 
+  # pivot row vector to column vector
   tidyr::pivot_longer(
-    cols = everything(),
-    names_to = c("var", ".value"),
-    names_pattern = "(.*)_(.*)"
+    cols = tidyselect::everything(), 
+    names_to = "var", 
+    values_to = "mean"
+  )
+
+college_std_devs <- college_factors |> 
+  # remove original non-numeric variables
+  dplyr::select(- college_name, - Private) |> 
+  # remove grouping variables
+  dplyr::select(- top_10_fct, - expend_fct, - grp_lbl) |> 
+  # vector of mean values per group
+  dplyr::summarise(dplyr::across(
+    .cols = everything(), 
+    .fns  = ~ sd(.x, na.rm = TRUE)
+  )) |> 
+  # pivot row vector to column vector
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "var", 
+    values_to = "sd"
+  )
+
+college_moments <- college_means |> 
+  dplyr::left_join(
+    y  = college_std_devs, 
+    by = "var"
   ) |> 
-  dplyr::mutate(range = max - min) |> 
-  dplyr::arrange(desc(range))
+  dplyr::mutate(cv = sd / mean) |> 
+  dplyr::arrange(desc(mean))
 ```
 
 ```{r}
-#| label: tbl-college-ranges
-#| tbl-cap: "College variables: range (max - min)"
+#| label: tbl-college-moments
+#| tbl-cap: "College variables: mean, sd, and cv = sd/mean"
 
-college_ranges |> 
-  dplyr::slice_head(n = 8) |>
-  knitr::kable(
-    caption = "Variables with largest ranges", 
-    col.names = c("variable", "min", "max", "range"), 
-    digits = 0
-  )
+college_moments |> knitr::kable(
+  caption = "Mean, SD, and CV = SD/Mean", 
+  col.names = c("variable", "mean", "sd", "cv"), 
+  digits = 1
+)
 ```
 
-The financial variables and enrollment counts range into the tens of thousands, whereas the percentages merely range from 0 to 100. If we compute Euclidean distances using raw values, the high-range variables will dominate. A difference of 1,000 in `Apps` would overwhelm a difference of 10 in `Grad.Rate`, even though both might represent meaningful distinctions.
+The financial variables are measured in thousands of dollars, whereas the percentages merely range from 0 to 100. The percentages thus contribute little to the overall Euclidean distance from a point (vector of observed numeric values) to a mean vector. Consequently the percentages will have little influence on calculations of clustering effectiveness based on Euclidean distances.
 
-This issue can be addressed by **standardizing** each numeric variable: subtract the overall mean and divide by the standard deviation. The result is a **z-score**:
+This issue can be addressed in a few different ways. For now we standardize each numeric variable: subtract the overall mean of the variable (across all observations) and then divide by the corresponding standard deviation of the variable. This will make the respective scales of the variables more compatible.
 
-$$z_j = \frac{x_j - \bar{x}_j}{s_j}$$
+### Within-group distances in standard units
 
-After standardization, all variables have mean 0 and standard deviation 1. A 1-unit difference in any standardized variable represents one standard deviation—a comparable "statistical distance" across all variables.
+Having standardized the college numeric variables we now calculate Euclidean distances. That is, within each group we calculate the distance of each point to the group mean vector. This vector of point-minus-mean is referred to as "error" (more precisely, "mean deviation") in statistical parlance. We calculate the squared Euclidean length of this vector, and sum these squared distances across all points in the group. The result is called the (within-group) sum of squared errors (SSE). Here are the calculated SSE values (and related statistics) per group.
 
 ```{r}
 #| label: college-z-scores
@@ -403,25 +405,6 @@ college_z_scores <- college_factors |>
 # count numeric variables (exclude grp_lbl)
 n_z_score_vars <- ncol(college_z_scores) - 1L
 ```
-
-The code below demonstrates the z-score transformation:
-  
-```{r}
-#| label: z-score-demo
-#| echo: true
-#| eval: false
-
-# Standardize numeric variables to z-scores
-college_z_scores <- college_numeric |> 
-  dplyr::mutate(across(
-    .cols = everything(), 
-    .fns  = ~ (.x - mean(.x)) / sd(.x)
-  ))
-```
-
-### Within-group distances in standard units
-
-Having standardized the college numeric variables we now calculate Euclidean distances. That is, within each group we calculate the distance of each point to the group mean vector. This vector of point-minus-mean is referred to as "error" (more precisely, "mean deviation") in statistical parlance. We calculate the squared Euclidean length of this vector, and sum these squared distances across all points in the group. The result is called the (within-group) sum of squared errors (SSE). Here are the calculated SSE values (and related statistics) per group.
 
 ```{r}
 #| label: coll-z-stats-per-grp
@@ -516,7 +499,7 @@ The columns of the table are as follows.
 
 -   group: the label of each group
 -   count: the number of observations (data rows)
--   df: count minus the number of numeric variables (`r n_z_score_vars`)
+-   df: count minus the number of numeric values (`r n_z_score_vars`)
 -   RMSE: $\surd{\text{MSE}}$
 -   MSE: SSE / df
 -   SSE: sum of squared point-center distances
@@ -531,18 +514,18 @@ We'll start our discussion of clustering using a function in the R `stats` packa
 
 Given a set of cluster centers the algorithm iteratively searches for a better set, meaning a set having a smaller "within-cluster sum of squares". In broad terms, this is done in two steps.
 
-1.  **Assign:** the algorithm assigns each data point to the nearest center (in Euclidean distance) thereby partitioning the data points into $K$ clusters.
-2.  **Update:** For each cluster of data points, the algorithm calculates a new cluster center, namely, the mean vector of the data points within the cluster. This yields a new set of cluster centers.
+1.  Assign: the algorithm assigns each data point to the nearest center (in Euclidean distance) thereby partitioning the data points into $K$ clusters.
+2.  Update: For each cluster of data points, the algorihtm calculates a new cluster center, namely, the mean vector of the data points within the cluster. This yields a new set of cluster centers.
 
-**Convergence criteria:** For each cluster the algorithm adds up the (point, center) squared distances. Those $K$ sums of squares per cluster are summed across clusters to form the "total within-cluster sum of squares (WCSS)" (previously referred to as the "total within-group SSE"). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the "between-cluster sum of squares (BCSS)".[^BCSS-WCSS] The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.
+Convergence criteria: For each cluster the algorithm adds up the (point, center) squared distances. Those $K$ sums of squares per cluster are summed acrosss clusters to form the "total within-cluster sum of squares (WCSS)" (previously referred to as the "total within-group SSE"). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the "between-cluster sum of squares (BCSS)".[^1] The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.
 
-[^BCSS-WCSS]: The sum of squared (point, grand-mean) distances does not depend on any grouping (clustering) of the observations, and is called the "total sum of squares". The between-cluster sum of squares (BCSS) equals the total sum of squares minus the within-cluster sum of squares. BCSS is also equal to a weighted sum of (cluster-center, grand-mean) squared distances.
+[^1]: The sum of squared (point, grand-mean) distances does not depend on any grouping (clustering) of the observations, and is called the "total sum of squares". The between-cluster sum of squares (BCSS) equals the total sum of squares minus the within-cluster sum of squares. BCSS is also equal to a weighted sum of (cluster-center, grand-mean) squared distances.
 
-### Results for specified initial cluster centers
+### Results for specified inital cluster centers
 
-We now provide the `kmeans()` function with cluster centers in the form of the group means calculated above.[^k-means]
+We now provide the `kmeans()` function with cluster centers in the form of the group means calculated above.[^2]
 
-[^k-means]: `kmeans()` expects the cluster centers to be expressed as a matrix, in which each *row* represents a single cluster center and each column represents a "coordinate" of the cluster centers corresponding to one of the numeric variables (columns) of the data matrix.
+[^2]: `kmeans()` expects the cluster centers to be expressed as a matrix, in which each *row* represents a single cluster center and each column represents a "coordinate" of the cluster centers corresponding to one of the numeric variables (columns) of the data matrix.
 
 The resulting clusters are shown in the scatter diagrams below, where for purposes of comparison we have projected the clusters onto the grouping variables we previously adopted.
 
@@ -593,7 +576,7 @@ g_top_10_Expend_kmc <- college_km_ctrs |>
 g_top_10_Expend_kmc
 ```
 
-### Manual grouping versus K-means
+### Jaccard similarity
 
 The figure above shows that the `kmeans()` clusters are distinct from but similar to the groups formed above whose mean values served as initial cluster centers. Here are the number of observations belonging to each combination of $g_{x,y}$ group and `kmeans()` cluster.
 
@@ -608,11 +591,7 @@ xtabs_cluster_grp <- xtabs(
 xtabs_cluster_grp
 ```
 
-Some clusters align well with manual groups (e.g., clusters largely contained within a single group), while others split across groups. This comparison helps us understand whether the algorithm is finding structure similar to what we might construct manually.
-
-### Jaccard similarity
-
-The table above provides in more detail the similarities and differences between the initial (`grp_lbl`) and final (`cluster`) clusters from `kmeans()`. The table can be represented and summarized by [Jaccard's measure](https://en.wikipedia.org/wiki/Jaccard_index) of the similarity of two finite sets, $(A, B)$, namely:
+The table above provides in more detail the similarities and differences between the inital (`grp_lbl`) and final (`cluster`) clusters from `kmeans()`. The table can be represented and summarized by [Jaccard's measure](https://en.wikipedia.org/wiki/Jaccard_index) of the similarity of two finite sets, $(A, B)$, namely:
 
 $$
 \begin{align}
@@ -659,12 +638,6 @@ jaccard_cluster_grp_avg <- jaccard_cluster_grp_lst [[2]]
 ```
 
 The weighted average (weighted by cell count) of these similarity values is `r round(jaccard_cluster_grp_avg, 2)`.
-
-The Jaccard index is useful for comparing clusterings:
-
-- **Compare K-means runs:** Are different random starts converging to similar solutions?
-- **Compare to known groupings:** Does the algorithm recover expected structure?
-- **Assess stability:** How much does the clustering change with different parameter choices?
 
 ### Distribution of point-center distances
 
@@ -720,27 +693,6 @@ Let's run `kmeans()` again, this time specifying only the desired number $K$ of 
 To make the algorithm more robust we specify parameter `nstart`, the number times to run `kmeans()`, each using a distinct random selection of data rows as initial cluster centers. For each run the algorithm computes WCSS (the total within-cluster sum of squares). Once `nstart` runs have been completed, the run having the smallest value of WCSS is reported to the user. A rule of thumb is to set `nstart` to a value between 20 and 50.
 
 We now run `kmeans()` again, setting $K = 4$ and `nstart = 25`. For purposes of comparison with previous results, here is a projection of the resulting 4 clusters onto a (Top10perc, Expend) scatter diagram.
-
-The key code for running K-means with multiple random starts:
-
-```{r}
-#| label: kmeans-code-demo
-#| echo: true
-#| eval: false
-
-# K-means with multiple random starts for robustness
-kmeans_result <- college_z_scores |>
-  dplyr::select(-grp_lbl) |>
-  stats::kmeans(
-    centers = 4,      # number of clusters
-    nstart  = 25      # number of random starts
-  )
-
-# Extract results
-kmeans_result$cluster       # cluster assignments
-kmeans_result$centers       # cluster centroids  
-kmeans_result$tot.withinss  # total within-cluster SS
-```
 
 ```{r}
 #| label: m-kmeans-nstart
@@ -848,27 +800,6 @@ So far in our application of `kmeans()` to the college data we have set $K = 4$.
 
 For the college data, the figure below shows how WCSS decreases as $K$ increases.
 
-The code to generate the elbow plot:
-
-```{r}
-#| label: elbow-code-demo
-#| echo: true
-#| eval: false
-
-# Compute WCSS for different values of K
-wcss_by_k <- tibble::tibble(k = 2:12) |> 
-  dplyr::mutate(
-    wcss = purrr::map_dbl(k, ~ {
-      kmeans(college_z, centers = .x, nstart = 20)$tot.withinss
-    })
-  )
-
-# Plot WCSS vs K (elbow plot)
-ggplot(wcss_by_k, aes(x = k, y = wcss)) +
-  geom_line() + geom_point() +
-  labs(x = "Number of clusters (K)", y = "Within-cluster SS")
-```
-
 ```{r}
 #| label: mk-tbl
 
@@ -909,7 +840,6 @@ g_mk_tbl <- mk_tbl |>
     name = "K", 
     breaks = seq(2, 12, 2)) + 
   ggplot2::geom_line() + 
-  ggplot2::geom_point() +
   ggplot2::labs(
     title = "WCSS versus K for college z-scores", 
     subtitle = "(nstart = 20)")
@@ -918,153 +848,32 @@ g_mk_tbl
 
 In general, smaller values of $K$ are more interpretable. Based on the figure above we might set $K$ to be 4 or 5. This is a judgement call that depends on the circumstances and goals of one's project.
 
-::: {.callout-note}
-## The elbow method
-
-Look for an "elbow" in the plot—a point where the rate of decrease in WCSS sharply levels off. Before the elbow, adding clusters captures real structure. After the elbow, we see diminishing returns.
-
-The elbow is often subjective; domain knowledge and interpretability should also guide your choice of $K$.
-:::
-
-## Interpreting the Clusters
-
-Clustering is not complete until we interpret what the clusters mean. The algorithm found groups—now we ask what characterizes each one.
-
-```{r}
-#| label: cluster-profiles
-
-# Add cluster assignments to original data
-college_with_clusters <- college |> 
-  dplyr::mutate(cluster = factor(m_kmeans_nstart$cluster))
-
-# Compute cluster profiles
-cluster_profiles <- college_with_clusters |> 
-  dplyr::group_by(cluster) |> 
-  dplyr::summarise(
-    n = n(),
-    Pct_Private = mean(Private == "Yes") * 100,
-    Top10perc = mean(Top10perc),
-    Expend = mean(Expend),
-    Grad.Rate = mean(Grad.Rate),
-    F.Undergrad = mean(F.Undergrad),
-    Outstate = mean(Outstate),
-    .groups = "drop"
-  )
-```
-
-```{r}
-#| label: tbl-cluster-profiles
-#| tbl-cap: "Cluster profiles: mean values for selected variables"
-
-cluster_profiles |> 
-  knitr::kable(
-    digits = 0,
-    col.names = c("Cluster", "n", "% Private", "Top10%", 
-                  "Expend", "Grad Rate", "Enrollment", "Outstate")
-  )
-```
-
-Review of these profiles and additional variable summaries suggests the following interpretations:
-
-::: {.callout-tip}
-## Cluster interpretation (example)
-
-The specific cluster numbers may vary depending on random seed, but typical patterns in college data include:
-
-- **High-resource selective schools:** High `Top10perc`, high `Expend`, high `Outstate`, mostly private—likely elite private institutions
-- **Large public universities:** High `F.Undergrad`, lower `Expend` per student, lower `Outstate`—flagship state universities
-- **Regional/teaching-focused:** Moderate values across metrics, mix of private and public
-- **Open-access institutions:** Lower `Top10perc`, lower `Expend`, lower graduation rates
-
-Does this match your domain knowledge about the US higher education landscape?
-:::
-
-This interpretive step is essential. Without it, clustering remains a mathematical exercise. With it, clustering becomes a tool for generating insights and hypotheses.
-
-## Other Clustering Algorithms
+## Other clustering algorithms
 
 Clustering methods are an active area of research. The K-means algorithm, first introduced in the 1930's, has the longest history. More recent methods can be categorized along the following lines.
 
--   **Soft versus Hard:** "Hard" clustering assigns each data point to a single cluster. "Soft" clustering assigns to each point a finite probability distribution of cluster membership.
+-   Soft versus Hard: "Hard" clustering assigns each data point to a single cluster. "Soft" clustering assigns to each point a finite probability distribution of cluster membership.
 
--   **Agglomerative versus Divisive:** methods define the initial partition of the data into clusters in opposite ways. Agglomerative clustering initially defines each data point to be a cluster, and then merges clusters. Divisive clustering initially defines the entire data set to be a single cluster, and then breaks up this and subsequent clusters into smaller clusters.
+-   Agglomerative versus Divisive methods define the initial partition of the data into clusters in opposite ways. Agglomerative clustering initially defines each data point to be a cluster, and then merges clusters. Divisive clustering initially defines the entire data set to be a single cluster, and then breaks up this and subsequent clusters into smaller clusters.
 
--   **Hierarchical or not:** Instead of a partition, hierarchical methods create a hierarchy of parent (superset) and child (subset) clusters.
+-   Hierarchical or not: Instead of a partition, hierarchical methods create a hierarchy of parent (superset) and child (subset) clusters.
 
--   **Centroid-based versus Density-based:** K-means and other centroid-based methods identify a cluster of points with the mean, median, or other central measure of the points in the cluster. Density-based methods find areas having a high density of points.
+-   Centroid-based versus Density-based: K-means and other centroid-based methods identify a cluster of points with the mean, median, or other central measure of the points in the cluster. Density-based methods find areas having a high density of points.
 
 Some methods of note are [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) (Density Based Spatial Clustering of Applications with Noise) and [HDBSCAN](https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html) (a hierarchical version of DBSCAN).
 
-### Example: DBSCAN
-
-Unlike K-means, DBSCAN does not require specifying the number of clusters in advance. Instead, it finds clusters based on density—regions where points are packed closely together. Points in sparse regions are labeled as noise.
-
-```{r}
-#| label: dbscan-demo
-#| echo: true
-
-# DBSCAN clustering on standardized college data
-dbscan_result <- college_z_scores |> 
-  dplyr::select(-grp_lbl) |> 
-  dbscan::dbscan(eps = 2.5, minPts = 10)
-
-# Cluster assignments (0 = noise)
-table(dbscan_result$cluster)
-```
-
-```{r}
-#| label: fig-dbscan
-#| fig-cap: "DBSCAN clusters (0 = noise points)"
-
-college_z_scores |> 
-  dplyr::mutate(cluster = factor(dbscan_result$cluster)) |> 
-  ggplot2::ggplot(ggplot2::aes(
-    x = Top10perc, y = Expend, 
-    color = cluster, shape = cluster
-  )) +
-  ggplot2::geom_point(alpha = 0.6) +
-  ggplot2::labs(
-    title = "DBSCAN clustering",
-    subtitle = "eps = 2.5, minPts = 10"
-  )
-```
-
-DBSCAN's key parameters are `eps` (the neighborhood radius) and `minPts` (minimum points to form a dense region). Points not belonging to any dense region are classified as noise (cluster 0). This can be useful for identifying outliers or when clusters have irregular shapes.
-
-::: {.callout-note}
-## When to use DBSCAN vs K-means
-
-- **K-means:** Works well when clusters are roughly spherical and similar in size. Requires specifying $K$.
-- **DBSCAN:** Works well for clusters of arbitrary shape, can identify outliers, doesn't require specifying $K$. Sensitive to the choice of `eps` and `minPts`.
-:::
-
 ## Team Exercises
 
-1.  **Iris data:** Submit R command `help("iris")` to learn about the measurements of iris flowers available in R as `datasets::iris`. Summarise these measurements in a graph or table, for example by applying the `GGally::ggpairs()` function.
+1.  Iris data: Submit R command `help("iris")` to learn about the measurements of iris flowers available in R as `datasets::iris`. Summarise these measurements in a graph or table, for example by applying the `GGally::ggpairs()` function.
 
-2.  **Iris K-means:** Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable `Species`? Count the number of observations corresponding to each combination of cluster and `Species`, for example by using R function `stats::xtabs()`.
-
-3.  **Wine quality data (optional):** The `eda4mldata::wine_quality` dataset contains chemical measurements of wines. Apply K-means clustering to the numeric variables and interpret the resulting clusters. Do they correspond to quality ratings or wine color?
-
-## Connections to Machine Learning
-
-Clustering connects to supervised learning in several ways:
-
-::: {.callout-note}
-## ML connections
-
-- **Preprocessing:** Standardization (z-scores) is essential for many ML algorithms, not just clustering.
-- **Feature engineering:** Cluster membership can become a derived feature for supervised models.
-- **Model selection:** The elbow heuristic parallels cross-validation and regularization—balancing fit against complexity.
-- **Loss minimization:** K-means minimizes WCSS, a precursor to the loss functions used in supervised learning.
-:::
+2.  Iris K-means: Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable `Species`? Count the number of observations corresponding to each combination of cluster and `Species`, for example by using R function `stats::xtabs()`.
 
 ## Resources
 
 [An Introduction to Statistical Learning](https://www.statlearning.com/) by James, Witten, Hastie, & Tibshirani
 
 [K-means clustering with tidy data principles – tidymodels](https://www.tidymodels.org/learn/statistics/k-means/)
- 
+
 [tidyclust::k_means](https://tidyclust.tidymodels.org/articles/k_means.html)
 
 [Cluster analysis - Wikipedia](https://en.wikipedia.org/wiki/Cluster_analysis)

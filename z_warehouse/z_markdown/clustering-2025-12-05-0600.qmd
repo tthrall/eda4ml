@@ -58,7 +58,7 @@ source(here("code", "xtabs_to_jaccard.R"))
 
 ------------------------------------------------------------------------
 
-## Introduction
+## Initial Remarks
 
 When we encounter a new data set with many variables, our first challenge is simplification. With two or three variables, we can make scatterplots. But what about ten variables? Fifty? We cannot visualize high-dimensional data directly, so we need other strategies.
 
@@ -516,7 +516,7 @@ The columns of the table are as follows.
 
 -   group: the label of each group
 -   count: the number of observations (data rows)
--   df: count minus the number of numeric variables (`r n_z_score_vars`)
+-   df: count minus the number of numeric values (`r n_z_score_vars`)
 -   RMSE: $\surd{\text{MSE}}$
 -   MSE: SSE / df
 -   SSE: sum of squared point-center distances
@@ -534,15 +534,15 @@ Given a set of cluster centers the algorithm iteratively searches for a better s
 1.  **Assign:** the algorithm assigns each data point to the nearest center (in Euclidean distance) thereby partitioning the data points into $K$ clusters.
 2.  **Update:** For each cluster of data points, the algorithm calculates a new cluster center, namely, the mean vector of the data points within the cluster. This yields a new set of cluster centers.
 
-**Convergence criteria:** For each cluster the algorithm adds up the (point, center) squared distances. Those $K$ sums of squares per cluster are summed across clusters to form the "total within-cluster sum of squares (WCSS)" (previously referred to as the "total within-group SSE"). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the "between-cluster sum of squares (BCSS)".[^BCSS-WCSS] The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.
+**Convergence criteria:** For each cluster the algorithm adds up the (point, center) squared distances. Those $K$ sums of squares per cluster are summed across clusters to form the "total within-cluster sum of squares (WCSS)" (previously referred to as the "total within-group SSE"). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the "between-cluster sum of squares (BCSS)".[^1] The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.
 
-[^BCSS-WCSS]: The sum of squared (point, grand-mean) distances does not depend on any grouping (clustering) of the observations, and is called the "total sum of squares". The between-cluster sum of squares (BCSS) equals the total sum of squares minus the within-cluster sum of squares. BCSS is also equal to a weighted sum of (cluster-center, grand-mean) squared distances.
+[^1]: The sum of squared (point, grand-mean) distances does not depend on any grouping (clustering) of the observations, and is called the "total sum of squares". The between-cluster sum of squares (BCSS) equals the total sum of squares minus the within-cluster sum of squares. BCSS is also equal to a weighted sum of (cluster-center, grand-mean) squared distances.
 
-### Results for specified initial cluster centers
+### Results for specified inital cluster centers
 
-We now provide the `kmeans()` function with cluster centers in the form of the group means calculated above.[^k-means]
+We now provide the `kmeans()` function with cluster centers in the form of the group means calculated above.[^2]
 
-[^k-means]: `kmeans()` expects the cluster centers to be expressed as a matrix, in which each *row* represents a single cluster center and each column represents a "coordinate" of the cluster centers corresponding to one of the numeric variables (columns) of the data matrix.
+[^2]: `kmeans()` expects the cluster centers to be expressed as a matrix, in which each *row* represents a single cluster center and each column represents a "coordinate" of the cluster centers corresponding to one of the numeric variables (columns) of the data matrix.
 
 The resulting clusters are shown in the scatter diagrams below, where for purposes of comparison we have projected the clusters onto the grouping variables we previously adopted.
 
@@ -612,7 +612,7 @@ Some clusters align well with manual groups (e.g., clusters largely contained wi
 
 ### Jaccard similarity
 
-The table above provides in more detail the similarities and differences between the initial (`grp_lbl`) and final (`cluster`) clusters from `kmeans()`. The table can be represented and summarized by [Jaccard's measure](https://en.wikipedia.org/wiki/Jaccard_index) of the similarity of two finite sets, $(A, B)$, namely:
+The table above provides in more detail the similarities and differences between the inital (`grp_lbl`) and final (`cluster`) clusters from `kmeans()`. The table can be represented and summarized by [Jaccard's measure](https://en.wikipedia.org/wiki/Jaccard_index) of the similarity of two finite sets, $(A, B)$, namely:
 
 $$
 \begin{align}

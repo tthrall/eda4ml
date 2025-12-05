@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -191,6 +226,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -205,13 +246,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
   </div>
 </li>
       </ul>
@@ -228,19 +269,19 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
   </div>
 </li>
       </ul>
@@ -257,19 +298,19 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -286,7 +327,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
   </div>
 </li>
       </ul>
@@ -303,7 +344,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
   </div>
 </li>
       </ul>
@@ -311,7 +352,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -330,7 +371,7 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#initial-remarks" id="toc-initial-remarks" class="nav-link active" data-scroll-target="#initial-remarks"><span class="header-section-number">3.1</span> Initial Remarks</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">3.1</span> Introduction</a></li>
   <li><a href="#us-colleges" id="toc-us-colleges" class="nav-link" data-scroll-target="#us-colleges"><span class="header-section-number">3.2</span> US Colleges</a></li>
   <li><a href="#class-exercise" id="toc-class-exercise" class="nav-link" data-scroll-target="#class-exercise"><span class="header-section-number">3.3</span> Class Exercise</a></li>
   <li><a href="#grouping-variables" id="toc-grouping-variables" class="nav-link" data-scroll-target="#grouping-variables"><span class="header-section-number">3.4</span> Grouping Variables</a>
@@ -342,15 +383,21 @@ window.Quarto = {
   </ul></li>
   <li><a href="#k-means-clustering" id="toc-k-means-clustering" class="nav-link" data-scroll-target="#k-means-clustering"><span class="header-section-number">3.5</span> K-means Clustering</a>
   <ul>
-  <li><a href="#results-for-specified-inital-cluster-centers" id="toc-results-for-specified-inital-cluster-centers" class="nav-link" data-scroll-target="#results-for-specified-inital-cluster-centers"><span class="header-section-number">3.5.1</span> Results for specified inital cluster centers</a></li>
-  <li><a href="#jaccard-similarity" id="toc-jaccard-similarity" class="nav-link" data-scroll-target="#jaccard-similarity"><span class="header-section-number">3.5.2</span> Jaccard similarity</a></li>
-  <li><a href="#distribution-of-point-center-distances" id="toc-distribution-of-point-center-distances" class="nav-link" data-scroll-target="#distribution-of-point-center-distances"><span class="header-section-number">3.5.3</span> Distribution of point-center distances</a></li>
-  <li><a href="#results-for-random-initial-cluster-centers" id="toc-results-for-random-initial-cluster-centers" class="nav-link" data-scroll-target="#results-for-random-initial-cluster-centers"><span class="header-section-number">3.5.4</span> Results for random initial cluster centers</a></li>
-  <li><a href="#which-value-of-k" id="toc-which-value-of-k" class="nav-link" data-scroll-target="#which-value-of-k"><span class="header-section-number">3.5.5</span> Which value of <span class="math inline">\(K\)</span>?</a></li>
+  <li><a href="#results-for-specified-initial-cluster-centers" id="toc-results-for-specified-initial-cluster-centers" class="nav-link" data-scroll-target="#results-for-specified-initial-cluster-centers"><span class="header-section-number">3.5.1</span> Results for specified initial cluster centers</a></li>
+  <li><a href="#manual-grouping-versus-k-means" id="toc-manual-grouping-versus-k-means" class="nav-link" data-scroll-target="#manual-grouping-versus-k-means"><span class="header-section-number">3.5.2</span> Manual grouping versus K-means</a></li>
+  <li><a href="#jaccard-similarity" id="toc-jaccard-similarity" class="nav-link" data-scroll-target="#jaccard-similarity"><span class="header-section-number">3.5.3</span> Jaccard similarity</a></li>
+  <li><a href="#distribution-of-point-center-distances" id="toc-distribution-of-point-center-distances" class="nav-link" data-scroll-target="#distribution-of-point-center-distances"><span class="header-section-number">3.5.4</span> Distribution of point-center distances</a></li>
+  <li><a href="#results-for-random-initial-cluster-centers" id="toc-results-for-random-initial-cluster-centers" class="nav-link" data-scroll-target="#results-for-random-initial-cluster-centers"><span class="header-section-number">3.5.5</span> Results for random initial cluster centers</a></li>
+  <li><a href="#which-value-of-k" id="toc-which-value-of-k" class="nav-link" data-scroll-target="#which-value-of-k"><span class="header-section-number">3.5.6</span> Which value of <span class="math inline">\(K\)</span>?</a></li>
   </ul></li>
-  <li><a href="#other-clustering-algorithms" id="toc-other-clustering-algorithms" class="nav-link" data-scroll-target="#other-clustering-algorithms"><span class="header-section-number">3.6</span> Other clustering algorithms</a></li>
-  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">3.7</span> Team Exercises</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">3.8</span> Resources</a></li>
+  <li><a href="#interpreting-the-clusters" id="toc-interpreting-the-clusters" class="nav-link" data-scroll-target="#interpreting-the-clusters"><span class="header-section-number">3.6</span> Interpreting the Clusters</a></li>
+  <li><a href="#other-clustering-algorithms" id="toc-other-clustering-algorithms" class="nav-link" data-scroll-target="#other-clustering-algorithms"><span class="header-section-number">3.7</span> Other Clustering Algorithms</a>
+  <ul>
+  <li><a href="#example-dbscan" id="toc-example-dbscan" class="nav-link" data-scroll-target="#example-dbscan"><span class="header-section-number">3.7.1</span> Example: DBSCAN</a></li>
+  </ul></li>
+  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">3.8</span> Team Exercises</a></li>
+  <li><a href="#connections-to-machine-learning" id="toc-connections-to-machine-learning" class="nav-link" data-scroll-target="#connections-to-machine-learning"><span class="header-section-number">3.9</span> Connections to Machine Learning</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">3.10</span> Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/clustering.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -376,7 +423,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:28 Thu 4-Dec-2025</p>
+      <p class="date">06:34 Fri 5-Dec-2025</p>
     </div>
   </div>
   
@@ -389,13 +436,31 @@ window.Quarto = {
 
 
 <hr>
-<section id="initial-remarks" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="initial-remarks"><span class="header-section-number">3.1</span> Initial Remarks</h2>
-<p>In the context of machine learning, “unsupervised learning” encompasses algorithms designed to seek patterns in data, with minimal required guidance from the user, and without the benefit of a response variable (or a set of observation “labels”) to be approximated by functions of predictor variables. Most but not all of these algorithms are designed for high-dimensional data, that is, data with many variables (columns).</p>
-<p>This approach is in the spirit of exploratory data analysis (EDA), which is practically forced upon us when we come across a new data set (and can remain essential throughout the life-cycle of a project). On the one hand, EDA has no sharp measures of success that we are driven to optimize, so one might say that we’re strolling through the data, taking in the scenery. On the other hand, we are looking for unanticipated patterns in the data, and therefore it is useful to record just what patterns we do anticipate, conjecture, or wonder about.</p>
-<p>In our previous sessions we have reviewed some ways of looking at one or two variables at a time. When we are presented with a new data set having many variables, it is useful to simplify the data in some way to help us form a first impression.</p>
-<p>One way is to look for a few functions of the many variables that somehow carry much of the original information. The prime method for doing so is principal component analysis (PCA), where the functions are linear and capture much of the variation in the data. We’ll come back to PCA in subsequent sessions.</p>
-<p>In this session we’ll discuss another way to simplify the data, namely, to group observations having similar profiles (patterns in the values of the variables). Such clustering methods are currently of great interest in both science and industry, giving rise to a number of new clustering methods.</p>
+<section id="introduction" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
+<p>When we encounter a new data set with many variables, our first challenge is simplification. With two or three variables, we can make scatterplots. But what about ten variables? Fifty? We cannot visualize high-dimensional data directly, so we need other strategies.</p>
+<p><strong>Clustering</strong> offers one such strategy: group observations that have similar profiles across many variables, then explore these groups. This approach is firmly in the spirit of exploratory data analysis (EDA). We are not testing hypotheses or optimizing a loss function against known labels—we are looking for unanticipated patterns in the data.</p>
+<p>In machine learning terminology, clustering is an example of <strong>unsupervised learning</strong>: algorithms that seek structure in data without the benefit of a response variable or observation labels. Most unsupervised methods are designed for high-dimensional settings where direct visualization fails.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The EDA mindset
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Clustering shares EDA’s exploratory character:</p>
+<ul>
+<li>There is no single “correct” answer</li>
+<li>Results depend on choices we make (distance metric, number of clusters, algorithm)</li>
+<li>Interpretation requires domain knowledge</li>
+<li>The goal is insight, not prediction</li>
+</ul>
+</div>
+</div>
+<p>In this chapter we’ll discuss how to group observations having similar profiles. We begin with manual grouping to build intuition, then introduce K-means clustering as an algorithmic approach, and conclude with a brief look at alternative methods.</p>
 </section>
 <section id="us-colleges" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="us-colleges"><span class="header-section-number">3.2</span> US Colleges</h2>
@@ -503,7 +568,27 @@ Table&nbsp;3.1: Variables in the ISLR2::College data set
 </section>
 <section id="class-exercise" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="class-exercise"><span class="header-section-number">3.3</span> Class Exercise</h2>
-<p>Team up with a classmate and make your own copy of the <code>ISLR2::College</code> data. Record your questions and conjectures about the data. Which of these could be addressed by the set of data variables? Take 15 minutes to prepare to report out to the class.</p>
+<p>Team up with a classmate and make your own copy of the <code>ISLR2::College</code> data. Spend 15 minutes exploring the data and preparing to report out to the class. Consider the following questions to guide your exploration:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Guiding questions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Composition:</strong> How many private vs.&nbsp;public schools are in the data?</li>
+<li><strong>Scale:</strong> What is the range of <code>Expend</code> (expenditure per student)? How does this compare to the range of <code>Grad.Rate</code>?</li>
+<li><strong>Association:</strong> Which numeric variables appear to be correlated? Use <code>GGally::ggpairs()</code> on a subset of variables.</li>
+<li><strong>Expectations:</strong> Based on your domain knowledge, what groupings would you expect to find among colleges? Elite vs.&nbsp;non-elite? Large vs.&nbsp;small? Research-focused vs.&nbsp;teaching-focused?</li>
+<li><strong>Questions:</strong> What questions about colleges might clustering help answer?</li>
+</ol>
+</div>
+</div>
+<p>Record your observations and conjectures. Which of these could be addressed by the available variables?</p>
 </section>
 <section id="grouping-variables" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="grouping-variables"><span class="header-section-number">3.4</span> Grouping Variables</h2>
@@ -637,127 +722,73 @@ Table&nbsp;3.2: (<code>Top10perc</code>, <code>Expend</code>): mean values per g
 </section>
 <section id="standardizing-variables" class="level3" data-number="3.4.3">
 <h3 data-number="3.4.3" class="anchored" data-anchor-id="standardizing-variables"><span class="header-section-number">3.4.3</span> Standardizing variables</h3>
-<p>The following table lists the mean, standard deviation, and coefficient of variation <span class="math inline">\((cv = \frac{sd}{mean})\)</span> per variable. The variables having the largest mean value are listed first.</p>
+<p>The following table shows the range (minimum, maximum) of each numeric variable in the college data.</p>
 <div class="cell">
-<div id="tbl-college-moments" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-college-ranges" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-college-moments-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.3: College variables: mean, sd, and cv = sd/mean
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-college-ranges-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.3: College variables: range (max - min)
 </figcaption>
-<div aria-describedby="tbl-college-moments-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-college-ranges-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Mean, SD, and CV = SD/Mean</caption>
+<caption>Variables with largest ranges</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">variable</th>
-<th style="text-align: right;">mean</th>
-<th style="text-align: right;">sd</th>
-<th style="text-align: right;">cv</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">range</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Outstate</td>
-<td style="text-align: right;">10440.7</td>
-<td style="text-align: right;">4023.0</td>
-<td style="text-align: right;">0.4</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Expend</td>
-<td style="text-align: right;">9660.2</td>
-<td style="text-align: right;">5221.8</td>
-<td style="text-align: right;">0.5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Room.Board</td>
-<td style="text-align: right;">4357.5</td>
-<td style="text-align: right;">1096.7</td>
-<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">3186</td>
+<td style="text-align: right;">56233</td>
+<td style="text-align: right;">53047</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">F.Undergrad</td>
-<td style="text-align: right;">3699.9</td>
-<td style="text-align: right;">4850.4</td>
-<td style="text-align: right;">1.3</td>
+<td style="text-align: left;">Apps</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">48094</td>
+<td style="text-align: right;">48013</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Apps</td>
-<td style="text-align: right;">3001.6</td>
-<td style="text-align: right;">3870.2</td>
-<td style="text-align: right;">1.3</td>
+<td style="text-align: left;">F.Undergrad</td>
+<td style="text-align: right;">139</td>
+<td style="text-align: right;">31643</td>
+<td style="text-align: right;">31504</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Accept</td>
-<td style="text-align: right;">2018.8</td>
-<td style="text-align: right;">2451.1</td>
-<td style="text-align: right;">1.2</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">26330</td>
+<td style="text-align: right;">26258</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P.Undergrad</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">21836</td>
+<td style="text-align: right;">21835</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outstate</td>
+<td style="text-align: right;">2340</td>
+<td style="text-align: right;">21700</td>
+<td style="text-align: right;">19360</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Personal</td>
-<td style="text-align: right;">1340.6</td>
-<td style="text-align: right;">677.1</td>
-<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">6800</td>
+<td style="text-align: right;">6550</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">P.Undergrad</td>
-<td style="text-align: right;">855.3</td>
-<td style="text-align: right;">1522.4</td>
-<td style="text-align: right;">1.8</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Enroll</td>
-<td style="text-align: right;">780.0</td>
-<td style="text-align: right;">929.2</td>
-<td style="text-align: right;">1.2</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Books</td>
-<td style="text-align: right;">549.4</td>
-<td style="text-align: right;">165.1</td>
-<td style="text-align: right;">0.3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Terminal</td>
-<td style="text-align: right;">79.7</td>
-<td style="text-align: right;">14.7</td>
-<td style="text-align: right;">0.2</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">PhD</td>
-<td style="text-align: right;">72.7</td>
-<td style="text-align: right;">16.3</td>
-<td style="text-align: right;">0.2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Grad.Rate</td>
-<td style="text-align: right;">65.5</td>
-<td style="text-align: right;">17.2</td>
-<td style="text-align: right;">0.3</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Top25perc</td>
-<td style="text-align: right;">55.8</td>
-<td style="text-align: right;">19.8</td>
-<td style="text-align: right;">0.4</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Top10perc</td>
-<td style="text-align: right;">27.6</td>
-<td style="text-align: right;">17.6</td>
-<td style="text-align: right;">0.6</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">perc.alumni</td>
-<td style="text-align: right;">22.7</td>
-<td style="text-align: right;">12.4</td>
-<td style="text-align: right;">0.5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">S.F.Ratio</td>
-<td style="text-align: right;">14.1</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">6392</td>
+<td style="text-align: right;">6357</td>
 </tr>
 </tbody>
 </table>
@@ -766,8 +797,22 @@ Table&nbsp;3.3: College variables: mean, sd, and cv = sd/mean
 </figure>
 </div>
 </div>
-<p>The financial variables are measured in thousands of dollars, whereas the percentages merely range from 0 to 100. The percentages thus contribute little to the overall Euclidean distance from a point (vector of observed numeric values) to a mean vector. Consequently the percentages will have little influence on calculations of clustering effectiveness based on Euclidean distances.</p>
-<p>This issue can be addressed in a few different ways. For now we standardize each numeric variable: subtract the overall mean of the variable (across all observations) and then divide by the corresponding standard deviation of the variable. This will make the respective scales of the variables more compatible.</p>
+<p>The financial variables and enrollment counts range into the tens of thousands, whereas the percentages merely range from 0 to 100. If we compute Euclidean distances using raw values, the high-range variables will dominate. A difference of 1,000 in <code>Apps</code> would overwhelm a difference of 10 in <code>Grad.Rate</code>, even though both might represent meaningful distinctions.</p>
+<p>This issue can be addressed by <strong>standardizing</strong> each numeric variable: subtract the overall mean and divide by the standard deviation. The result is a <strong>z-score</strong>:</p>
+<p><span class="math display">\[z_j = \frac{x_j - \bar{x}_j}{s_j}\]</span></p>
+<p>After standardization, all variables have mean 0 and standard deviation 1. A 1-unit difference in any standardized variable represents one standard deviation—a comparable “statistical distance” across all variables.</p>
+<p>The code below demonstrates the z-score transformation:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize numeric variables to z-scores</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>college_z_scores <span class="ot">&lt;-</span> college_numeric <span class="sc">|&gt;</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.cols =</span> <span class="fu">everything</span>(), </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.fns  =</span> <span class="sc">~</span> (.x <span class="sc">-</span> <span class="fu">mean</span>(.x)) <span class="sc">/</span> <span class="fu">sd</span>(.x)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 </section>
 <section id="within-group-distances-in-standard-units" class="level3" data-number="3.4.4">
 <h3 data-number="3.4.4" class="anchored" data-anchor-id="within-group-distances-in-standard-units"><span class="header-section-number">3.4.4</span> Within-group distances in standard units</h3>
@@ -836,7 +881,7 @@ Table&nbsp;3.4: Point-center distances per group
 <ul>
 <li>group: the label of each group</li>
 <li>count: the number of observations (data rows)</li>
-<li>df: count minus the number of numeric values (17)</li>
+<li>df: count minus the number of numeric variables (17)</li>
 <li>RMSE: <span class="math inline">\(\surd{\text{MSE}}\)</span></li>
 <li>MSE: SSE / df</li>
 <li>SSE: sum of squared point-center distances</li>
@@ -850,12 +895,12 @@ Table&nbsp;3.4: Point-center distances per group
 <p>We’ll start our discussion of clustering using a function in the R <code>stats</code> package, namely <code>stats::kmeans()</code>. The function requires us to specify either the desired number <span class="math inline">\(K\)</span> of clusters (groups) of observations to be formed, or else to provide an initial set of <span class="math inline">\(K\)</span> cluster centers. If we merely provide the desired number <span class="math inline">\(K\)</span> of clusters, <code>kmeans()</code> randomly selects <span class="math inline">\(K\)</span> data rows (observations) as the initial set of cluster centers.</p>
 <p>Given a set of cluster centers the algorithm iteratively searches for a better set, meaning a set having a smaller “within-cluster sum of squares”. In broad terms, this is done in two steps.</p>
 <ol type="1">
-<li>Assign: the algorithm assigns each data point to the nearest center (in Euclidean distance) thereby partitioning the data points into <span class="math inline">\(K\)</span> clusters.</li>
-<li>Update: For each cluster of data points, the algorihtm calculates a new cluster center, namely, the mean vector of the data points within the cluster. This yields a new set of cluster centers.</li>
+<li><strong>Assign:</strong> the algorithm assigns each data point to the nearest center (in Euclidean distance) thereby partitioning the data points into <span class="math inline">\(K\)</span> clusters.</li>
+<li><strong>Update:</strong> For each cluster of data points, the algorithm calculates a new cluster center, namely, the mean vector of the data points within the cluster. This yields a new set of cluster centers.</li>
 </ol>
-<p>Convergence criteria: For each cluster the algorithm adds up the (point, center) squared distances. Those <span class="math inline">\(K\)</span> sums of squares per cluster are summed acrosss clusters to form the “total within-cluster sum of squares (WCSS)” (previously referred to as the “total within-group SSE”). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the “between-cluster sum of squares (BCSS)”.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.</p>
-<section id="results-for-specified-inital-cluster-centers" class="level3" data-number="3.5.1">
-<h3 data-number="3.5.1" class="anchored" data-anchor-id="results-for-specified-inital-cluster-centers"><span class="header-section-number">3.5.1</span> Results for specified inital cluster centers</h3>
+<p><strong>Convergence criteria:</strong> For each cluster the algorithm adds up the (point, center) squared distances. Those <span class="math inline">\(K\)</span> sums of squares per cluster are summed across clusters to form the “total within-cluster sum of squares (WCSS)” (previously referred to as the “total within-group SSE”). In addition the algorithm records the grand mean vector, the average across the entire data set and forms a weighted sum of the squared (cluster-center, grand-mean) Euclidean distances, which is called the “between-cluster sum of squares (BCSS)”.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> The algorithm concludes the search when cluster-membership no longer changes, or when the decrease in WCSS is sufficiently small.</p>
+<section id="results-for-specified-initial-cluster-centers" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="results-for-specified-initial-cluster-centers"><span class="header-section-number">3.5.1</span> Results for specified initial cluster centers</h3>
 <p>We now provide the <code>kmeans()</code> function with cluster centers in the form of the group means calculated above.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p>The resulting clusters are shown in the scatter diagrams below, where for purposes of comparison we have projected the clusters onto the grouping variables we previously adopted.</p>
 <div class="cell">
@@ -873,8 +918,8 @@ Figure&nbsp;3.5: (<code>Top10perc</code>, <code>Expend</code>): clusters identif
 </div>
 </div>
 </section>
-<section id="jaccard-similarity" class="level3" data-number="3.5.2">
-<h3 data-number="3.5.2" class="anchored" data-anchor-id="jaccard-similarity"><span class="header-section-number">3.5.2</span> Jaccard similarity</h3>
+<section id="manual-grouping-versus-k-means" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="manual-grouping-versus-k-means"><span class="header-section-number">3.5.2</span> Manual grouping versus K-means</h3>
 <p>The figure above shows that the <code>kmeans()</code> clusters are distinct from but similar to the groups formed above whose mean values served as initial cluster centers. Here are the number of observations belonging to each combination of <span class="math inline">\(g_{x,y}\)</span> group and <code>kmeans()</code> cluster.</p>
 <div id="tbl-xtabs-cluster-grp" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -893,7 +938,11 @@ cluster g_00 g_01 g_10 g_11
 </div>
 </figure>
 </div>
-<p>The table above provides in more detail the similarities and differences between the inital (<code>grp_lbl</code>) and final (<code>cluster</code>) clusters from <code>kmeans()</code>. The table can be represented and summarized by <a href="https://en.wikipedia.org/wiki/Jaccard_index">Jaccard’s measure</a> of the similarity of two finite sets, <span class="math inline">\((A, B)\)</span>, namely:</p>
+<p>Some clusters align well with manual groups (e.g., clusters largely contained within a single group), while others split across groups. This comparison helps us understand whether the algorithm is finding structure similar to what we might construct manually.</p>
+</section>
+<section id="jaccard-similarity" class="level3" data-number="3.5.3">
+<h3 data-number="3.5.3" class="anchored" data-anchor-id="jaccard-similarity"><span class="header-section-number">3.5.3</span> Jaccard similarity</h3>
+<p>The table above provides in more detail the similarities and differences between the initial (<code>grp_lbl</code>) and final (<code>cluster</code>) clusters from <code>kmeans()</code>. The table can be represented and summarized by <a href="https://en.wikipedia.org/wiki/Jaccard_index">Jaccard’s measure</a> of the similarity of two finite sets, <span class="math inline">\((A, B)\)</span>, namely:</p>
 <p><span id="eq-Jaccard-similarity-measure"><span class="math display">\[
 \begin{align}
   J(A, B) &amp;= \frac{\left| A \cap B \right|}{\left| A \cup B \right|}
@@ -956,9 +1005,15 @@ Table&nbsp;3.6: Jaccard similarity: binary groups v kmeans clusters
 </div>
 </div>
 <p>The weighted average (weighted by cell count) of these similarity values is 0.33.</p>
+<p>The Jaccard index is useful for comparing clusterings:</p>
+<ul>
+<li><strong>Compare K-means runs:</strong> Are different random starts converging to similar solutions?</li>
+<li><strong>Compare to known groupings:</strong> Does the algorithm recover expected structure?</li>
+<li><strong>Assess stability:</strong> How much does the clustering change with different parameter choices?</li>
+</ul>
 </section>
-<section id="distribution-of-point-center-distances" class="level3" data-number="3.5.3">
-<h3 data-number="3.5.3" class="anchored" data-anchor-id="distribution-of-point-center-distances"><span class="header-section-number">3.5.3</span> Distribution of point-center distances</h3>
+<section id="distribution-of-point-center-distances" class="level3" data-number="3.5.4">
+<h3 data-number="3.5.4" class="anchored" data-anchor-id="distribution-of-point-center-distances"><span class="header-section-number">3.5.4</span> Distribution of point-center distances</h3>
 <p>The two figures below show the range of point-center distances for the original grouping and for the <code>kmeans()</code> clustering. In the latter case, points are closer to the mean of the cluster, as can be seen by comparing the scale of the two figures. The total within-cluster sum of squares is 7434 for <code>kmeans()</code> compared to 10433 for the original grouping.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -989,11 +1044,29 @@ Figure&nbsp;3.7: K-means clusters: point-center distances
 </div>
 </div>
 </section>
-<section id="results-for-random-initial-cluster-centers" class="level3" data-number="3.5.4">
-<h3 data-number="3.5.4" class="anchored" data-anchor-id="results-for-random-initial-cluster-centers"><span class="header-section-number">3.5.4</span> Results for random initial cluster centers</h3>
+<section id="results-for-random-initial-cluster-centers" class="level3" data-number="3.5.5">
+<h3 data-number="3.5.5" class="anchored" data-anchor-id="results-for-random-initial-cluster-centers"><span class="header-section-number">3.5.5</span> Results for random initial cluster centers</h3>
 <p>Let’s run <code>kmeans()</code> again, this time specifying only the desired number <span class="math inline">\(K\)</span> of clusters. The function will then select <span class="math inline">\(K\)</span> rows of the data at random as the initial set of cluster centers. In any case, no matter how the initial cluster centers may be selected, that selection influences the subsequent iterative formation of clusters.</p>
 <p>To make the algorithm more robust we specify parameter <code>nstart</code>, the number times to run <code>kmeans()</code>, each using a distinct random selection of data rows as initial cluster centers. For each run the algorithm computes WCSS (the total within-cluster sum of squares). Once <code>nstart</code> runs have been completed, the run having the smallest value of WCSS is reported to the user. A rule of thumb is to set <code>nstart</code> to a value between 20 and 50.</p>
 <p>We now run <code>kmeans()</code> again, setting <span class="math inline">\(K = 4\)</span> and <code>nstart = 25</code>. For purposes of comparison with previous results, here is a projection of the resulting 4 clusters onto a (Top10perc, Expend) scatter diagram.</p>
+<p>The key code for running K-means with multiple random starts:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># K-means with multiple random starts for robustness</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>kmeans_result <span class="ot">&lt;-</span> college_z_scores <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>grp_lbl) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">kmeans</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">centers =</span> <span class="dv">4</span>,      <span class="co"># number of clusters</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">nstart  =</span> <span class="dv">25</span>      <span class="co"># number of random starts</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract results</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>kmeans_result<span class="sc">$</span>cluster       <span class="co"># cluster assignments</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>kmeans_result<span class="sc">$</span>centers       <span class="co"># cluster centroids  </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>kmeans_result<span class="sc">$</span>tot.withinss  <span class="co"># total within-cluster SS</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-top-10-expend-nstart" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1055,10 +1128,28 @@ Figure&nbsp;3.9: Revised point-center distances (nstart = 25)
 </div>
 </div>
 </section>
-<section id="which-value-of-k" class="level3" data-number="3.5.5">
-<h3 data-number="3.5.5" class="anchored" data-anchor-id="which-value-of-k"><span class="header-section-number">3.5.5</span> Which value of <span class="math inline">\(K\)</span>?</h3>
+<section id="which-value-of-k" class="level3" data-number="3.5.6">
+<h3 data-number="3.5.6" class="anchored" data-anchor-id="which-value-of-k"><span class="header-section-number">3.5.6</span> Which value of <span class="math inline">\(K\)</span>?</h3>
 <p>So far in our application of <code>kmeans()</code> to the college data we have set <span class="math inline">\(K = 4\)</span>. How would the results change with different choices for the value of <span class="math inline">\(K\)</span>? Breaking the observations into smaller but more numerous clusters should in general reduce the total within-cluster sum of squares (WCSS), but we can also expect to reach a point of diminishing returns.</p>
 <p>For the college data, the figure below shows how WCSS decreases as <span class="math inline">\(K\)</span> increases.</p>
+<p>The code to generate the elbow plot:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute WCSS for different values of K</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>wcss_by_k <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">k =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">12</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">wcss =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(k, <span class="sc">~</span> {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">kmeans</span>(college_z, <span class="at">centers =</span> .x, <span class="at">nstart =</span> <span class="dv">20</span>)<span class="sc">$</span>tot.withinss</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot WCSS vs K (elbow plot)</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcss_by_k, <span class="fu">aes</span>(<span class="at">x =</span> k, <span class="at">y =</span> wcss)) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Number of clusters (K)"</span>, <span class="at">y =</span> <span class="st">"Within-cluster SS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-mk-tbl" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1074,28 +1165,222 @@ Figure&nbsp;3.10: Within-cluster sum of squares versus number of clusters
 </div>
 </div>
 <p>In general, smaller values of <span class="math inline">\(K\)</span> are more interpretable. Based on the figure above we might set <span class="math inline">\(K\)</span> to be 4 or 5. This is a judgement call that depends on the circumstances and goals of one’s project.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The elbow method
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Look for an “elbow” in the plot—a point where the rate of decrease in WCSS sharply levels off. Before the elbow, adding clusters captures real structure. After the elbow, we see diminishing returns.</p>
+<p>The elbow is often subjective; domain knowledge and interpretability should also guide your choice of <span class="math inline">\(K\)</span>.</p>
+</div>
+</div>
 </section>
 </section>
-<section id="other-clustering-algorithms" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="other-clustering-algorithms"><span class="header-section-number">3.6</span> Other clustering algorithms</h2>
+<section id="interpreting-the-clusters" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="interpreting-the-clusters"><span class="header-section-number">3.6</span> Interpreting the Clusters</h2>
+<p>Clustering is not complete until we interpret what the clusters mean. The algorithm found groups—now we ask what characterizes each one.</p>
+<div class="cell">
+<div id="tbl-cluster-profiles" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cluster-profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.8: Cluster profiles: mean values for selected variables
+</figcaption>
+<div aria-describedby="tbl-cluster-profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 6%">
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Cluster</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">% Private</th>
+<th style="text-align: right;">Top10%</th>
+<th style="text-align: right;">Expend</th>
+<th style="text-align: right;">Grad Rate</th>
+<th style="text-align: right;">Enrollment</th>
+<th style="text-align: right;">Outstate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">269</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">9975</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">1820</td>
+<td style="text-align: right;">12394</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">337</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">7025</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">2307</td>
+<td style="text-align: right;">7880</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">9204</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">14514</td>
+<td style="text-align: right;">8134</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">20651</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">3162</td>
+<td style="text-align: right;">17639</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Review of these profiles and additional variable summaries suggests the following interpretations:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Cluster interpretation (example)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The specific cluster numbers may vary depending on random seed, but typical patterns in college data include:</p>
+<ul>
+<li><strong>High-resource selective schools:</strong> High <code>Top10perc</code>, high <code>Expend</code>, high <code>Outstate</code>, mostly private—likely elite private institutions</li>
+<li><strong>Large public universities:</strong> High <code>F.Undergrad</code>, lower <code>Expend</code> per student, lower <code>Outstate</code>—flagship state universities</li>
+<li><strong>Regional/teaching-focused:</strong> Moderate values across metrics, mix of private and public</li>
+<li><strong>Open-access institutions:</strong> Lower <code>Top10perc</code>, lower <code>Expend</code>, lower graduation rates</li>
+</ul>
+<p>Does this match your domain knowledge about the US higher education landscape?</p>
+</div>
+</div>
+<p>This interpretive step is essential. Without it, clustering remains a mathematical exercise. With it, clustering becomes a tool for generating insights and hypotheses.</p>
+</section>
+<section id="other-clustering-algorithms" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="other-clustering-algorithms"><span class="header-section-number">3.7</span> Other Clustering Algorithms</h2>
 <p>Clustering methods are an active area of research. The K-means algorithm, first introduced in the 1930’s, has the longest history. More recent methods can be categorized along the following lines.</p>
 <ul>
-<li><p>Soft versus Hard: “Hard” clustering assigns each data point to a single cluster. “Soft” clustering assigns to each point a finite probability distribution of cluster membership.</p></li>
-<li><p>Agglomerative versus Divisive methods define the initial partition of the data into clusters in opposite ways. Agglomerative clustering initially defines each data point to be a cluster, and then merges clusters. Divisive clustering initially defines the entire data set to be a single cluster, and then breaks up this and subsequent clusters into smaller clusters.</p></li>
-<li><p>Hierarchical or not: Instead of a partition, hierarchical methods create a hierarchy of parent (superset) and child (subset) clusters.</p></li>
-<li><p>Centroid-based versus Density-based: K-means and other centroid-based methods identify a cluster of points with the mean, median, or other central measure of the points in the cluster. Density-based methods find areas having a high density of points.</p></li>
+<li><p><strong>Soft versus Hard:</strong> “Hard” clustering assigns each data point to a single cluster. “Soft” clustering assigns to each point a finite probability distribution of cluster membership.</p></li>
+<li><p><strong>Agglomerative versus Divisive:</strong> methods define the initial partition of the data into clusters in opposite ways. Agglomerative clustering initially defines each data point to be a cluster, and then merges clusters. Divisive clustering initially defines the entire data set to be a single cluster, and then breaks up this and subsequent clusters into smaller clusters.</p></li>
+<li><p><strong>Hierarchical or not:</strong> Instead of a partition, hierarchical methods create a hierarchy of parent (superset) and child (subset) clusters.</p></li>
+<li><p><strong>Centroid-based versus Density-based:</strong> K-means and other centroid-based methods identify a cluster of points with the mean, median, or other central measure of the points in the cluster. Density-based methods find areas having a high density of points.</p></li>
 </ul>
 <p>Some methods of note are <a href="https://en.wikipedia.org/wiki/DBSCAN">DBSCAN</a> (Density Based Spatial Clustering of Applications with Noise) and <a href="https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html">HDBSCAN</a> (a hierarchical version of DBSCAN).</p>
+<section id="example-dbscan" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="example-dbscan"><span class="header-section-number">3.7.1</span> Example: DBSCAN</h3>
+<p>Unlike K-means, DBSCAN does not require specifying the number of clusters in advance. Instead, it finds clusters based on density—regions where points are packed closely together. Points in sparse regions are labeled as noise.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DBSCAN clustering on standardized college data</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>dbscan_result <span class="ot">&lt;-</span> college_z_scores <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>grp_lbl) <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  dbscan<span class="sc">::</span><span class="fu">dbscan</span>(<span class="at">eps =</span> <span class="fl">2.5</span>, <span class="at">minPts =</span> <span class="dv">10</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Cluster assignments (0 = noise)</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dbscan_result<span class="sc">$</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  0   1 
+145 632 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-dbscan" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dbscan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="clustering_files/figure-html/fig-dbscan-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dbscan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.11: DBSCAN clusters (0 = noise points)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>DBSCAN’s key parameters are <code>eps</code> (the neighborhood radius) and <code>minPts</code> (minimum points to form a dense region). Points not belonging to any dense region are classified as noise (cluster 0). This can be useful for identifying outliers or when clusters have irregular shapes.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+When to use DBSCAN vs K-means
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>K-means:</strong> Works well when clusters are roughly spherical and similar in size. Requires specifying <span class="math inline">\(K\)</span>.</li>
+<li><strong>DBSCAN:</strong> Works well for clusters of arbitrary shape, can identify outliers, doesn’t require specifying <span class="math inline">\(K\)</span>. Sensitive to the choice of <code>eps</code> and <code>minPts</code>.</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="team-exercises" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">3.7</span> Team Exercises</h2>
+</section>
+<section id="team-exercises" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">3.8</span> Team Exercises</h2>
 <ol type="1">
-<li><p>Iris data: Submit R command <code>help("iris")</code> to learn about the measurements of iris flowers available in R as <code>datasets::iris</code>. Summarise these measurements in a graph or table, for example by applying the <code>GGally::ggpairs()</code> function.</p></li>
-<li><p>Iris K-means: Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable <code>Species</code>? Count the number of observations corresponding to each combination of cluster and <code>Species</code>, for example by using R function <code>stats::xtabs()</code>.</p></li>
+<li><p><strong>Iris data:</strong> Submit R command <code>help("iris")</code> to learn about the measurements of iris flowers available in R as <code>datasets::iris</code>. Summarise these measurements in a graph or table, for example by applying the <code>GGally::ggpairs()</code> function.</p></li>
+<li><p><strong>Iris K-means:</strong> Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable <code>Species</code>? Count the number of observations corresponding to each combination of cluster and <code>Species</code>, for example by using R function <code>stats::xtabs()</code>.</p></li>
+<li><p><strong>Wine quality data (optional):</strong> The <code>eda4mldata::wine_quality</code> dataset contains chemical measurements of wines. Apply K-means clustering to the numeric variables and interpret the resulting clusters. Do they correspond to quality ratings or wine color?</p></li>
 </ol>
 </section>
-<section id="resources" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="resources"><span class="header-section-number">3.8</span> Resources</h2>
+<section id="connections-to-machine-learning" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="connections-to-machine-learning"><span class="header-section-number">3.9</span> Connections to Machine Learning</h2>
+<p>Clustering connects to supervised learning in several ways:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML connections
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Preprocessing:</strong> Standardization (z-scores) is essential for many ML algorithms, not just clustering.</li>
+<li><strong>Feature engineering:</strong> Cluster membership can become a derived feature for supervised models.</li>
+<li><strong>Model selection:</strong> The elbow heuristic parallels cross-validation and regularization—balancing fit against complexity.</li>
+<li><strong>Loss minimization:</strong> K-means minimizes WCSS, a precursor to the loss functions used in supervised learning.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="resources" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="resources"><span class="header-section-number">3.10</span> Resources</h2>
 <p><a href="https://www.statlearning.com/">An Introduction to Statistical Learning</a> by James, Witten, Hastie, &amp; Tibshirani</p>
 <p><a href="https://www.tidymodels.org/learn/statistics/k-means/">K-means clustering with tidy data principles – tidymodels</a></p>
 <p><a href="https://tidyclust.tidymodels.org/articles/k_means.html">tidyclust::k_means</a></p>
