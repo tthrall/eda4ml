@@ -1,0 +1,637 @@
+---
+title: "Statistical Simulation"
+subtitle: "Exploring What-If Scenarios"
+author: "Chapter 4"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    incremental: false
+    toc: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(knitr)
+library(tidyverse)
+
+set.seed(42)
+```
+
+# Why Simulate?
+
+## The Central Question
+
+How might our plans, methods, model $\ldots$ fail?
+
+. . .
+
+**Simulation** lets us explore scenarios we can't observe directly.
+
+. . .
+
+Generate data from known processes → see how methods behave.
+
+## Uses of Simulation
+
+1. **Compare methods:** Which estimator performs better?
+
+. . .
+
+2. **Assess robustness:** What happens with outliers? Small samples?
+
+. . .
+
+3. **Understand systems:** How does randomness propagate?
+
+. . .
+
+4. **Quantify uncertainty:** How precise are our estimates?
+
+## The EDA Connection
+
+Simulation extends EDA beyond the data we have.
+
+. . .
+
+> "What would happen if $\dots$?"
+
+. . .
+
+- $\dots$ the sample size were larger?
+- $\dots$ the distribution had heavier tails?
+- $\dots$ there were outliers?
+
+. . .
+
+Simulation lets us **explore failure modes** before they occur in practice.
+
+# Random Number Generation
+
+## R's Distribution Functions
+
+For each distribution, R provides four functions:
+
+. . .
+
+| Prefix | Function | Example |
+|--------|----------|---------|
+| `d` | density/mass | `dnorm(0)` → 0.399 |
+| `p` | cumulative probability | `pnorm(1.96)` → 0.975 |
+| `q` | quantile (inverse CDF) | `qnorm(0.975)` → 1.96 |
+| `r` | random generation | `rnorm(10)` → 10 values |
+
+## Continuous Distributions (selected)
+
+```{r}
+#| label: tbl-continuous-dist
+
+tibble::tribble(
+  ~Function, ~Distribution,
+  "[d,p,q,r]norm", "Normal",
+  "[d,p,q,r]unif", "Uniform",
+  "[d,p,q,r]exp", "Exponential",
+  "[d,p,q,r]gamma", "Gamma",
+  "[d,p,q,r]beta", "Beta",
+  "[d,p,q,r]t", "Student t",
+  "[d,p,q,r]chisq", "Chi-squared"
+) |> knitr::kable()
+```
+
+See `?Distributions` for a complete list.
+
+## Discrete Distributions (selected)
+
+```{r}
+#| label: tbl-discrete-dist
+
+tibble::tribble(
+  ~Function, ~Distribution,
+  "[d,p,q,r]binom", "Binomial",
+  "[d,p,q,r]pois", "Poisson",
+  "[d,p,q,r]geom", "Geometric",
+  "[d,p,q,r]nbinom", "Negative Binomial"
+) |> knitr::kable()
+```
+
+. . .
+
+The Poisson is the "law of rare events"—the limit of Binomial$(n, p)$ as $n \to \infty$ and $p \to 0$ with $np \to \lambda$.
+
+## Generating Random Samples
+
+```{r}
+#| label: rng-demo
+#| echo: true
+#| eval: false
+
+# 100 standard normal values
+x <- rnorm(n = 100, mean = 0, sd = 1)
+
+# 100 uniform values on [0, 1]
+u <- runif(n = 100, min = 0, max = 1)
+
+# 100 Poisson values with mean 5
+counts <- rpois(n = 100, lambda = 5)
+```
+
+. . .
+
+**Key insight:** We specify the distribution; R generates samples.
+
+# Comparing Estimators
+
+## Mean vs. Median
+
+Both estimate the center of a symmetric distribution.
+
+. . .
+
+**Mean:** $\hat{\mu} = \frac{1}{n}\sum_{i=1}^n X_i$
+
+. . .
+
+**Median:** $\hat{m}$ = middle value (or average of two middle values)
+
+. . .
+
+Which is better? **It depends on the distribution.**
+
+## The Efficiency Question
+
+For normal data, theory tells us:
+
+$$\frac{\text{Var}(\hat{m})}{\text{Var}(\hat{\mu})} \approx \frac{\pi}{2} \approx 1.57$$
+
+. . .
+
+The median has **57% higher variance** than the mean.
+
+. . .
+
+Can we verify this by simulation?
+
+## Simulation Design
+
+```{r}
+#| label: sim-design
+#| echo: true
+#| eval: false
+
+# Parameters
+n <- 30      # sample size
+R <- 10000   # number of replications
+
+# Storage
+means <- numeric(R)
+medians <- numeric(R)
+
+# Simulation loop
+for (r in 1:R) {
+  x <- rnorm(n)
+  means[r] <- mean(x)
+  medians[r] <- median(x)
+}
+
+# Compare variances
+var(medians) / var(means)
+```
+
+## Simulation Results
+
+```{r}
+#| label: mean-median-sim
+
+n <- 30
+R <- 10000
+
+sim_results <- tibble::tibble(
+  rep = 1:R,
+  sample = purrr::map(rep, ~ rnorm(n)),
+  mean = purrr::map_dbl(sample, mean),
+  median = purrr::map_dbl(sample, median)
+)
+
+var_ratio <- var(sim_results$median) / var(sim_results$mean)
+```
+
+```{r}
+#| label: fig-mean-median
+#| fig-cap: "Sampling distributions of mean and median (n=30, R=10,000)"
+
+sim_results |> 
+  tidyr::pivot_longer(cols = c(mean, median), names_to = "estimator", values_to = "value") |> 
+  ggplot2::ggplot(ggplot2::aes(x = value, fill = estimator)) +
+  ggplot2::geom_histogram(bins = 50, alpha = 0.7, position = "identity") +
+  ggplot2::labs(
+    x = "Estimate",
+    y = "Count",
+    fill = "Estimator"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Verifying Theory
+
+```{r}
+#| label: tbl-mean-median-var
+
+tibble::tibble(
+  Estimator = c("Mean", "Median"),
+  Variance = c(var(sim_results$mean), var(sim_results$median)),
+  `Std Error` = c(sd(sim_results$mean), sd(sim_results$median))
+) |> 
+  knitr::kable(digits = 4)
+```
+
+. . .
+
+**Variance ratio:** `r round(var_ratio, 3)` (theory: $\pi/2 \approx$ `r round(pi/2, 3)`)
+
+. . .
+
+Simulation confirms the theoretical result.
+
+## Why This Matters
+
+We verified a known result. But simulation shines when:
+
+. . .
+
+- Theory is intractable
+- Assumptions are violated
+- We need to compare many methods
+
+. . .
+
+**EDA application:** "How would my estimator behave if the data were slightly different?"
+
+# Monte Carlo Methods
+
+## Estimating π
+
+Classic example: estimate $\pi$ by random sampling.
+
+. . .
+
+**Idea:** A quarter circle of radius 1 has area $\pi/4$.
+
+. . .
+
+1. Generate random points $(X, Y)$ uniform on $[0,1]^2$
+2. Count points inside the quarter circle: $X^2 + Y^2 < 1$
+3. Proportion inside $\approx \pi/4$
+
+## Visual Intuition
+
+```{r}
+#| label: fig-pi-estimate
+#| fig-cap: "Monte Carlo estimation of π"
+
+n_points <- 5000
+pi_data <- tibble::tibble(
+  x = runif(n_points),
+  y = runif(n_points),
+  inside = (x^2 + y^2) < 1
+)
+
+pi_estimate <- 4 * mean(pi_data$inside)
+
+pi_data |> 
+  ggplot2::ggplot(ggplot2::aes(x = x, y = y, color = inside, shape = inside)) +
+  ggplot2::geom_point(alpha = 0.6, size = 1.0) +
+  ggplot2::stat_function(fun = ~ sqrt(1 - .x^2), color = "white", linewidth = 1) +
+  ggplot2::coord_fixed() +
+  ggplot2::scale_color_manual(values = c("FALSE" = "#E74C3C", "TRUE" = "#2ECC71")) +
+  ggplot2::scale_shape_manual(values = c("FALSE" = 4, "TRUE" = 16)) +
+  ggplot2::labs(
+    title = paste0("Estimate: ", round(pi_estimate, 4), " (true: ", round(pi, 4), ")"),
+    color = "Inside circle",
+    shape = "Inside circle"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## The Monte Carlo Principle
+
+To estimate $E[g(X)]$:
+
+$$\hat{\theta} = \frac{1}{n}\sum_{i=1}^n g(X_i)$$
+
+. . .
+
+where $X_1, \ldots, X_n$ are random samples from the distribution of $X$.
+
+. . .
+
+**Law of Large Numbers:** $\hat{\theta} \to E[g(X)]$ as $n \to \infty$
+
+## Convergence Rate
+
+```{r}
+#| label: fig-pi-convergence
+#| fig-cap: "Monte Carlo estimate converges to true value"
+
+# Cumulative estimate of pi
+cumulative_pi <- tibble::tibble(
+  n = 1:n_points,
+  cumsum_inside = cumsum(pi_data$inside),
+  estimate = 4 * cumsum_inside / n
+)
+
+cumulative_pi |> 
+  ggplot2::ggplot(ggplot2::aes(x = n, y = estimate)) +
+  ggplot2::geom_line(color = "steelblue") +
+  ggplot2::geom_hline(yintercept = pi, linetype = "dashed", color = "red") +
+  ggplot2::scale_x_log10() +
+  ggplot2::labs(
+    x = "Number of samples (log scale)",
+    y = "Estimate of π"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+. . .
+
+Standard error decreases as $1/\sqrt{n}$.
+
+# Rare Events
+
+## The Problem
+
+What if we want to estimate $P(Z > 6)$ where $Z \sim N(0,1)$?
+
+. . .
+
+```{r}
+#| label: rare-event-prob
+#| echo: true
+
+# True probability
+pnorm(6, lower.tail = FALSE)
+```
+
+. . .
+
+About 1 in a billion. Naive simulation won't work.
+
+## Naive Approach Fails
+
+```{r}
+#| label: naive-sim
+#| echo: true
+
+# Generate 1 million standard normals
+z <- rnorm(1e6)
+
+# Count how many exceed 6
+sum(z > 6)
+```
+
+. . .
+
+We'd need billions of samples to see even one event.
+
+## Importance Sampling
+
+**Key idea:** Sample from a different distribution, then reweight.
+
+. . .
+
+Instead of sampling from $p(x)$, sample from $q(x)$ where rare events are common.
+
+. . .
+
+$$E_p[g(X)] = E_q\left[g(X) \cdot \frac{p(X)}{q(X)}\right]$$
+
+. . .
+
+The ratio $w(x) = p(x)/q(x)$ is the **importance weight**.
+
+## Importance Sampling for $P(Z > 6)$
+
+**Strategy:** Shift the normal distribution to center it near 6.
+
+. . .
+
+Let $q(x) = \phi(x - 6)$ (normal centered at 6).
+
+. . .
+
+```{r}
+#| label: importance-sampling
+#| echo: true
+
+# Sample from shifted normal
+n <- 10000
+x <- rnorm(n, mean = 6, sd = 1)
+
+# Importance weights: p(x) / q(x)
+log_weights <- dnorm(x, log = TRUE) - dnorm(x, mean = 6, log = TRUE)
+weights <- exp(log_weights)
+
+# Estimate P(Z > 6)
+estimate <- mean((x > 6) * weights)
+estimate
+```
+
+## Comparing Estimates
+
+```{r}
+#| label: tbl-importance-sampling
+
+tibble::tibble(
+  Method = c("True value", "Importance sampling", "Naive (n = 10^6)"),
+  Estimate = c(
+    format(pnorm(6, lower.tail = FALSE), scientific = TRUE, digits = 3), 
+    format(estimate, scientific = TRUE, digits = 3), 
+    "0"
+  )
+) |> knitr::kable()
+```
+
+. . .
+
+Importance sampling makes the impossible feasible.
+
+# Bootstrap
+
+## Quantifying Uncertainty
+
+How precise is our estimate?
+
+. . .
+
+Classical approach: derive standard error formula.
+
+. . .
+
+**Bootstrap approach:** Resample from the data itself.
+
+## The Bootstrap Idea
+
+1. Treat the sample as a proxy for the population
+2. Draw **with replacement** from the sample
+3. Compute statistic on each resample
+4. Use variability across resamples to estimate uncertainty
+
+## Bootstrap in Action
+
+```{r}
+#| label: bootstrap-demo
+#| echo: true
+#| eval: false
+
+# Original sample
+x <- c(12, 15, 18, 22, 25, 28, 31, 35, 42, 55)
+
+# Bootstrap
+B <- 10000
+boot_means <- numeric(B)
+
+for (b in 1:B) {
+  x_star <- sample(x, replace = TRUE)
+  boot_means[b] <- mean(x_star)
+}
+
+# 95% confidence interval
+quantile(boot_means, c(0.025, 0.975))
+```
+
+## Bootstrap Example
+
+```{r}
+#| label: bootstrap-example
+
+x <- c(12, 15, 18, 22, 25, 28, 31, 35, 42, 55)
+B <- 10000
+
+boot_means <- purrr::map_dbl(1:B, ~ mean(sample(x, replace = TRUE)))
+boot_ci <- quantile(boot_means, c(0.025, 0.975))
+
+# Normal theory CI for comparison
+n_x <- length(x)
+se_x <- sd(x) / sqrt(n_x)
+normal_ci <- mean(x) + c(-1, 1) * qt(0.975, df = n_x - 1) * se_x
+```
+
+```{r}
+#| label: fig-bootstrap
+#| fig-cap: "Bootstrap distribution of the sample mean"
+
+tibble::tibble(mean = boot_means) |> 
+  ggplot2::ggplot(ggplot2::aes(x = mean)) +
+  ggplot2::geom_histogram(bins = 50, fill = "steelblue", alpha = 0.7) +
+  ggplot2::geom_vline(xintercept = mean(x), color = "red", linewidth = 1) +
+  ggplot2::geom_vline(xintercept = boot_ci, color = "red", linetype = "dashed") +
+  ggplot2::labs(
+    x = "Bootstrap sample mean",
+    y = "Count",
+    title = paste0("Bootstrap 95% CI: [", round(boot_ci[1], 1), ", ", round(boot_ci[2], 1), "]")
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+. . .
+
+Normal theory 95% CI: [`r round(normal_ci[1], 1)`, `r round(normal_ci[2], 1)`] — similar result.
+
+## Bootstrap for Any Statistic
+
+The bootstrap works for almost any statistic:
+
+. . .
+
+- Correlation coefficients
+- Regression coefficients
+- Median, trimmed mean
+- Ratios, differences
+
+. . .
+
+**EDA application:** "How much would this pattern change with different data?"
+
+# Connections to ML
+
+## Simulation in the ML Pipeline
+
+Simulation connects to machine learning:
+
+. . .
+
+**Cross-validation:** Repeatedly resample to estimate generalization error.
+
+. . .
+
+**Stochastic gradient descent:** Random sampling of training batches.
+
+. . .
+
+**Bayesian ML:** MCMC and variational inference sample from posteriors.
+
+## Simulation as Model Checking
+
+After fitting a model:
+
+. . .
+
+1. Simulate data from the fitted model
+2. Compare simulated data to real data
+3. Discrepancies reveal model failures
+
+. . .
+
+This is the **posterior predictive check**—simulation for model criticism.
+
+# Summary
+
+## Chapter 4: Key Takeaways
+
+1. **Simulation explores what-if scenarios** before they occur
+
+2. **R provides d/p/q/r functions** for common distributions
+
+3. **Monte Carlo methods** estimate quantities via random sampling
+
+4. **Importance sampling** handles rare events
+
+5. **Bootstrap** quantifies uncertainty without formulas
+
+## Key Formulas
+
+| Concept | Formula |
+|---------|---------|
+| Monte Carlo estimate | $\hat{\theta} = \frac{1}{n}\sum_{i=1}^n g(X_i)$ |
+| Importance weight | $w(x) = p(x) / q(x)$ |
+| Variance ratio (mean vs. median) | $\pi/2 \approx 1.57$ |
+
+## The Simulation Workflow
+
+1. **Specify** the data-generating process
+2. **Generate** random samples
+3. **Compute** statistics of interest
+4. **Repeat** many times
+5. **Summarize** the distribution of results
+
+## Team Exercises
+
+1. Modify the mean vs. median simulation to use Cauchy data (`rcauchy()`). What happens to the variance ratio?
+
+2. Use bootstrap to estimate a 95% CI for the median of `mtcars$mpg`.
+
+3. Estimate $P(Z > 4)$ using importance sampling. Compare to `pnorm(4, lower.tail = FALSE)`.
+
+## Resources
+
+- [Advanced Statistical Computing](https://bookdown.org/rdpeng/advstatcomp/) by Roger Peng
+- [Monte Carlo method - Wikipedia](https://en.wikipedia.org/wiki/Monte_Carlo_method)
+- [Bootstrap Methods](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
+- R documentation: `?Distributions`
