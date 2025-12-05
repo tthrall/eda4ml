@@ -1,0 +1,515 @@
+---
+title: "Information Theory"
+subtitle: "Quantifying Uncertainty and Information"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 6"
+    preview-links: auto
+    incremental: false
+    code-fold: false
+    echo: true
+    progress: true
+    hash: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(knitr)
+```
+
+## A Coda to Part 1 {.smaller}
+
+Part 1 introduced EDA from a **geometric perspective**:
+
+- Scatter plots and conditional distributions
+- Clustering of observations
+- Simulation
+
+. . .
+
+This chapter takes a different approach: **information theory**.
+
+. . .
+
+These concepts appear repeatedly in ML:
+
+- Decision tree construction
+- Neural network training (cross-entropy loss)
+- Model comparison
+
+::: {.notes}
+This is positioned as a "coda"—self-contained vocabulary that students will encounter in specialized ML studies.
+:::
+
+## Chapter Roadmap
+
+| Concept | Intuition |
+|---------|-----------|
+| **Entropy** | How uncertain is an outcome? |
+| **Mutual Information** | How much does knowing X tell us about Y? |
+| **KL Divergence** | How costly is using the wrong distribution? |
+
+. . .
+
+All three connect to the **Twenty Questions** game.
+
+## Entropy: The Yes-No Questions Game {#sec-entropy}
+
+Imagine a box of tickets, each bearing a capital letter.
+
+. . .
+
+**The game:**
+
+1. A ticket is drawn at random (you can't see it)
+2. You ask yes-no questions until you can identify the letter with certainty
+3. Goal: minimize average number of questions
+
+. . .
+
+**Entropy** measures the difficulty of this game.
+
+## Box 1: No Uncertainty
+
+$$\text{Box 1: } \{A, A, A, A\}$$
+
+. . .
+
+How many questions needed?
+
+. . .
+
+**Zero.** You already know the answer.
+
+. . .
+
+$$H = 0$$
+
+## Box 2: One Bit of Uncertainty
+
+$$\text{Box 2: } \{A, A, B, B\}$$
+
+. . .
+
+One question: "Is it A?"
+
+. . .
+
+**One question** always suffices.
+
+. . .
+
+$$H = 1 \text{ bit}$$
+
+## Box 3: Two Bits of Uncertainty
+
+$$\text{Box 3: } \{A, B, C, D\}$$
+
+. . .
+
+First question: "Is it A or B?"
+
+Second question: "Is it [first of the pair]?"
+
+. . .
+
+**Two questions** always suffices.
+
+. . .
+
+$$H = 2 \text{ bits}$$
+
+## Box 4: Fractional Entropy
+
+$$\text{Box 4: } \{A, A, B, C\}$$
+
+. . .
+
+**Optimal strategy:**
+
+- First ask: "Is it A?" (probability ½)
+- If yes → done (1 question)
+- If no → one more question to distinguish B from C
+
+. . .
+
+$$\text{Average} = \frac{1}{2}(1) + \frac{1}{2}(2) = \frac{3}{2} \text{ questions}$$
+
+. . .
+
+$$H = 1.5 \text{ bits}$$
+
+## The Entropy Formula
+
+For a probability distribution $(p_1, p_2, \ldots, p_K)$:
+
+$$H = -\sum_{k=1}^{K} p_k \log_2(p_k)$$
+
+. . .
+
+Equivalently:
+
+$$H = \sum_{k=1}^{K} p_k \log_2\left(\frac{1}{p_k}\right)$$
+
+. . .
+
+**Units:** bits (binary digits) when using $\log_2$
+
+## Entropy Examples
+
+```{r}
+#| label: entropy-examples
+#| echo: false
+
+tibble::tribble(
+  ~Box, ~Contents, ~Probabilities, ~H,
+  "Box 1", "{A,A,A,A}", "(1)", "0",
+  "Box 2", "{A,A,B,B}", "(½, ½)", "1",
+  "Box 3", "{A,B,C,D}", "(¼,¼,¼,¼)", "2",
+  "Box 4", "{A,A,B,C}", "(½,¼,¼)", "1.5"
+) |> knitr::kable()
+```
+
+. . .
+
+**Pattern:** Entropy is maximized when all outcomes are equally likely.
+
+## Binary Search Strategy
+
+**General approach:**
+
+1. Partition tickets into two groups of equal (or nearly equal) probability
+2. Ask which group contains the drawn ticket
+3. Repeat within the identified group
+
+. . .
+
+**Maximum questions:** $\lceil \log_2(K) \rceil$ for $K$ distinct values
+
+. . .
+
+**Average questions:** Often fewer (as Box 4 shows)
+
+## Joint Entropy: Two Variables {#sec-joint-entropy}
+
+Now each ticket has a **letter** and a **number**.
+
+. . .
+
+$$\text{Box 5: } \{A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2\}$$
+
+. . .
+
+This is equivalent to:
+
+- Draw letter from $\{A, A, B, C\}$ → $H_{\text{letter}} = 1.5$
+- Draw number from $\{1, 2\}$ → $H_{\text{number}} = 1$
+
+. . .
+
+**Independently!**
+
+## Entropy of Independent Variables
+
+When $X$ and $Y$ are independent:
+
+$$H_{X,Y} = H_X + H_Y$$
+
+. . .
+
+For Box 5:
+
+$$H = 1.5 + 1 = 2.5 \text{ bits}$$
+
+. . .
+
+**Intuition:** No information about the letter helps you guess the number, and vice versa.
+
+## Mutual Information: When Variables Are Dependent {#sec-mutual-info}
+
+$$\text{Box 6: } \{A_1, A_2, B_1, C_2\}$$
+
+. . .
+
+Same marginal distributions:
+
+- Letters: $\{A, A, B, C\}$ → $H_{\text{letter}} = 1.5$
+- Numbers: $\{1, 1, 2, 2\}$ → $H_{\text{number}} = 1$
+
+. . .
+
+But now they're **dependent!**
+
+## The Power of Dependence
+
+**New strategy for Box 6:**
+
+1. First ask: "Is the number 1?" (1 question)
+2. If yes → letter is A or B (1 more question)
+3. If no → letter is A or C (1 more question)
+
+. . .
+
+**Total: 2 questions** (not 2.5!)
+
+. . .
+
+$$H_{X,Y} = 2 < H_X + H_Y = 2.5$$
+
+## Mutual Information Defined
+
+$$MI_{X,Y} = H_X + H_Y - H_{X,Y}$$
+
+. . .
+
+**Interpretation:** The reduction in uncertainty about $Y$ from knowing $X$ (and vice versa).
+
+. . .
+
+For Box 6:
+
+$$MI = 1.5 + 1 - 2 = 0.5 \text{ bits}$$
+
+. . .
+
+**Properties:**
+
+- $MI \geq 0$ always
+- $MI = 0$ if and only if $X$ and $Y$ are independent
+
+## Mutual Information: Visual Intuition
+
+```{r}
+#| label: fig-mi-venn
+#| echo: false
+#| fig-height: 4
+#| fig-width: 6
+
+# Simple Venn-style diagram using ggplot
+library(ggforce)
+
+circles <- tibble(
+  x0 = c(-0.5, 0.5),
+  y0 = c(0, 0),
+  r = c(1.2, 1.2),
+  label = c("H(X)", "H(Y)")
+)
+
+ggplot() +
+  geom_circle(data = circles, aes(x0 = x0, y0 = y0, r = r, fill = label), 
+              alpha = 0.3, color = "white", linewidth = 1) +
+  annotate("text", x = -1.1, y = 0, label = "H(X|Y)", size = 5, color = "white") +
+  annotate("text", x = 1.1, y = 0, label = "H(Y|X)", size = 5, color = "white") +
+  annotate("text", x = 0, y = 0, label = "MI", size = 6, fontface = "bold", color = "white") +
+  coord_fixed() +
+  theme_void() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c("H(X)" = "steelblue", "H(Y)" = "coral"))
+```
+
+$$H_{X,Y} = H_X + H_Y - MI_{X,Y}$$
+
+## KL Divergence: The Cost of Being Wrong {#sec-kl-divergence}
+
+**Scenario:** You've optimized your strategy for Box 5 (independent), but the actual box is Box 6 (dependent).
+
+. . .
+
+- Your strategy expects 2.5 questions on average
+- Optimal for Box 6 needs only 2 questions
+
+. . .
+
+**The cost of misinformation:** 0.5 extra questions per round
+
+## KL Divergence Defined
+
+$$KL(P \| Q) = \sum_{x} P(x) \log_2\left(\frac{P(x)}{Q(x)}\right)$$
+
+. . .
+
+**Interpretation:** Expected extra bits needed when using code optimized for $Q$ but the true distribution is $P$.
+
+. . .
+
+$P$ = true distribution (what the box actually is)
+
+$Q$ = assumed distribution (what you think it is)
+
+## KL Divergence Example
+
+```{r}
+#| label: kl-example
+#| echo: false
+
+tibble::tribble(
+  ~x, ~`P(x)`, ~`Q(x)`, ~`log₂(P/Q)`, ~Term,
+  "A₁", "1/4", "2/8", "0", "0",
+  "A₂", "1/4", "2/8", "0", "0",
+  "B₁", "1/4", "1/8", "1", "1/4",
+  "C₂", "1/4", "1/8", "1", "1/4"
+) |> knitr::kable()
+```
+
+. . .
+
+$$KL(P \| Q) = 0 + 0 + \frac{1}{4} + \frac{1}{4} = \frac{1}{2}$$
+
+. . .
+
+**Confirms:** Using the wrong distribution costs 0.5 bits.
+
+## KL Divergence Properties
+
+**Not symmetric:** $KL(P \| Q) \neq KL(Q \| P)$ in general
+
+. . .
+
+**Non-negative:** $KL(P \| Q) \geq 0$
+
+. . .
+
+**Zero iff identical:** $KL(P \| Q) = 0 \Leftrightarrow P = Q$
+
+. . .
+
+**Not a true distance** (fails triangle inequality)—hence "divergence"
+
+## Where These Ideas Appear in ML {#sec-ml-applications}
+
+| Concept | ML Application |
+|---------|----------------|
+| **Entropy** | Decision tree splits |
+| **Mutual Information** | Feature selection |
+| **KL Divergence** | Loss functions, VAEs |
+| **Cross-entropy** | Classification loss |
+
+## Cross-Entropy Loss
+
+For classification with true label $y$ and predicted probabilities $\hat{p}$:
+
+$$\mathcal{L} = -\sum_{c} y_c \log(\hat{p}_c)$$
+
+. . .
+
+For one-hot labels (one true class):
+
+$$\mathcal{L} = -\log(\hat{p}_{\text{true class}})$$
+
+. . .
+
+**Minimizing cross-entropy = minimizing KL divergence from true distribution**
+
+## Decision Trees and Information Gain
+
+When splitting a node:
+
+$$\text{Information Gain} = H(\text{parent}) - \sum_{\text{children}} \frac{n_{\text{child}}}{n_{\text{parent}}} H(\text{child})$$
+
+. . .
+
+**Strategy:** Choose the split that maximizes information gain.
+
+. . .
+
+This is equivalent to maximizing mutual information between the split and the target.
+
+## Feature Selection with Mutual Information
+
+**Correlation** captures linear relationships.
+
+. . .
+
+**Mutual Information** captures *any* dependence.
+
+```{r}
+#| label: mi-vs-cor
+#| echo: false
+#| fig-height: 3.5
+#| fig-width: 8
+
+set.seed(42)
+n <- 200
+
+# Linear relationship
+x1 <- rnorm(n)
+y1 <- 2*x1 + rnorm(n, sd = 0.5)
+
+# Nonlinear relationship (parabola)
+x2 <- runif(n, -2, 2)
+y2 <- x2^2 + rnorm(n, sd = 0.3)
+
+p1 <- tibble(x = x1, y = y1) |>
+  ggplot(aes(x, y)) +
+  geom_point(alpha = 0.5, color = "steelblue") +
+  labs(title = paste0("Linear: cor = ", round(cor(x1, y1), 2))) +
+  theme_minimal(base_size = 12)
+
+p2 <- tibble(x = x2, y = y2) |>
+  ggplot(aes(x, y)) +
+  geom_point(alpha = 0.5, color = "coral") +
+  labs(title = paste0("Parabolic: cor = ", round(cor(x2, y2), 2))) +
+  theme_minimal(base_size = 12)
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+. . .
+
+Correlation misses the parabolic relationship. Mutual information catches it.
+
+## Summary: Three Linked Concepts
+
+| Concept | Question Answered |
+|---------|-------------------|
+| **Entropy** $H$ | How uncertain is $X$? |
+| **Mutual Information** $MI$ | How much does $X$ tell us about $Y$? |
+| **KL Divergence** $KL$ | How costly is assuming $Q$ when truth is $P$? |
+
+. . .
+
+$$MI_{X,Y} = KL\big(P_{X,Y} \| P_X \cdot P_Y\big)$$
+
+Mutual information *is* the KL divergence from independence.
+
+## Key Formulas
+
+$$H(X) = -\sum_x P(x) \log_2 P(x)$$
+
+. . .
+
+$$MI_{X,Y} = H_X + H_Y - H_{X,Y}$$
+
+. . .
+
+$$KL(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
+
+## Team Exercises {#sec-exercises}
+
+1. **Entropy, Discrete Uniform**: Calculate $H$ for Box $\{A, B, C, D, E\}$. Generalize to $K$ distinct values.
+
+2. **Entropy, UCB Admissions**: Using the UCB admissions data, calculate $H_{\text{decision}}$, $H_{\text{decision, sex}}$, and $MI_{\text{decision, sex}}$.
+
+3. **Cross-entropy intuition**: For a 3-class problem with true class 1, compare cross-entropy loss for predictions $(0.9, 0.05, 0.05)$ vs $(0.6, 0.2, 0.2)$ vs $(0.33, 0.33, 0.34)$.
+
+4. **Mutual information for feature selection**: Compute MI between features and target. Compare to correlation. When does MI find what correlation misses?
+
+## Resources {#sec-resources}
+
+- [A Mathematical Theory of Communication](https://webarchive.loc.gov/all/20050415122608/http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf) — Shannon's original 1948 paper
+
+- [Shannon Entropy, Information Gain, and Picking Balls from Buckets](https://medium.com/udacity/shannon-entropy-information-gain-and-picking-balls-from-buckets-5810d35d54b4) — Udacity tutorial
+
+- [Mutual Information](https://en.wikipedia.org/wiki/Mutual_information) — Wikipedia
+
+- [Cross-entropy](https://en.wikipedia.org/wiki/Cross-entropy) — Wikipedia
+
+- [Information gain in decision trees](https://en.wikipedia.org/wiki/Information_gain_in_decision_trees) — Wikipedia
