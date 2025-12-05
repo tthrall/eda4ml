@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -328,8 +363,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
   </div>
 </li>
       </ul>
@@ -337,7 +378,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -361,29 +402,38 @@ window.Quarto = {
   <ul>
   <li><a href="#continuous-distributions" id="toc-continuous-distributions" class="nav-link" data-scroll-target="#continuous-distributions"><span class="header-section-number">4.2.1</span> Continuous Distributions</a></li>
   <li><a href="#discrete-distributions" id="toc-discrete-distributions" class="nav-link" data-scroll-target="#discrete-distributions"><span class="header-section-number">4.2.2</span> Discrete Distributions</a></li>
+  <li><a href="#generating-random-samples" id="toc-generating-random-samples" class="nav-link" data-scroll-target="#generating-random-samples"><span class="header-section-number">4.2.3</span> Generating Random Samples</a></li>
   </ul></li>
-  <li><a href="#sec-mean-v-median-example" id="toc-sec-mean-v-median-example" class="nav-link" data-scroll-target="#sec-mean-v-median-example"><span class="header-section-number">4.3</span> Example Application</a></li>
+  <li><a href="#sec-mean-v-median-example" id="toc-sec-mean-v-median-example" class="nav-link" data-scroll-target="#sec-mean-v-median-example"><span class="header-section-number">4.3</span> Example Application: Mean vs.&nbsp;Median</a>
+  <ul>
+  <li><a href="#simulation-design" id="toc-simulation-design" class="nav-link" data-scroll-target="#simulation-design"><span class="header-section-number">4.3.1</span> Simulation Design</a></li>
+  <li><a href="#simulation-results" id="toc-simulation-results" class="nav-link" data-scroll-target="#simulation-results"><span class="header-section-number">4.3.2</span> Simulation Results</a></li>
+  </ul></li>
   <li><a href="#sec-class-exr" id="toc-sec-class-exr" class="nav-link" data-scroll-target="#sec-class-exr"><span class="header-section-number">4.4</span> Class Exercise</a></li>
   <li><a href="#sec-mc-sim" id="toc-sec-mc-sim" class="nav-link" data-scroll-target="#sec-mc-sim"><span class="header-section-number">4.5</span> Monte Carlo Simulation</a>
   <ul>
-  <li><a href="#sec-est-pi" id="toc-sec-est-pi" class="nav-link" data-scroll-target="#sec-est-pi"><span class="header-section-number">4.5.1</span> Example 1: estimate <span class="math inline">\(\pi\)</span></a></li>
-  <li><a href="#sec-est-area" id="toc-sec-est-area" class="nav-link" data-scroll-target="#sec-est-area"><span class="header-section-number">4.5.2</span> Example 2: estimate area of an arbitrary region</a></li>
-  <li><a href="#importance-sampling-art-importance-sampling" id="toc-importance-sampling-art-importance-sampling" class="nav-link" data-scroll-target="#importance-sampling-art-importance-sampling"><span class="header-section-number">4.5.3</span> Importance Sampling </a></li>
+  <li><a href="#sec-est-pi" id="toc-sec-est-pi" class="nav-link" data-scroll-target="#sec-est-pi"><span class="header-section-number">4.5.1</span> Example 1: Estimate <span class="math inline">\(\pi\)</span></a></li>
+  <li><a href="#the-monte-carlo-principle" id="toc-the-monte-carlo-principle" class="nav-link" data-scroll-target="#the-monte-carlo-principle"><span class="header-section-number">4.5.2</span> The Monte Carlo Principle</a></li>
+  <li><a href="#sec-est-area" id="toc-sec-est-area" class="nav-link" data-scroll-target="#sec-est-area"><span class="header-section-number">4.5.3</span> Example 2: Estimate Area of an Arbitrary Region</a></li>
   </ul></li>
-  <li><a href="#sec-mcmc" id="toc-sec-mcmc" class="nav-link" data-scroll-target="#sec-mcmc"><span class="header-section-number">4.6</span> Markov Chain Monte Carlo (MCMC) </a>
+  <li><a href="#sec-importance-sampling" id="toc-sec-importance-sampling" class="nav-link" data-scroll-target="#sec-importance-sampling"><span class="header-section-number">4.6</span> Importance Sampling</a>
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">4.6.1</span> Overview</a></li>
-  <li><a href="#markov-chains" id="toc-markov-chains" class="nav-link" data-scroll-target="#markov-chains"><span class="header-section-number">4.6.2</span> Markov chains</a></li>
-  <li><a href="#time-reversal" id="toc-time-reversal" class="nav-link" data-scroll-target="#time-reversal"><span class="header-section-number">4.6.3</span> Time Reversal</a></li>
-  <li><a href="#metropolis-hastings-algorithmart-mh-algo" id="toc-metropolis-hastings-algorithmart-mh-algo" class="nav-link" data-scroll-target="#metropolis-hastings-algorithmart-mh-algo"><span class="header-section-number">4.6.4</span> Metropolis-Hastings Algorithm</a>
-  <ul class="collapse">
-  <li><a href="#outline" id="toc-outline" class="nav-link" data-scroll-target="#outline"><span class="header-section-number">4.6.4.1</span> Outline</a></li>
-  <li><a href="#metropolis-algorithm" id="toc-metropolis-algorithm" class="nav-link" data-scroll-target="#metropolis-algorithm"><span class="header-section-number">4.6.4.2</span> Metropolis Algorithm</a></li>
-  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">4.6.4.3</span> Example</a></li>
+  <li><a href="#the-rare-event-problem" id="toc-the-rare-event-problem" class="nav-link" data-scroll-target="#the-rare-event-problem"><span class="header-section-number">4.6.1</span> The Rare Event Problem</a></li>
+  <li><a href="#the-importance-sampling-solution" id="toc-the-importance-sampling-solution" class="nav-link" data-scroll-target="#the-importance-sampling-solution"><span class="header-section-number">4.6.2</span> The Importance Sampling Solution</a></li>
+  <li><a href="#application-to-pz-6" id="toc-application-to-pz-6" class="nav-link" data-scroll-target="#application-to-pz-6"><span class="header-section-number">4.6.3</span> Application to <span class="math inline">\(P(Z &gt; 6)\)</span></a></li>
   </ul></li>
+  <li><a href="#sec-bootstrap" id="toc-sec-bootstrap" class="nav-link" data-scroll-target="#sec-bootstrap"><span class="header-section-number">4.7</span> Bootstrap Resampling</a>
+  <ul>
+  <li><a href="#the-bootstrap-idea" id="toc-the-bootstrap-idea" class="nav-link" data-scroll-target="#the-bootstrap-idea"><span class="header-section-number">4.7.1</span> The Bootstrap Idea</a></li>
+  <li><a href="#bootstrap-implementation" id="toc-bootstrap-implementation" class="nav-link" data-scroll-target="#bootstrap-implementation"><span class="header-section-number">4.7.2</span> Bootstrap Implementation</a></li>
+  <li><a href="#bootstrap-example" id="toc-bootstrap-example" class="nav-link" data-scroll-target="#bootstrap-example"><span class="header-section-number">4.7.3</span> Bootstrap Example</a></li>
+  <li><a href="#why-bootstrap-matters-for-eda" id="toc-why-bootstrap-matters-for-eda" class="nav-link" data-scroll-target="#why-bootstrap-matters-for-eda"><span class="header-section-number">4.7.4</span> Why Bootstrap Matters for EDA</a></li>
+  <li><a href="#bootstrap-for-correlation" id="toc-bootstrap-for-correlation" class="nav-link" data-scroll-target="#bootstrap-for-correlation"><span class="header-section-number">4.7.5</span> Bootstrap for Correlation</a></li>
   </ul></li>
-  <li><a href="#sec-team-exr" id="toc-sec-team-exr" class="nav-link" data-scroll-target="#sec-team-exr"><span class="header-section-number">4.7</span> Team Exercises</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">4.8</span> Resources</a></li>
+  <li><a href="#sec-mcmc-preview" id="toc-sec-mcmc-preview" class="nav-link" data-scroll-target="#sec-mcmc-preview"><span class="header-section-number">4.8</span> Advanced Topics: MCMC</a></li>
+  <li><a href="#sec-ml-connections" id="toc-sec-ml-connections" class="nav-link" data-scroll-target="#sec-ml-connections"><span class="header-section-number">4.9</span> Connections to Machine Learning</a></li>
+  <li><a href="#sec-team-exr" id="toc-sec-team-exr" class="nav-link" data-scroll-target="#sec-team-exr"><span class="header-section-number">4.10</span> Team Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">4.11</span> Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/simulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -409,7 +459,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">14:40 Thu 4-Dec-2025</p>
+      <p class="date">12:14 Fri 5-Dec-2025</p>
     </div>
   </div>
   
@@ -424,26 +474,42 @@ window.Quarto = {
 <hr>
 <section id="sec-introduction" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-introduction"><span class="header-section-number">4.1</span> Introduction</h2>
-<p>Statistical simulation generates random data from specified distributions in order to model the behavior of complex systems and analyze potential outcomes of various scenarios. Simulations augment analytic solutions, enabling researchers to explore different possibilities and assess alternative methods. Here are some of the uses of statistical simulation.</p>
+<p>How might our plans, methods, or model fail?</p>
+<p>This is the question that motivates statistical simulation. When we propose a method—an estimator, a model, a decision rule—we want to know how it will behave before we deploy it. Will it work well with small samples? What if the data have outliers? What if our assumptions are wrong?</p>
+<p>Simulation lets us explore these scenarios systematically. We generate data from known processes, apply our methods, and observe what happens. Because we control the data-generating process, we can study behavior that would be impossible to observe in practice.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Uses of Simulation
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li>Comparing statistical methods</li>
-<li>Assessing the robustness of data analyses</li>
-<li>Understanding system behavior</li>
-<li>Supplementing real-world data</li>
+<li><strong>Comparing methods:</strong> Which estimator performs better under various conditions?</li>
+<li><strong>Assessing robustness:</strong> What happens when assumptions are violated?</li>
+<li><strong>Understanding systems:</strong> How does randomness propagate through complex processes?</li>
+<li><strong>Quantifying uncertainty:</strong> How precise are our estimates?</li>
 </ul>
+</div>
+</div>
+<p>Simulation is firmly in the spirit of exploratory data analysis. We are not proving theorems—we are exploring possibilities. The goal is insight: understanding how methods behave so we can make better choices.</p>
 </section>
 <section id="sec-rng" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="sec-rng"><span class="header-section-number">4.2</span> Generating Random Numbers from a Given Distribution</h2>
-<p>As mentioned in an earlier session, the R <code>stats</code> package provides random number generators for commonly used probability distributions. For each random number generator the package also provides the probability density function (for continuous distributions) or the probability mass function (for discrete distributions), along with cumulative versions (incomplete integrals or sums), and the inverse of the cumulative versions, the quantile functions. The naming convention is illustrated by the uniform distribution over a finite interval (unit interval by default).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>The R <code>stats</code> package provides random number generators for commonly used probability distributions. For each distribution, the package provides four functions following a naming convention illustrated by the normal distribution:</p>
 <ul>
-<li><code>dunif()</code> density at a given point <span class="math inline">\(x\)</span></li>
-<li><code>punif()</code> cumulative probability, that <span class="math inline">\(X \le x\)</span></li>
-<li><code>qunif()</code> quantile, return <span class="math inline">\(x\)</span> having prescribed cumulative probability <span class="math inline">\(p\)</span></li>
-<li><code>runif()</code> generate indpendent instances <span class="math inline">\((X_1, \ldots, X_n)\)</span> of a uniform random variable</li>
+<li><code>dnorm()</code> density at a given point <span class="math inline">\(x\)</span></li>
+<li><code>pnorm()</code> cumulative probability, <span class="math inline">\(P(X \le x)\)</span></li>
+<li><code>qnorm()</code> quantile, return <span class="math inline">\(x\)</span> having prescribed cumulative probability <span class="math inline">\(p\)</span></li>
+<li><code>rnorm()</code> generate independent instances <span class="math inline">\((X_1, \ldots, X_n)\)</span> of a normal random variable</li>
 </ul>
+<p>The prefix indicates the function type: <code>d</code> for density, <code>p</code> for probability (CDF), <code>q</code> for quantile, and <code>r</code> for random generation.</p>
 <section id="continuous-distributions" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="continuous-distributions"><span class="header-section-number">4.2.1</span> Continuous Distributions</h3>
-<p>The <code>stats</code> package includes the following continuous distributions.</p>
+<p>The <code>stats</code> package includes the following continuous distributions (among others; see <code>?Distributions</code> for a complete list).</p>
 <div class="cell">
 <div id="tbl-dpqr-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -453,7 +519,7 @@ Table&nbsp;4.1: Continuous Distributions from <code>stats</code>
 <div aria-describedby="tbl-dpqr-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Continuous Distributions from <code>stats</code></caption>
+<caption>Selected Continuous Distributions from <code>stats</code></caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">prefix</th>
@@ -529,7 +595,7 @@ Table&nbsp;4.1: Continuous Distributions from <code>stats</code>
 </figure>
 </div>
 </div>
-<p>These distributions have interesting histories and relationships.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> For example a beta variable <span class="math inline">\(X\)</span> having shape parameters <span class="math inline">\((\alpha, \beta)\)</span> can be expressed as the ratio <span class="math inline">\(U/(U + V)\)</span>, where <span class="math inline">\((U, V)\)</span> are independent gamma variables having a common scale parameter, and respective shape parameters <span class="math inline">\((\alpha, \beta)\)</span>. See the resources listed below if interested.</p>
+<p>These distributions have interesting histories and relationships.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> For example a beta variable <span class="math inline">\(X\)</span> having shape parameters <span class="math inline">\((\alpha, \beta)\)</span> can be expressed as the ratio <span class="math inline">\(U/(U + V)\)</span>, where <span class="math inline">\((U, V)\)</span> are independent gamma variables having a common scale parameter, and respective shape parameters <span class="math inline">\((\alpha, \beta)\)</span>.</p>
 </section>
 <section id="discrete-distributions" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="discrete-distributions"><span class="header-section-number">4.2.2</span> Discrete Distributions</h3>
@@ -543,7 +609,7 @@ Table&nbsp;4.2: Discrete Distributions from <code>stats</code>
 <div aria-describedby="tbl-dpqr-int-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Discrete Distributions from <code>stats</code></caption>
+<caption>Selected Discrete Distributions from <code>stats</code></caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">prefix</th>
@@ -584,48 +650,208 @@ Table&nbsp;4.2: Discrete Distributions from <code>stats</code>
 </figure>
 </div>
 </div>
-<p>Again, these distributions have interesting histories and relationships. For example the Poisson distribution can described as the limiting case of binomial distributions, <span class="math inline">\(\text{Binom}(n, p_n)\)</span> such that the respective expected values, <span class="math inline">\(n \times p_n\)</span>, converge to <span class="math inline">\(\lambda &gt; 0\)</span> as <span class="math inline">\(n \rightarrow \infty\)</span>. Equivalently we can write <span class="math inline">\(p_n \approx \lambda/n\)</span>, so that <span class="math inline">\(p_n\)</span>, the probability of success on a single Bernoulli trial, becomes vanishingly small as the number <span class="math inline">\(n\)</span> of Bernoulli trials increases. For this reason the Poisson distribution has been called “the law of rare events”.</p>
+<p>The Poisson distribution can be described as the limiting case of binomial distributions, <span class="math inline">\(\text{Binom}(n, p_n)\)</span> such that the respective expected values, <span class="math inline">\(n \times p_n\)</span>, converge to <span class="math inline">\(\lambda &gt; 0\)</span> as <span class="math inline">\(n \rightarrow \infty\)</span>. Equivalently we can write <span class="math inline">\(p_n \approx \lambda/n\)</span>, so that <span class="math inline">\(p_n\)</span>, the probability of success on a single Bernoulli trial, becomes vanishingly small as the number <span class="math inline">\(n\)</span> of Bernoulli trials increases. For this reason the Poisson distribution has been called “the law of rare events”.</p>
+</section>
+<section id="generating-random-samples" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="generating-random-samples"><span class="header-section-number">4.2.3</span> Generating Random Samples</h3>
+<p>The following code demonstrates random number generation:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 100 standard normal values</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 100 uniform values on [0, 1]</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 100 Poisson values with mean 5</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">lambda =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The key insight is that we specify the distribution and its parameters; R generates samples from that distribution.</p>
 </section>
 </section>
 <section id="sec-mean-v-median-example" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="sec-mean-v-median-example"><span class="header-section-number">4.3</span> Example Application</h2>
-<p>Statistical simulation has been used to evaluate proposed statistical methods. Here’s an admittedly tame example (where the answer has already been determined mathematically).</p>
-<p>Let <span class="math inline">\(\hat{\mathcal{m}}\)</span> and <span class="math inline">\(\hat{\mu}\)</span> denote the median and mean, respectively, of a random sample from a continuous distribution. For a symmetric distribution (with a defined population mean value), the population median and mean coincide. But the sample mean is highly sensitive to a few outlying values in the sample, and is thus less robust than the sample median for long-tailed distributions.</p>
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-mean-v-median-example"><span class="header-section-number">4.3</span> Example Application: Mean vs.&nbsp;Median</h2>
+<p>Statistical simulation is commonly used to evaluate proposed statistical methods. Here’s an example where we can verify simulation results against known theory.</p>
+<p>Let <span class="math inline">\(\hat{m}\)</span> and <span class="math inline">\(\hat{\mu}\)</span> denote the median and mean, respectively, of a random sample from a continuous distribution. For a symmetric distribution (with a defined population mean value), the population median and mean coincide. But the sample mean is highly sensitive to a few outlying values in the sample, and is thus less robust than the sample median for long-tailed distributions.</p>
 <p>Consequently, in financial applications and other applications where long-tailed distributions occur, the median is the preferred descriptor of the central value of the sample and of the population.</p>
 <p>In some cases the robustness of the sample median comes at a cost. If the population distribution is normal with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span> then the sample mean has smaller variance than the sample median (although they estimate the same population value).</p>
 <p><span id="eq-variance-mean-v-median"><span class="math display">\[
 \begin{align}
   \text{Var} \left\{ \hat{\mu} \right\} &amp;= \frac{\sigma^2}{n} \\
   \\
-  \text{Var} \left\{ \hat{\mathcal{m}} \right\} &amp;= \frac{\pi}{2} \frac{\sigma^2}{n + 1} \\
+  \text{Var} \left\{ \hat{m} \right\} &amp;= \frac{\pi}{2} \frac{\sigma^2}{n + 1} \\
   \\
-  \frac{ \text{Var} \left\{ \hat{\mathcal{m}} \right\} }{ \text{Var} \left\{ \hat{\mu} \right\} } &amp;\approx \frac{\pi}{2} \\
+  \frac{ \text{Var} \left\{ \hat{m} \right\} }{ \text{Var} \left\{ \hat{\mu} \right\} } &amp;\approx \frac{\pi}{2} \\
   &amp;\approx 1.57
 \end{align}
 \qquad(4.1)\]</span></span></p>
 <p>This ratio of variances in the normal case can be verified by simulation.</p>
-<p>In this example, simulation would merely illustrate a property already determined mathematically. But in other situations, statistical simulation may be the best practical way to understand the properties of a proposed statistical procedure, or more generally, a system that entails random events.</p>
+<section id="simulation-design" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="simulation-design"><span class="header-section-number">4.3.1</span> Simulation Design</h3>
+<p>The structure of a simulation study follows a common pattern:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">30</span>       <span class="co"># sample size</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="dv">10000</span>    <span class="co"># number of replications</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Storage</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">numeric</span>(R)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>medians <span class="ot">&lt;-</span> <span class="fu">numeric</span>(R)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation loop</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (r <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>R) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)           <span class="co"># generate sample</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  means[r] <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)     <span class="co"># compute mean</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  medians[r] <span class="ot">&lt;-</span> <span class="fu">median</span>(x) <span class="co"># compute median</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare variances</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(medians) <span class="sc">/</span> <span class="fu">var</span>(means)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="simulation-results" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="simulation-results"><span class="header-section-number">4.3.2</span> Simulation Results</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-mean-median" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mean-median-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="simulation_files/figure-html/fig-mean-median-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mean-median-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.1: Sampling distributions of mean and median (n=30, R=10,000)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-mean-median-var" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mean-median-var-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.3: Variance comparison: mean vs.&nbsp;median
+</figcaption>
+<div aria-describedby="tbl-mean-median-var-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Estimator</th>
+<th style="text-align: right;">Variance</th>
+<th style="text-align: right;">Std Dev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mean</td>
+<td style="text-align: right;">0.0338</td>
+<td style="text-align: right;">0.1837</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Median</td>
+<td style="text-align: right;">0.0512</td>
+<td style="text-align: right;">0.2263</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The simulated variance ratio is 1.517, compared to the theoretical value of <span class="math inline">\(\pi/2 \approx\)</span> 1.571. Simulation confirms the theoretical result.</p>
+<p>In this example, simulation merely illustrates a property already determined mathematically. But in other situations, statistical simulation may be the best practical way to understand the properties of a proposed statistical procedure, or more generally, a system that entails random events.</p>
+</section>
 </section>
 <section id="sec-class-exr" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="sec-class-exr"><span class="header-section-number">4.4</span> Class Exercise</h2>
-<p>With a teammate, generate a sample of <span class="math inline">\(n\)</span> pseudo-random numbers following the normal distribution, for example using <code>stats::rnorm()</code>. Calculate <span class="math inline">\(\hat{\mathcal{m}}\)</span> and <span class="math inline">\(\hat{\mu}\)</span>, the sample <code>median()</code> and <code>mean()</code>. Now repeat that process a total of <span class="math inline">\(R\)</span> times, recording the values of the sample mean and median in each run. This gives a sample of size <span class="math inline">\(R\)</span> of the pair <span class="math inline">\((\hat{\mathcal{m}}, \hat{\mu})\)</span>. What is the sample variance of these two estimators? Take 20 minutes to prepare to report your progress to the class.</p>
+<p>With a teammate, verify the variance ratio result using your own simulation.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Simulation exercise structure
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Set parameters:</strong> Choose sample size <span class="math inline">\(n\)</span> (e.g., 30) and number of replications <span class="math inline">\(R\)</span> (e.g., 5000)</li>
+<li><strong>Create storage:</strong> Initialize vectors to hold <span class="math inline">\(R\)</span> means and <span class="math inline">\(R\)</span> medians</li>
+<li><strong>Run the loop:</strong> For each replication <span class="math inline">\(r = 1, \ldots, R\)</span>:
+<ul>
+<li>Generate a sample of size <span class="math inline">\(n\)</span> from <code>rnorm()</code></li>
+<li>Compute and store the sample mean</li>
+<li>Compute and store the sample median</li>
+</ul></li>
+<li><strong>Analyze results:</strong>
+<ul>
+<li>Calculate <code>var(medians) / var(means)</code></li>
+<li>Compare to <span class="math inline">\(\pi/2 \approx 1.57\)</span></li>
+</ul></li>
+<li><strong>Extend:</strong> What happens if you use <code>rcauchy()</code> instead of <code>rnorm()</code>?</li>
+</ol>
+</div>
+</div>
+<p>Take 20 minutes to prepare to report your progress to the class.</p>
 </section>
 <section id="sec-mc-sim" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="sec-mc-sim"><span class="header-section-number">4.5</span> Monte Carlo Simulation</h2>
 <p>Monte Carlo simulation encompasses a broad set of algorithms that use random sampling to obtain numerical values. Mathematician <a href="https://en.wikipedia.org/wiki/Stanis%C5%82aw_Ulam">Stanislav Ulam</a> led the development of this approach (and coined the name) as part of the Manhattan Project during World War 2. The approach is used when other types of numerical calculation are not feasible.</p>
 <section id="sec-est-pi" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="sec-est-pi"><span class="header-section-number">4.5.1</span> Example 1: estimate <span class="math inline">\(\pi\)</span></h3>
-<p>Here is a simple illustration. Recall that a circle of radius <span class="math inline">\(r\)</span> has an area equal to <span class="math inline">\(\pi \; r^2\)</span>. Setting <span class="math inline">\(r = 1\)</span> we see that the unit circle has an area equal to <span class="math inline">\(\pi\)</span>. Centered at the origin of the plane, the area is divided equally among the four quadrants of the plane. Thus the area within the first quadrant equals <span class="math inline">\(\pi/4\)</span>. We can use random sampling to estimate <span class="math inline">\(\pi\)</span> as follows.</p>
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="sec-est-pi"><span class="header-section-number">4.5.1</span> Example 1: Estimate <span class="math inline">\(\pi\)</span></h3>
+<p>Here is a classic illustration. Recall that a circle of radius <span class="math inline">\(r\)</span> has an area equal to <span class="math inline">\(\pi \; r^2\)</span>. Setting <span class="math inline">\(r = 1\)</span> we see that the unit circle has an area equal to <span class="math inline">\(\pi\)</span>. Centered at the origin of the plane, the area is divided equally among the four quadrants of the plane. Thus the area within the first quadrant equals <span class="math inline">\(\pi/4\)</span>. We can use random sampling to estimate <span class="math inline">\(\pi\)</span> as follows.</p>
 <ol type="1">
 <li>Generate pairs of independent standard uniform random variables <span class="math inline">\(\{ (X_j, Y_j) \}_{j = 1}^n\)</span>. They constitute uniformly random points in the unit square.</li>
 <li>Define <span class="math inline">\(B_j\)</span> to be the Bernoulli indicator function, equal to 1 if <span class="math inline">\(X_j^2 + Y_j^2 &lt; 1\)</span> and equal to zero otherwise. Note that <span class="math inline">\(B_j\)</span> has expected value <span class="math inline">\(\pi/4\)</span>.</li>
-<li>Calculate the sample average <span class="math inline">\(A(B_{\bullet})\)</span> as an estimate of <span class="math inline">\(\pi/4\)</span>.</li>
+<li>Calculate the sample average <span class="math inline">\(\bar{B}\)</span> as an estimate of <span class="math inline">\(\pi/4\)</span>.</li>
 <li>Multiply the sample average by 4 as an estimate of <span class="math inline">\(\pi\)</span>.</li>
 </ol>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-pi-estimate" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pi-estimate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="simulation_files/figure-html/fig-pi-estimate-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pi-estimate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.2: Monte Carlo estimation of π
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <p>The precision of the estimate improves as the number <span class="math inline">\(n\)</span> of randomly generated points increases.</p>
 </section>
-<section id="sec-est-area" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="sec-est-area"><span class="header-section-number">4.5.2</span> Example 2: estimate area of an arbitrary region</h3>
+<section id="the-monte-carlo-principle" class="level3" data-number="4.5.2">
+<h3 data-number="4.5.2" class="anchored" data-anchor-id="the-monte-carlo-principle"><span class="header-section-number">4.5.2</span> The Monte Carlo Principle</h3>
+<p>More generally, to estimate <span class="math inline">\(E[g(X)]\)</span> for some function <span class="math inline">\(g\)</span> and random variable <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[\hat{\theta} = \frac{1}{n}\sum_{i=1}^n g(X_i)\]</span></p>
+<p>where <span class="math inline">\(X_1, \ldots, X_n\)</span> are random samples from the distribution of <span class="math inline">\(X\)</span>.</p>
+<p>By the Law of Large Numbers, <span class="math inline">\(\hat{\theta} \to E[g(X)]\)</span> as <span class="math inline">\(n \to \infty\)</span>. The standard error of the estimate decreases as <span class="math inline">\(1/\sqrt{n}\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-pi-convergence" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pi-convergence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="simulation_files/figure-html/fig-pi-convergence-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pi-convergence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.3: Monte Carlo estimate converges to true value
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-est-area" class="level3" data-number="4.5.3">
+<h3 data-number="4.5.3" class="anchored" data-anchor-id="sec-est-area"><span class="header-section-number">4.5.3</span> Example 2: Estimate Area of an Arbitrary Region</h3>
 <p>The figure below shows a simple closed curve within the unit square centered at the origin.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -635,291 +861,282 @@ Table&nbsp;4.2: Discrete Distributions from <code>stats</code>
 <img src="simulation_files/figure-html/fig-c-tbl-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-c-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.1: Monte Carlo estimation of area
+Figure&nbsp;4.4: Monte Carlo estimation of area
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>The closed curve defines an interior region <span class="math inline">\(\mathcal{R}\)</span> bounded by the square <span class="math inline">\(\mathcal{S} = [-0.5, 0.5] \times [-0.5, 0.5]\)</span>. We assume that for any point <span class="math inline">\((x, y) \in \mathcal{S}\)</span> we can determine whether the point is inside or outside <span class="math inline">\(\mathcal{R}\)</span>. The Monte Carlo estimate of the area of this region is the proportion of points randomly selected from <span class="math inline">\(\mathcal{S}\)</span> that fall within <span class="math inline">\(\mathcal{R}\)</span> multiplied by the area of <span class="math inline">\(\mathcal{S}\)</span> (which is 1 in this case).</p>
-<p>In the current example, the closed curve shown above is a deformation of the unit circle in which the Euclidean norm at each point, <span class="math inline">\(t\)</span>, along the circle has been multiplied by a prescribed positive continuous function, <span class="math inline">\(f(t)\)</span>. Consequently a point <span class="math inline">\((x, y)\)</span> is in the interior of the closed curve if <span class="math inline">\(x^2 + y^2 &lt; f^2(t)\)</span>, where <span class="math inline">\(t \in [0,1)\)</span> equals <span class="math inline">\(\arctan(y, x) \bmod{2 \pi}\)</span>.</p>
-<p>This is a common application of Mote Carlo simulation: estimating the volume of given region <span class="math inline">\(\mathcal{R}\)</span> in Euclidean space, under the assumption that, for any given point, we can determine whether the point is inside or outside the region.</p>
-</section>
-<section id="importance-sampling-art-importance-sampling" class="level3" data-number="4.5.3">
-<h3 data-number="4.5.3" class="anchored" data-anchor-id="importance-sampling-art-importance-sampling"><span class="header-section-number">4.5.3</span> Importance Sampling <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></h3>
-<p>The above description of Monte Carlo simulation is also called rejection sampling, and can be generalized as follows. Let <span class="math inline">\(\mathcal{R}\)</span> denote a region of <span class="math inline">\(\mathbb{R}^d\)</span> having a finite volume <span class="math inline">\(| \mathcal{R} |\)</span>. We want to estimate the average value, <span class="math inline">\(\mu(f, \mathcal{R})\)</span> of any given integrable function <span class="math inline">\(f: \mathcal{R} \rightarrow \mathbb{R}\)</span>.</p>
-<p><span id="eq-mu-f-region"><span class="math display">\[
-\begin{align}
-  \mu(f, \mathcal{R}) &amp;= \frac{1}{| \mathcal{R} |} \int_\mathcal{R} f(x) \; dx
-\end{align}
-\qquad(4.2)\]</span></span></p>
-<p>This corresponds to the expected value of <span class="math inline">\(f(X)\)</span> when the random vector <span class="math inline">\(X\)</span> has a uniform probability distribution over <span class="math inline">\(\mathcal{R}\)</span>. More generally, suppose we also have some probability density function <span class="math inline">\(p(\cdot)\)</span> restricted to <span class="math inline">\(\mathcal{R}\)</span>, and we want to calculate the expected value of <span class="math inline">\(f(X)\)</span> when <span class="math inline">\(X\)</span> has probability density <span class="math inline">\(p(\cdot)\)</span>.</p>
-<p><span id="eq-mu-f-p"><span class="math display">\[
-\begin{align}
-  \mu(f, p) &amp;= \int_\mathcal{R} f(x) \times p(x) \; dx
-\end{align}
-\qquad(4.3)\]</span></span></p>
-<p>Now. it may not be convenient or feasible to generate a random sample of vectors <span class="math inline">\(\{ X_1, \ldots, X_n \}\)</span> from the probability distribution having given density function <span class="math inline">\(p(\cdot)\)</span>. But we may be able to generate a random sample of vectors <span class="math inline">\(\{ Y_1, \ldots, Y_n \}\)</span> from a density function <span class="math inline">\(q(\cdot)\)</span> defined on a region <span class="math inline">\(\mathcal{S}\)</span> containing <span class="math inline">\(\mathcal{R}\)</span>. Then <span class="math inline">\(\mu(f, p)\)</span> can be expressed as the following weighted expectation of <span class="math inline">\(f(Y)\)</span>.</p>
-<p><span id="eq-mu-w-f-q"><span class="math display">\[
-\begin{align}
-  \mu(f, p) &amp;= \int_\mathcal{R} w(y) \times f(y) \times q(y) \; dy  \\ \\
-  &amp; \text{where } \\ \\
-  w(y) &amp;= \frac{p(y)}{q(y)}
-\end{align}
-\qquad(4.4)\]</span></span></p>
-<p>The estimated value takes the form of the following weighted sum.</p>
-<p><span id="eq-avg-w-f-q"><span class="math display">\[
-\begin{align}
-  \hat{\mu}(f, p) &amp;= \frac{\sum_{j = 1}^n w(Y_j) \; f(Y_j)}
-  {\sum_{k = 1}^n w(Y_k)}
-\end{align}
-\qquad(4.5)\]</span></span></p>
-<p>This approach is called <em>importance sampling</em>, and has many variations.</p>
-<p>Example: Suppose <span class="math inline">\(Z\)</span> has a standard normal distribution with density function <span class="math inline">\(\phi(\cdot)\)</span> and cumulative probability function <span class="math inline">\(\Phi(\cdot)\)</span>, and we want to determine the following conditional expectation.</p>
-<p><span id="eq-mu-f-z-conditional"><span class="math display">\[
-\begin{align}
-  \mu(f, p) &amp;= E \left \{ f(Z) \; | \; Z \ge 6  \right \} \\
-  &amp;= \int_\mathcal{R} f(z) \times p(z) \; dz \\ \\
-  &amp; \text{where } \\ \\
-  \mathcal{R} &amp;= \{ z \; : \; z \ge 6 \} \\
-  p(z) &amp;=
-  \begin{cases}
-    0 &amp; \text{if } z &lt; 6 \\
-    \frac{\phi(z)}{1 - \Phi(6)} &amp; \text{if } z \ge 6
-  \end{cases}
-\end{align}
-\qquad(4.6)\]</span></span></p>
-<p>A naive approach to estimating <span class="math inline">\(\mu(f, p)\)</span> would be to generate standard normal variables <span class="math inline">\(\{ Z_1, \ldots, Z_n \}\)</span>, rejecting those values less than 6, and then averaging <span class="math inline">\(f(Z_\nu)\)</span> across the remaining values. The problem is that we would expect only one in a billion values to pass this threshhold, making that algorithm highly inefficient.</p>
-<p>Alternatively, we could define <span class="math inline">\(Y_\nu = 12 | Z_\nu |\)</span>, and apply the weighted averaging of <a href="#eq-avg-w-f-q" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
-<p><span id="eq-mu-f-z-conditional"><span class="math display">\[
-\begin{align}
-  w(y) &amp;= \frac{p(y)}{q(y)} \\ \\
-  &amp; \text{where } \\ \\
-  p(y) &amp;=
-  \begin{cases}
-    0 &amp; \text{if } z &lt; 6 \\
-    \frac{\phi(y)}{1 - \Phi(6)} &amp; \text{if } z \ge 6
-  \end{cases} \\
-  q(y) &amp;= \frac{2}{12} \; \phi \left ( \frac{y}{12} \right )
-\end{align}
-\qquad(4.7)\]</span></span></p>
-<p>This weighting function <span class="math inline">\(w(\cdot)\)</span> rapidly decreases on the interval <span class="math inline">\(y \in [6, \infty)\)</span> and otherwise assigns zero weight.</p>
+<p>This is a common application of Monte Carlo simulation: estimating the volume of a given region <span class="math inline">\(\mathcal{R}\)</span> in Euclidean space, under the assumption that, for any given point, we can determine whether the point is inside or outside the region.</p>
 </section>
 </section>
-<section id="sec-mcmc" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="sec-mcmc"><span class="header-section-number">4.6</span> Markov Chain Monte Carlo (MCMC) <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></h2>
-<section id="overview" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">4.6.1</span> Overview</h3>
-<p>Markov Chain Monte Carlo (MCMC) simulation encompasses many variations. The basic problem to be addressed is the same as that of importance sampling:</p>
-<ul>
-<li><p>We would like to generate a random sample from a distribution having given density, <span class="math inline">\(p(x), x \in \mathbb{R}^d\)</span>.</p></li>
-<li><p>We cannot directly generate the desired random sample, although we can evaluate <span class="math inline">\(p(x)\)</span> for any given <span class="math inline">\(x \in \mathbb{R}^d\)</span>.</p></li>
-</ul>
-<p>The approach toward a solution can be framed as follows.</p>
-<ul>
-<li><p>Construct a Markov chain <span class="math inline">\(X: \mathbb{Z} \rightarrow \mathbb{R}^d\)</span> (a discrete-time random process) having a stationary distribution (to which <span class="math inline">\(X(\cdot)\)</span> converges) given by density <span class="math inline">\(p(\cdot)\)</span>.</p></li>
-<li><p>Generate a sufficient number <span class="math inline">\(n\)</span> of samples from <span class="math inline">\(X(\cdot)\)</span> so that <span class="math inline">\(\{ X(n), X(n+1), \ldots \}\)</span> approximates a sample from the desired stationary distribution.</p></li>
-</ul>
-</section>
-<section id="markov-chains" class="level3" data-number="4.6.2">
-<h3 data-number="4.6.2" class="anchored" data-anchor-id="markov-chains"><span class="header-section-number">4.6.2</span> Markov chains</h3>
-<p>Recall the definition of a Markov chain, <span class="math inline">\(X(\cdot)\)</span>. The conditional distribution of <span class="math inline">\(X(t)\)</span> given past values, <span class="math inline">\(X(t-1), X(t-2), \ldots\)</span>, is just the conditional distribution of <span class="math inline">\(X(t)\)</span> given its preceding value, <span class="math inline">\(X(t-1)\)</span>.</p>
-<p>To illustrate, suppose that the values of <span class="math inline">\(X(\cdot)\)</span> are restricted to a finite set, say <span class="math inline">\(\{ 1, 2, 3 \}\)</span>. Then we define the transition probability <span class="math inline">\(p_{a, b}\)</span> as the following conditional probability.</p>
-<p><span id="eq-discrete-transition-prob"><span class="math display">\[
-\begin{align}
-  p_{a, b} &amp;= P(X(t) = b \; | \; X(t-1) = a)
-\end{align}
-\qquad(4.8)\]</span></span></p>
-<p>These transition probabilities are the elements of the following transition probability matrix <span class="math inline">\(T\)</span>.</p>
-<p><span id="eq-transition-matrix-example"><span class="math display">\[
-\begin{align}
-  T &amp;=
-  \left (
-  \begin{matrix}
-    p_{1, 1} &amp; p_{1,2} &amp; p_{1,3} \\
-    p_{2, 1} &amp; p_{2,2} &amp; p_{2,3} \\
-    p_{3, 1} &amp; p_{3,2} &amp; p_{3,3}
-  \end{matrix}
-  \right )
-\end{align}
-\qquad(4.9)\]</span></span></p>
-<p>If we denote the (marginal) probability distribution of <span class="math inline">\(X(n)\)</span> as <span class="math inline">\(\pi_n\)</span></p>
-<p><span id="eq-marginal-prob-example"><span class="math display">\[
-\begin{align}
-  \pi_n &amp;= \left ( P(X(n) = 1), P(X(n) = 2), P(X(n) = 3) \right )
-\end{align}
-\qquad(4.10)\]</span></span></p>
-<p>then we have</p>
-<p><span id="eq-marginal-prob-transition"><span class="math display">\[
-\begin{align}
-  \pi_{n+1} &amp;= \pi_n  \; T
-\end{align}
-\qquad(4.11)\]</span></span></p>
-<p>Consequently we have</p>
-<p><span id="eq-marginal-prob-power"><span class="math display">\[
-\begin{align}
-  \pi_n &amp;= \pi_0  \; T^n
-\end{align}
-\qquad(4.12)\]</span></span></p>
-<p>Under regularity conditions<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> there is a unique stationary distribution, say <span class="math inline">\(\pi_\infty\)</span>, such that <span class="math inline">\(\pi_n \rightarrow \pi_\infty\)</span>. Convergence is accompanied by diminishing values of <span class="math inline">\(\lVert \pi_{n+1} - \pi_n \rVert\)</span>.</p>
-</section>
-<section id="time-reversal" class="level3" data-number="4.6.3">
-<h3 data-number="4.6.3" class="anchored" data-anchor-id="time-reversal"><span class="header-section-number">4.6.3</span> Time Reversal</h3>
-<p>Recall that <span class="math inline">\(p(x)\)</span> is the prescribed stationary distribution of a Markov chain <span class="math inline">\(X(\cdot)\)</span> that we must construct. To do so, we will use the fact that if <span class="math inline">\(X(\cdot)\)</span> is time-reversible, then the marginal distribution of <span class="math inline">\(X(\nu)\)</span> is stationary. This can be seen as follows.</p>
-<p><span class="math inline">\(X(\cdot)\)</span> is time-reversible if the following holds. For any given <span class="math inline">\(n &gt; 0\)</span> define <span class="math inline">\(Y(\nu) = X(n - \nu)\)</span> for <span class="math inline">\(0 \le \nu \le n\)</span>. Then the joint probability distribution of the sequence <span class="math inline">\(( X(0), \ldots, X(n) )\)</span> is equal to that of the sequence <span class="math inline">\(( Y(0), \ldots, Y(n) ) = ( X(n), \ldots, X(0) )\)</span>.</p>
-<p>It follows that the ordered pair of random variables <span class="math inline">\((X(0), X(n))\)</span> has the same distribution as that of <span class="math inline">\((X(n), X(0))\)</span>, so that <span class="math inline">\(X(0)\)</span> has the same distribution as <span class="math inline">\(X(n)\)</span>, and this holds for all <span class="math inline">\(n &gt; 0\)</span>. Thus if <span class="math inline">\(X(\cdot)\)</span> is time-reversible its marginal distribution must be stationary.</p>
-<p>Now assume for the moment that the values of <span class="math inline">\(X(t)\)</span> form a discrete set, so that:</p>
-<p><span id="eq-balance-eqns-prep"><span class="math display">\[
-\begin{align}
-  P\left ( X(0) = a, X(1) = b \right ) &amp;= \pi_\infty(a) \times p_{a, b} \\
-  P\left ( X(1) = a, X(0) = b \right ) &amp;= \pi_\infty(b) \times p_{b, a}
-\end{align}
-\qquad(4.13)\]</span></span></p>
-<p>If <span class="math inline">\(X(\cdot)\)</span> is time-reversible, it follows that:</p>
-<p><span id="eq-balance-eqns"><span class="math display">\[
-\begin{align}
-  \pi_\infty(a) \times p_{a, b} &amp;= \pi_\infty(b) \times p_{b, a}
-\end{align}
-\qquad(4.14)\]</span></span></p>
-<p>Equations of this form are called <em>local balance equations</em>. If they hold then marginal distribution <span class="math inline">\(\pi_\infty\)</span> along with transition probabilities <span class="math inline">\(p_{a, b}\)</span> define a stationary Markov chain.</p>
-</section>
-<section id="metropolis-hastings-algorithmart-mh-algo" class="level3" data-number="4.6.4">
-<h3 data-number="4.6.4" class="anchored" data-anchor-id="metropolis-hastings-algorithmart-mh-algo"><span class="header-section-number">4.6.4</span> Metropolis-Hastings Algorithm<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></h3>
-<p>Suppose now that <span class="math inline">\(q(Y \; | \; X )\)</span> is a transition density from which we can generate a random sequence <span class="math inline">\(X(0), X(1), \ldots\)</span>, and let <span class="math inline">\(p(x)\)</span> denote the prescribed stationary distribution of <span class="math inline">\(X(\cdot)\)</span>. Also suppose that the current state of the generated sequence is <span class="math inline">\(X(t) = x\)</span>.</p>
-<section id="outline" class="level4" data-number="4.6.4.1">
-<h4 data-number="4.6.4.1" class="anchored" data-anchor-id="outline"><span class="header-section-number">4.6.4.1</span> Outline</h4>
-<p>The Metropolis-Hastings procedure is an iterative algorithm for generating the next value of the sequence as follows.</p>
-<ol type="1">
-<li>Generate a candidate value <span class="math inline">\(y \sim q(Y \; | \; x )\)</span>.</li>
-<li>Calculate <em>acceptance ratio</em> <span class="math inline">\(\alpha(y \; | \; x)\)</span> shown below.</li>
-<li>Generate <span class="math inline">\(u \sim unif(0, 1)\)</span>. Set the next value to <span class="math inline">\(y\)</span> if <span class="math inline">\(u \le \alpha(y \; | \; x)\)</span>. Otherwise set the next value to the current value, <span class="math inline">\(x\)</span>.</li>
-</ol>
-<p><span id="eq-accept-ratio"><span class="math display">\[
-\begin{align}
-  \alpha(y \; | \; x) &amp;= \max \left \{1, \frac{ p(y) \; q(x \; | \; y) }{ p(x) \; q(y \; | \; x ) } \right \}
-\end{align}
-\qquad(4.15)\]</span></span></p>
-</section>
-<section id="metropolis-algorithm" class="level4" data-number="4.6.4.2">
-<h4 data-number="4.6.4.2" class="anchored" data-anchor-id="metropolis-algorithm"><span class="header-section-number">4.6.4.2</span> Metropolis Algorithm</h4>
-<p>The original algorithm, known as the Metropolis algorithm, is a simpler procedure that generates a random walk. Let <span class="math inline">\(g(\cdot)\)</span> denote a probability density function that is symmetric with respect to <span class="math inline">\(x = 0\)</span>. Given the current state <span class="math inline">\(X(t) = x\)</span>, generate the candidate value <span class="math inline">\(y\)</span> as:</p>
-<p><span id="eq-Metro-next-y"><span class="math display">\[
-\begin{align}
-  y &amp;= x + \epsilon \\ \\
-  &amp;\text{where } \\ \\
-  \epsilon &amp;\sim g(\cdot)
-\end{align}
-\qquad(4.16)\]</span></span></p>
-<p>Then the density <span class="math inline">\(q(y \; | \; x)\)</span> of the transition from <span class="math inline">\(x\)</span> to <span class="math inline">\(y = x + \epsilon\)</span> is:</p>
-<p><span id="eq-Metro-transition-dens"><span class="math display">\[
-\begin{align}
-  q(y \; | \; x) &amp;= g(y - x)
-\end{align}
-\qquad(4.17)\]</span></span></p>
-<p>Since <span class="math inline">\(g(\cdot)\)</span> is symmetric about zero, <span class="math inline">\(q(y \; | \; x )\)</span> is symmetric in its two arguments.</p>
-<p><span id="eq-Metro-transition-symm"><span class="math display">\[
-\begin{align}
-  q(x \; | \; y) &amp;= g(x - y) \\
-  &amp;= g(y - x) \\
-  &amp;= q(y \; | \; x)
-\end{align}
-\qquad(4.18)\]</span></span></p>
-<p>Consequently the acceptance ratio simplifies as follows.</p>
-<p><span id="eq-Metro-accept-ratio"><span class="math display">\[
-\begin{align}
-  \alpha(y \; | \; x) &amp;= \max \left \{1, \frac{ p(y) \; q(x \; | \; y) }{ p(x) \; q(y \; | \; x ) } \right \} \\
-  &amp;= \max \left \{1, \frac{ p(y) }{ p(x) } \right \}
-\end{align}
-\qquad(4.19)\]</span></span></p>
-</section>
-<section id="example" class="level4" data-number="4.6.4.3">
-<h4 data-number="4.6.4.3" class="anchored" data-anchor-id="example"><span class="header-section-number">4.6.4.3</span> Example</h4>
-<p>For some fixed <span class="math inline">\(\delta &gt; 0\)</span> let <span class="math inline">\(g(\cdot)\)</span> be the uniform density on the interval <span class="math inline">\((-\delta, \delta)\)</span>. Let the specified stationary distribution be given by the standard normal density function <span class="math inline">\(\phi(\cdot)\)</span>. Then the Metropolis algorithm outlined above will generate a random walk in discrete time having jump-magnitudes governed by <span class="math inline">\(\delta\)</span>.</p>
-<p>The steps to generate the next value <span class="math inline">\(y\)</span> given the current value <span class="math inline">\(x\)</span> are a simplification of the steps previously outlined.</p>
-<ol type="1">
-<li>Generatecandidate value <span class="math inline">\(y = x + \epsilon\)</span>, where <span class="math inline">\(\epsilon \sim uniform(-\delta, \delta)\)</span>.</li>
-<li>Calculate <em>acceptance ratio</em> <span class="math inline">\(\alpha(y \; | \; x)\)</span> shown below.</li>
-<li>Generate <span class="math inline">\(u \sim unif(0, 1)\)</span>. Set the next value to <span class="math inline">\(y\)</span> if <span class="math inline">\(u \le \alpha(y \; | \; x)\)</span>. Otherwise set the next value to the current value, <span class="math inline">\(x\)</span>.</li>
-</ol>
-<p><span id="eq-Metro-accept-ratio-normal"><span class="math display">\[
-\begin{align}
-  \alpha(y \; | \; x) &amp;= \max \left \{1, \frac{ \phi(y) }{ \phi(x) } \right \}
-\end{align}
-\qquad(4.20)\]</span></span></p>
-<p>Here are three simulations, each starting at <span class="math inline">\(X(0) = 0\)</span>, but with <span class="math inline">\(\delta \in \{ \frac{1}{8}, \frac{1}{2}, 2 \}\)</span>, respectively. Recall that <span class="math inline">\(| X(t+1) - X(t) | \le \delta\)</span>. Thus the trajectories are decreasingly smooth.</p>
+<section id="sec-importance-sampling" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="sec-importance-sampling"><span class="header-section-number">4.6</span> Importance Sampling</h2>
+<p>The Monte Carlo approach described above is also called rejection sampling. It works well when the quantity of interest corresponds to a commonly occurring simulation event. But what if we want to estimate rare events?</p>
+<section id="the-rare-event-problem" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="the-rare-event-problem"><span class="header-section-number">4.6.1</span> The Rare Event Problem</h3>
+<p>Suppose <span class="math inline">\(Z\)</span> has a standard normal distribution, and we want to estimate <span class="math inline">\(P(Z &gt; 6)\)</span>.</p>
 <div class="cell">
-<div class="cell-output-display">
-<div id="fig-nrw-trajectory" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-nrw-trajectory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="simulation_files/figure-html/fig-nrw-trajectory-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nrw-trajectory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.2: X(t) with small to large jumps
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>Next we see histograms of the generated values. For the first and smoothest series more time would have been needed to traverse a greater portion of the normal distribution values.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div id="fig-nrw-hist" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-nrw-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="simulation_files/figure-html/fig-nrw-hist-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nrw-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.3: Histograms of X(t) with small to large jumps
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>Comparing the sets of summary statistics below, we see that the first random walk was confined to a narrower range of values. The final column is the effective sample size estimated by <code>R</code> function <code>astsa::ESS()</code>.</p>
-<div id="tbl-nrw-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-nrw-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4.3: Summary statistics: normal random walks
-</figcaption>
-<div aria-describedby="tbl-nrw-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># True probability</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">6</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 9
-  d_idx   min    q_1    avg    q_3   max    sd     n    ess
-  &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
-1 1     -2.07 -1.54  -0.995 -0.505 0.525 0.650  1024   4.07
-2 2     -3.06 -1.12  -0.303  0.601 2.53  1.10   1024  15.6 
-3 3     -3.37 -0.773 -0.151  0.555 3.23  0.985  1024 212.  </code></pre>
+<pre><code>[1] 9.865876e-10</code></pre>
+</div>
+</div>
+<p>This probability is about 1 in a billion. A naive simulation approach would generate standard normal values and count how many exceed 6:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 1 million standard normals</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fl">1e6</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Count how many exceed 6</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(z <span class="sc">&gt;</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>We would need billions of samples to see even one event. This is computationally infeasible.</p>
+</section>
+<section id="the-importance-sampling-solution" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="the-importance-sampling-solution"><span class="header-section-number">4.6.2</span> The Importance Sampling Solution</h3>
+<p><strong>Key idea:</strong> Sample from a different distribution where the event of interest is common, then reweight the samples.</p>
+<p>Instead of sampling from <span class="math inline">\(p(x)\)</span>, sample from <span class="math inline">\(q(x)\)</span> where the event <span class="math inline">\(\{X &gt; 6\}\)</span> is likely. The expected value under <span class="math inline">\(p\)</span> can be expressed as a weighted expectation under <span class="math inline">\(q\)</span>:</p>
+<p><span class="math display">\[E_p[g(X)] = E_q\left[g(X) \cdot \frac{p(X)}{q(X)}\right]\]</span></p>
+<p>The ratio <span class="math inline">\(w(x) = p(x)/q(x)\)</span> is the <strong>importance weight</strong>.</p>
+</section>
+<section id="application-to-pz-6" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="application-to-pz-6"><span class="header-section-number">4.6.3</span> Application to <span class="math inline">\(P(Z &gt; 6)\)</span></h3>
+<p><strong>Strategy:</strong> Shift the normal distribution to center it near 6. Let <span class="math inline">\(q(x)\)</span> be a normal distribution centered at 6.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample from shifted normal (centered at 6)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">6</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Importance weights: p(x) / q(x)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Using log scale for numerical stability</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>log_weights <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">log =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">6</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>weights <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_weights)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate P(Z &gt; 6)</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>estimate <span class="ot">&lt;-</span> <span class="fu">mean</span>((x <span class="sc">&gt;</span> <span class="dv">6</span>) <span class="sc">*</span> weights)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>estimate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9.790833e-10</code></pre>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-importance-sampling" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-importance-sampling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.4: Comparison of estimation methods
+</figcaption>
+<div aria-describedby="tbl-importance-sampling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">True value</td>
+<td style="text-align: left;">9.87e-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Importance sampling</td>
+<td style="text-align: left;">9.79e-10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Naive (n = 10^6)</td>
+<td style="text-align: left;">0</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
 </div>
+</div>
+<p>Importance sampling makes the estimation of rare event probabilities feasible. The approach generalizes to many problems where direct simulation is inefficient.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 </section>
 </section>
-</section>
-<section id="sec-team-exr" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="sec-team-exr"><span class="header-section-number">4.7</span> Team Exercises</h2>
+<section id="sec-bootstrap" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="sec-bootstrap"><span class="header-section-number">4.7</span> Bootstrap Resampling</h2>
+<p>A common question in data analysis is: how precise is our estimate? Classical statistics derives standard error formulas for specific estimators under specific assumptions. But what if we’re using a novel estimator, or our assumptions are uncertain?</p>
+<p>The <strong>bootstrap</strong> provides a general-purpose approach to quantifying uncertainty.</p>
+<section id="the-bootstrap-idea" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="the-bootstrap-idea"><span class="header-section-number">4.7.1</span> The Bootstrap Idea</h3>
 <ol type="1">
-<li>As in the class exercise, generate <span class="math inline">\(R\)</span> samples, each a sample of size <span class="math inline">\(n\)</span>, but this time use the Cauchy distribution (<code>rcauchy()</code>) rather than normal distribution (<code>rnorm()</code>). Calculate the sample variance and construct a histogram of the <span class="math inline">\(R\)</span> sample means:</li>
-</ol>
-<p><span id="eq-sim-sample-mean"><span class="math display">\[
-\left\{ \hat{\mu}_r \right\}_{r = 1}^R
-\qquad(4.21)\]</span></span></p>
-<ol start="2" type="1">
-<li><p>Suppose <span class="math inline">\((U_1, \ldots, U_n)\)</span> are independent and identically distributed random variables following the standard uniform distribution on the interval <span class="math inline">\((0, 1)\)</span>. Now set <span class="math inline">\(X_j = - \log_e(U_j)\)</span> for <span class="math inline">\(j = 1, \ldots, n\)</span>. What is the distribution of <span class="math inline">\((X_1, \ldots, X_n)\)</span>?</p></li>
-<li><p>In the Monte Carlo illustration of <a href="#sec-est-pi" class="quarto-xref"><span>Section 4.5.1</span></a>, what is the standard error of estimate of <span class="math inline">\(\pi\)</span>?</p></li>
+<li>Treat the observed sample as a proxy for the population</li>
+<li>Draw samples <strong>with replacement</strong> from the observed data (bootstrap samples)</li>
+<li>Compute the statistic of interest on each bootstrap sample</li>
+<li>Use the variability across bootstrap samples to estimate uncertainty</li>
 </ol>
 </section>
-<section id="resources" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="resources"><span class="header-section-number">4.8</span> Resources</h2>
+<section id="bootstrap-implementation" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="bootstrap-implementation"><span class="header-section-number">4.7.2</span> Bootstrap Implementation</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original sample</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">25</span>, <span class="dv">28</span>, <span class="dv">31</span>, <span class="dv">35</span>, <span class="dv">42</span>, <span class="dv">55</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Bootstrap parameters</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="dv">10000</span>  <span class="co"># number of bootstrap samples</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Storage for bootstrap estimates</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>boot_means <span class="ot">&lt;-</span> <span class="fu">numeric</span>(B)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Bootstrap loop</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>B) {</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Sample with replacement</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  x_star <span class="ot">&lt;-</span> <span class="fu">sample</span>(x, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute statistic</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  boot_means[b] <span class="ot">&lt;-</span> <span class="fu">mean</span>(x_star)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% confidence interval (percentile method)</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(boot_means, <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bootstrap-example" class="level3" data-number="4.7.3">
+<h3 data-number="4.7.3" class="anchored" data-anchor-id="bootstrap-example"><span class="header-section-number">4.7.3</span> Bootstrap Example</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-bootstrap" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bootstrap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="simulation_files/figure-html/fig-bootstrap-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bootstrap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.5: Bootstrap distribution of the sample mean
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>For comparison, the normal theory 95% CI is [18.9, 37.7]—similar to the bootstrap result.</p>
+</section>
+<section id="why-bootstrap-matters-for-eda" class="level3" data-number="4.7.4">
+<h3 data-number="4.7.4" class="anchored" data-anchor-id="why-bootstrap-matters-for-eda"><span class="header-section-number">4.7.4</span> Why Bootstrap Matters for EDA</h3>
+<p>The bootstrap works for almost any statistic:</p>
+<ul>
+<li>Correlation coefficients</li>
+<li>Regression coefficients</li>
+<li>Median, trimmed mean</li>
+<li>Ratios, differences</li>
+<li>Complex derived quantities</li>
+</ul>
+<p>This makes it invaluable for exploratory analysis, where we often compute statistics for which standard error formulas are unavailable or unreliable.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Bootstrap for EDA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The bootstrap answers a fundamental EDA question: “How much would this pattern change with different data?”</p>
+<p>When you observe an interesting pattern—a correlation, a difference between groups, a trend—the bootstrap helps you assess whether that pattern is robust or potentially spurious.</p>
+</div>
+</div>
+</section>
+<section id="bootstrap-for-correlation" class="level3" data-number="4.7.5">
+<h3 data-number="4.7.5" class="anchored" data-anchor-id="bootstrap-for-correlation"><span class="header-section-number">4.7.5</span> Bootstrap for Correlation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-boot-correlation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-boot-correlation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="simulation_files/figure-html/fig-boot-correlation-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-boot-correlation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.6: Bootstrap distribution of correlation (mpg vs.&nbsp;weight in mtcars)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The observed correlation between fuel efficiency and weight is -0.87, with a 95% bootstrap CI of [-0.93, -0.79]. The entire interval is negative, suggesting the negative association is robust.</p>
+</section>
+</section>
+<section id="sec-mcmc-preview" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="sec-mcmc-preview"><span class="header-section-number">4.8</span> Advanced Topics: MCMC</h2>
+<p>For some problems, neither direct simulation nor importance sampling is feasible. <strong>Markov Chain Monte Carlo (MCMC)</strong> methods address this by constructing a sequence of random values that converges to the desired distribution.</p>
+<p>MCMC is fundamental to Bayesian statistics and probabilistic machine learning, where we often need to sample from complex posterior distributions that cannot be sampled directly.</p>
+<p>The key ideas are:</p>
+<ol type="1">
+<li>Construct a Markov chain whose stationary distribution is the target distribution</li>
+<li>Run the chain long enough to reach equilibrium</li>
+<li>Use the generated samples as (approximate) draws from the target</li>
+</ol>
+<p>The <strong>Metropolis-Hastings algorithm</strong> is the foundational MCMC method. Given a proposal distribution, it accepts or rejects candidate values based on an acceptance ratio that ensures the chain converges to the desired distribution.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+MCMC in this book
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A detailed treatment of MCMC, including the Metropolis algorithm and diagnostics for assessing convergence, is provided in <a href="mcmc-appendix.html" class="quarto-xref"><span>Chapter 16</span></a>. This material is essential for students pursuing Bayesian machine learning but requires additional mathematical background in Markov chain theory.</p>
+</div>
+</div>
+</section>
+<section id="sec-ml-connections" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="sec-ml-connections"><span class="header-section-number">4.9</span> Connections to Machine Learning</h2>
+<p>Simulation methods connect to machine learning in several ways:</p>
+<p><strong>Cross-validation</strong> repeatedly resamples data to estimate generalization error—a form of simulation-based model evaluation.</p>
+<p><strong>Stochastic gradient descent</strong> uses random sampling of training batches, introducing controlled randomness to enable optimization at scale.</p>
+<p><strong>Bayesian machine learning</strong> relies on MCMC and related methods (variational inference) to sample from posterior distributions over model parameters.</p>
+<p><strong>Posterior predictive checks</strong> use simulation to assess model fit: generate data from the fitted model and compare to observed data. Discrepancies reveal model failures.</p>
+</section>
+<section id="sec-team-exr" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="sec-team-exr"><span class="header-section-number">4.10</span> Team Exercises</h2>
+<ol type="1">
+<li><p>As in the class exercise, generate <span class="math inline">\(R\)</span> samples, each a sample of size <span class="math inline">\(n\)</span>, but this time use the Cauchy distribution (<code>rcauchy()</code>) rather than normal distribution (<code>rnorm()</code>). Calculate the sample variance and construct a histogram of the <span class="math inline">\(R\)</span> sample means. What do you observe?</p></li>
+<li><p>Use the bootstrap to estimate a 95% confidence interval for the median of <code>mtcars$mpg</code>. How does the width compare to a bootstrap CI for the mean?</p></li>
+<li><p>Estimate <span class="math inline">\(P(Z &gt; 4)\)</span> using importance sampling with a shifted normal distribution centered at 4. Compare your estimate to <code>pnorm(4, lower.tail = FALSE)</code>.</p></li>
+<li><p>Suppose <span class="math inline">\((U_1, \ldots, U_n)\)</span> are independent and identically distributed random variables following the standard uniform distribution on the interval <span class="math inline">\((0, 1)\)</span>. Now set <span class="math inline">\(X_j = - \log_e(U_j)\)</span> for <span class="math inline">\(j = 1, \ldots, n\)</span>. What is the distribution of <span class="math inline">\((X_1, \ldots, X_n)\)</span>? Verify by simulation.</p></li>
+</ol>
+</section>
+<section id="resources" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="resources"><span class="header-section-number">4.11</span> Resources</h2>
 <p><a href="https://www.google.co.uk/books/edition/Statistical_Distributions/OA4AJZsnOpMC?hl=en">Statistical Distributions</a> by Forbes, Evans, Hastings, and Peacock</p>
 <p><a href="https://www.google.co.uk/books/edition/_/NSzEtAEACAAJ?hl=en&amp;sa=X&amp;ved=2ahUKEwiMpLHk3uiKAxUF9bsIHcSpBaIQre8FegQIGhAC">Distributions in Statistics</a> by Johnson and Kotz</p>
 <p><a href="https://bookdown.org/rdpeng/advstatcomp/">Advanced Statistical Computing</a> by Roger Peng</p>
 <p><a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/Random.html">R: Random Number Generation</a></p>
 <p><a href="https://en.wikipedia.org/wiki/Monte_Carlo_method">Monte Carlo method - Wikipedia</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Bootstrapping_(statistics)">Bootstrap Methods - Wikipedia</a></p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Forbes_2010_stats_dstns" class="csl-entry" role="listitem">
+Forbes, C., M. Evans, N. Hastings, and B. Peacock. 2010. <em>Statistical Distributions</em>. Wiley Series in Probability and Statistics - Applied Probability and Statistics Section Series. Wiley. <a href="https://books.google.co.uk/books?id = OA4AJZsnOpMC">https://books.google.co.uk/books?id = OA4AJZsnOpMC</a>.
+</div>
+<div id="ref-Johnson_Kotz_1985_stats_dstns" class="csl-entry" role="listitem">
+Johnson, N. L., and S. Kotz. 1985. <em>Distributions in Statistics</em>. Distributions in Statistics, v. 4. Wiley. <a href="https://books.google.co.uk/books?id = NSzEtAEACAAJ">https://books.google.co.uk/books?id = NSzEtAEACAAJ</a>.
+</div>
 <div id="ref-Tokdar_Kass_2010" class="csl-entry" role="listitem">
 Tokdar, Surya T., and Robert E. Kass. 2010. <span>“Importance Sampling: A Review.”</span> <em>WIREs Computational Statistics</em> 2 (1): 54–60. https://doi.org/<a href="https://doi.org/10.1002/wics.56">https://doi.org/10.1002/wics.56</a>.
 </div>
@@ -928,13 +1145,8 @@ Tokdar, Surya T., and Robert E. Kass. 2010. <span>“Importance Sampling: A Revi
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>See <span class="citation" data-cites="Rrng">(<a href="references.html#ref-Rrng" role="doc-biblioref"><strong>Rrng?</strong></a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>See <span class="citation" data-cites="forbes2010statistical">(<a href="references.html#ref-forbes2010statistical" role="doc-biblioref"><strong>forbes2010statistical?</strong></a>)</span> and <span class="citation" data-cites="johnson1985distributions">(<a href="references.html#ref-johnson1985distributions" role="doc-biblioref"><strong>johnson1985distributions?</strong></a>)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>See <span class="citation" data-cites="Tokdar_Kass_2010">Tokdar and Kass (<a href="references.html#ref-Tokdar_Kass_2010" role="doc-biblioref">2010</a>)</span>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>If <span class="math inline">\(Y_\nu = 12 | Z_\nu |\)</span>, then the probability that <span class="math inline">\(Y_\nu \ge 6\)</span> is about 0.62.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p>See <span class="citation" data-cites="rdpeng2022advstatcomp">(<a href="references.html#ref-rdpeng2022advstatcomp" role="doc-biblioref"><strong>rdpeng2022advstatcomp?</strong></a>)</span><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p>A unique, stationary distribution exists if the chain is aperiodic, and if all states communicate and are positive recurrent. For further details see the <a href="https://en.wikipedia.org/wiki/Discrete-time_Markov_chain#Stationary_distributions">Wikipedia article</a>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7"><p>See <span class="citation" data-cites="MH_algo_Wikipedia_2025">(<a href="references.html#ref-MH_algo_Wikipedia_2025" role="doc-biblioref"><strong>MH_algo_Wikipedia_2025?</strong></a>)</span>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>See <span class="citation" data-cites="Forbes_2010_stats_dstns">Forbes et al. (<a href="references.html#ref-Forbes_2010_stats_dstns" role="doc-biblioref">2010</a>)</span> and <span class="citation" data-cites="Johnson_Kotz_1985_stats_dstns">Johnson and Kotz (<a href="references.html#ref-Johnson_Kotz_1985_stats_dstns" role="doc-biblioref">1985</a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See <span class="citation" data-cites="Tokdar_Kass_2010">Tokdar and Kass (<a href="references.html#ref-Tokdar_Kass_2010" role="doc-biblioref">2010</a>)</span> for further details.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
