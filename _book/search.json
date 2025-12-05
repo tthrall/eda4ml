@@ -2213,7 +2213,7 @@
     "href": "mcmc-appendix.html#resources",
     "title": "16  Markov Chain Monte Carlo",
     "section": "16.9 Resources",
-    "text": "16.9 Resources\nAdvanced Statistical Computing by Roger Peng (Chapter 7)\nMetropolis-Hastings algorithm - Wikipedia\nMCMC Interactive Gallery\nStan - Modern probabilistic programming with HMC/NUTS",
+    "text": "16.9 Resources\nAdvanced Statistical Computing by Roger Peng (Chapter 7)\nMetropolis-Hastings algorithm - Wikipedia\nMCMC Interactive Gallery\nStan - Modern probabilistic programming with HMC/NUTS\n\n\n\n\nPeng, Roger D. 2025. Advanced Statistical Computing. https://bookdown.org/rdpeng/advstatcomp/.",
     "crumbs": [
       "Appendices",
       "<span class='chapter-number'>16</span>  <span class='chapter-title'>Markov Chain Monte Carlo</span>"
@@ -2224,7 +2224,7 @@
     "href": "mcmc-appendix.html#footnotes",
     "title": "16  Markov Chain Monte Carlo",
     "section": "",
-    "text": "See (rdpeng2022advstatcomp?) for additional background.↩︎\nA unique, stationary distribution exists if the chain is aperiodic, and if all states communicate and are positive recurrent. For further details see the Wikipedia article.↩︎\nSee (MH_algo_Wikipedia_2025?).↩︎",
+    "text": "See Peng (2025, chap. 7) for additional background.↩︎\nA unique, stationary distribution exists if the chain is aperiodic, and if all states communicate and are positive recurrent. For further details see the Wikipedia article.↩︎\nSee (MH_algo_Wikipedia_2025?).↩︎",
     "crumbs": [
       "Appendices",
       "<span class='chapter-number'>16</span>  <span class='chapter-title'>Markov Chain Monte Carlo</span>"

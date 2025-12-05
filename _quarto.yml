@@ -65,6 +65,7 @@ book:
         - graph-theory.qmd
     - part: Appendices
       chapters:
+        - mcmc-appendix.qmd
         - em-algorithm.qmd
     - summary.qmd
     - references.qmd

@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -419,7 +439,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">11:59 Fri 5-Dec-2025</p>
+      <p class="date">12:27 Fri 5-Dec-2025</p>
     </div>
   </div>
   
@@ -851,11 +871,16 @@ Tuning the Step Size
 <p><a href="https://mc-stan.org/">Stan</a> - Modern probabilistic programming with HMC/NUTS</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Peng_2022_adv_stat_comp" class="csl-entry" role="listitem">
+Peng, Roger D. 2025. <em>Advanced Statistical Computing</em>. <a href="https://bookdown.org/rdpeng/advstatcomp/">https://bookdown.org/rdpeng/advstatcomp/</a>.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>See <span class="citation" data-cites="rdpeng2022advstatcomp">(<a href="references.html#ref-rdpeng2022advstatcomp" role="doc-biblioref"><strong>rdpeng2022advstatcomp?</strong></a>)</span> for additional background.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>See <span class="citation" data-cites="Peng_2022_adv_stat_comp">Peng (<a href="references.html#ref-Peng_2022_adv_stat_comp" role="doc-biblioref">2025, chap. 7</a>)</span> for additional background.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>A unique, stationary distribution exists if the chain is aperiodic, and if all states communicate and are positive recurrent. For further details see the <a href="https://en.wikipedia.org/wiki/Discrete-time_Markov_chain#Stationary_distributions">Wikipedia article</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>See <span class="citation" data-cites="MH_algo_Wikipedia_2025">(<a href="references.html#ref-MH_algo_Wikipedia_2025" role="doc-biblioref"><strong>MH_algo_Wikipedia_2025?</strong></a>)</span>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
