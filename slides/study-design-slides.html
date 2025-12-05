@@ -185,7 +185,8 @@ EDA for Machine Learning
 <li><strong>Observational studies</strong>: Learning from data you didn’t generate</li>
 <li><strong>Experimental studies</strong>: Learning from conditions you control<br>
 </li>
-<li><strong>Quantifying uncertainty</strong>: When can we trust our estimates?</li>
+<li><strong>Measurement</strong>: Bias, chance error, and uncertainty</li>
+<li><strong>The role of EDA</strong>: Bridging design and modeling</li>
 </ol>
 <aside class="notes">
 <p>Instructor note: This chapter draws heavily from Freedman, Pisani, and Purves (FPP). The examples are classic but the lessons are timeless.</p>
@@ -219,19 +220,19 @@ EDA for Machine Learning
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Literary Digest (n = 2.4 million)</td>
+<td style="text-align: left;">digest</td>
 <td style="text-align: right;">43</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Gallup prediction of Digest</td>
+<td style="text-align: left;">gallup_re_digest</td>
 <td style="text-align: right;">44</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Gallup prediction of election (n = 50,000)</td>
+<td style="text-align: left;">gallup_re_election</td>
 <td style="text-align: right;">56</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Actual election result</td>
+<td style="text-align: left;">election_result</td>
 <td style="text-align: right;">62</td>
 </tr>
 </tbody>
@@ -295,14 +296,15 @@ EDA for Machine Learning
 </div>
 </div>
 </section>
-<section id="truman-vs.-dewey-1948-quota-sampling-fails" class="slide level2">
-<h2>Truman vs.&nbsp;Dewey, 1948: Quota Sampling Fails</h2>
+<section id="truman-vs.-dewey-1948" class="slide level2">
+<h2>Truman vs.&nbsp;Dewey, 1948:</h2>
+<p>Quota Sampling Fails</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Source</th>
+<th style="text-align: left;">source</th>
 <th style="text-align: right;">Truman</th>
 <th style="text-align: right;">Dewey</th>
 <th style="text-align: right;">Thurmond</th>
@@ -332,7 +334,7 @@ EDA for Machine Learning
 <td style="text-align: right;">4</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Actual result</strong></td>
+<td style="text-align: left;">Election_result</td>
 <td style="text-align: right;">50</td>
 <td style="text-align: right;">45</td>
 <td style="text-align: right;">3</td>
@@ -503,8 +505,56 @@ EDA for Machine Learning
           display:block!important;
       }</style></aside>
 </section>
-<section id="uc-berkeley-admissions-when-significance-doesnt-apply" class="slide level2">
-<h2>UC Berkeley Admissions: When “Significance” Doesn’t Apply</h2>
+<section id="uc-berkeley-admissions-simpsons-paradox" class="slide level2">
+<h2>UC Berkeley Admissions: Simpson’s Paradox</h2>
+<p>In the 1970s, concern arose that graduate admissions were biased against women.</p>
+<div class="fragment">
+<p><strong>Overall admission rate</strong>: Men 44%, Women 35%</p>
+</div>
+<div class="fragment">
+<p>But department-by-department analysis told a different story…</p>
+<aside class="notes">
+<p>This is one of the most famous examples of Simpson’s Paradox. Build the suspense before revealing the twist.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="the-paradox-revealed" class="slide level2">
+<h2>The Paradox Revealed</h2>
+<p>Most departments admitted a <strong>higher</strong> percentage of female applicants.</p>
+<div class="fragment">
+<p><strong>What happened?</strong> Women applied disproportionately to departments with lower overall admission rates.</p>
+</div>
+<div class="fragment">
+<p>Aggregating across departments <strong>reversed</strong> the apparent pattern.</p>
+</div>
+<div class="fragment">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>ML Connection</strong></p>
+</div>
+<div class="callout-content">
+<p>A feature (gender) appeared predictive of the outcome (admission) only because both were associated with a <strong>confounder</strong> (department choice). Stratify by potential confounders.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="uc-berkeley-the-sampling-lesson" class="slide level2">
+<h2>UC Berkeley: The Sampling Lesson</h2>
 <ul>
 <li>Data included <em>all</em> applicants in 1973 (not a sample)</li>
 <li>Standard statistical formulas assume probability sampling</li>
@@ -576,27 +626,27 @@ EDA for Machine Learning
 <tr class="header">
 <th style="text-align: left;">Grade</th>
 <th style="text-align: left;">Group</th>
-<th style="text-align: left;">Size</th>
+<th style="text-align: right;">Size</th>
 <th style="text-align: right;">Polio Rate (per 100k)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">2</td>
-<td style="text-align: left;">Vaccinated (consent)</td>
-<td style="text-align: left;">225,000</td>
+<td style="text-align: left;">treatment</td>
+<td style="text-align: right;">225000</td>
 <td style="text-align: right;">25</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1, 3</td>
-<td style="text-align: left;">Control</td>
-<td style="text-align: left;">725,000</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: right;">725000</td>
 <td style="text-align: right;">54</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">2</td>
-<td style="text-align: left;">No consent</td>
-<td style="text-align: left;">125,000</td>
+<td style="text-align: left;">no_consent</td>
+<td style="text-align: right;">125000</td>
 <td style="text-align: right;">44</td>
 </tr>
 </tbody>
@@ -619,24 +669,24 @@ EDA for Machine Learning
 <thead>
 <tr class="header">
 <th style="text-align: left;">Group</th>
-<th style="text-align: left;">Size</th>
+<th style="text-align: right;">Size</th>
 <th style="text-align: right;">Polio Rate (per 100k)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Vaccinated</td>
-<td style="text-align: left;">200,000</td>
+<td style="text-align: left;">treatment</td>
+<td style="text-align: right;">200000</td>
 <td style="text-align: right;">28</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Placebo control</td>
-<td style="text-align: left;">200,000</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: right;">200000</td>
 <td style="text-align: right;">71</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">No consent</td>
-<td style="text-align: left;">350,000</td>
+<td style="text-align: left;">no_consent</td>
+<td style="text-align: right;">350000</td>
 <td style="text-align: right;">46</td>
 </tr>
 </tbody>
@@ -671,6 +721,19 @@ EDA for Machine Learning
 <li>Selection bias in treatment assignment</li>
 <li>Unconscious bias in outcome measurement</li>
 </ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>ML Connection</strong></p>
+</div>
+<div class="callout-content">
+<p>In supervised ML, annotators should not have access to information that could bias their labels. The NFIP’s initial design mirrors <em>label leakage</em>.</p>
+</div>
+</div>
+</div>
 </div>
 </section>
 <section id="the-portacaval-shunt-design-determines-conclusions" class="slide level2">
@@ -688,19 +751,19 @@ EDA for Machine Learning
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">No controls</td>
+<td style="text-align: left;">no_controls</td>
 <td style="text-align: right;">24</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Controls, not randomized</td>
+<td style="text-align: left;">controls_not_randomized</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Randomized controlled</td>
+<td style="text-align: left;">randomized_controlled</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">3</td>
@@ -740,12 +803,12 @@ EDA for Machine Learning
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Randomized</td>
+<td style="text-align: left;">randomized</td>
 <td style="text-align: right;">60</td>
 <td style="text-align: right;">60</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Non-randomized</td>
+<td style="text-align: left;">non_randomized</td>
 <td style="text-align: right;">60</td>
 <td style="text-align: right;">45</td>
 </tr>
@@ -768,7 +831,7 @@ EDA for Machine Learning
 <p><strong>ML Connection</strong></p>
 </div>
 <div class="callout-content">
-<p>If treatment/control groups differ systematically, you’re measuring the <em>group difference</em>, not the treatment effect.</p>
+<p>Evaluating a model on a non-exchangeable test set overstates performance. Randomized train/test splits guard against this bias.</p>
 </div>
 </div>
 </div>
@@ -833,7 +896,7 @@ Figure&nbsp;1
 <p><strong>ML Connection</strong></p>
 </div>
 <div class="callout-content">
-<p>Model error = <em>bias</em> + variance</p>
+<p>Model error = bias + variance. EDA reveals both.</p>
 </div>
 </div>
 </div>
@@ -859,7 +922,7 @@ Figure&nbsp;1
 <p><strong>Key Insight</strong></p>
 </div>
 <div class="callout-content">
-<p>Uncertainty shrinks with <span class="math inline">\(\sqrt{n}\)</span>, not <span class="math inline">\(n\)</span>.</p>
+<p>Uncertainty shrinks with <span class="math inline">\(\sqrt{n}\)</span>, not <span class="math inline">\(n\)</span>. Precision and accuracy are distinct.</p>
 </div>
 </div>
 </div>
@@ -887,6 +950,50 @@ Figure&nbsp;2
 </div>
 </section></section>
 <section>
+<section id="the-role-of-eda" class="title-slide slide level1 center">
+<h1>The Role of EDA</h1>
+
+</section>
+<section id="eda-bridges-design-and-modeling" class="slide level2">
+<h2>EDA Bridges Design and Modeling</h2>
+<p><strong>Study design</strong> determines what data <em>could</em> be collected.</p>
+<div class="fragment">
+<p><strong>EDA</strong> reveals what was <em>actually</em> collected.</p>
+</div>
+<div class="fragment">
+<p>EDA answers:</p>
+<ul>
+<li>Does the feature distribution match deployment expectations?</li>
+<li>Are there systematic patterns in missing data?</li>
+<li>Do labels exhibit expected reliability?</li>
+<li>Are there outliers warranting investigation?</li>
+</ul>
+<aside class="notes">
+<p>This is the bridge to the rest of the course. Study design sets intentions; EDA verifies whether those intentions were achieved.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="the-bottom-line" class="slide level2">
+<h2>The Bottom Line</h2>
+<p>No algorithm can overcome fundamentally flawed data collection.</p>
+<div class="fragment">
+<p><strong>EDA is the diagnostic step that reveals whether data support the intended use.</strong></p>
+</div>
+<div class="fragment">
+<p>The examples in this chapter—from the <em>Literary Digest</em> poll to the NB10 measurements—show that study design flaws are often invisible until the data are examined.</p>
+</div>
+</section></section>
+<section>
 <section id="synthesis" class="title-slide slide level1 center">
 <h1>Synthesis</h1>
 
@@ -901,6 +1008,39 @@ Figure&nbsp;2
 <li><p><strong>All estimates have uncertainty—quantify it</strong></p></li>
 </ol>
 </section>
+<section id="key-concepts" class="slide level2">
+<h2>Key Concepts</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Selection bias</td>
+<td>Sample systematically differs from population</td>
+</tr>
+<tr class="even">
+<td>Confounding</td>
+<td>Third variable creates spurious association</td>
+</tr>
+<tr class="odd">
+<td>Randomization</td>
+<td>Assignment by chance mechanism</td>
+</tr>
+<tr class="even">
+<td>Double-blind</td>
+<td>Neither subject nor evaluator knows assignment</td>
+</tr>
+<tr class="odd">
+<td>Standard error</td>
+<td>SD of a sample statistic: <span class="math inline">\(\sigma / \sqrt{n}\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="looking-ahead-ml-implications" class="slide level2">
 <h2>Looking Ahead: ML Implications</h2>
 <ul>
@@ -911,6 +1051,27 @@ Figure&nbsp;2
 </ul>
 <aside class="notes">
 <p>These are the bridges to later ML material. Each of these could be a full lecture in its own right.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="team-exercises" class="slide level2">
+<h2>Team Exercises</h2>
+<ol type="1">
+<li><p>A quiz has 10 questions. The average number right is 6.4 with SD = 2.0. What is the average number wrong? What is its SD?</p></li>
+<li><p>Left-handedness decreases with age in survey data (10% at age 20, 4% at age 70). Does this mean people switch hands as they age?</p></li>
+<li><p>The 25th percentile of height is 62.2 inches; the 75th is 65.8 inches. If the distribution is normal, find the 90th percentile.</p></li>
+</ol>
+<aside class="notes">
+<p>These are the FPP exercises from the chapter. They reinforce the core concepts and can be used as in-class activities or homework.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -962,39 +1123,58 @@ Figure&nbsp;2
 <tbody>
 <tr class="odd">
 <td>Opening</td>
-<td>1-3</td>
+<td>1-2</td>
 <td>5 min</td>
 </tr>
 <tr class="even">
 <td>Observational Studies</td>
-<td>4-10</td>
-<td>20 min</td>
+<td>3-12</td>
+<td>25 min</td>
 </tr>
 <tr class="odd">
 <td>Experimental Studies</td>
-<td>11-16</td>
+<td>13-20</td>
 <td>20 min</td>
 </tr>
 <tr class="even">
 <td>Measurement/Uncertainty</td>
-<td>17-20</td>
+<td>21-24</td>
 <td>15 min</td>
 </tr>
 <tr class="odd">
+<td>Role of EDA</td>
+<td>25-26</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
 <td>Synthesis</td>
-<td>21-23</td>
-<td>10 min</td>
+<td>27-32</td>
+<td>15 min</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Total</strong>: ~70 minutes with discussion</p>
+<p><strong>Total</strong>: ~85 minutes with discussion</p>
 </section>
 <section id="customization-options" class="slide level2" data-visibility="uncounted">
 <h2>Customization Options</h2>
-<p><strong>For shorter sessions</strong> (45 min): Cut slides 9, 20</p>
-<p><strong>For longer sessions</strong>: Expand slides 5, 13, 15 with more discussion</p>
-<p><strong>For ML-focused audience</strong>: Add more examples to “ML Connection” callouts</p>
-<p><strong>For statistics-focused audience</strong>: Show the mathematical derivations from the textbook</p>
+<p><strong>For shorter sessions</strong> (50 min): Cut slides 8, 12, 24; condense synthesis</p>
+<p><strong>For longer sessions</strong>: Expand Simpson’s Paradox with actual department data; add more discussion time</p>
+<p><strong>For ML-focused audience</strong>: Expand “ML Connection” callouts with code examples</p>
+<p><strong>For statistics-focused audience</strong>: Show the mathematical derivations from FPP</p>
+</section>
+<section id="data-sources" class="slide level2" data-visibility="uncounted">
+<h2>Data Sources</h2>
+<p>All FPP datasets are loaded from the <code>eda4mldata</code> package:</p>
+<ul>
+<li><code>lit_digest</code> — Literary Digest 1936 poll</li>
+<li><code>truman_dewey</code> — 1948 election predictions</li>
+<li><code>us_elections</code> — Gallup accuracy 1952-2004</li>
+<li><code>salk_nfip</code> — Salk vaccine NFIP design</li>
+<li><code>salk_blind</code> — Salk vaccine double-blind design</li>
+<li><code>portacaval_studies</code> — Portacaval shunt study results</li>
+<li><code>portacaval_survival</code> — Shunt survival rates</li>
+<li><code>nb10</code> — NB10 weight measurements</li>
+</ul>
 
 </section></section>
     </div>

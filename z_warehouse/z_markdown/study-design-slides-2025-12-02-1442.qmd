@@ -18,7 +18,6 @@ format:
 
 library(tidyverse)
 library(knitr)
-library(eda4mldata)
 ```
 
 # Opening
@@ -46,8 +45,7 @@ This is the key insight for a data science audience. Even "big data" is a sample
 
 1. **Observational studies**: Learning from data you didn't generate
 2. **Experimental studies**: Learning from conditions you control  
-3. **Measurement**: Bias, chance error, and uncertainty
-4. **The role of EDA**: Bridging design and modeling
+3. **Quantifying uncertainty**: When can we trust our estimates?
 
 ::: {.notes}
 Instructor note: This chapter draws heavily from Freedman, Pisani, and Purves (FPP). The examples are classic but the lessons are timeless.
@@ -61,8 +59,15 @@ Instructor note: This chapter draws heavily from Freedman, Pisani, and Purves (F
 #| label: lit-digest-tbl
 #| echo: false
 
-eda4mldata::lit_digest |> 
-  knitr::kable(col.names = c("Source", "FDR Predicted %"))
+lit_digest_tbl <- tibble::tribble(
+  ~Source, ~`FDR Predicted %`, 
+  "Literary Digest (n = 2.4 million)", 43L, 
+  "Gallup prediction of Digest", 44L, 
+  "Gallup prediction of election (n = 50,000)", 56L, 
+  "Actual election result", 62L
+)
+
+lit_digest_tbl |> knitr::kable()
 ```
 
 . . .
@@ -97,24 +102,21 @@ The sampling frame excluded the population of interest.
 If your training data excludes a subpopulation, your model won't serve them.
 :::
 
-## Truman vs. Dewey, 1948: 
-
-Quota Sampling Fails
+## Truman vs. Dewey, 1948: Quota Sampling Fails
 
 ```{r}
 #| label: truman-dewey-tbl
 #| echo: false
 
-eda4mldata::truman_dewey |> 
-  dplyr::rename(
-    Truman   = truman, 
-    Dewey    = dewey, 
-    Thurmond = thurmond, 
-    Wallace  = wallace ) |> 
-  dplyr::mutate(
-    source = source |> stringr::str_to_title()
-  ) |> 
-  knitr::kable()
+truman_dewey_tbl <- tibble::tribble(
+  ~Source, ~Truman, ~Dewey, ~Thurmond, ~Wallace, 
+  "Crossley", 45L, 50L, 2L, 3L, 
+  "Gallup", 44L, 50L, 2L, 4L, 
+  "Roper", 38L, 53L, 5L, 4L, 
+  "**Actual result**", 50L, 45L, 3L, 2L
+)
+
+truman_dewey_tbl |> knitr::kable()
 ```
 
 . . .
@@ -178,13 +180,17 @@ Simple random sampling is often impractical (cost, logistics).
 #| label: us-elections-tbl
 #| echo: false
 
-eda4mldata::us_elections |> 
-  dplyr::select(year, n, winner, gallup, actual, error) |>
-  dplyr::filter(year %in% c(1952, 1960, 1976, 1984, 2000, 2004)) |>
-  knitr::kable(
-    col.names = c("Year", "Sample Size", "Winner", "Gallup %", "Actual %", "Error"),
-    digits = 1
-  )
+us_elections_48_04 <- tibble::tribble(
+  ~Year, ~`Sample Size`, ~Winner, ~`Gallup %`, ~`Actual %`, ~Error, 
+  1952, 5385, "Eisenhower", 51.0, 55.1, -4.1,  
+  1960, 8015, "Kennedy", 51.0, 49.7, 1.3,  
+  1976, 3439, "Carter", 48.0, 50.1, -2.1,  
+  1984, 3456, "Reagan", 59.0, 58.8, 0.2,  
+  2000, 3571, "Bush", 48.0, 47.9, 0.1, 
+  2004, 2014, "Bush", 49.0, 50.6, -1.6
+)
+
+us_elections_48_04 |> knitr::kable(digits = 1)
 ```
 
 Errors mostly within ±3 percentage points—with samples of 2,000-8,000, not millions.
@@ -193,42 +199,7 @@ Errors mostly within ±3 percentage points—with samples of 2,000-8,000, not mi
 This is a subset of the full table in the textbook. The point is the contrast with the Literary Digest: *smaller* samples with *probability* sampling beat *huge* samples with biased sampling.
 :::
 
-## UC Berkeley Admissions: Simpson's Paradox
-
-In the 1970s, concern arose that graduate admissions were biased against women.
-
-. . .
-
-**Overall admission rate**: Men 44%, Women 35%
-
-. . .
-
-But department-by-department analysis told a different story...
-
-::: {.notes}
-This is one of the most famous examples of Simpson's Paradox. Build the suspense before revealing the twist.
-:::
-
-## The Paradox Revealed
-
-Most departments admitted a **higher** percentage of female applicants.
-
-. . .
-
-**What happened?** Women applied disproportionately to departments with lower overall admission rates.
-
-. . .
-
-Aggregating across departments **reversed** the apparent pattern.
-
-. . .
-
-::: {.callout-note}
-## ML Connection
-A feature (gender) appeared predictive of the outcome (admission) only because both were associated with a **confounder** (department choice). Stratify by potential confounders.
-:::
-
-## UC Berkeley: The Sampling Lesson
+## UC Berkeley Admissions: When "Significance" Doesn't Apply
 
 - Data included *all* applicants in 1973 (not a sample)
 - Standard statistical formulas assume probability sampling
@@ -269,8 +240,14 @@ Draw a simple DAG on the board if you have time: Confounder → Treatment → Ou
 #| label: salk-nfip
 #| echo: false
 
-eda4mldata::salk_nfip |> 
-  knitr::kable(col.names = c("Grade", "Group", "Size", "Polio Rate (per 100k)"))
+salk_nfip <- tibble::tribble(
+  ~Grade, ~Group, ~Size, ~`Polio Rate (per 100k)`, 
+  "2", "Vaccinated (consent)", "225,000", 25, 
+  "1, 3", "Control", "725,000", 54, 
+  "2", "No consent", "125,000", 44
+)
+
+salk_nfip |> knitr::kable()
 ```
 
 . . .
@@ -286,8 +263,14 @@ eda4mldata::salk_nfip |>
 #| label: salk-blind
 #| echo: false
 
-eda4mldata::salk_blind |> 
-  knitr::kable(col.names = c("Group", "Size", "Polio Rate (per 100k)"))
+salk_blind <- tibble::tribble(
+  ~Group, ~Size, ~`Polio Rate (per 100k)`, 
+  "Vaccinated", "200,000", 28, 
+  "Placebo control", "200,000", 71, 
+  "No consent", "350,000", 46
+)
+
+salk_blind |> knitr::kable()
 ```
 
 . . .
@@ -313,19 +296,20 @@ This eliminates:
 - Selection bias in treatment assignment
 - Unconscious bias in outcome measurement
 
-::: {.callout-note}
-## ML Connection
-In supervised ML, annotators should not have access to information that could bias their labels. The NFIP's initial design mirrors *label leakage*.
-:::
-
 ## The Portacaval Shunt: Design Determines Conclusions
 
 ```{r}
 #| label: portacaval-tbl
 #| echo: false
 
-eda4mldata::portacaval_studies |> 
-  knitr::kable(col.names = c("Study Design", "Marked Enthusiasm", "Moderate", "None"))
+portacaval_tbl <- tibble::tribble(
+  ~`Study Design`, ~`Marked Enthusiasm`, ~Moderate, ~None,
+  "No controls", 24, 7, 1, 
+  "Controls, not randomized", 10, 3, 2, 
+  "Randomized controlled", 0, 1, 3 
+)
+
+portacaval_tbl |> knitr::kable()
 ```
 
 . . .
@@ -342,8 +326,13 @@ This is one of the most striking tables in all of statistics. 75% of uncontrolle
 #| label: shunt-survival
 #| echo: false
 
-eda4mldata::portacaval_survival |> 
-  knitr::kable(col.names = c("Design", "Surgery Survival %", "Control Survival %"))
+shunt_survival <- tibble::tribble(
+  ~Design, ~`Surgery Survival %`, ~`Control Survival %`, 
+  "Randomized", 60, 60, 
+  "Non-randomized", 60, 45
+)
+
+shunt_survival |> knitr::kable()
 ```
 
 . . .
@@ -358,7 +347,7 @@ Control patients: 60% (randomized) vs 45% (non-randomized)
 
 ::: {.callout-note}
 ## ML Connection
-Evaluating a model on a non-exchangeable test set overstates performance. Randomized train/test splits guard against this bias.
+If treatment/control groups differ systematically, you're measuring the *group difference*, not the treatment effect.
 :::
 
 ## Experimental Design Principles
@@ -383,11 +372,21 @@ A/B tests are randomized controlled experiments. Observational "causal" claims r
 **Study**: 100 measurements under identical conditions at the National Bureau of Standards
 
 ```{r}
+#| label: NB10-data
+#| echo: false
+
+NB10_long <- here::here(
+  "data", "retain", "NB10_long.txt"
+) |> 
+  readr::read_tsv()
+```
+
+```{r}
 #| label: fig-NB10
 #| echo: false
 #| fig-height: 4
 
-eda4mldata::nb10 |>
+NB10_long |>
   ggplot(aes(x = deficit)) +
   geom_histogram(bins = 20, fill = "coral", color = "white") +
   labs(
@@ -415,7 +414,7 @@ NB10 is **biased**: It weighs ~405 μg less than 10g
 
 ::: {.callout-note}
 ## ML Connection
-Model error = bias + variance. EDA reveals both.
+Model error = _bias_ + variance
 :::
 
 ## How Accurate is the Sample Average?
@@ -436,7 +435,7 @@ Our estimate of 405 μg is probably within ~2 μg of the true value.
 
 ::: {.callout-tip}
 ## Key Insight
-Uncertainty shrinks with $\sqrt{n}$, not $n$. Precision and accuracy are distinct.
+Uncertainty shrinks with $\sqrt{n}$, not $n$.
 :::
 
 ## Outliers and Non-Normality
@@ -446,9 +445,11 @@ Uncertainty shrinks with $\sqrt{n}$, not $n$. Precision and accuracy are distinc
 #| echo: false
 #| fig-height: 4
 
-eda4mldata::nb10 |> 
+NB10_z <- NB10_long |> 
   dplyr::mutate(
-    z = (deficit - mean(deficit)) / sd(deficit)) |>
+    z = ( deficit - mean(deficit)) / sd(deficit) )
+
+NB10_z |>
   ggplot(aes(x = z)) +
   geom_histogram(aes(y = after_stat(density)), bins = 20, 
                  fill = "steelblue", color = "white", alpha = 0.7) +
@@ -470,41 +471,6 @@ Measurements at z ≈ ±5 would be < 1 in a million under normality.
 Don't assume normality. **Look at your data.**
 :::
 
-# The Role of EDA
-
-## EDA Bridges Design and Modeling
-
-**Study design** determines what data *could* be collected.
-
-. . .
-
-**EDA** reveals what was *actually* collected.
-
-. . .
-
-EDA answers:
-
-- Does the feature distribution match deployment expectations?
-- Are there systematic patterns in missing data?
-- Do labels exhibit expected reliability?
-- Are there outliers warranting investigation?
-
-::: {.notes}
-This is the bridge to the rest of the course. Study design sets intentions; EDA verifies whether those intentions were achieved.
-:::
-
-## The Bottom Line
-
-No algorithm can overcome fundamentally flawed data collection.
-
-. . .
-
-**EDA is the diagnostic step that reveals whether data support the intended use.**
-
-. . .
-
-The examples in this chapter—from the *Literary Digest* poll to the NB10 measurements—show that study design flaws are often invisible until the data are examined.
-
 # Synthesis
 
 ## Core Principles for Data Scientists
@@ -519,16 +485,6 @@ The examples in this chapter—from the *Literary Digest* poll to the NB10 measu
 
 5. **All estimates have uncertainty—quantify it**
 
-## Key Concepts
-
-| Concept | Definition |
-|---------|------------|
-| Selection bias | Sample systematically differs from population |
-| Confounding | Third variable creates spurious association |
-| Randomization | Assignment by chance mechanism |
-| Double-blind | Neither subject nor evaluator knows assignment |
-| Standard error | SD of a sample statistic: $\sigma / \sqrt{n}$ |
-
 ## Looking Ahead: ML Implications
 
 - **Train/validation/test splits** are sampling problems
@@ -541,18 +497,6 @@ The examples in this chapter—from the *Literary Digest* poll to the NB10 measu
 
 ::: {.notes}
 These are the bridges to later ML material. Each of these could be a full lecture in its own right.
-:::
-
-## Team Exercises
-
-1. A quiz has 10 questions. The average number right is 6.4 with SD = 2.0. What is the average number wrong? What is its SD?
-
-2. Left-handedness decreases with age in survey data (10% at age 20, 4% at age 70). Does this mean people switch hands as they age?
-
-3. The 25th percentile of height is 62.2 inches; the 75th is 65.8 inches. If the distribution is normal, find the 90th percentile.
-
-::: {.notes}
-These are the FPP exercises from the chapter. They reinforce the core concepts and can be used as in-class activities or homework.
 :::
 
 ## Discussion Questions
@@ -573,34 +517,20 @@ Use these for class discussion or as take-home reflection questions.
 
 | Section | Slides | Suggested Time |
 |---------|--------|----------------|
-| Opening | 1-2 | 5 min |
-| Observational Studies | 3-12 | 25 min |
-| Experimental Studies | 13-20 | 20 min |
-| Measurement/Uncertainty | 21-24 | 15 min |
-| Role of EDA | 25-26 | 5 min |
-| Synthesis | 27-32 | 15 min |
+| Opening | 1-3 | 5 min |
+| Observational Studies | 4-10 | 20 min |
+| Experimental Studies | 11-16 | 20 min |
+| Measurement/Uncertainty | 17-20 | 15 min |
+| Synthesis | 21-23 | 10 min |
 
-**Total**: ~85 minutes with discussion
+**Total**: ~70 minutes with discussion
 
 ## Customization Options {visibility="uncounted"}
 
-**For shorter sessions** (50 min): Cut slides 8, 12, 24; condense synthesis
+**For shorter sessions** (45 min): Cut slides 9, 20
 
-**For longer sessions**: Expand Simpson's Paradox with actual department data; add more discussion time
+**For longer sessions**: Expand slides 5, 13, 15 with more discussion
 
-**For ML-focused audience**: Expand "ML Connection" callouts with code examples
+**For ML-focused audience**: Add more examples to "ML Connection" callouts
 
-**For statistics-focused audience**: Show the mathematical derivations from FPP
-
-## Data Sources {visibility="uncounted"}
-
-All FPP datasets are loaded from the `eda4mldata` package:
-
-- `lit_digest` — Literary Digest 1936 poll
-- `truman_dewey` — 1948 election predictions
-- `us_elections` — Gallup accuracy 1952-2004
-- `salk_nfip` — Salk vaccine NFIP design
-- `salk_blind` — Salk vaccine double-blind design
-- `portacaval_studies` — Portacaval shunt study results
-- `portacaval_survival` — Shunt survival rates
-- `nb10` — NB10 weight measurements
+**For statistics-focused audience**: Show the mathematical derivations from the textbook

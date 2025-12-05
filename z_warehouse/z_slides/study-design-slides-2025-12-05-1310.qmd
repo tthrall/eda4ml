@@ -1,0 +1,563 @@
+---
+title: "Sampling and Study Design"
+subtitle: "Where Data Come From"
+author: "Chapter 5"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    incremental: false
+    toc: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(knitr)
+library(tidyverse)
+```
+
+# Why Study Design Matters
+
+## The Central Question
+
+Where did the data come from?
+
+. . .
+
+**The capabilities of an ML system are bound by the quality of the data used to train, test, and evaluate it.**
+
+. . .
+
+No algorithm can overcome fundamentally flawed data collection.
+
+## Key Questions for ML Practitioners
+
+1. Do the training data generalize to the deployment environment?
+
+. . .
+
+2. How reliable are the labels?
+
+. . .
+
+3. How will model performance be monitored over time?
+
+. . .
+
+These are **study design** questions—relevant long before ML existed.
+
+## Historical Examples, Modern Lessons
+
+We examine case studies from polling, medicine, and measurement.
+
+. . .
+
+Each illustrates a principle that carries directly into ML:
+
+- Selection bias
+- Confounding
+- Randomization
+- Blinding
+- Measurement error
+
+# Observational Studies
+
+## Literary Digest Poll, 1936
+
+The *Literary Digest* predicted Landon would defeat Roosevelt decisively.
+
+. . .
+
+```{r}
+#| label: tbl-lit-digest
+
+tibble::tribble(
+  ~Source, ~`FDR Predicted %`,
+  "Literary Digest (n = 2.4 million)", 43L,
+  "Gallup prediction of Digest", 44L,
+  "Gallup prediction of election", 56L,
+  "Actual result", 62L
+) |> knitr::kable()
+```
+
+. . .
+
+The *Digest's* error of **19 percentage points** is the largest in history by a major poll.
+
+## What Went Wrong?
+
+The *Digest* sampled from:
+
+- Automobile registrations
+- Telephone directories
+- Magazine subscribers
+
+. . .
+
+In 1936, these sources over-represented **wealthy Americans**—who favored Landon.
+
+. . .
+
+**2.4 million responses couldn't overcome selection bias.**
+
+## ML Connection: Selection Bias
+
+The training data systematically differed from the deployment population.
+
+. . .
+
+A model trained on *Digest* respondents would learn patterns that fail to generalize.
+
+. . .
+
+**Lesson:** Large sample size does not guarantee accuracy. Ask how the sample was chosen.
+
+## Truman vs. Dewey, 1948
+
+All major pollsters predicted Dewey would win.
+
+. . .
+
+```{r}
+#| label: tbl-truman-dewey
+
+tibble::tribble(
+  ~Source, ~Truman, ~Dewey,
+  "Crossley", 45L, 50L,
+  "Gallup", 44L, 50L,
+  "Roper", 38L, 53L,
+  "Actual result", 50L, 45L
+) |> knitr::kable()
+```
+
+. . .
+
+What went wrong this time?
+
+## Quota Sampling
+
+Pollsters used **quota sampling**:
+
+- Match sample to population on observable features (gender, employment, etc.)
+- Interviewers choose subjects to fill quotas
+
+. . .
+
+**Problem:** Interviewers systematically chose subjects easier to reach—who happened to lean Republican.
+
+. . .
+
+Matching on measured covariates missed **unmeasured confounders**.
+
+## Probability Sampling
+
+Since 1948, pollsters use **probability sampling**:
+
+. . .
+
+- Subjects chosen by a random mechanism
+- Interviewers have no discretion
+- Chance of inclusion is known in advance
+
+. . .
+
+**Key insight:** Let randomness approximate the population, rather than trying to control all factors.
+
+## UC Berkeley Admissions
+
+In the 1970s, concern arose that graduate admissions were biased against women.
+
+. . .
+
+Overall admission rate: **Men 44%, Women 35%**
+
+. . .
+
+But department-by-department analysis told a different story...
+
+## Simpson's Paradox
+
+Most departments admitted a **higher** percentage of female applicants.
+
+. . .
+
+**The paradox:** Women applied disproportionately to departments with lower overall admission rates.
+
+. . .
+
+Aggregating across departments reversed the pattern.
+
+## ML Connection: Confounding
+
+Apparent bias disappeared after conditioning on department.
+
+. . .
+
+In ML terms: a feature (gender) appeared predictive of the outcome (admission) only because both were associated with a **confounder** (department choice).
+
+. . .
+
+**Lesson:** Aggregate statistics can mislead. Stratify by potential confounders.
+
+# Experimental Studies
+
+## Salk Vaccine Trial, 1954
+
+Polio was devastating. The Salk vaccine showed promise in the lab.
+
+. . .
+
+**Why not just adopt it?**
+
+- Polio incidence varied year to year (60,000 cases in 1952, 30,000 in 1953)
+- Any decrease could be ascribed to natural variation
+- The vaccine itself carried some risk
+
+. . .
+
+A controlled experiment was needed.
+
+## The NFIP Design
+
+Initial design:
+
+- Grade 2 children with parental consent → **treatment**
+- Grades 1 and 3 children → **control**
+- Grade 2 without consent → tracked separately
+
+. . .
+
+**Problems:**
+
+- Polio transmission may vary by grade
+- Parental consent is confounded with socioeconomic status
+
+## The Double-Blind Design
+
+Improved design:
+
+- Only children with parental consent are eligible
+- **Random assignment** to treatment or control
+- Neither parents, nurses, nor diagnosing physicians know assignment
+
+. . .
+
+This is a **randomized, double-blind, controlled experiment**.
+
+## Results
+
+```{r}
+#| label: tbl-salk-results
+
+tibble::tribble(
+  ~Group, ~Size, ~`Polio Rate (per 100k)`,
+  "Treatment (vaccine)", 200000L, 28L,
+  "Control (placebo)", 200000L, 71L,
+  "No consent", 350000L, 46L
+) |> knitr::kable()
+```
+
+. . .
+
+Strong evidence of effectiveness: **60% reduction** in polio rate.
+
+## Why Double-Blind?
+
+**Blinding prevents:**
+
+- Physicians unconsciously diagnosing based on treatment status
+- Parents reporting symptoms differently based on expectations
+- Administrators routing patients based on perceived health
+
+. . .
+
+Each is a source of **systematic bias in the labels**.
+
+## ML Connection: Label Quality
+
+The double-blind protocol ensures labels (polio diagnosis) are not contaminated by treatment status.
+
+. . .
+
+In supervised ML: annotators should not have access to information that could bias their labels.
+
+. . .
+
+**Lesson:** Label leakage undermines model validity.
+
+## Portacaval Shunt
+
+Surgery to redirect blood flow in cirrhosis patients. Risky procedure.
+
+. . .
+
+**51 studies evaluated effectiveness:**
+
+```{r}
+#| label: tbl-portacaval
+
+tibble::tribble(
+  ~Design, ~`Marked Enthusiasm`, ~Moderate, ~None,
+  "No controls", 24L, 7L, 1L,
+  "Controls, not randomized", 10L, 3L, 2L,
+  "Randomized controlled", 0L, 1L, 3L
+) |> knitr::kable()
+```
+
+## The Pattern
+
+- 75% of uncontrolled studies → "marked enthusiasm"
+- 67% of non-randomized controlled → "marked enthusiasm"
+- 0% of randomized controlled → "marked enthusiasm"
+
+. . .
+
+**Randomized trials showed the surgery had little value.**
+
+## What Happened?
+
+Without randomization, surgeons operated on **healthier patients**.
+
+. . .
+
+Sicker patients were used as controls.
+
+. . .
+
+```{r}
+#| label: tbl-shunt-survival
+
+tibble::tribble(
+  ~Design, ~`Surgery Survival`, ~`Control Survival`,
+  "Randomized", "60%", "60%",
+  "Non-randomized", "60%", "45%"
+) |> knitr::kable()
+```
+
+. . .
+
+The control group was **not comparable** to the treatment group.
+
+## ML Connection: Test Set Validity
+
+Evaluating a model on a non-exchangeable test set overstates performance.
+
+. . .
+
+If "easy" cases go to training and "hard" cases to testing (or vice versa), metrics are misleading.
+
+. . .
+
+**Lesson:** Randomized train/test splits guard against this bias.
+
+# Measurement
+
+## NB10: Precision Weighing
+
+The National Bureau of Standards maintains reference weights.
+
+. . .
+
+**NB10** has a nominal value of 10 grams.
+
+. . .
+
+100 measurements were taken under controlled conditions:
+
+- Same room, same apparatus, same technicians
+- Same procedure each time
+- Temperature and pressure held constant
+
+## The Measurements
+
+```{r}
+#| label: fig-nb10-hist
+
+# Simulated NB10 data based on chapter values
+set.seed(42)
+nb10_deficits <- c(409, 400, 406, 399, 402, 406, 401, 403, 401, 403,
+                   398, 403, 407, 402, 401, 399, 400, 401, 405, 402,
+                   408, 399, 399, 402, 399, 397, 407, 401, 399, 401,
+                   403, 400, 410, 401, 407, 423, 406, 406, 402, 405,
+                   405, 409, 399, 402, 407, 406, 413, 409, 404, 402,
+                   404, 406, 407, 405, 411, 410, 410, 410, 401, 402,
+                   404, 405, 392, 407, 406, 404, 403, 408, 404, 407,
+                   412, 406, 409, 400, 408, 404, 401, 404, 408, 406,
+                   408, 406, 401, 412, 393, 437, 418, 415, 404, 401,
+                   401, 407, 412, 375, 409, 406, 398, 406, 403, 404)
+
+nb10_mean <- mean(nb10_deficits)
+nb10_sd <- sd(nb10_deficits)
+
+tibble::tibble(deficit = nb10_deficits) |>
+  ggplot2::ggplot(ggplot2::aes(x = deficit)) +
+  ggplot2::geom_histogram(bins = 20, fill = "steelblue", alpha = 0.7) +
+  ggplot2::geom_vline(xintercept = nb10_mean, color = "red", linewidth = 1) +
+  ggplot2::labs(
+    title = paste0("NB10 deficits: mean = ", round(nb10_mean, 1), " µg"),
+    x = "Deficit from 10g (micrograms)",
+    y = "Count"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Key Findings
+
+**Average deficit:** ~405 micrograms
+
+. . .
+
+NB10 weighs about **9.999595 grams**, not 10 grams.
+
+. . .
+
+This is **systematic bias**—consistent across measurements.
+
+. . .
+
+**Standard deviation:** ~6.5 micrograms
+
+. . .
+
+This is **chance error**—varies from measurement to measurement.
+
+## Outliers
+
+Two measurements (#86 and #94) had z-scores near ±5.
+
+. . .
+
+For a normal distribution, such extreme values would be extraordinarily rare.
+
+. . .
+
+**Conclusion:** Even highly controlled measurement processes can produce non-normal error distributions.
+
+## ML Connection: Measurement Issues
+
+1. **Systematic bias:** Labels may be consistently shifted from ground truth
+
+. . .
+
+2. **Non-normal errors:** Outliers can unduly influence model training
+
+. . .
+
+3. **The fix:** EDA to detect these issues before modeling
+
+# Standard Error
+
+## How Precise is an Average?
+
+The sample average is an estimate of the population mean.
+
+. . .
+
+How much would a new sample's average differ?
+
+. . .
+
+$$\text{SE}(\bar{X}) = \frac{\sigma}{\sqrt{n}}$$
+
+. . .
+
+Standard error decreases as $\sqrt{n}$ increases.
+
+## NB10 Example
+
+With $n = 100$ measurements and $\hat{\sigma} = 6.5$ µg:
+
+. . .
+
+$$\hat{\text{SE}} = \frac{6.5}{\sqrt{100}} = 0.65 \text{ µg}$$
+
+. . .
+
+The average deficit of 405 µg is probably within 1-2 µg of the true value.
+
+. . .
+
+**Precision** (SE) and **accuracy** (bias) are distinct concepts.
+
+# The Role of EDA
+
+## EDA Bridges Design and Modeling
+
+**Study design** determines what data *could* be collected.
+
+. . .
+
+**EDA** reveals what was *actually* collected.
+
+. . .
+
+EDA answers:
+
+- Does the feature distribution match deployment expectations?
+- Are there systematic patterns in missing data?
+- Do labels exhibit expected reliability?
+- Are there outliers warranting investigation?
+
+## The Bottom Line
+
+The examples in this chapter predate ML by decades.
+
+. . .
+
+Yet they illustrate issues that remain decisive:
+
+- Selection bias
+- Confounding
+- Need for randomization
+- Label quality
+- Measurement error
+
+. . .
+
+**EDA is the diagnostic step that reveals whether data support the intended use.**
+
+# Summary
+
+## Chapter 5: Key Takeaways
+
+1. **Sample size alone doesn't guarantee accuracy**—selection bias can overwhelm large samples
+
+2. **Randomization** ensures comparable groups without controlling all factors
+
+3. **Blinding** prevents systematic bias in labels and evaluations
+
+4. **Confounding** can create spurious associations or mask real ones
+
+5. **Measurement has both bias and variance**—EDA reveals both
+
+## Key Concepts
+
+| Concept | Definition |
+|---------|------------|
+| Selection bias | Sample systematically differs from population |
+| Confounding | Third variable creates spurious association |
+| Randomization | Assignment by chance mechanism |
+| Double-blind | Neither subject nor evaluator knows assignment |
+| Standard error | SD of a sample statistic: $\sigma / \sqrt{n}$ |
+
+## Team Exercises
+
+1. A quiz has 10 questions. The average number right is 6.4 with SD = 2.0. What is the average number wrong? What is its SD?
+
+2. Left-handedness decreases with age in survey data (10% at age 20, 4% at age 70). Does this mean people switch hands as they age?
+
+3. The 25th percentile of height is 62.2 inches; the 75th is 65.8 inches. If the distribution is normal, find the 90th percentile.
+
+## Resources
+
+- [Statistics](https://www.goodreads.com/book/show/147358.Statistics) by Freedman, Pisani, and Purves
+- [Sampling Techniques](https://www.google.co.uk/books/edition/Sampling_Techniques/8Y4QAQAAIAAJ) by William G. Cochran
+- [MLOps principles](https://ml-ops.org/)
