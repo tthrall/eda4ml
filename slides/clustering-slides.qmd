@@ -1,0 +1,548 @@
+---
+title: "Clustering"
+subtitle: "EDA in Higher Dimensions"
+author: "Chapter 3"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    incremental: false
+    toc: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(knitr)
+library(tidyverse)
+library(ISLR2)
+
+# Load college data
+college <- ISLR2::College |> 
+  tibble::as_tibble(rownames = "college_name")
+
+# Create z-scores for numeric variables
+college_numeric <- college |> 
+
+  dplyr::select(where(is.numeric))
+
+college_z <- college_numeric |> 
+  dplyr::mutate(across(everything(), ~ (. - mean(.)) / sd(.)))
+
+# Add college names back for reference
+college_z <- college_z |> 
+  dplyr::mutate(college_name = college$college_name, .before = 1)
+```
+
+# Clustering as EDA
+
+## The Central Question
+
+When we have many variables, how do we simplify?
+
+. . .
+
+**One approach:** Group observations with similar profiles.
+
+. . .
+
+This is **clustering**—EDA extended to higher dimensions.
+
+## Unsupervised Learning
+
+In **supervised learning**, we have a response variable $Y$ to predict from features $X$.
+
+. . .
+
+In **unsupervised learning**, we have only $X$—no labels, no "right answer."
+
+. . .
+
+**Goal:** Discover structure in the data itself.
+
+## The EDA Spirit
+
+> "We are looking for unanticipated patterns in the data."
+
+. . .
+
+Clustering shares EDA's exploratory mindset:
+
+- No single "correct" answer
+- Results depend on choices we make
+- Interpretation requires domain knowledge
+
+# The College Data
+
+## US Colleges (1995)
+
+```{r}
+#| label: tbl-college-vars
+#| tbl-cap: "Selected variables from ISLR2::College"
+
+tibble::tibble(
+  Variable = c("Private", "Apps", "Accept", "Enroll", "Top10perc", 
+               "Expend", "Grad.Rate"),
+  Description = c(
+    "Private or public institution",
+    "Applications received",
+    "Applications accepted", 
+    "New students enrolled",
+    "Pct. from top 10% of H.S. class",
+    "Instructional expenditure per student",
+    "Graduation rate"
+  )
+) |> knitr::kable()
+```
+
+## Exploring the Data
+
+```{r}
+#| label: fig-college-scatter
+#| fig-cap: "Expenditure vs. Top 10% students"
+
+college |> 
+  ggplot2::ggplot(ggplot2::aes(x = Top10perc, y = Expend, color = Private)) +
+  ggplot2::geom_point(alpha = 0.5) +
+  ggplot2::labs(
+    x = "% from top 10% of H.S. class",
+    y = "Expenditure per student ($)"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Class Exercise
+
+Before running any algorithm:
+
+. . .
+
+1. How many private vs. public schools?
+2. What is the range of expenditure?
+3. Which variables are correlated?
+4. What groupings would you expect to find?
+
+. . .
+
+→ Build intuition before automation.
+
+# Grouping Variables
+
+## Manual Grouping
+
+We can create groups from the data ourselves:
+
+. . .
+
+```{r}
+#| label: manual-groups
+
+college_grouped <- college |> 
+  dplyr::mutate(
+    top10_group = if_else(Top10perc < median(Top10perc), "lower", "upper"),
+    expend_group = if_else(Expend < median(Expend), "lower", "upper"),
+    group_label = paste0(
+      if_else(top10_group == "lower", "0", "1"),
+      if_else(expend_group == "lower", "0", "1")
+    )
+  )
+```
+
+Split each variable at its median → four groups.
+
+. . .
+
+| Group | Top10perc | Expend |
+|-------|-----------|--------|
+| g_00 | below median | below median |
+| g_01 | below median | above median |
+| g_10 | above median | below median |
+| g_11 | above median | above median |
+
+## The Four Groups
+
+```{r}
+#| label: fig-four-groups
+#| fig-cap: "Manual grouping by median splits"
+
+college_grouped |> 
+  ggplot2::ggplot(ggplot2::aes(
+    x = Top10perc, y = Expend, 
+    color = group_label, shape = group_label
+  )) +
+  ggplot2::geom_point(alpha = 0.6) +
+  ggplot2::geom_vline(xintercept = median(college$Top10perc), linetype = "dashed") +
+  ggplot2::geom_hline(yintercept = median(college$Expend), linetype = "dashed") +
+  ggplot2::labs(
+    x = "% from top 10% of H.S. class",
+    y = "Expenditure per student ($)",
+    color = "Group", shape = "Group"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## The Limitation
+
+Manual grouping works when we have 2-3 variables.
+
+. . .
+
+But the college data has **17 numeric variables**.
+
+. . .
+
+We need an algorithm that can find groups in high-dimensional space.
+
+# Distance and Standardization
+
+## Euclidean Distance
+
+To measure similarity, we use **distance**:
+
+$$d(a, b) = \sqrt{\sum_{j=1}^{p} (a_j - b_j)^2}$$
+
+. . .
+
+Observations that are "close" in this sense have similar profiles.
+
+## The Scale Problem
+
+```{r}
+#| label: tbl-variable-ranges
+#| tbl-cap: "Variable ranges differ dramatically"
+
+college_numeric |> 
+  dplyr::summarise(across(everything(), list(
+    min = ~ min(., na.rm = TRUE),
+    max = ~ max(., na.rm = TRUE)
+  ))) |> 
+  tidyr::pivot_longer(everything(), names_to = c("variable", ".value"), 
+                      names_pattern = "(.*)_(.*)") |> 
+  dplyr::mutate(range = max - min) |> 
+  dplyr::arrange(desc(range)) |> 
+  dplyr::slice_head(n = 5) |> 
+  knitr::kable(digits = 0, col.names = c("Variable", "Min", "Max", "Range"))
+```
+
+. . .
+
+Variables with larger ranges dominate the distance calculation.
+
+## The Solution: Z-Scores
+
+Standardize each variable:
+
+$$z_j = \frac{x_j - \bar{x}_j}{s_j}$$
+
+. . .
+
+After transformation:
+
+- All variables have mean 0 and SD 1
+- A 1-unit difference represents one standard deviation
+- Variables contribute equally to distance
+
+# K-Means Clustering
+
+## The Core Idea
+
+Partition $n$ observations into $K$ clusters such that each observation belongs to the cluster with the **nearest centroid**.
+
+. . .
+
+**Objective:** Minimize the total within-cluster sum of squares (WCSS):
+
+$$\min \sum_{k=1}^{K} \sum_{i \in C_k} \|x_i - \mu_k\|^2$$
+
+## The Algorithm
+
+1. **Initialize:** Randomly select $K$ observations as initial centroids
+
+. . .
+
+2. **Assign:** Assign each observation to the nearest centroid
+
+. . .
+
+3. **Update:** Recalculate centroids as the mean of assigned observations
+
+. . .
+
+4. **Repeat:** Go to step 2 until assignments stop changing
+
+## K-Means on College Data
+
+```{r}
+#| label: kmeans-fit
+
+set.seed(42)
+
+# Use z-scores of numeric variables
+college_z_numeric <- college_z |> 
+  dplyr::select(-college_name)
+
+kmeans_fit <- stats::kmeans(college_z_numeric, centers = 4, nstart = 25)
+```
+
+```{r}
+#| label: fig-kmeans-result
+#| fig-cap: "K-means clusters (K=4) projected onto two variables"
+
+college |> 
+  dplyr::mutate(cluster = factor(kmeans_fit$cluster)) |> 
+  ggplot2::ggplot(ggplot2::aes(
+    x = Top10perc, y = Expend, 
+    color = cluster, shape = cluster
+  )) +
+  ggplot2::geom_point(alpha = 0.6) +
+  ggplot2::scale_shape_manual(values = c(16, 17, 15, 18)) +
+  ggplot2::labs(
+    x = "% from top 10% of H.S. class",
+    y = "Expenditure per student ($)",
+    color = "Cluster", shape = "Cluster"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Practical Note: nstart
+
+K-means depends on random initialization.
+
+. . .
+
+Different starting points → different solutions.
+
+. . .
+
+**Solution:** Run multiple times, keep the best result.
+
+```r
+kmeans(X, centers = 4, nstart = 25)
+```
+
+. . .
+
+Rule of thumb: `nstart` between 20 and 50.
+
+# Evaluating Clusters
+
+## Within-Cluster Sum of Squares
+
+$$\text{WCSS} = \sum_{k=1}^{K} \sum_{i \in C_k} \|x_i - \mu_k\|^2$$
+
+. . .
+
+**Lower WCSS** = tighter clusters.
+
+. . .
+
+But WCSS always decreases as $K$ increases—even with meaningless clusters.
+
+## Choosing K: The Elbow Method
+
+```{r}
+#| label: compute-wcss
+
+set.seed(42)
+
+wcss_values <- tibble::tibble(k = 2:12) |> 
+  dplyr::mutate(
+    wcss = purrr::map_dbl(k, ~ {
+      kmeans(college_z_numeric, centers = .x, nstart = 20)$tot.withinss
+    })
+  )
+```
+
+```{r}
+#| label: fig-elbow
+#| fig-cap: "WCSS decreases as K increases—look for the 'elbow'"
+
+wcss_values |> 
+  ggplot2::ggplot(ggplot2::aes(x = k, y = wcss)) +
+  ggplot2::geom_line(linewidth = 1) +
+  ggplot2::geom_point(size = 3) +
+  ggplot2::scale_x_continuous(breaks = 2:12) +
+  ggplot2::labs(
+    x = "Number of clusters (K)",
+    y = "Within-cluster sum of squares"
+  ) +
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+## Reading the Elbow Plot
+
+**Steep decline:** Adding clusters captures real structure.
+
+. . .
+
+**Gradual decline:** Diminishing returns—overfitting.
+
+. . .
+
+The "elbow" is where the rate of decrease sharply levels off.
+
+. . .
+
+**Caveat:** The elbow is subjective. Domain knowledge matters.
+
+# Comparing Clusterings
+
+## Jaccard Similarity
+
+How do we compare two different clusterings?
+
+. . .
+
+The **Jaccard index** measures agreement by looking at pairs:
+
+$$J = \frac{|A \cap B|}{|A \cup B|}$$
+
+. . .
+
+- $J = 1$: Perfect agreement
+- $J \approx 0$: No agreement
+
+. . .
+
+**Use cases:** Compare K-means runs for stability; compare to known groupings.
+
+## Manual Grouping versus K-means
+
+How well does K-means recover our manual grouping?
+
+```{r}
+#| label: tbl-cluster-vs-group
+#| tbl-cap: "K-means clusters vs. manual groups"
+
+college_grouped |> 
+  dplyr::mutate(cluster = factor(kmeans_fit$cluster)) |> 
+  dplyr::count(group_label, cluster) |> 
+  tidyr::pivot_wider(names_from = cluster, values_from = n, values_fill = 0) |> 
+  knitr::kable()
+```
+
+. . .
+
+Some clusters align well with manual groups; others split across them.
+
+# Interpretation
+
+## What Do Clusters Mean?
+
+The algorithm found groups—now ask what characterizes each one.
+
+. . .
+
+**Profile each cluster:**
+
+- Compute cluster means for each variable
+- Compare to overall means
+- Look at distributions within clusters
+
+## Cluster Profiles
+
+```{r}
+#| label: tbl-cluster-profiles
+#| tbl-cap: "Cluster means for selected variables"
+
+college |> 
+  dplyr::mutate(cluster = factor(kmeans_fit$cluster)) |> 
+  dplyr::group_by(cluster) |> 
+  dplyr::summarise(
+    n = n(),
+    Top10perc = mean(Top10perc),
+    Expend = mean(Expend),
+    Grad.Rate = mean(Grad.Rate),
+    .groups = "drop"
+  ) |> 
+  knitr::kable(digits = 0)
+```
+
+. . .
+
+What story do these profiles tell?
+
+## Example Interpretation
+
+Review of additional variable profiles suggests:
+
+. . .
+
+- **Cluster 1:** High selectivity, high expenditure → "Elite institutions"
+- **Cluster 2:** Lower selectivity, moderate expenditure → "Regional schools"
+- **Cluster 3:** Large enrollment, lower cost → "Large state universities"
+- **Cluster 4:** Small, moderate selectivity → "Small privates"
+
+. . .
+
+Does this match domain knowledge?
+
+# Connections to ML
+
+## Clustering in the ML Pipeline
+
+Clustering connects to supervised learning:
+
+. . .
+
+**Preprocessing:** Standardization is essential for many ML algorithms, not just clustering.
+
+. . .
+
+**Feature engineering:** Cluster membership can become a derived feature.
+
+. . .
+
+**Model selection:** The elbow heuristic → cross-validation, regularization.
+
+## Other Clustering Methods
+
+| Type | Examples |
+|------|----------|
+| Centroid-based | K-means, K-medoids |
+| Density-based | DBSCAN, HDBSCAN |
+| Hierarchical | Agglomerative, Divisive |
+| Soft clustering | Gaussian mixture models |
+
+. . .
+
+K-means assumes spherical clusters of similar size. Other methods relax these assumptions.
+
+# Summary
+
+## Chapter 3: Key Takeaways
+
+1. **Clustering is EDA** for high-dimensional data
+2. **Standardize first**—z-scores equalize variable contributions
+3. **K-means minimizes WCSS** via iterative assignment and update
+4. **The elbow method** guides (but doesn't determine) K selection
+5. **Interpretation completes** the analysis—profile your clusters
+
+## Key Formulas
+
+| Concept | Formula |
+|---------|---------|
+| Z-score | $z_j = \frac{x_j - \bar{x}_j}{s_j}$ |
+| Euclidean distance | $d(a,b) = \sqrt{\sum (a_j - b_j)^2}$ |
+| WCSS | $\sum_k \sum_{i \in C_k} \|x_i - \mu_k\|^2$ |
+| Jaccard index | $J = \frac{|A \cap B|}{|A \cup B|}$ |
+
+## Team Exercises
+
+1. Apply K-means to `datasets::iris` measurements
+2. Compare clusters to the `Species` variable using `xtabs()`
+3. Experiment with different values of K
+
+## Resources
+
+- ISLR2: *An Introduction to Statistical Learning* (Ch. 12)
+- tidymodels: [K-means with tidy data principles](https://www.tidymodels.org/learn/statistics/k-means/)
+- Wikipedia: [Cluster analysis](https://en.wikipedia.org/wiki/Cluster_analysis)
+- CRAN: [dbscan package](https://cran.r-project.org/web/packages/dbscan/)
