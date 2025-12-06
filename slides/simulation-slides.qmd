@@ -7,7 +7,12 @@ format:
     theme: [dark, eda4ml-slides.scss]
     slide-number: true
     incremental: false
-    toc: false
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 4"
+    preview-links: auto
+    progress: true
+    hash: true
     code-fold: true
     fig-width: 8
     fig-height: 5

@@ -1,0 +1,69 @@
+<!-- 
+  REPLACEMENT FOR fig-mi-venn in info-theory-slides.qmd
+  
+  Replace lines 291-321 (the fig-mi-venn code block) with this code.
+  This version:
+  - Uses geom_polygon() instead of ggforce::geom_circle()
+  - Adds H(X) and H(Y) labels above the circles
+  - Uses colors compatible with the dark slide theme
+-->
+
+```{r}
+#| label: fig-entropy-venn
+#| echo: false
+#| fig-height: 4.5
+#| fig-width: 7
+
+# Generate circle coordinates without ggforce
+make_circle <- function(x0, y0, r, n = 100) {
+  theta <- seq(0, 2 * pi, length.out = n)
+  tibble::tibble(
+    x = x0 + r * cos(theta),
+    y = y0 + r * sin(theta)
+  )
+}
+
+# Create two overlapping circles
+circle_left <- make_circle(x0 = -0.5, y0 = 0, r = 1.2)
+circle_right <- make_circle(x0 = 0.5, y0 = 0, r = 1.2)
+
+# Build the plot
+ggplot2::ggplot() +
+  # Left circle (H(X))
+  ggplot2::geom_polygon(
+    data = circle_left,
+    mapping = aes(x = x, y = y),
+    fill = "#4A90D9",
+    alpha = 0.5,
+    color = "white",
+    linewidth = 1.5
+  ) +
+  # Right circle (H(Y))
+  ggplot2::geom_polygon(
+    data = circle_right,
+    mapping = aes(x = x, y = y),
+    fill = "#E07050",
+    alpha = 0.5,
+    color = "white",
+    linewidth = 1.5
+  ) +
+  # Circle labels (H(X) and H(Y) above circles)
+  ggplot2::annotate("text", x = -0.5, y = 1.5, label = "H(X)", 
+                    size = 6, fontface = "bold", color = "white") +
+  ggplot2::annotate("text", x = 0.5, y = 1.5, label = "H(Y)", 
+                    size = 6, fontface = "bold", color = "white") +
+  # Region labels
+  ggplot2::annotate("label", x = -1.1, y = 0, label = "H(X|Y)", size = 5, 
+                    fill = "#4A90D9", color = "white", fontface = "bold", label.size = 0) +
+  ggplot2::annotate("label", x = 1.1, y = 0, label = "H(Y|X)", size = 5, 
+                    fill = "#E07050", color = "white", fontface = "bold", label.size = 0) +
+  ggplot2::annotate("label", x = 0, y = 0, label = "MI", size = 6, 
+                    fill = "#8B6090", color = "white", fontface = "bold", label.size = 0) +
+  ggplot2::coord_fixed() +
+  ggplot2::theme_void() +
+  ggplot2::theme(
+    panel.background = element_rect(fill = "gray20", color = NA)
+  ) +
+  ggplot2::xlim(-2.2, 2.2) +
+  ggplot2::ylim(-1.8, 2)
+```

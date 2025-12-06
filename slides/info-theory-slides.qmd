@@ -54,7 +54,7 @@ This is positioned as a "coda"—self-contained vocabulary that students will en
 | Concept | Intuition |
 |---------|-----------|
 | **Entropy** | How uncertain is an outcome? |
-| **Mutual Information** | How much does knowing X tell us about Y? |
+| **Mutual Information** | How much information do (X, Y) share? |
 | **KL Divergence** | How costly is using the wrong distribution? |
 
 . . .
@@ -69,9 +69,10 @@ Imagine a box of tickets, each bearing a capital letter.
 
 **The game:**
 
-1. A ticket is drawn at random (you can't see it)
-2. You ask yes-no questions until you can identify the letter with certainty
-3. Goal: minimize average number of questions
+1. You are shown the box of tickets.
+2. A ticket is drawn at random, but you can't see it.
+3. You ask yes-no questions until you can identify the letter with certainty.
+4. Goal: minimize average number of questions.
 
 . . .
 
@@ -288,42 +289,84 @@ $$MI = 1.5 + 1 - 2 = 0.5 \text{ bits}$$
 ## Mutual Information: Visual Intuition
 
 ```{r}
-#| label: fig-mi-venn
+#| label: fig-entropy-venn
 #| echo: false
-#| fig-height: 4
-#| fig-width: 6
+#| fig-height: 4.5
+#| fig-width: 7
 
-# Simple Venn-style diagram using ggplot
-library(ggforce)
+# Generate circle coordinates without ggforce
+make_circle <- function(x0, y0, r, n = 100) {
+  theta <- seq(0, 2 * pi, length.out = n)
+  tibble::tibble(
+    x = x0 + r * cos(theta),
+    y = y0 + r * sin(theta)
+  )
+}
 
-circles <- tibble(
-  x0 = c(-0.5, 0.5),
-  y0 = c(0, 0),
-  r = c(1.2, 1.2),
-  label = c("H(X)", "H(Y)")
-)
+# Create two overlapping circles
+circle_left <- make_circle(x0 = -0.5, y0 = 0, r = 1.2)
+circle_right <- make_circle(x0 = 0.5, y0 = 0, r = 1.2)
 
-ggplot() +
-  geom_circle(data = circles, aes(x0 = x0, y0 = y0, r = r, fill = label), 
-              alpha = 0.5, color = "white", linewidth = 1.5) +
-  annotate("label", x = -1.1, y = 0, label = "H(X|Y)", size = 5, 
-           fill = "#4A90D9", color = "white", fontface = "bold", label.size = 0) +
-  annotate("label", x = 1.1, y = 0, label = "H(Y|X)", size = 5, 
-           fill = "#E07050", color = "white", fontface = "bold", label.size = 0) +
-  annotate("label", x = 0, y = 0, label = "MI", size = 6, 
-           fill = "#8B6090", color = "white", fontface = "bold", label.size = 0) +
-  coord_fixed() +
-  theme_void() +
-  theme(legend.position = "none",
-        panel.background = element_rect(fill = "gray20", color = NA)) +
-  scale_fill_manual(values = c("H(X)" = "#4A90D9", "H(Y)" = "#E07050"))
+# Build the plot
+ggplot2::ggplot() +
+  # Left circle (H(X))
+  ggplot2::geom_polygon(
+    data = circle_left,
+    mapping = aes(x = x, y = y),
+    fill = "#4A90D9",
+    alpha = 0.5,
+    color = "white",
+    linewidth = 1.5
+  ) +
+  # Right circle (H(Y))
+  ggplot2::geom_polygon(
+    data = circle_right,
+    mapping = aes(x = x, y = y),
+    fill = "#E07050",
+    alpha = 0.5,
+    color = "white",
+    linewidth = 1.5
+  ) +
+  # Circle labels (H(X) and H(Y) above circles)
+  ggplot2::annotate(
+    "text", x = -0.5, y = 1.5, label = "H(X)", 
+    size = 6, fontface = "bold", color = "white"
+  ) +
+  ggplot2::annotate(
+    "text", x = 0.5, y = 1.5, label = "H(Y)", 
+    size = 6, fontface = "bold", color = "white"
+  ) +
+  # Region labels
+  ggplot2::annotate(
+    "label", x = -1.1, y = 0, label = "H(X|Y)", size = 5, 
+    fill = "#4A90D9", color = "white", fontface = "bold", 
+    label.size = 0
+  ) +
+  ggplot2::annotate(
+    "label", x = 1.1, y = 0, label = "H(Y|X)", size = 5, 
+    fill = "#E07050", color = "white", fontface = "bold", 
+    label.size = 0
+  ) +
+  ggplot2::annotate(
+    "label", x = 0, y = 0, label = "MI", size = 6, 
+    fill = "#8B6090", color = "white", fontface = "bold", 
+    label.size = 0
+  ) +
+  ggplot2::coord_fixed() +
+  ggplot2::theme_void() +
+  ggplot2::theme(
+    panel.background = 
+      element_rect(fill = "gray20", color = NA)
+  ) +
+  ggplot2::xlim(-2.2, 2.2) +
+  ggplot2::ylim(-1.8, 2)
 ```
 
 $$H_{X,Y} = H_X + H_Y - MI_{X,Y}$$
 
 ## KL Divergence: The Cost of Being Wrong {#sec-kl-divergence}
 
-**Scenario:** You've optimized your strategy for Box 5 (independent), but the actual box is Box 6 (dependent).
+**Scenario:** You're shown Box 5 (independent) and optimized your strategy accordingly, but the actual box is Box 6 (dependent).
 
 . . .
 
@@ -411,8 +454,6 @@ Minimizing cross-entropy loss is equivalent to minimizing the divergence between
 
 . . .
 
-The mathematical details require additional concepts (degenerate distributions) beyond our scope here.
-
 ## Decision Trees and Information Gain
 
 When splitting a node:
@@ -424,8 +465,6 @@ $$\text{Information Gain} = H(\text{parent}) - \sum_{\text{children}} \frac{n_{\
 **Strategy:** Choose the split that maximizes information gain.
 
 . . .
-
-This is equivalent to maximizing mutual information between the split and the target.
 
 ## Feature Selection with Mutual Information
 

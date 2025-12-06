@@ -6,7 +6,12 @@ format:
   revealjs:
     theme: [dark, eda4ml-slides.scss]
     slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 5"
     preview-links: auto
+    progress: true
+    hash: true
     incremental: false
     code-fold: false
     echo: true
