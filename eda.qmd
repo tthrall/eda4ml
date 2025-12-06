@@ -58,7 +58,8 @@ Exploratory Data Analysis (EDA) is an approach to data analysis advocated by [Jo
 
 Tukey contrasted EDA with what he called "confirmatory data analysis" (CDA). Confirmatory analysis begins with a hypothesis and asks whether the data support or refute it. Exploratory analysis begins with data and asks what patterns, anomalies, or relationships might be present. The difference is one of emphasis rather than exclusion: a complete analysis typically involves both exploration and confirmation, and EDA includes models suggested by data.
 
-For students of machine learning, EDA serves several purposes:
+::: {.callout-note}
+## EDA in machine learning
 
 - **Understanding the data before modeling.** What variables are available? What are their types (numeric, categorical, text, date)? How are they distributed? Are there missing values, outliers, or obvious errors? Answers to these questions inform every subsequent modeling decision.
 
@@ -67,8 +68,13 @@ For students of machine learning, EDA serves several purposes:
 - **Diagnosing models.** After fitting a model, EDA methods help assess whether the model captures the structure in the data. Residual plots, for example, can reveal systematic patterns that the model has missed.
 
 - **Communicating findings.** Visualizations and summaries developed during exploration often become the basis for communicating results to stakeholders who may not follow the technical details of model fitting.
+:::
+
+::: {.callout-note}
+## The EDA mindset
 
 EDA is not a single technique but a mindset: a willingness to look at data from multiple angles, to transform variables, to compare subgroups, and above all to ask questions.
+:::
 
 ## Data as a Sample from a Population
 
