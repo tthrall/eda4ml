@@ -514,7 +514,11 @@ g_xy <- xy_long |>
 g_xy
 ```
 
-Moral: pay attention to the data! The graphical and tabular summaries we choose to present should be useful and informative. For example, it might be helpful to note that group 2 looks like the partial outline of a parabola. We should note that group 3 consists of 10 points falling on a line, with one outlier. In group 4 we should note that of the 11 data points, 10 have identical $x$-values. We want to minimize the chance of inadvertently conveying false impressions by merely reporting standard summary statistics.
+::: {.callout-warning}
+## Anscombe's lesson
+
+Summary statistics can mask dramatically different data structures. Group 2 traces a parabola; group 3 has ten points on a line plus one outlier; group 4 has ten observations at a single $x$-value. Yet all four groups yield identical means, standard deviations, correlations, and regression lines. Always visualize before summarizing.
+:::
 
 ## Statistical Independence
 
@@ -523,6 +527,14 @@ The father-son data is an example of a pair of statistically dependent variables
 Practical examples of statistically *independent* (unrelated) variables exist but are rare, since studies typically collect data on variables believed to be related. Nevertheless, the concept of statistical independence is very useful, as it gives rise to measures of departure from statistical independence (and thus measures of statistical association).
 
 The correlation coefficient $r$ is an example of such a measure for two continuous variables. If $(X, Y)$ is a pair of statistically independent variables, then $r = 0$. Note, however, that $(X, Y)$ may be statistically dependent even if uncorrelated, that is, even if $r = 0$.
+
+::: {.callout-note}
+## Correlation versus independence
+
+- If $X$ and $Y$ are independent, then $r = 0$.
+- But $r = 0$ does not imply independence—$X$ and $Y$ can be strongly related yet uncorrelated if the relationship is nonlinear.
+- Correlation measures *linear* association only.
+:::
 
 ### Definition
 

@@ -390,7 +390,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:02 Sat 6-Dec-2025</p>
+      <p class="date">10:30 Sat 6-Dec-2025</p>
     </div>
   </div>
   
@@ -682,7 +682,19 @@ Figure&nbsp;2.7: Scatter diagram of (x, y) per group
 </div>
 </div>
 </div>
-<p>Moral: pay attention to the data! The graphical and tabular summaries we choose to present should be useful and informative. For example, it might be helpful to note that group 2 looks like the partial outline of a parabola. We should note that group 3 consists of 10 points falling on a line, with one outlier. In group 4 we should note that of the 11 data points, 10 have identical <span class="math inline">\(x\)</span>-values. We want to minimize the chance of inadvertently conveying false impressions by merely reporting standard summary statistics.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Anscombe’s lesson
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Summary statistics can mask dramatically different data structures. Group 2 traces a parabola; group 3 has ten points on a line plus one outlier; group 4 has ten observations at a single <span class="math inline">\(x\)</span>-value. Yet all four groups yield identical means, standard deviations, correlations, and regression lines. Always visualize before summarizing.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="statistical-independence" class="level2" data-number="2.6">
@@ -690,6 +702,23 @@ Figure&nbsp;2.7: Scatter diagram of (x, y) per group
 <p>The father-son data is an example of a pair of statistically dependent variables, since the distribution of sons’ heights changes when conditioned on the father’s height. (The same can be said for fathers’ heights conditioned on the height of the son.) Short fathers tend to have short sons; tall fathers tend to have tall sons.</p>
 <p>Practical examples of statistically <em>independent</em> (unrelated) variables exist but are rare, since studies typically collect data on variables believed to be related. Nevertheless, the concept of statistical independence is very useful, as it gives rise to measures of departure from statistical independence (and thus measures of statistical association).</p>
 <p>The correlation coefficient <span class="math inline">\(r\)</span> is an example of such a measure for two continuous variables. If <span class="math inline">\((X, Y)\)</span> is a pair of statistically independent variables, then <span class="math inline">\(r = 0\)</span>. Note, however, that <span class="math inline">\((X, Y)\)</span> may be statistically dependent even if uncorrelated, that is, even if <span class="math inline">\(r = 0\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Correlation versus independence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent, then <span class="math inline">\(r = 0\)</span>.</li>
+<li>But <span class="math inline">\(r = 0\)</span> does not imply independence—<span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> can be strongly related yet uncorrelated if the relationship is nonlinear.</li>
+<li>Correlation measures <em>linear</em> association only.</li>
+</ul>
+</div>
+</div>
 <section id="definition" class="level3" data-number="2.6.1">
 <h3 data-number="2.6.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">2.6.1</span> Definition</h3>
 <p>The pair of random variables <span class="math inline">\((X, Y)\)</span> is defined to be statistically independent if</p>
