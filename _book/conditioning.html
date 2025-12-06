@@ -390,7 +390,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">09:27 Sat 6-Dec-2025</p>
+      <p class="date">10:02 Sat 6-Dec-2025</p>
     </div>
   </div>
   
@@ -403,6 +403,17 @@ window.Quarto = {
 
 
 <hr>
+<p>A scatter plot of two variables invites a natural question: if we know the value of one variable, what can we say about the other? The answer lies in <em>conditional distributions</em>—the distribution of one variable given a particular value (or range of values) of another.</p>
+<p>In <a href="eda.html" class="quarto-xref"><span>Chapter 1</span></a> we examined the heights of fathers and sons, observing a positive association in the scatter plot. But the scatter plot shows the <em>joint</em> distribution of the two variables. To understand the relationship more precisely, we need to ask: for fathers of a given height, how are the sons’ heights distributed? This is the conditional distribution of son’s height given father’s height.</p>
+<p>Conditional distributions are fundamental to both statistics and machine learning. In regression, we model the conditional mean—the expected value of the response variable given the predictors. In classification, we estimate conditional probabilities—the probability of each class given the features. Understanding conditional distributions builds the conceptual foundation for these methods.</p>
+<p>This chapter develops the machinery for describing and measuring relationships between variables:</p>
+<ul>
+<li><p><strong>Conditional distributions and the graph of averages.</strong> We return to the father-son data and compute the average son’s height for each value of father’s height. This “graph of averages” reveals the conditional expectation function—the foundation of regression.</p></li>
+<li><p><strong>Z-scores and standardization.</strong> Converting variables to standard units (mean zero, standard deviation one) allows us to compare variables measured on different scales and simplifies the geometry of linear relationships.</p></li>
+<li><p><strong>The regression line.</strong> We derive the line that best predicts son’s height from father’s height, discovering along the way why Galton called this phenomenon “regression to the mean.”</p></li>
+<li><p><strong>Statistical independence.</strong> Two variables are independent when knowing one tells us nothing about the other—that is, when the conditional distribution equals the marginal distribution. We examine independence for both continuous and categorical variables, and encounter Simpson’s paradox as a cautionary tale about confounding.</p></li>
+</ul>
+<p>Throughout, we emphasize the geometric interpretation: regression as orthogonal projection, correlation as the cosine of an angle between standardized variables. These perspectives, developed more fully in Part 2, connect exploratory analysis to the linear algebra underlying modern machine learning.</p>
 <section id="heights-of-fathers-and-sons" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="heights-of-fathers-and-sons"><span class="header-section-number">2.1</span> Heights of Fathers and Sons</h2>
 <p>The box-plot below can be regarded as the (sample) <em>conditional distribution</em> of sons’ heights grouped by the height (rounded to the nearest odd inch) of each son’s father.</p>
