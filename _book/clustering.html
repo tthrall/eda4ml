@@ -399,7 +399,8 @@ window.Quarto = {
   <li><a href="#interpreting-the-clusters" id="toc-interpreting-the-clusters" class="nav-link" data-scroll-target="#interpreting-the-clusters"><span class="header-section-number">3.6</span> Interpreting the Clusters</a></li>
   <li><a href="#other-clustering-algorithms" id="toc-other-clustering-algorithms" class="nav-link" data-scroll-target="#other-clustering-algorithms"><span class="header-section-number">3.7</span> Other Clustering Algorithms</a>
   <ul>
-  <li><a href="#example-dbscan" id="toc-example-dbscan" class="nav-link" data-scroll-target="#example-dbscan"><span class="header-section-number">3.7.1</span> Example: DBSCAN</a></li>
+  <li><a href="#distance-measures" id="toc-distance-measures" class="nav-link" data-scroll-target="#distance-measures"><span class="header-section-number">3.7.1</span> Distance Measures</a></li>
+  <li><a href="#example-dbscan" id="toc-example-dbscan" class="nav-link" data-scroll-target="#example-dbscan"><span class="header-section-number">3.7.2</span> Example: DBSCAN</a></li>
   </ul></li>
   <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">3.8</span> Team Exercises</a></li>
   <li><a href="#connections-to-machine-learning" id="toc-connections-to-machine-learning" class="nav-link" data-scroll-target="#connections-to-machine-learning"><span class="header-section-number">3.9</span> Connections to Machine Learning</a></li>
@@ -429,7 +430,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">06:34 Fri 5-Dec-2025</p>
+      <p class="date">09:17 Sat 6-Dec-2025</p>
     </div>
   </div>
   
@@ -1302,8 +1303,24 @@ Cluster interpretation (example)
 <li><p><strong>Centroid-based versus Density-based:</strong> K-means and other centroid-based methods identify a cluster of points with the mean, median, or other central measure of the points in the cluster. Density-based methods find areas having a high density of points.</p></li>
 </ul>
 <p>Some methods of note are <a href="https://en.wikipedia.org/wiki/DBSCAN">DBSCAN</a> (Density Based Spatial Clustering of Applications with Noise) and <a href="https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html">HDBSCAN</a> (a hierarchical version of DBSCAN).</p>
-<section id="example-dbscan" class="level3" data-number="3.7.1">
-<h3 data-number="3.7.1" class="anchored" data-anchor-id="example-dbscan"><span class="header-section-number">3.7.1</span> Example: DBSCAN</h3>
+<section id="distance-measures" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="distance-measures"><span class="header-section-number">3.7.1</span> Distance Measures</h3>
+<p>Both K-means and density-based methods like DBSCAN depend on a distance (or dissimilarity) measure to determine which observations are “close.” The default is Euclidean distance (the <span class="math inline">\(L_2\)</span> norm):</p>
+<p><span class="math display">\[
+d_2(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{j=1}^{p} (x_j - y_j)^2}
+\]</span></p>
+<p>Other common choices include Manhattan distance (<span class="math inline">\(L_1\)</span>), which sums absolute differences and is less sensitive to outliers in individual dimensions:</p>
+<p><span class="math display">\[
+d_1(\mathbf{x}, \mathbf{y}) = \sum_{j=1}^{p} |x_j - y_j|
+\]</span></p>
+<p>and Chebyshev distance (<span class="math inline">\(L_\infty\)</span>), which considers only the largest single-dimension difference:</p>
+<p><span class="math display">\[
+d_\infty(\mathbf{x}, \mathbf{y}) = \max_{j} |x_j - y_j|
+\]</span></p>
+<p>The choice of distance measure affects cluster shapes and which observations are grouped together. Euclidean distance implicitly assumes that features are on comparable scales—reinforcing why standardization (z-scores) is typically applied before clustering. In high-dimensional settings, all distance measures face the “curse of dimensionality,” a phenomenon we examine in <a href="reduce-dim.html" class="quarto-xref"><span>Chapter 8</span></a>.</p>
+</section>
+<section id="example-dbscan" class="level3" data-number="3.7.2">
+<h3 data-number="3.7.2" class="anchored" data-anchor-id="example-dbscan"><span class="header-section-number">3.7.2</span> Example: DBSCAN</h3>
 <p>Unlike K-means, DBSCAN does not require specifying the number of clusters in advance. Instead, it finds clusters based on density—regions where points are packed closely together. Points in sparse regions are labeled as noise.</p>
 <div class="cell">
 <details class="code-fold">

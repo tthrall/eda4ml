@@ -995,6 +995,28 @@ Clustering methods are an active area of research. The K-means algorithm, first 
 
 Some methods of note are [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN) (Density Based Spatial Clustering of Applications with Noise) and [HDBSCAN](https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html) (a hierarchical version of DBSCAN).
 
+### Distance Measures
+
+Both K-means and density-based methods like DBSCAN depend on a distance (or dissimilarity) measure to determine which observations are "close." The default is Euclidean distance (the $L_2$ norm):
+
+$$
+d_2(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{j=1}^{p} (x_j - y_j)^2}
+$$
+
+Other common choices include Manhattan distance ($L_1$), which sums absolute differences and is less sensitive to outliers in individual dimensions:
+
+$$
+d_1(\mathbf{x}, \mathbf{y}) = \sum_{j=1}^{p} |x_j - y_j|
+$$
+
+and Chebyshev distance ($L_\infty$), which considers only the largest single-dimension difference:
+
+$$
+d_\infty(\mathbf{x}, \mathbf{y}) = \max_{j} |x_j - y_j|
+$$
+
+The choice of distance measure affects cluster shapes and which observations are grouped together. Euclidean distance implicitly assumes that features are on comparable scales—reinforcing why standardization (z-scores) is typically applied before clustering. In high-dimensional settings, all distance measures face the "curse of dimensionality," a phenomenon we examine in @sec-reduce-dim.
+
 ### Example: DBSCAN
 
 Unlike K-means, DBSCAN does not require specifying the number of clusters in advance. Instead, it finds clusters based on density—regions where points are packed closely together. Points in sparse regions are labeled as noise.

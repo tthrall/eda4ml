@@ -1,0 +1,28 @@
+<!-- 
+  ADDITION 2: clustering.qmd
+  Insert after line 996 (after "...HDBSCAN (a hierarchical version of DBSCAN).")
+  Insert before line 998 ("### Example: DBSCAN")
+-->
+
+### Distance Measures
+
+Both K-means and density-based methods like DBSCAN depend on a distance (or dissimilarity) measure to determine which observations are "close." The default is Euclidean distance (the $L_2$ norm):
+
+$$
+d_2(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{j=1}^{p} (x_j - y_j)^2}
+$$
+
+Other common choices include Manhattan distance ($L_1$), which sums absolute differences and is less sensitive to outliers in individual dimensions:
+
+$$
+d_1(\mathbf{x}, \mathbf{y}) = \sum_{j=1}^{p} |x_j - y_j|
+$$
+
+and Chebyshev distance ($L_\infty$), which considers only the largest single-dimension difference:
+
+$$
+d_\infty(\mathbf{x}, \mathbf{y}) = \max_{j} |x_j - y_j|
+$$
+
+The choice of distance measure affects cluster shapes and which observations are grouped together. Euclidean distance implicitly assumes that features are on comparable scales—reinforcing why standardization (z-scores) is typically applied before clustering. In high-dimensional settings, all distance measures face the "curse of dimensionality," a phenomenon we examine in @sec-dimred.
+
