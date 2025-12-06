@@ -165,6 +165,39 @@ g_s_avg_per_f_mpt
 
 The above graph of average son-height per father's height forms an approximate straight line, although the slope of the line is less than 1 (which is the slope of the reference line).
 
+## Smoothing the Conditional Expectation
+
+The graph of averages approximates the conditional expectation function—the expected son's height given father's height—but the averaging bins introduce discontinuities. A smoother estimate can be obtained using *local regression*, often called loess (locally estimated scatterplot smoothing).
+
+```{r}
+#| label: fig-scatter-loess
+#| fig-cap: "Scatter plot with loess smooth and graph of averages"
+
+father_son_ht |> 
+  ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
+  ggplot2::geom_point(alpha = 0.3) + 
+  ggplot2::geom_smooth(
+    method = "loess", 
+    se = FALSE, 
+    color = "blue", 
+    linewidth = 1.2) + 
+  ggplot2::geom_point(
+    data = s_stats_per_f_mpt, 
+    mapping = aes(x = f_mpt, y = s_avg), 
+    shape = 23, 
+    fill = "gold", 
+    size = 3) + 
+  ggplot2::labs(
+    title = "Conditional expectation: discrete averages vs. smooth curve",
+    x = "Father's height (inches)",
+    y = "Son's height (inches)"
+  )
+```
+
+The loess curve (blue) passes near the conditional averages (gold diamonds), confirming that both methods estimate the same underlying relationship. Loess works by fitting weighted local regressions in a sliding window, giving more weight to nearby points. Unlike the regression line we will derive shortly, loess makes no assumption of linearity—it is a *nonparametric* smoother.
+
+The near-linearity of the loess curve here suggests that a linear model will be appropriate for these data. When loess reveals curvature, it signals that a simple linear regression may miss important structure.
+
 ## Z-Scores: transforming data values to standard units
 
 Imagine choosing a father-son pair at random from the entire population and measuring their respective heights. This would be an example of a pair of random variables $(X, Y)$. If we happened to know the average and standard deviation of (father, son) heights, respectively, from the entire population, we could convert the given heights to so-called standard units, or z-scores, as follows.
