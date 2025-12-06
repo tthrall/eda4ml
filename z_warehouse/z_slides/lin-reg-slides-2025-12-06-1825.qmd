@@ -1,0 +1,637 @@
+---
+title: "Linear Regression"
+subtitle: "Projection onto Feature Space"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 7"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(knitr)
+library(tidyverse)
+library(HistData)
+library(scatterplot3d)
+```
+
+# The Big Picture
+
+## Linear Algebra Meets Statistics
+
+In Part 1, we explored data through:
+
+- Scatter plots and conditional distributions
+- Clustering observations
+- Simulation
+
+. . .
+
+**Part 2** takes a different approach: the **geometry of linear algebra**.
+
+. . .
+
+::: {.callout-note}
+## Core insight
+
+Least-squares regression is **orthogonal projection** onto feature space.
+:::
+
+## Why Geometry?
+
+Linear algebra provides:
+
+- A unified language for regression, PCA, and classification
+- Geometric intuition for what "fitting" means
+- Tools that scale to high dimensions
+
+. . .
+
+**This chapter:** Regression as projection
+
+**Next chapters:** PCA and LDA as finding optimal subspaces
+
+## Two Perspectives on Data
+
+| Perspective | Focus | Visualization |
+|-------------|-------|---------------|
+| **Row** | Observations as points | Scatter plots in feature space |
+| **Column** | Features as vectors | Vectors in observation space |
+
+. . .
+
+Most visualizations use the **row perspective**.
+
+Most linear algebra uses the **column perspective**.
+
+. . .
+
+Understanding both is essential.
+
+# Data Example: Family Heights
+
+## Galton's Height Data
+
+In 1885, Francis Galton studied heights of parents and children.
+
+. . .
+
+```{r}
+#| label: galton-data
+
+galton_3d <- HistData::GaltonFamilies |>
+  tibble::as_tibble() |>
+  dplyr::group_by(family) |>
+  dplyr::slice_head(n = 1) |>  # oldest child per family
+  dplyr::ungroup() |>
+  dplyr::select(father, mother, childHeight, gender) |>
+  dplyr::rename(child = childHeight)
+
+n_families <- nrow(galton_3d)
+n_sons <- sum(galton_3d$gender == "male")
+```
+
+- `r n_families` families (oldest child only)
+- `r n_sons` sons, `r n_families - n_sons` daughters
+- Variables: father's height, mother's height, child's height
+
+## The Data Matrix
+
+```{r}
+#| label: tbl-galton-sample
+
+galton_3d |>
+  dplyr::slice_head(n = 6) |>
+  knitr::kable(
+    digits = 1,
+    caption = "Family heights (inches)"
+  )
+```
+
+. . .
+
+**Goal:** Predict child's height from parents' heights.
+
+## 3D Visualization
+
+```{r}
+#| label: fig-galton-3d
+#| fig-cap: "Family heights: sons (blue), daughters (red)"
+#| fig-height: 5.5
+
+scatterplot3d::scatterplot3d(
+  x = galton_3d$mother, xlab = "Mother",
+  y = galton_3d$father, ylab = "Father",
+  z = galton_3d$child, zlab = "Child",
+  pch = 16,
+  color = dplyr::if_else(galton_3d$gender == "male", "steelblue", "coral"),
+  main = "Family Heights"
+)
+```
+
+## From Line to Plane
+
+In @sec-conditioning, we regressed son's height on father's height → **regression line**
+
+. . .
+
+Now: regress son's height on *both* parents' heights → **regression plane**
+
+. . .
+
+$$
+\hat{s} = \beta_0 + \beta_m \cdot m + \beta_f \cdot f
+$$
+
+where $m$ = mother's height, $f$ = father's height
+
+## The Regression Plane
+
+```{r}
+#| label: fig-galton-plane
+#| fig-cap: "Regression plane with residual segments"
+#| fig-height: 5
+
+sons <- galton_3d |> dplyr::filter(gender == "male")
+lm_sons <- lm(child ~ mother + father, data = sons)
+
+s3d <- scatterplot3d::scatterplot3d(
+  x = sons$mother, xlab = "Mother",
+  y = sons$father, ylab = "Father",
+  z = sons$child, zlab = "Son",
+  pch = 16,
+  color = "steelblue",
+  main = "Regression Plane for Sons' Heights"
+)
+s3d$plane3d(lm_sons, col = "coral", lty = "solid")
+
+# Add residual segments
+orig <- s3d$xyz.convert(sons$mother, sons$father, sons$child)
+proj <- s3d$xyz.convert(sons$mother, sons$father, fitted(lm_sons))
+segments(orig$x, orig$y, proj$x, proj$y, col = "gray50", lwd = 0.5)
+```
+
+## Fitted Coefficients
+
+```{r}
+#| label: lm-sons-coef
+
+coef_tbl <- tibble::tibble(
+  Term = c("Intercept", "Mother", "Father"),
+  Coefficient = coef(lm_sons)
+) 
+
+coef_tbl |> knitr::kable(digits = 2)
+```
+
+. . .
+
+**Interpretation:**
+
+- Each inch of mother's height → `r round(coef(lm_sons)[2], 2)` inches for son
+- Each inch of father's height → `r round(coef(lm_sons)[3], 2)` inches for son
+
+# The Generic Linear Model
+
+## Matrix Notation
+
+$$
+y_\bullet = X_{\bullet,\bullet} \; \beta_\bullet + \epsilon_\bullet
+$$
+
+. . .
+
+| Symbol | Name | Dimension |
+|--------|------|-----------|
+| $y_\bullet$ | Response (target) | $n \times 1$ |
+| $X_{\bullet,\bullet}$ | Feature matrix | $n \times d$ |
+| $\beta_\bullet$ | Coefficients | $d \times 1$ |
+| $\epsilon_\bullet$ | Residuals | $n \times 1$ |
+
+## Feature Space
+
+The columns of $X$ span a subspace called **feature space**:
+
+$$
+\text{col}(X) = \text{span}(x_{\bullet,1}, \ldots, x_{\bullet,d})
+$$
+
+. . .
+
+Any prediction $\hat{y} = X\beta$ is a **linear combination** of feature vectors:
+
+$$
+\hat{y}_\bullet = \beta_1 x_{\bullet,1} + \cdots + \beta_d x_{\bullet,d}
+$$
+
+. . .
+
+So $\hat{y}$ must lie in $\text{col}(X)$.
+
+## The Central Question
+
+Given $y_\bullet$ and $X_{\bullet,\bullet}$:
+
+> Find $\beta_\bullet$ that minimizes $\|\epsilon_\bullet\|$
+
+. . .
+
+This is the **least-squares problem**.
+
+. . .
+
+::: {.callout-note}
+## Geometric interpretation
+
+Find the point in feature space closest to $y$.
+:::
+
+# Geometry of Least Squares
+
+## Distance and Norms
+
+The **Euclidean norm** (length) of vector $v$:
+
+$$
+\|v_\bullet\|_2 = \sqrt{\sum_{\nu=1}^{n} v_\nu^2}
+$$
+
+. . .
+
+Minimizing $\|\epsilon\|^2$ is the **least-squares criterion**:
+
+$$
+\min_\beta \sum_{\nu=1}^{n} (y_\nu - \hat{y}_\nu)^2
+$$
+
+## Inner Products
+
+The **inner product** of vectors $v$ and $w$:
+
+$$
+\langle v, w \rangle = v^\top w = \sum_{\nu=1}^{n} v_\nu w_\nu
+$$
+
+. . .
+
+Key properties:
+
+- $\|v\|^2 = \langle v, v \rangle$
+- $v \perp w$ (orthogonal) when $\langle v, w \rangle = 0$
+
+. . .
+
+Inner products connect to **covariance** and **correlation**.
+
+## The Projection Insight
+
+**Theorem:** The least-squares solution $\hat{y}$ is the **orthogonal projection** of $y$ onto $\text{col}(X)$.
+
+. . .
+
+```{r}
+#| label: fig-projection-diagram
+#| fig-cap: "Orthogonal projection onto feature space"
+#| fig-height: 4
+#| fig-width: 6
+
+# Simple 2D illustration of projection
+ggplot() +
+  # Feature space line
+  geom_segment(aes(x = 0, y = 0, xend = 4, yend = 2), 
+               color = "steelblue", linewidth = 1.5,
+               arrow = arrow(length = unit(0.3, "cm"))) +
+  # y vector
+  geom_segment(aes(x = 0, y = 0, xend = 2, yend = 3),
+               color = "coral", linewidth = 1.5,
+               arrow = arrow(length = unit(0.3, "cm"))) +
+  # y-hat (projection)
+  geom_segment(aes(x = 0, y = 0, xend = 2.4, yend = 1.2),
+               color = "gold", linewidth = 1.5,
+               arrow = arrow(length = unit(0.3, "cm"))) +
+  # residual (perpendicular)
+  geom_segment(aes(x = 2.4, y = 1.2, xend = 2, yend = 3),
+               color = "gray50", linewidth = 1, linetype = "dashed") +
+  # right angle marker
+ geom_segment(aes(x = 2.4, y = 1.2, xend = 2.28, yend = 1.44), color = "gray50") +
+ geom_segment(aes(x = 2.28, y = 1.44, xend = 2.16, yend = 1.32), color = "gray50") +
+  # Labels
+  annotate("text", x = 4.2, y = 2, label = "col(X)", size = 5, color = "steelblue") +
+  annotate("text", x = 1.7, y = 3.2, label = "y", size = 6, color = "coral") +
+  annotate("text", x = 2.7, y = 0.9, label = expression(hat(y)), size = 6, color = "gold") +
+  annotate("text", x = 2.6, y = 2.3, label = expression(epsilon), size = 5, color = "gray50") +
+  coord_fixed() +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "gray20", color = NA))
+```
+
+## Why Orthogonal?
+
+The residual $\epsilon = y - \hat{y}$ is **perpendicular** to feature space.
+
+. . .
+
+**Intuition:** If $\epsilon$ had any component along $\text{col}(X)$, we could reduce its length by adjusting $\hat{y}$.
+
+. . .
+
+**Mathematically:** $\epsilon \perp x_{\bullet,j}$ for every feature vector $j$.
+
+# Centering Data
+
+## The Intercept Problem
+
+The regression plane $\hat{s} = \beta_0 + \beta_m m + \beta_f f$ doesn't pass through the origin.
+
+. . .
+
+**Problem:** It's not a proper subspace (subspaces must contain the origin).
+
+. . .
+
+**Solution:** Center the data!
+
+## Centering Transformation
+
+Replace each value with its deviation from the mean:
+
+$$
+\dot{v}_\nu = v_\nu - \bar{v}
+$$
+
+. . .
+
+After centering:
+
+- Mean of each variable is zero
+- The regression "plane" passes through the origin
+- No intercept term needed
+
+## Matrix Form of Centering
+
+$$
+\dot{v}_\bullet = C \; v_\bullet
+$$
+
+where 
+
+$$
+C = I - \frac{1}{n} \mathbf{1}\mathbf{1}^\top
+$$
+
+. . .
+
+$C$ is itself a **projection matrix**—it projects onto the subspace orthogonal to the constant vector.
+
+# The Normal Equations
+
+## Deriving the Solution
+
+To minimize $\|\epsilon\|^2 = \|y - X\beta\|^2$:
+
+. . .
+
+Take derivative with respect to $\beta$, set to zero:
+
+$$
+X^\top X \; \hat{\beta} = X^\top y
+$$
+
+. . .
+
+These are the **normal equations**.
+
+## The Projection Matrix
+
+Solving for $\hat{\beta}$:
+
+$$
+\hat{\beta} = (X^\top X)^{-1} X^\top y
+$$
+
+. . .
+
+The predicted values:
+
+$$
+\hat{y} = X \hat{\beta} = \underbrace{X(X^\top X)^{-1} X^\top}_{P} y
+$$
+
+. . .
+
+Matrix $P$ is the **projection matrix** (or "hat matrix").
+
+## Properties of P
+
+The projection matrix $P = X(X^\top X)^{-1}X^\top$ satisfies:
+
+. . .
+
+**Idempotent:** $P^2 = P$
+
+(Projecting twice = projecting once)
+
+. . .
+
+**Symmetric:** $P^\top = P$
+
+(Makes it an *orthogonal* projection)
+
+. . .
+
+**Complementary:** $(I - P)$ projects onto the orthogonal complement
+
+## Orthogonality of Residuals
+
+Since $\hat{y} = Py$ and $\epsilon = (I-P)y$:
+
+$$
+\hat{y}^\top \epsilon = y^\top P^\top (I-P) y = y^\top (P - P^2) y = 0
+$$
+
+. . .
+
+::: {.callout-note}
+## Key result
+
+Predicted values and residuals are **orthogonal**.
+:::
+
+# Row vs Column Views
+
+## Two Ways to See Regression
+
+| View | Space | Dimension |
+|------|-------|-----------|
+| **Row** | Observations as points in $\mathbb{R}^d$ | $d$-dimensional |
+| **Column** | Features as vectors in $\mathbb{R}^n$ | $n$-dimensional |
+
+## Row View: Fitting a Plane
+
+```{r}
+#| label: fig-row-view
+#| fig-cap: "Row view: points in feature space, plane fits through them"
+#| fig-height: 4.5
+
+# Same 3D plot as before
+s3d <- scatterplot3d::scatterplot3d(
+  x = sons$mother, xlab = "Mother",
+  y = sons$father, ylab = "Father",
+  z = sons$child, zlab = "Son",
+  pch = 16,
+  color = "steelblue",
+  main = "Row View: Observations as Points"
+)
+s3d$plane3d(lm_sons, col = "coral")
+```
+
+## Column View: Projection
+
+In $n$-dimensional space (one dimension per observation):
+
+- Each feature is a vector of length $n$
+- $y$ is a vector of length $n$
+- $\hat{y}$ is the projection of $y$ onto $\text{span}(x_1, x_2, \ldots, x_d)$
+
+. . .
+
+This is where the linear algebra happens!
+
+## Connecting the Views
+
+| Operation | Row View | Column View |
+|-----------|----------|-------------|
+| Fit model | Find plane minimizing vertical distances | Project $y$ onto $\text{col}(X)$ |
+| Residual | Vertical distance to plane | $y - \hat{y}$ |
+| Prediction | Point on plane | Vector in $\text{col}(X)$ |
+
+# Connections to ML
+
+## Why This Matters for ML {.smaller}
+
+The projection perspective is foundational for:
+
+. . .
+
+**Regularization:** Ridge regression modifies the projection
+$$\hat{\beta}_{\text{ridge}} = (X^\top X + \lambda I)^{-1} X^\top y$$
+
+. . .
+
+**Dimension reduction:** PCA finds the "best" low-dimensional subspace
+
+. . .
+
+**Kernel methods:** Project into implicit high-dimensional feature spaces
+
+. . .
+
+**Neural networks:** Each layer performs a linear transformation (projection) followed by a nonlinearity
+
+## Covariance as Inner Product
+
+For centered data:
+
+$$
+\text{Cov}(x, y) = \frac{1}{n-1} \langle \dot{x}, \dot{y} \rangle
+$$
+
+. . .
+
+**Correlation** is the cosine of the angle between centered vectors:
+
+$$
+r = \frac{\langle \dot{x}, \dot{y} \rangle}{\|\dot{x}\| \; \|\dot{y}\|}
+$$
+
+. . .
+
+This connects regression to the correlation coefficient from Part 1!
+
+# Summary
+
+## Key Takeaways
+
+1. **Row vs Column:** Two complementary views of the same data
+
+2. **Least squares = Projection:** $\hat{y}$ is the orthogonal projection of $y$ onto feature space
+
+3. **Centering matters:** Makes the geometry cleaner (proper subspaces)
+
+4. **P is special:** Symmetric, idempotent → orthogonal projection
+
+5. **Residuals ⊥ Features:** The defining property of least-squares
+
+## Key Formulas
+
+**Generic linear model:**
+$$y = X\beta + \epsilon$$
+
+. . .
+
+**Normal equations:**
+$$X^\top X \hat{\beta} = X^\top y$$
+
+. . .
+
+**Projection matrix:**
+$$P = X(X^\top X)^{-1}X^\top$$
+
+. . .
+
+**Predicted values:**
+$$\hat{y} = Py$$
+
+# Exercises
+
+## Team Exercise 1: By Hand
+
+Let $y = (3, 1, 2)^\top$ and $x = (1, 2, 2)^\top$.
+
+1. Find the projection $\hat{y}$ of $y$ onto $\text{span}(x)$
+2. Compute the residual $\epsilon = y - \hat{y}$
+3. Verify that $\epsilon \perp x$
+
+## Team Exercise 2: Interpretation
+
+For the Galton height regression:
+
+1. What does it mean geometrically that $\hat{y} \in \text{col}(X)$?
+2. Why must the residuals be orthogonal to every column of $X$?
+3. If we added a third predictor (e.g., sibling count), how would the geometry change?
+
+## Team Exercise 3: Correlation as Geometry
+
+For centered vectors $\dot{x}$ and $\dot{y}$:
+
+1. Show that $r^2 = \cos^2(\theta)$ where $\theta$ is the angle between them
+2. What does $r = 1$ mean geometrically?
+3. What does $r = 0$ mean geometrically?
+
+# Resources
+
+## References
+
+- [Statistics](https://www.goodreads.com/book/show/147358.Statistics) by Freedman, Pisani, Purves — intuitive treatment of regression
+
+- [Linear Algebra and Its Applications](https://www.goodreads.com/book/show/179699.Linear_Algebra_and_Its_Applications) by Strang — definitive LA text
+
+- [Introduction to Statistical Learning (ISLR2)](https://www.statlearning.com/) — regression in ML context
+
+- [The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/) — advanced treatment
