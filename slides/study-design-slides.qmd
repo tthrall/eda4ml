@@ -18,8 +18,6 @@ format:
 
 library(tidyverse)
 library(knitr)
-
-# TODO: Capitalize surnames in political polling tables
 library(eda4mldata)
 ```
 
@@ -108,14 +106,6 @@ Quota Sampling Fails
 #| echo: false
 
 eda4mldata::truman_dewey |> 
-  dplyr::rename(
-    Truman   = truman, 
-    Dewey    = dewey, 
-    Thurmond = thurmond, 
-    Wallace  = wallace ) |> 
-  dplyr::mutate(
-    source = source |> stringr::str_to_title()
-  ) |> 
   knitr::kable()
 ```
 
