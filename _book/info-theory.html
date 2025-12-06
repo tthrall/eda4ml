@@ -380,7 +380,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">14:40 Thu 4-Dec-2025</p>
+      <p class="date">11:11 Sat 6-Dec-2025</p>
     </div>
   </div>
   
@@ -435,6 +435,22 @@ window.Quarto = {
 <p>For the second box we have two values, each drawn with probability <span class="math inline">\(\frac{1}{2}\)</span>, so <span class="math inline">\(H = 1\)</span>.</p>
 <p>For the third box we have four values, each drawn with probability <span class="math inline">\(\frac{1}{4}\)</span>, so <span class="math inline">\(H = 2\)</span>.</p>
 <p>For the fourth box, we calculated that the average number of required questions is <span class="math inline">\(\frac{3}{2}\)</span>, which is the value of <span class="math inline">\(H\)</span>.</p>
+<p>The figure below summarizes the entropy values for these four boxes.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-entropy-boxes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-entropy-boxes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="info-theory_files/figure-html/fig-entropy-boxes-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-entropy-boxes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Entropy (in bits) for four example distributions
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Entropy is zero when there is no uncertainty (Box 1), and increases with the number of equally likely outcomes. Box 4 has intermediate entropy: the unequal probabilities mean that, on average, fewer questions are needed than for Box 3’s uniform distribution.</p>
 </section>
 <section id="h_x-y-for-independent-x-y" class="level3" data-number="6.2.4">
 <h3 data-number="6.2.4" class="anchored" data-anchor-id="h_x-y-for-independent-x-y"><span class="header-section-number">6.2.4</span> <span class="math inline">\(H_{X, Y}\)</span> for independent <span class="math inline">\((X, Y)\)</span></h3>
@@ -481,6 +497,22 @@ window.Quarto = {
 \end{align}
 \qquad(6.3)\]</span></span></p>
 <p><span class="math inline">\(MI\)</span> is non-negative, and is zero when <span class="math inline">\((X, Y)\)</span> are independent.</p>
+<p>The relationship between joint entropy and mutual information can be visualized as overlapping regions:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-entropy-venn" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-entropy-venn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="info-theory_files/figure-html/fig-entropy-venn-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-entropy-venn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.2: Relationship between entropies and mutual information
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The left circle represents the entropy of <span class="math inline">\(X\)</span>; the right circle represents the entropy of <span class="math inline">\(Y\)</span>. Their overlap—the mutual information <span class="math inline">\(MI(X,Y)\)</span>—is the reduction in uncertainty about one variable gained by knowing the other. When <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent, the circles do not overlap: <span class="math inline">\(MI = 0\)</span> and <span class="math inline">\(H_{X,Y} = H_X + H_Y\)</span>.</p>
 </section>
 <section id="kl-divergence" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="kl-divergence"><span class="header-section-number">6.4</span> KL Divergence</h2>

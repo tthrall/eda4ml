@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 #| label: CRAN-libraries
 
 library(assertthat)
+# library(ggforce)
 library(here)
 library(latex2exp)
 library(tidyverse)
@@ -99,6 +100,39 @@ For the third box we have four values, each drawn with probability $\frac{1}{4}$
 
 For the fourth box, we calculated that the average number of required questions is $\frac{3}{2}$, which is the value of $H$.
 
+The figure below summarizes the entropy values for these four boxes.
+
+```{r}
+#| label: fig-entropy-boxes
+#| fig-cap: "Entropy (in bits) for four example distributions"
+
+entropy_examples <- tibble::tibble(
+  box = c("Box 1\n{A,A,A,A}", 
+          "Box 2\n{A,A,B,B}", 
+          "Box 3\n{A,B,C,D}", 
+          "Box 4\n{A,A,B,C}"),
+  entropy = c(0, 1, 2, 1.5)
+) |> 
+  dplyr::mutate(box = forcats::fct_inorder(box))
+
+entropy_examples |> 
+  ggplot2::ggplot(mapping = aes(x = box, y = entropy)) + 
+  ggplot2::geom_col(fill = "steelblue", width = 0.6) + 
+  ggplot2::geom_text(
+    mapping = aes(label = entropy), 
+    vjust = -0.5, 
+    size = 5
+  ) + 
+  ggplot2::labs(
+    x = NULL,
+    y = "Entropy H (bits)"
+  ) + 
+  ggplot2::ylim(0, 2.5) + 
+  ggplot2::theme_minimal(base_size = 14)
+```
+
+Entropy is zero when there is no uncertainty (Box 1), and increases with the number of equally likely outcomes. Box 4 has intermediate entropy: the unequal probabilities mean that, on average, fewer questions are needed than for Box 3's uniform distribution.
+
 ### $H_{X, Y}$ for independent $(X, Y)$
 
 So far we've discussed entropy with respect to a single random variable. We now extend the discussion to a pair of random variables. Let's change the game so that each ticket now bears both a letter and a positive integer.
@@ -158,6 +192,72 @@ $$
 $$ {#eq-mutual-info-xy}
 
 $MI$ is non-negative, and is zero when $(X, Y)$ are independent.
+
+The relationship between joint entropy and mutual information can be visualized as overlapping regions:
+
+```{r}
+#| label: fig-entropy-venn
+#| fig-cap: "Relationship between entropies and mutual information"
+#| fig-width: 7
+#| fig-height: 5
+
+# Generate circle coordinates without ggforce
+# Function to create circle points
+make_circle <- function(x0, y0, r, n = 100) {
+  theta <- seq(0, 2 * pi, length.out = n)
+  tibble::tibble(
+    x = x0 + r * cos(theta),
+    y = y0 + r * sin(theta)
+  )
+}
+
+# Create two overlapping circles
+circle_left <- make_circle(x0 = -0.5, y0 = 0, r = 1.2) |> 
+  dplyr::mutate(group = "H(X)")
+circle_right <- make_circle(x0 = 0.5, y0 = 0, r = 1.2) |> 
+  dplyr::mutate(group = "H(Y)")
+
+# Build the plot
+ggplot2::ggplot() +
+  # Left circle (H(X))
+  ggplot2::geom_polygon(
+    data = circle_left,
+    mapping = aes(x = x, y = y),
+    fill = "steelblue",
+    alpha = 0.3,
+    color = "gray30",
+    linewidth = 1
+  ) +
+  # Right circle (H(Y))
+  ggplot2::geom_polygon(
+    data = circle_right,
+    mapping = aes(x = x, y = y),
+    fill = "coral",
+    alpha = 0.3,
+    color = "gray30",
+    linewidth = 1
+  ) +
+  # Circle labels
+  ggplot2::annotate("text", x = -0.5, y = 1.5, label = "H(X)", 
+                    size = 5, fontface = "bold") +
+  ggplot2::annotate("text", x = 0.5, y = 1.5, label = "H(Y)", 
+                    size = 5, fontface = "bold") +
+  # Region labels
+  ggplot2::annotate("text", x = -1.0, y = 0, label = "H(X|Y)", size = 4) +
+  ggplot2::annotate("text", x = 1.0, y = 0, label = "H(Y|X)", size = 4) +
+  ggplot2::annotate("text", x = 0, y = 0, label = "MI(X,Y)", size = 4) +
+  # Formula at bottom - use parse=TRUE with character string
+  ggplot2::annotate("text", x = 0, y = -1.8, 
+                    label = "H[X*','*Y] == H[X] + H[Y] - MI(X,Y)",
+                    parse = TRUE,
+                    size = 4) +
+  ggplot2::coord_fixed() +
+  ggplot2::theme_void() +
+  ggplot2::xlim(-2.5, 2.5) +
+  ggplot2::ylim(-2.2, 2)
+```
+
+The left circle represents the entropy of $X$; the right circle represents the entropy of $Y$. Their overlap—the mutual information $MI(X,Y)$—is the reduction in uncertainty about one variable gained by knowing the other. When $X$ and $Y$ are independent, the circles do not overlap: $MI = 0$ and $H_{X,Y} = H_X + H_Y$.
 
 ## KL Divergence
 
