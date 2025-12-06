@@ -188,7 +188,7 @@ EDA for Machine Learning
 </tr>
 <tr class="even">
 <td><strong>Mutual Information</strong></td>
-<td>How much does knowing X tell us about Y?</td>
+<td>How much information do (X, Y) share?</td>
 </tr>
 <tr class="odd">
 <td><strong>KL Divergence</strong></td>
@@ -206,9 +206,10 @@ EDA for Machine Learning
 <div class="fragment">
 <p><strong>The game:</strong></p>
 <ol type="1">
-<li>A ticket is drawn at random (you can’t see it)</li>
-<li>You ask yes-no questions until you can identify the letter with certainty</li>
-<li>Goal: minimize average number of questions</li>
+<li>You are shown the box of tickets.</li>
+<li>A ticket is drawn at random, but you can’t see it.</li>
+<li>You ask yes-no questions until you can identify the letter with certainty.</li>
+<li>Goal: minimize average number of questions.</li>
 </ol>
 </div>
 <div class="fragment">
@@ -425,13 +426,13 @@ EDA for Machine Learning
 <section id="mutual-information-visual-intuition" class="slide level2">
 <h2>Mutual Information: Visual Intuition</h2>
 
-<img data-src="info-theory-slides_files/figure-revealjs/fig-mi-venn-1.png" id="fig-mi-venn" width="576" class="r-stretch quarto-figure-center"><p class="caption">
+<img data-src="info-theory-slides_files/figure-revealjs/fig-entropy-venn-1.png" id="fig-entropy-venn" width="672" class="r-stretch quarto-figure-center"><p class="caption">
 Figure&nbsp;1
 </p><p><span class="math display">\[H_{X,Y} = H_X + H_Y - MI_{X,Y}\]</span></p>
 </section>
 <section id="sec-kl-divergence" class="slide level2">
 <h2>KL Divergence: The Cost of Being Wrong</h2>
-<p><strong>Scenario:</strong> You’ve optimized your strategy for Box 5 (independent), but the actual box is Box 6 (dependent).</p>
+<p><strong>Scenario:</strong> You’re shown Box 5 (independent) and optimized your strategy accordingly, but the actual box is Box 6 (dependent).</p>
 <div class="fragment">
 <ul>
 <li>Your strategy expects 2.5 questions on average</li>
@@ -577,9 +578,6 @@ Figure&nbsp;1
 <li>the observed outcomes</li>
 </ul>
 </div>
-<div class="fragment">
-<p>The mathematical details require additional concepts (degenerate distributions) beyond our scope here.</p>
-</div>
 </section>
 <section id="decision-trees-and-information-gain" class="slide level2">
 <h2>Decision Trees and Information Gain</h2>
@@ -587,9 +585,6 @@ Figure&nbsp;1
 <p><span class="math display">\[\text{Information Gain} = H(\text{parent}) - \sum_{\text{children}} \frac{n_{\text{child}}}{n_{\text{parent}}} H(\text{child})\]</span></p>
 <div class="fragment">
 <p><strong>Strategy:</strong> Choose the split that maximizes information gain.</p>
-</div>
-<div class="fragment">
-<p>This is equivalent to maximizing mutual information between the split and the target.</p>
 </div>
 </section>
 <section id="feature-selection-with-mutual-information" class="slide level2">
