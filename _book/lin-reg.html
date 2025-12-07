@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>7&nbsp; Linear Regression – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./reduce-dim.html" rel="next">
+<link href="./info-theory.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lin-reg.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./lin-reg.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#galtons-height-data" id="toc-galtons-height-data" class="nav-link active" data-scroll-target="#galtons-height-data"><span class="header-section-number">7.1</span> Galton’s Height Data</a>
+  <ul>
+  <li><a href="#simple-regression-sons-height-from-fathers-height" id="toc-simple-regression-sons-height-from-fathers-height" class="nav-link" data-scroll-target="#simple-regression-sons-height-from-fathers-height"><span class="header-section-number">7.1.1</span> Simple Regression: Son’s Height from Father’s Height</a></li>
+  <li><a href="#multiple-regression-adding-mothers-height" id="toc-multiple-regression-adding-mothers-height" class="nav-link" data-scroll-target="#multiple-regression-adding-mothers-height"><span class="header-section-number">7.1.2</span> Multiple Regression: Adding Mother’s Height</a></li>
+  <li><a href="#the-geometry-of-regression" id="toc-the-geometry-of-regression" class="nav-link" data-scroll-target="#the-geometry-of-regression"><span class="header-section-number">7.1.3</span> The Geometry of Regression</a></li>
+  </ul></li>
+  <li><a href="#a-higher-dimensional-example-better-life-index" id="toc-a-higher-dimensional-example-better-life-index" class="nav-link" data-scroll-target="#a-higher-dimensional-example-better-life-index"><span class="header-section-number">7.2</span> A Higher-Dimensional Example: Better Life Index</a></li>
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">7.3</span> Notation</a>
+  <ul>
+  <li><a href="#feature-space" id="toc-feature-space" class="nav-link" data-scroll-target="#feature-space"><span class="header-section-number">7.3.1</span> Feature Space</a></li>
+  <li><a href="#row-versus-column-perspectives" id="toc-row-versus-column-perspectives" class="nav-link" data-scroll-target="#row-versus-column-perspectives"><span class="header-section-number">7.3.2</span> Row versus Column Perspectives</a></li>
+  </ul></li>
+  <li><a href="#geometry-of-least-squares" id="toc-geometry-of-least-squares" class="nav-link" data-scroll-target="#geometry-of-least-squares"><span class="header-section-number">7.4</span> Geometry of Least Squares</a>
+  <ul>
+  <li><a href="#norms-and-distance" id="toc-norms-and-distance" class="nav-link" data-scroll-target="#norms-and-distance"><span class="header-section-number">7.4.1</span> Norms and Distance</a></li>
+  <li><a href="#inner-products" id="toc-inner-products" class="nav-link" data-scroll-target="#inner-products"><span class="header-section-number">7.4.2</span> Inner Products</a></li>
+  <li><a href="#centering-data" id="toc-centering-data" class="nav-link" data-scroll-target="#centering-data"><span class="header-section-number">7.4.3</span> Centering Data</a></li>
+  <li><a href="#the-centering-matrix" id="toc-the-centering-matrix" class="nav-link" data-scroll-target="#the-centering-matrix"><span class="header-section-number">7.4.4</span> The Centering Matrix</a></li>
+  </ul></li>
+  <li><a href="#orthogonal-projection" id="toc-orthogonal-projection" class="nav-link" data-scroll-target="#orthogonal-projection"><span class="header-section-number">7.5</span> Orthogonal Projection</a>
+  <ul>
+  <li><a href="#projection-onto-a-line" id="toc-projection-onto-a-line" class="nav-link" data-scroll-target="#projection-onto-a-line"><span class="header-section-number">7.5.1</span> Projection onto a Line</a></li>
+  <li><a href="#projection-onto-a-subspace" id="toc-projection-onto-a-subspace" class="nav-link" data-scroll-target="#projection-onto-a-subspace"><span class="header-section-number">7.5.2</span> Projection onto a Subspace</a></li>
+  <li><a href="#the-normal-equations" id="toc-the-normal-equations" class="nav-link" data-scroll-target="#the-normal-equations"><span class="header-section-number">7.5.3</span> The Normal Equations</a></li>
+  <li><a href="#the-projection-matrix" id="toc-the-projection-matrix" class="nav-link" data-scroll-target="#the-projection-matrix"><span class="header-section-number">7.5.4</span> The Projection Matrix</a></li>
+  <li><a href="#orthogonality-of-fitted-values-and-residuals" id="toc-orthogonality-of-fitted-values-and-residuals" class="nav-link" data-scroll-target="#orthogonality-of-fitted-values-and-residuals"><span class="header-section-number">7.5.5</span> Orthogonality of Fitted Values and Residuals</a></li>
+  </ul></li>
+  <li><a href="#coefficients-as-coordinates" id="toc-coefficients-as-coordinates" class="nav-link" data-scroll-target="#coefficients-as-coordinates"><span class="header-section-number">7.6</span> Coefficients as Coordinates</a>
+  <ul>
+  <li><a href="#multicollinearity" id="toc-multicollinearity" class="nav-link" data-scroll-target="#multicollinearity"><span class="header-section-number">7.6.1</span> Multicollinearity</a></li>
+  </ul></li>
+  <li><a href="#the-pythagorean-decomposition" id="toc-the-pythagorean-decomposition" class="nav-link" data-scroll-target="#the-pythagorean-decomposition"><span class="header-section-number">7.7</span> The Pythagorean Decomposition</a></li>
+  <li><a href="#row-and-column-visualizations" id="toc-row-and-column-visualizations" class="nav-link" data-scroll-target="#row-and-column-visualizations"><span class="header-section-number">7.8</span> Row and Column Visualizations</a>
+  <ul>
+  <li><a href="#row-view-observations-as-points" id="toc-row-view-observations-as-points" class="nav-link" data-scroll-target="#row-view-observations-as-points"><span class="header-section-number">7.8.1</span> Row View: Observations as Points</a></li>
+  <li><a href="#column-view-features-as-vectors" id="toc-column-view-features-as-vectors" class="nav-link" data-scroll-target="#column-view-features-as-vectors"><span class="header-section-number">7.8.2</span> Column View: Features as Vectors</a></li>
+  </ul></li>
+  <li><a href="#connections-to-machine-learning" id="toc-connections-to-machine-learning" class="nav-link" data-scroll-target="#connections-to-machine-learning"><span class="header-section-number">7.9</span> Connections to Machine Learning</a>
+  <ul>
+  <li><a href="#regularization" id="toc-regularization" class="nav-link" data-scroll-target="#regularization"><span class="header-section-number">7.9.1</span> Regularization</a></li>
+  <li><a href="#dimension-reduction" id="toc-dimension-reduction" class="nav-link" data-scroll-target="#dimension-reduction"><span class="header-section-number">7.9.2</span> Dimension Reduction</a></li>
+  <li><a href="#linear-discriminant-analysis" id="toc-linear-discriminant-analysis" class="nav-link" data-scroll-target="#linear-discriminant-analysis"><span class="header-section-number">7.9.3</span> Linear Discriminant Analysis</a></li>
+  <li><a href="#kernel-methods" id="toc-kernel-methods" class="nav-link" data-scroll-target="#kernel-methods"><span class="header-section-number">7.9.4</span> Kernel Methods</a></li>
+  <li><a href="#neural-networks" id="toc-neural-networks" class="nav-link" data-scroll-target="#neural-networks"><span class="header-section-number">7.9.5</span> Neural Networks</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">7.10</span> Summary</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">7.11</span> Exercises</a>
+  <ul>
+  <li><a href="#concepts" id="toc-concepts" class="nav-link" data-scroll-target="#concepts"><span class="header-section-number">7.11.1</span> Concepts</a>
+  <ul class="collapse">
+  <li><a href="#row-vs-column-perspective" id="toc-row-vs-column-perspective" class="nav-link" data-scroll-target="#row-vs-column-perspective"><span class="header-section-number">7.11.1.1</span> Row vs Column Perspective</a></li>
+  <li><a href="#feature-space-1" id="toc-feature-space-1" class="nav-link" data-scroll-target="#feature-space-1"><span class="header-section-number">7.11.1.2</span> Feature Space</a></li>
+  <li><a href="#orthogonality" id="toc-orthogonality" class="nav-link" data-scroll-target="#orthogonality"><span class="header-section-number">7.11.1.3</span> Orthogonality</a></li>
+  <li><a href="#centering-data-1" id="toc-centering-data-1" class="nav-link" data-scroll-target="#centering-data-1"><span class="header-section-number">7.11.1.4</span> Centering Data</a></li>
+  <li><a href="#projection-matrix-properties" id="toc-projection-matrix-properties" class="nav-link" data-scroll-target="#projection-matrix-properties"><span class="header-section-number">7.11.1.5</span> Projection Matrix Properties</a></li>
+  </ul></li>
+  <li><a href="#calculations" id="toc-calculations" class="nav-link" data-scroll-target="#calculations"><span class="header-section-number">7.11.2</span> Calculations</a>
+  <ul class="collapse">
+  <li><a href="#d-projection" id="toc-d-projection" class="nav-link" data-scroll-target="#d-projection"><span class="header-section-number">7.11.2.1</span> 1D Projection</a></li>
+  <li><a href="#distance-measures" id="toc-distance-measures" class="nav-link" data-scroll-target="#distance-measures"><span class="header-section-number">7.11.2.2</span> Distance Measures</a></li>
+  <li><a href="#d-projection-1" id="toc-d-projection-1" class="nav-link" data-scroll-target="#d-projection-1"><span class="header-section-number">7.11.2.3</span> 2D Projection</a></li>
+  <li><a href="#pythagorean-decomposition" id="toc-pythagorean-decomposition" class="nav-link" data-scroll-target="#pythagorean-decomposition"><span class="header-section-number">7.11.2.4</span> Pythagorean Decomposition</a></li>
+  </ul></li>
+  <li><a href="#programming" id="toc-programming" class="nav-link" data-scroll-target="#programming"><span class="header-section-number">7.11.3</span> Programming</a>
+  <ul class="collapse">
+  <li><a href="#centering-heights" id="toc-centering-heights" class="nav-link" data-scroll-target="#centering-heights"><span class="header-section-number">7.11.3.1</span> Centering Heights</a></li>
+  <li><a href="#visualizing-residuals" id="toc-visualizing-residuals" class="nav-link" data-scroll-target="#visualizing-residuals"><span class="header-section-number">7.11.3.2</span> Visualizing Residuals</a></li>
+  <li><a href="#constructing-the-projection-matrix" id="toc-constructing-the-projection-matrix" class="nav-link" data-scroll-target="#constructing-the-projection-matrix"><span class="header-section-number">7.11.3.3</span> Constructing the Projection Matrix</a></li>
+  </ul></li>
+  <li><a href="#advanced" id="toc-advanced" class="nav-link" data-scroll-target="#advanced"><span class="header-section-number">7.11.4</span> Advanced</a>
+  <ul class="collapse">
+  <li><a href="#covariance-and-inner-product" id="toc-covariance-and-inner-product" class="nav-link" data-scroll-target="#covariance-and-inner-product"><span class="header-section-number">7.11.4.1</span> Covariance and Inner Product</a></li>
+  <li><a href="#correlated-features" id="toc-correlated-features" class="nav-link" data-scroll-target="#correlated-features"><span class="header-section-number">7.11.4.2</span> Correlated Features</a></li>
+  <li><a href="#sum-of-squares-decomposition" id="toc-sum-of-squares-decomposition" class="nav-link" data-scroll-target="#sum-of-squares-decomposition"><span class="header-section-number">7.11.4.3</span> Sum of Squares Decomposition</a></li>
+  <li><a href="#projection-matrix-properties-1" id="toc-projection-matrix-properties-1" class="nav-link" data-scroll-target="#projection-matrix-properties-1"><span class="header-section-number">7.11.4.4</span> Projection Matrix Properties</a></li>
+  <li><a href="#feature-basis-vectors" id="toc-feature-basis-vectors" class="nav-link" data-scroll-target="#feature-basis-vectors"><span class="header-section-number">7.11.4.5</span> Feature Basis Vectors</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/lin-reg.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lin-reg.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./lin-reg.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-lin-reg" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">17:58 Sun 7-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scatterplot3d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Galton family heights from eda4mldata</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(galton_families, <span class="at">package =</span> <span class="st">"eda4mldata"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load OECD Better Life Index</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(oecd_bli, <span class="at">package =</span> <span class="st">"eda4mldata"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p>Linear regression is one of the most fundamental tools in statistics and machine learning. This chapter presents linear regression from the perspective of linear algebra, revealing a geometric interpretation that unifies regression with other methods we will encounter in subsequent chapters.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Core Insight
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Least-squares linear regression is <strong>orthogonal projection</strong> onto feature space. Within the subspace spanned by the feature vectors, the vector <span class="math inline">\(\hat{y}\)</span> of predicted values is closest to the response vector <span class="math inline">\(y\)</span>.</p>
+</div>
+</div>
+<p>This geometric view has several advantages. First, it makes the algebra interpretable: the normal equations and the projection matrix are not arbitrary formulas but natural expressions of the projection operation. Second, it connects regression to other techniques—principal component analysis (PCA) and linear discriminant analysis (LDA) are also fundamentally about projection onto subspaces. Third, it clarifies what can go wrong: multicollinearity, overfitting, and numerical instability all have geometric explanations.</p>
+<p>Our fist example launched modern-day linear regression.</p>
+<section id="galtons-height-data" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="galtons-height-data"><span class="header-section-number">7.1</span> Galton’s Height Data</h2>
+<p>In 1885, Sir Francis Galton examined the heights of parents and their adult children to investigate the heritability of human stature. This study introduced the term “regression”—Galton observed that children of unusually tall or short parents tend to be closer to the population average, a phenomenon he called “regression towards mediocrity.”</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_families  <span class="ot">&lt;-</span> <span class="fu">nrow</span>(galton_families)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n_sons      <span class="ot">&lt;-</span> <span class="fu">sum</span>(galton_families<span class="sc">$</span>gender <span class="sc">==</span> <span class="st">"male"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>n_daughters <span class="ot">&lt;-</span> <span class="fu">sum</span>(galton_families<span class="sc">$</span>gender <span class="sc">==</span> <span class="st">"female"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>galton_families</code> dataset contains 205 families, with one adult child per family (the oldest). Of these, 179 are sons and 26 are daughters. Each observation records the heights (in inches) of the father, mother, and child.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>galton_families <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-galton-head" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-galton-head-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7.1: Family heights (inches): father, mother, oldest child
+</figcaption>
+<div aria-describedby="tbl-galton-head-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">family</th>
+<th style="text-align: right;">father</th>
+<th style="text-align: right;">mother</th>
+<th style="text-align: right;">child</th>
+<th style="text-align: left;">gender</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">78.5</td>
+<td style="text-align: right;">67.0</td>
+<td style="text-align: right;">73.2</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">75.5</td>
+<td style="text-align: right;">66.5</td>
+<td style="text-align: right;">73.5</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">75.0</td>
+<td style="text-align: right;">64.0</td>
+<td style="text-align: right;">71.0</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">75.0</td>
+<td style="text-align: right;">64.0</td>
+<td style="text-align: right;">70.5</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">75.0</td>
+<td style="text-align: right;">58.5</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: left;">male</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">74.0</td>
+<td style="text-align: right;">68.0</td>
+<td style="text-align: right;">69.5</td>
+<td style="text-align: left;">female</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<section id="simple-regression-sons-height-from-fathers-height" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="simple-regression-sons-height-from-fathers-height"><span class="header-section-number">7.1.1</span> Simple Regression: Son’s Height from Father’s Height</h3>
+<p>We begin with the simplest case: predicting a son’s height from his father’s height alone. This is <em>simple linear regression</em>—one response variable, one predictor.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to sons only</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>galton_sons <span class="ot">&lt;-</span> galton_families <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a> dplyr<span class="sc">::</span><span class="fu">filter</span>(gender <span class="sc">==</span> <span class="st">"male"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(galton_sons, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> father, <span class="at">y =</span> child)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"coral"</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Father's height (inches)"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Son's height (inches)"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-father-son-scatter" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-father-son-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-reg_files/figure-html/fig-father-son-scatter-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-father-son-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: Son’s height versus father’s height with regression line
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The regression line represents the model:</p>
+<p><span id="eq-simple-reg"><span class="math display">\[
+\hat{s} = \beta_0 + \beta_1 \times f
+\qquad(7.1)\]</span></span></p>
+<p>where <span class="math inline">\(\hat{s}\)</span> is the predicted son’s height and <span class="math inline">\(f\)</span> is the father’s height. The coefficients <span class="math inline">\((\beta_0, \beta_1)\)</span> are chosen to minimize the sum of squared vertical distances from the data points to the line.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lm_father_son <span class="ot">&lt;-</span> <span class="fu">lm</span>(child <span class="sc">~</span> father, <span class="at">data =</span> galton_sons)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>lm_father_son <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">35.712</td>
+<td style="text-align: right;">4.517</td>
+<td style="text-align: right;">7.906</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">0.503</td>
+<td style="text-align: right;">0.065</td>
+<td style="text-align: right;">7.696</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The slope of 0.503 means that, on average, each additional inch in father’s height is associated with about 0.5 inches in the son’s height. The fact that this slope is less than 1 is Galton’s “regression to the mean”—tall fathers tend to have sons who are tall, but not quite as tall as their fathers.</p>
+</section>
+<section id="multiple-regression-adding-mothers-height" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="multiple-regression-adding-mothers-height"><span class="header-section-number">7.1.2</span> Multiple Regression: Adding Mother’s Height</h3>
+<p>We can expand the model to include both parents’ heights as predictors. This is <em>multiple linear regression</em>—one response variable, multiple predictors.</p>
+<p><span id="eq-multiple-reg"><span class="math display">\[
+\hat{s} = \beta_0 + \beta_m \times m + \beta_f \times f
+\qquad(7.2)\]</span></span></p>
+<p>where <span class="math inline">\(m\)</span> is the mother’s height and <span class="math inline">\(f\)</span> is the father’s height.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>lm_both <span class="ot">&lt;-</span> <span class="fu">lm</span>(child <span class="sc">~</span> mother <span class="sc">+</span> father, <span class="at">data =</span> galton_sons)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>lm_both <span class="sc">|&gt;</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">19.937</td>
+<td style="text-align: right;">5.796</td>
+<td style="text-align: right;">3.440</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mother</td>
+<td style="text-align: right;">0.277</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">4.093</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">father</td>
+<td style="text-align: right;">0.474</td>
+<td style="text-align: right;">0.063</td>
+<td style="text-align: right;">7.527</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Both parents contribute to the prediction, though the father’s coefficient is somewhat larger. The model now defines a <em>regression plane</em> rather than a regression line.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>s3d <span class="ot">&lt;-</span> scatterplot3d<span class="sc">::</span><span class="fu">scatterplot3d</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> galton_sons<span class="sc">$</span>mother, <span class="at">xlab =</span> <span class="st">"Mother"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> galton_sons<span class="sc">$</span>father, <span class="at">ylab =</span> <span class="st">"Father"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> galton_sons<span class="sc">$</span>child,  <span class="at">zlab =</span> <span class="st">"Son"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">angle =</span> <span class="dv">55</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Son's Height Given Parents' Heights"</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>s3d<span class="sc">$</span><span class="fu">plane3d</span>(lm_both, <span class="at">col =</span> <span class="st">"coral"</span>, <span class="at">lty =</span> <span class="st">"solid"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-regression-plane" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-regression-plane-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-reg_files/figure-html/fig-regression-plane-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-regression-plane-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2: Regression plane for son’s height given both parents’ heights
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The plane represents all possible predictions <span class="math inline">\(\hat{s}\)</span> for any combination of mother’s and father’s heights. Each observed son’s height is a point above or below this plane, and the vertical distance from the point to the plane is the <em>residual</em>—the prediction error for that observation.</p>
+</section>
+<section id="the-geometry-of-regression" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="the-geometry-of-regression"><span class="header-section-number">7.1.3</span> The Geometry of Regression</h3>
+<p>Here is where linear algebra enters the picture. In matrix notation, the multiple regression model is:</p>
+<p><span id="eq-matrix-form"><span class="math display">\[
+s_\bullet = X_{\bullet,\bullet} \; \beta_\bullet + \epsilon_\bullet
+\qquad(7.3)\]</span></span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(s_\bullet\)</span> is the <span class="math inline">\(n \times 1\)</span> vector of sons’ heights</li>
+<li><span class="math inline">\(X_{\bullet,\bullet}\)</span> is the <span class="math inline">\(n \times 3\)</span> matrix with columns <span class="math inline">\((1_\bullet, m_\bullet, f_\bullet)\)</span></li>
+<li><span class="math inline">\(\beta_\bullet = (\beta_0, \beta_m, \beta_f)^\top\)</span> is the coefficient vector</li>
+<li><span class="math inline">\(\epsilon_\bullet\)</span> is the residual vector</li>
+</ul>
+<p>The columns of <span class="math inline">\(X_{\bullet,\bullet}\)</span> are vectors in <span class="math inline">\(n\)</span>-dimensional space (one dimension per observation). The column space of <span class="math inline">\(X\)</span>, denoted <span class="math inline">\(\text{col}(X)\)</span>, is the subspace spanned by these vectors. Any prediction <span class="math inline">\(\hat{s} = X\beta\)</span> is a linear combination of these column vectors and therefore lies within <span class="math inline">\(\text{col}(X)\)</span>.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The Projection Interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The least-squares solution <span class="math inline">\(\hat{s}\)</span> is the <strong>orthogonal projection</strong> of <span class="math inline">\(s\)</span> onto <span class="math inline">\(\text{col}(X)\)</span>. It is the point in feature space closest to the response vector.</p>
+</div>
+</div>
+<p>The residual vector <span class="math inline">\(\epsilon = s - \hat{s}\)</span> is perpendicular to every vector in <span class="math inline">\(\text{col}(X)\)</span>. This orthogonality is not a coincidence—it is the defining property of least-squares regression. If the residual had any component along <span class="math inline">\(\text{col}(X)\)</span>, we could reduce its length by adjusting the prediction.</p>
+<p>We will develop this geometric interpretation more fully after introducing additional notation and considering one more data example.</p>
+</section>
+</section>
+<section id="a-higher-dimensional-example-better-life-index" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="a-higher-dimensional-example-better-life-index"><span class="header-section-number">7.2</span> A Higher-Dimensional Example: Better Life Index</h2>
+<p>The Galton data has just two predictors. Real-world regression problems often involve many more. The OECD’s Better Life Index provides an example with 24 indicator variables measuring various aspects of well-being across 36 countries.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>oecd_bli <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">code</th>
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">HO_BASE</th>
+<th style="text-align: right;">HO_HISH</th>
+<th style="text-align: right;">HO_NUMR</th>
+<th style="text-align: right;">IW_HADI</th>
+<th style="text-align: right;">IW_HNFW</th>
+<th style="text-align: right;">JE_EMPL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AUS</td>
+<td style="text-align: left;">Australia</td>
+<td style="text-align: right;">1.1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.3</td>
+<td style="text-align: right;">31588</td>
+<td style="text-align: right;">47657</td>
+<td style="text-align: right;">72</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AUT</td>
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">1.6</td>
+<td style="text-align: right;">31173</td>
+<td style="text-align: right;">49887</td>
+<td style="text-align: right;">72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BEL</td>
+<td style="text-align: left;">Belgium</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">28307</td>
+<td style="text-align: right;">83876</td>
+<td style="text-align: right;">62</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BRA</td>
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">6.7</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">1.6</td>
+<td style="text-align: right;">11664</td>
+<td style="text-align: right;">6844</td>
+<td style="text-align: right;">67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CAN</td>
+<td style="text-align: left;">Canada</td>
+<td style="text-align: right;">0.2</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">29365</td>
+<td style="text-align: right;">67913</td>
+<td style="text-align: right;">72</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Suppose we want to predict life satisfaction (<code>SW_LIFS</code>) from the other indicators. This gives us 23 predictors.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict life satisfaction from other indicators</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>bli_numeric <span class="ot">&lt;-</span> oecd_bli <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>code, <span class="sc">-</span>country)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>lm_bli <span class="ot">&lt;-</span> <span class="fu">lm</span>(SW_LIFS <span class="sc">~</span> ., <span class="at">data =</span> bli_numeric)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Show just a few coefficients</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>lm_bli <span class="sc">|&gt;</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.679</td>
+<td style="text-align: right;">9.119</td>
+<td style="text-align: right;">0.074</td>
+<td style="text-align: right;">0.942</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HO_BASE</td>
+<td style="text-align: right;">-0.098</td>
+<td style="text-align: right;">0.073</td>
+<td style="text-align: right;">-1.337</td>
+<td style="text-align: right;">0.206</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HO_HISH</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">0.045</td>
+<td style="text-align: right;">0.665</td>
+<td style="text-align: right;">0.518</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HO_NUMR</td>
+<td style="text-align: right;">0.528</td>
+<td style="text-align: right;">0.621</td>
+<td style="text-align: right;">0.851</td>
+<td style="text-align: right;">0.411</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IW_HADI</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.190</td>
+<td style="text-align: right;">0.853</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IW_HNFW</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">-1.321</td>
+<td style="text-align: right;">0.211</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">JE_EMPL</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">1.240</td>
+<td style="text-align: right;">0.239</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JE_LMIS</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">0.046</td>
+<td style="text-align: right;">0.502</td>
+<td style="text-align: right;">0.625</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The geometry is the same as before: we project the response vector onto the subspace spanned by the predictor columns. But now that subspace has dimension 23 within a space of dimension 36. With 23 parameters estimated from only 36 observations, the coefficient estimates have large standard errors and the model is prone to overfitting.</p>
+<p>This tension between the number of predictors and the number of observations is a central theme in machine learning. We will return to it when we discuss regularization and dimension reduction.</p>
+</section>
+<section id="notation" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="notation"><span class="header-section-number">7.3</span> Notation</h2>
+<p>We now establish notation for the general linear regression problem. Let:</p>
+<ul>
+<li><span class="math inline">\(y_\bullet\)</span> be an <span class="math inline">\(n \times 1\)</span> response vector</li>
+<li><span class="math inline">\(X_{\bullet,\bullet}\)</span> be an <span class="math inline">\(n \times d\)</span> feature matrix with columns <span class="math inline">\(x_{\bullet,1}, \ldots, x_{\bullet,d}\)</span></li>
+<li><span class="math inline">\(\beta_\bullet\)</span> be a <span class="math inline">\(d \times 1\)</span> coefficient vector</li>
+<li><span class="math inline">\(\epsilon_\bullet\)</span> be an <span class="math inline">\(n \times 1\)</span> residual vector</li>
+</ul>
+<p>The linear model is:</p>
+<p><span id="eq-generic-lm"><span class="math display">\[
+y_\bullet = X_{\bullet,\bullet} \; \beta_\bullet + \epsilon_\bullet
+\qquad(7.4)\]</span></span></p>
+<p>The feature matrix <span class="math inline">\(X_{\bullet,\bullet}\)</span> often includes a column of ones to accommodate an intercept term. The columns of <span class="math inline">\(X\)</span> are called <em>feature vectors</em> or <em>predictor variables</em>. The subscript notation <span class="math inline">\(x_{\bullet,k}\)</span> denotes the <span class="math inline">\(k\)</span>-th column of <span class="math inline">\(X\)</span>—a vector of length <span class="math inline">\(n\)</span>.</p>
+<section id="feature-space" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="feature-space"><span class="header-section-number">7.3.1</span> Feature Space</h3>
+<p>The columns of <span class="math inline">\(X\)</span> span a subspace of <span class="math inline">\(\mathbb{R}^n\)</span> called the <em>feature space</em> or <em>column space</em>:</p>
+<p><span id="eq-feature-space"><span class="math display">\[
+\text{col}(X_{\bullet,\bullet}) = \text{span}(x_{\bullet,1}, \ldots, x_{\bullet,d})
+\qquad(7.5)\]</span></span></p>
+<p>Any linear combination of the columns lies in this subspace:</p>
+<p><span id="eq-linear-combo"><span class="math display">\[
+X_{\bullet,\bullet} \; \beta_\bullet = \beta_1 \, x_{\bullet,1} + \cdots + \beta_d \, x_{\bullet,d} \in \text{col}(X_{\bullet,\bullet})
+\qquad(7.6)\]</span></span></p>
+<p>The dimension of <span class="math inline">\(\text{col}(X)\)</span> is the <em>rank</em> of <span class="math inline">\(X\)</span>, denoted <span class="math inline">\(\text{rank}(X)\)</span>. If the columns are linearly independent, the rank equals <span class="math inline">\(d\)</span>. The rank is smaller when the columns are linearly dependent (for example, when <span class="math inline">\(d &gt; n\)</span>).</p>
+</section>
+<section id="row-versus-column-perspectives" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="row-versus-column-perspectives"><span class="header-section-number">7.3.2</span> Row versus Column Perspectives</h3>
+<p>There are two complementary ways to view a data matrix:</p>
+<p><strong>Row perspective:</strong> Each of the <span class="math inline">\(n\)</span> observations is a point in <span class="math inline">\(d\)</span>-dimensional space. A scatter plot displays these points, and the regression surface (line, plane, or hyperplane) passes through the point cloud.</p>
+<p><strong>Column perspective:</strong> Each of the <span class="math inline">\(d\)</span> features is a vector in <span class="math inline">\(n\)</span>-dimensional space. The response <span class="math inline">\(y\)</span> is also a vector in this space, and regression projects <span class="math inline">\(y\)</span> onto the subspace spanned by the feature vectors.</p>
+<p>Most data visualizations use the row perspective—we plot observations as points. But the mathematics of regression is most naturally expressed in the column perspective—we work with vectors whose length equals the number of observations.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 15%">
+<col style="width: 28%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Perspective</th>
+<th>Objects</th>
+<th>Space Dimension</th>
+<th>Regression Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Row</td>
+<td>Observations as points</td>
+<td><span class="math inline">\(d\)</span></td>
+<td>Fit surface through point cloud</td>
+</tr>
+<tr class="even">
+<td>Column</td>
+<td>Features as vectors</td>
+<td><span class="math inline">\(n\)</span></td>
+<td>Project <span class="math inline">\(y\)</span> onto <span class="math inline">\(\text{col}(X)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Understanding both perspectives is essential. We will move between them as needed, using the row view for visualization and the column view for algebra.</p>
+</section>
+</section>
+<section id="geometry-of-least-squares" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="geometry-of-least-squares"><span class="header-section-number">7.4</span> Geometry of Least Squares</h2>
+<p>The least-squares criterion is to find <span class="math inline">\(\beta_\bullet\)</span> that minimizes the sum of squared residuals:</p>
+<p><span id="eq-least-squares"><span class="math display">\[
+\min_{\beta_\bullet} \sum_{\nu=1}^{n} \epsilon_\nu^2 = \min_{\beta_\bullet} \| y_\bullet - X_{\bullet,\bullet} \beta_\bullet \|^2
+\qquad(7.7)\]</span></span></p>
+<p>To understand this geometrically, we need the concepts of vector norms and inner products.</p>
+<section id="norms-and-distance" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="norms-and-distance"><span class="header-section-number">7.4.1</span> Norms and Distance</h3>
+<p>The <em>Euclidean norm</em> (or <span class="math inline">\(\ell_2\)</span> norm) of a vector <span class="math inline">\(v_\bullet \in \mathbb{R}^n\)</span> is its length:</p>
+<p><span id="eq-l2-norm"><span class="math display">\[
+\| v_\bullet \|_2 = \sqrt{\sum_{\nu=1}^{n} v_\nu^2}
+\qquad(7.8)\]</span></span></p>
+<p>The squared norm <span class="math inline">\(\| v_\bullet \|_2^2\)</span> is the sum of squared components—exactly the quantity minimized in least squares.</p>
+<p>More generally, for any <span class="math inline">\(p \geq 1\)</span>, the <em><span class="math inline">\(p\)</span>-norm</em> is:</p>
+<p><span id="eq-lp-norm"><span class="math display">\[
+\| v_\bullet \|_p = \left( \sum_{\nu=1}^{n} |v_\nu|^p \right)^{1/p}
+\qquad(7.9)\]</span></span></p>
+<p>Special cases include <span class="math inline">\(\| v_\bullet \|_1 = \sum |v_\nu|\)</span> (the Manhattan or taxicab norm) and <span class="math inline">\(\| v_\bullet \|_\infty = \max |v_\nu|\)</span> (the maximum norm). Different norms lead to different regression methods—<span class="math inline">\(\ell_1\)</span> regression is more robust to outliers, and <span class="math inline">\(\ell_1\)</span> penalties on coefficients yield the LASSO. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</section>
+<section id="inner-products" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="inner-products"><span class="header-section-number">7.4.2</span> Inner Products</h3>
+<p>The <em>inner product</em> (or dot product) of vectors <span class="math inline">\(v_\bullet, w_\bullet \in \mathbb{R}^n\)</span> is:</p>
+<p><span id="eq-inner-product"><span class="math display">\[
+\langle v_\bullet, w_\bullet \rangle = v_\bullet^\top w_\bullet = \sum_{\nu=1}^{n} v_\nu w_\nu
+\qquad(7.10)\]</span></span></p>
+<p>The inner product relates to the norm via:</p>
+<p><span id="eq-norm-inner"><span class="math display">\[
+\| v_\bullet \|_2^2 = \langle v_\bullet, v_\bullet \rangle
+\qquad(7.11)\]</span></span></p>
+<p>Two vectors are <em>orthogonal</em> (perpendicular) when their inner product is zero:</p>
+<p><span id="eq-orthogonal"><span class="math display">\[
+v_\bullet \perp w_\bullet \iff \langle v_\bullet, w_\bullet \rangle = 0
+\qquad(7.12)\]</span></span></p>
+</section>
+<section id="centering-data" class="level3" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="centering-data"><span class="header-section-number">7.4.3</span> Centering Data</h3>
+<p>Consider again the regression model with an intercept:</p>
+<p><span class="math display">\[
+\hat{s} = \beta_0 + \beta_m m + \beta_f f
+\]</span></p>
+<p>The intercept <span class="math inline">\(\beta_0\)</span> ensures the regression surface passes through the point <span class="math inline">\((\bar{m}, \bar{f}, \bar{s})\)</span>—the centroid of the data. We can eliminate the intercept by <em>centering</em> each variable: subtracting its mean.</p>
+<p>For any vector <span class="math inline">\(v_\bullet\)</span>, define the centered vector:</p>
+<p><span id="eq-centering"><span class="math display">\[
+\dot{v}_\bullet = v_\bullet - \bar{v} \, \mathbf{1}_\bullet
+\qquad(7.13)\]</span></span></p>
+<p>where <span class="math inline">\(\bar{v} = \frac{1}{n} \sum_{\nu=1}^n v_\nu\)</span> is the mean and <span class="math inline">\(\mathbf{1}_\bullet = (1, \ldots, 1)^\top\)</span> is the vector of ones.</p>
+<p>After centering, <span class="math inline">\(\sum_{\nu} \dot{v}_\nu = 0\)</span>, meaning the centered vector is orthogonal to the constant vector: <span class="math inline">\(\dot{v}_\bullet \perp \mathbf{1}_\bullet\)</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Center the Galton sons data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>galton_centered <span class="ot">&lt;-</span> galton_sons <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mother_c =</span> mother <span class="sc">-</span> <span class="fu">mean</span>(mother),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">father_c =</span> father <span class="sc">-</span> <span class="fu">mean</span>(father),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">child_c  =</span> child <span class="sc">-</span> <span class="fu">mean</span>(child)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Regression with centered data (no intercept needed)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>lm_centered <span class="ot">&lt;-</span> <span class="fu">lm</span>(child_c <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> mother_c <span class="sc">+</span> father_c, <span class="at">data =</span> galton_centered)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare coefficients</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Term =</span> <span class="fu">c</span>(<span class="st">"Mother"</span>, <span class="st">"Father"</span>),</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">With intercept</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">coef</span>(lm_both)[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>],</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Centered (no intercept)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">coef</span>(lm_centered)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: right;">With intercept</th>
+<th style="text-align: right;">Centered (no intercept)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mother</td>
+<td style="text-align: right;">0.277</td>
+<td style="text-align: right;">0.277</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Father</td>
+<td style="text-align: right;">0.474</td>
+<td style="text-align: right;">0.474</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The slope coefficients are identical. Centering eliminates the intercept without changing the other coefficients. Geometrically, centering shifts the origin to the centroid of the data, so the regression surface (now a proper subspace) passes through the origin.</p>
+</section>
+<section id="the-centering-matrix" class="level3" data-number="7.4.4">
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="the-centering-matrix"><span class="header-section-number">7.4.4</span> The Centering Matrix</h3>
+<p>Centering can be expressed as matrix multiplication:</p>
+<p><span id="eq-center-matrix"><span class="math display">\[
+\dot{v}_\bullet = C_{\bullet,\bullet} \; v_\bullet
+\qquad(7.14)\]</span></span></p>
+<p>where the <em>centering matrix</em> is:</p>
+<p><span id="eq-centering-matrix"><span class="math display">\[
+C_{\bullet,\bullet} = I_{\bullet,\bullet} - \frac{1}{n} \mathbf{1}_\bullet \mathbf{1}_\bullet^\top
+\qquad(7.15)\]</span></span></p>
+<p>The matrix <span class="math inline">\(\frac{1}{n} \mathbf{1}_\bullet \mathbf{1}_\bullet^\top\)</span> projects any vector onto the constant vector (replacing each component with the mean). Subtracting this from the identity gives the complementary projection—onto the subspace orthogonal to the constant vector.</p>
+<p>The centering matrix <span class="math inline">\(C\)</span> is itself a projection matrix: it is symmetric (<span class="math inline">\(C^\top = C\)</span>) and idempotent (<span class="math inline">\(C^2 = C\)</span>).</p>
+</section>
+</section>
+<section id="orthogonal-projection" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="orthogonal-projection"><span class="header-section-number">7.5</span> Orthogonal Projection</h2>
+<p>We now arrive at the geometric heart of regression.</p>
+<section id="projection-onto-a-line" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="projection-onto-a-line"><span class="header-section-number">7.5.1</span> Projection onto a Line</h3>
+<p>Consider the simplest case: projecting a vector <span class="math inline">\(y_\bullet\)</span> onto a one-dimensional subspace spanned by a single vector <span class="math inline">\(x_\bullet\)</span>.</p>
+<p>The projection <span class="math inline">\(\hat{y}_\bullet\)</span> is the point on the line through <span class="math inline">\(x_\bullet\)</span> closest to <span class="math inline">\(y_\bullet\)</span>:</p>
+<p><span id="eq-proj-1d"><span class="math display">\[
+\hat{y}_\bullet = \frac{\langle y_\bullet, x_\bullet \rangle}{\langle x_\bullet, x_\bullet \rangle} \, x_\bullet = \frac{x_\bullet^\top y_\bullet}{x_\bullet^\top x_\bullet} \, x_\bullet
+\qquad(7.16)\]</span></span></p>
+<p>The scalar coefficient <span class="math inline">\(\hat{\beta} = \frac{x_\bullet^\top y_\bullet}{x_\bullet^\top x_\bullet}\)</span> is the regression coefficient in simple linear regression (without intercept).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple example vectors</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>y_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>x_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute projection</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>beta_hat <span class="ot">&lt;-</span> <span class="fu">sum</span>(y_vec <span class="sc">*</span> x_vec) <span class="sc">/</span> <span class="fu">sum</span>(x_vec <span class="sc">*</span> x_vec)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>y_hat <span class="ot">&lt;-</span> beta_hat <span class="sc">*</span> x_vec</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>resid <span class="ot">&lt;-</span> y_vec <span class="sc">-</span> y_hat</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify orthogonality</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Inner product of residual and x:"</span>, <span class="fu">sum</span>(resid <span class="sc">*</span> x_vec), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inner product of residual and x: 0 </code></pre>
+</div>
+</div>
+<p>The residual <span class="math inline">\(\epsilon_\bullet = y_\bullet - \hat{y}_\bullet\)</span> is orthogonal to <span class="math inline">\(x_\bullet\)</span>. This is not an accident—it is the defining property of orthogonal projection.</p>
+</section>
+<section id="projection-onto-a-subspace" class="level3" data-number="7.5.2">
+<h3 data-number="7.5.2" class="anchored" data-anchor-id="projection-onto-a-subspace"><span class="header-section-number">7.5.2</span> Projection onto a Subspace</h3>
+<p>For multiple regression, we project onto the subspace <span class="math inline">\(\text{col}(X)\)</span> spanned by all feature vectors. The projection <span class="math inline">\(\hat{y}_\bullet\)</span> satisfies:</p>
+<ol type="1">
+<li><span class="math inline">\(\hat{y}_\bullet \in \text{col}(X_{\bullet,\bullet})\)</span> — the prediction lies in feature space</li>
+<li><span class="math inline">\((y_\bullet - \hat{y}_\bullet) \perp \text{col}(X_{\bullet,\bullet})\)</span> — the residual is orthogonal to feature space</li>
+</ol>
+<p>Condition 2 means the residual is orthogonal to <em>every</em> column of <span class="math inline">\(X\)</span>:</p>
+<p><span id="eq-orthog-condition"><span class="math display">\[
+x_{\bullet,k}^\top (y_\bullet - \hat{y}_\bullet) = 0 \quad \text{for } k = 1, \ldots, d
+\qquad(7.17)\]</span></span></p>
+<p>Stacking these conditions gives:</p>
+<p><span id="eq-orthog-stacked"><span class="math display">\[
+X_{\bullet,\bullet}^\top (y_\bullet - \hat{y}_\bullet) = \mathbf{0}_\bullet
+\qquad(7.18)\]</span></span></p>
+</section>
+<section id="the-normal-equations" class="level3" data-number="7.5.3">
+<h3 data-number="7.5.3" class="anchored" data-anchor-id="the-normal-equations"><span class="header-section-number">7.5.3</span> The Normal Equations</h3>
+<p>Since <span class="math inline">\(\hat{y}_\bullet = X_{\bullet,\bullet} \hat{\beta}_\bullet\)</span>, the orthogonality condition becomes:</p>
+<p><span class="math display">\[
+X_{\bullet,\bullet}^\top (y_\bullet - X_{\bullet,\bullet} \hat{\beta}_\bullet) = \mathbf{0}_\bullet
+\]</span></p>
+<p>Expanding:</p>
+<p><span class="math display">\[
+X_{\bullet,\bullet}^\top y_\bullet - X_{\bullet,\bullet}^\top X_{\bullet,\bullet} \hat{\beta}_\bullet = \mathbf{0}_\bullet
+\]</span></p>
+<p>Rearranging gives the <em>normal equations</em>:</p>
+<p><span id="eq-normal-equations"><span class="math display">\[
+X_{\bullet,\bullet}^\top X_{\bullet,\bullet} \; \hat{\beta}_\bullet = X_{\bullet,\bullet}^\top y_\bullet
+\qquad(7.19)\]</span></span></p>
+<p>If <span class="math inline">\(X_{\bullet,\bullet}^\top X_{\bullet,\bullet}\)</span> is invertible (which requires the columns of <span class="math inline">\(X\)</span> to be linearly independent), we can solve for the coefficients:</p>
+<p><span id="eq-beta-hat"><span class="math display">\[
+\hat{\beta}_\bullet = (X_{\bullet,\bullet}^\top X_{\bullet,\bullet})^{-1} X_{\bullet,\bullet}^\top y_\bullet
+\qquad(7.20)\]</span></span></p>
+</section>
+<section id="the-projection-matrix" class="level3" data-number="7.5.4">
+<h3 data-number="7.5.4" class="anchored" data-anchor-id="the-projection-matrix"><span class="header-section-number">7.5.4</span> The Projection Matrix</h3>
+<p>The predicted values are:</p>
+<p><span id="eq-y-hat"><span class="math display">\[
+\hat{y}_\bullet = X_{\bullet,\bullet} \hat{\beta}_\bullet = X_{\bullet,\bullet} (X_{\bullet,\bullet}^\top X_{\bullet,\bullet})^{-1} X_{\bullet,\bullet}^\top y_\bullet = P_{\bullet,\bullet} \; y_\bullet
+\qquad(7.21)\]</span></span></p>
+<p>where the <em>projection matrix</em> (or “hat matrix”) is:</p>
+<p><span id="eq-projection-matrix"><span class="math display">\[
+P_{\bullet,\bullet} = X_{\bullet,\bullet} (X_{\bullet,\bullet}^\top X_{\bullet,\bullet})^{-1} X_{\bullet,\bullet}^\top
+\qquad(7.22)\]</span></span></p>
+<p>The projection matrix <span class="math inline">\(P\)</span> has remarkable properties:</p>
+<p><strong>Symmetric:</strong> <span class="math inline">\(P_{\bullet,\bullet}^\top = P_{\bullet,\bullet}\)</span></p>
+<p><strong>Idempotent:</strong> <span class="math inline">\(P_{\bullet,\bullet}^2 = P_{\bullet,\bullet}\)</span></p>
+<p>The idempotent property reflects the fact that projecting twice is the same as projecting once—once a vector is in <span class="math inline">\(\text{col}(X)\)</span>, it stays there.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct projection matrix for small example</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, galton_sons<span class="sc">$</span>mother[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], galton_sons<span class="sc">$</span>father[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> X <span class="sc">%*%</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify idempotent: P^2 = P</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Max difference |P^2 - P|:"</span>, <span class="fu">max</span>(<span class="fu">abs</span>(P <span class="sc">%*%</span> P <span class="sc">-</span> P)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Max difference |P^2 - P|: 1.683029e-13 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify symmetric: P' = P</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Max difference |P' - P|:"</span>, <span class="fu">max</span>(<span class="fu">abs</span>(<span class="fu">t</span>(P) <span class="sc">-</span> P)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Max difference |P' - P|: 1.225686e-13 </code></pre>
+</div>
+</div>
+</section>
+<section id="orthogonality-of-fitted-values-and-residuals" class="level3" data-number="7.5.5">
+<h3 data-number="7.5.5" class="anchored" data-anchor-id="orthogonality-of-fitted-values-and-residuals"><span class="header-section-number">7.5.5</span> Orthogonality of Fitted Values and Residuals</h3>
+<p>The residuals are:</p>
+<p><span class="math display">\[
+\epsilon_\bullet = y_\bullet - \hat{y}_\bullet = y_\bullet - P_{\bullet,\bullet} y_\bullet = (I_{\bullet,\bullet} - P_{\bullet,\bullet}) y_\bullet
+\]</span></p>
+<p>The matrix <span class="math inline">\((I - P)\)</span> is also a projection matrix—it projects onto the orthogonal complement of <span class="math inline">\(\text{col}(X)\)</span>.</p>
+<p>Since <span class="math inline">\(P\)</span> and <span class="math inline">\((I - P)\)</span> project onto orthogonal subspaces:</p>
+<p><span id="eq-orthog-yhat-eps"><span class="math display">\[
+\hat{y}_\bullet^\top \epsilon_\bullet = y_\bullet^\top P_{\bullet,\bullet}^\top (I_{\bullet,\bullet} - P_{\bullet,\bullet}) y_\bullet = y_\bullet^\top (P_{\bullet,\bullet} - P_{\bullet,\bullet}^2) y_\bullet = 0
+\qquad(7.23)\]</span></span></p>
+<p>The predicted values and residuals are orthogonal vectors.</p>
+</section>
+</section>
+<section id="coefficients-as-coordinates" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="coefficients-as-coordinates"><span class="header-section-number">7.6</span> Coefficients as Coordinates</h2>
+<p>The regression coefficients <span class="math inline">\(\hat{\beta}_\bullet\)</span> have a natural geometric interpretation: they are the coordinates of <span class="math inline">\(\hat{y}_\bullet\)</span> expressed in the basis formed by the feature vectors.</p>
+<p>When the feature vectors are orthogonal, each coefficient is simply the projection of <span class="math inline">\(y\)</span> onto that feature, independent of the others:</p>
+<p><span id="eq-orthog-coef"><span class="math display">\[
+\hat{\beta}_k = \frac{\langle y_\bullet, x_{\bullet,k} \rangle}{\langle x_{\bullet,k}, x_{\bullet,k} \rangle}
+\qquad(7.24)\]</span></span></p>
+<p>When the feature vectors are <em>not</em> orthogonal (the typical case), the coefficients are interdependent. The projection of <span class="math inline">\(y\)</span> onto one feature must account for its correlation with the other features. This is why coefficient estimates can change dramatically when predictors are added or removed—a phenomenon that surprises students who expect regression coefficients to behave like correlation coefficients.</p>
+<section id="multicollinearity" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="multicollinearity"><span class="header-section-number">7.6.1</span> Multicollinearity</h3>
+<p>When feature vectors are nearly parallel (highly correlated), small changes in the data can cause large changes in the coefficients. In this situation the projection is numerically unstable.</p>
+<p>The matrix <span class="math inline">\(X^\top X\)</span> becomes nearly singular when columns are highly correlated, making <span class="math inline">\((X^\top X)^{-1}\)</span> have very large entries. This amplifies noise in the data into noise in the coefficient estimates.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlation between mother and father heights</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(galton_sons<span class="sc">$</span>mother, galton_sons<span class="sc">$</span>father)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1110306</code></pre>
+</div>
+</div>
+<p>In the Galton data, mother’s and father’s heights are positively correlated (assortative mating), but not so highly as to cause serious multicollinearity.</p>
+</section>
+</section>
+<section id="the-pythagorean-decomposition" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="the-pythagorean-decomposition"><span class="header-section-number">7.7</span> The Pythagorean Decomposition</h2>
+<p>For centered data, the orthogonality of <span class="math inline">\(\hat{y}_\bullet\)</span> and <span class="math inline">\(\epsilon_\bullet\)</span> implies a Pythagorean relationship:</p>
+<p><span id="eq-pythagorean"><span class="math display">\[
+\| \dot{y}_\bullet \|^2 = \| \hat{\dot{y}}_\bullet \|^2 + \| \dot{\epsilon}_\bullet \|^2
+\qquad(7.25)\]</span></span></p>
+<p>This decomposes the total variation in <span class="math inline">\(y\)</span> into explained and unexplained components:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 42%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Formula</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\| \dot{y}_\bullet \|^2\)</span></td>
+<td><span class="math inline">\(\sum (y_\nu - \bar{y})^2\)</span></td>
+<td>Total Sum of Squares (TSS)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\| \hat{\dot{y}}_\bullet \|^2\)</span></td>
+<td><span class="math inline">\(\sum (\hat{y}_\nu - \bar{y})^2\)</span></td>
+<td>Explained Sum of Squares (ESS)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\| \dot{\epsilon}_\bullet \|^2\)</span></td>
+<td><span class="math inline">\(\sum (y_\nu - \hat{y}_\nu)^2\)</span></td>
+<td>Residual Sum of Squares (RSS)</td>
+</tr>
+</tbody>
+</table>
+<p>The coefficient of determination <span class="math inline">\(R^2\)</span> is the proportion of variance explained:</p>
+<p><span id="eq-r-squared"><span class="math display">\[
+R^2 = \frac{\| \hat{\dot{y}}_\bullet \|^2}{\| \dot{y}_\bullet \|^2} = 1 - \frac{\| \dot{\epsilon}_\bullet \|^2}{\| \dot{y}_\bullet \|^2}
+\qquad(7.26)\]</span></span></p>
+<p>Geometrically, <span class="math inline">\(R^2\)</span> is the squared cosine of the angle between <span class="math inline">\(\dot{y}_\bullet\)</span> and <span class="math inline">\(\hat{\dot{y}}_\bullet\)</span>:</p>
+<p><span id="eq-r-squared-angle"><span class="math display">\[
+R^2 = \cos^2(\theta)
+\qquad(7.27)\]</span></span></p>
+<p>When <span class="math inline">\(\hat{y}\)</span> is close to <span class="math inline">\(y\)</span> (small angle), <span class="math inline">\(R^2\)</span> is near 1. When <span class="math inline">\(\hat{y}\)</span> is nearly orthogonal to <span class="math inline">\(y\)</span>, <span class="math inline">\(R^2\)</span> is near 0.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute R² for the Galton regression</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> galton_sons<span class="sc">$</span>child</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>y_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>y_centered <span class="ot">&lt;-</span> y <span class="sc">-</span> y_bar</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>y_hat <span class="ot">&lt;-</span> <span class="fu">fitted</span>(lm_both)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>y_hat_centered <span class="ot">&lt;-</span> y_hat <span class="sc">-</span> y_bar</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>TSS <span class="ot">&lt;-</span> <span class="fu">sum</span>(y_centered<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>ESS <span class="ot">&lt;-</span> <span class="fu">sum</span>(y_hat_centered<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>RSS <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(lm_both)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Quantity =</span> <span class="fu">c</span>(<span class="st">"Total SS"</span>, <span class="st">"Explained SS"</span>, <span class="st">"Residual SS"</span>, <span class="st">"R²"</span>),</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">c</span>(TSS, ESS, RSS, ESS<span class="sc">/</span>TSS)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Quantity</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Total SS</td>
+<td style="text-align: right;">1163.86</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Explained SS</td>
+<td style="text-align: right;">367.61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Residual SS</td>
+<td style="text-align: right;">796.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R²</td>
+<td style="text-align: right;">0.32</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The regression explains about 32% of the variance in sons’ heights.</p>
+</section>
+<section id="row-and-column-visualizations" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="row-and-column-visualizations"><span class="header-section-number">7.8</span> Row and Column Visualizations</h2>
+<p>We have emphasized that regression can be viewed from two perspectives. Let us make this concrete with visualizations.</p>
+<section id="row-view-observations-as-points" class="level3" data-number="7.8.1">
+<h3 data-number="7.8.1" class="anchored" data-anchor-id="row-view-observations-as-points"><span class="header-section-number">7.8.1</span> Row View: Observations as Points</h3>
+<p>The row view is familiar: each observation is a point, and the regression surface passes through the point cloud.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>s3d <span class="ot">&lt;-</span> scatterplot3d<span class="sc">::</span><span class="fu">scatterplot3d</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> galton_sons<span class="sc">$</span>mother, <span class="at">xlab =</span> <span class="st">"Mother"</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> galton_sons<span class="sc">$</span>father, <span class="at">ylab =</span> <span class="st">"Father"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> galton_sons<span class="sc">$</span>child,  <span class="at">zlab =</span> <span class="st">"Son"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">angle =</span> <span class="dv">55</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Row View: Points in Feature Space"</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>s3d<span class="sc">$</span><span class="fu">plane3d</span>(lm_both, <span class="at">col =</span> <span class="st">"coral"</span>, <span class="at">lty =</span> <span class="st">"solid"</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add residual segments for a subset</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>n_show <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(galton_sons), n_show)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>orig <span class="ot">&lt;-</span> s3d<span class="sc">$</span><span class="fu">xyz.convert</span>(</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  galton_sons<span class="sc">$</span>mother[idx], </span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  galton_sons<span class="sc">$</span>father[idx], </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  galton_sons<span class="sc">$</span>child[idx]</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>proj <span class="ot">&lt;-</span> s3d<span class="sc">$</span><span class="fu">xyz.convert</span>(</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  galton_sons<span class="sc">$</span>mother[idx], </span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  galton_sons<span class="sc">$</span>father[idx], </span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fitted</span>(lm_both)[idx]</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="fu">segments</span>(orig<span class="sc">$</span>x, orig<span class="sc">$</span>y, proj<span class="sc">$</span>x, proj<span class="sc">$</span>y, <span class="at">col =</span> <span class="st">"gray50"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-row-view" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-row-view-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-reg_files/figure-html/fig-row-view-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-row-view-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.3: Row view: observations as points in 3D space
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The vertical segments show residuals—the distances minimized by least squares.</p>
+</section>
+<section id="column-view-features-as-vectors" class="level3" data-number="7.8.2">
+<h3 data-number="7.8.2" class="anchored" data-anchor-id="column-view-features-as-vectors"><span class="header-section-number">7.8.2</span> Column View: Features as Vectors</h3>
+<p>The column view is less familiar but more revealing of the linear algebra. Each feature is a vector of length <span class="math inline">\(n\)</span> (one component per observation), and we project the response vector onto the subspace spanned by the feature vectors.</p>
+<p>For illustration, consider a small sample of the data:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Small sample for visualization</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>n_small <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>small_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(galton_sons), n_small)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>small_data <span class="ot">&lt;-</span> galton_sons[small_idx, ]</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Center the data</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>m_c <span class="ot">&lt;-</span> small_data<span class="sc">$</span>mother <span class="sc">-</span> <span class="fu">mean</span>(small_data<span class="sc">$</span>mother)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>f_c <span class="ot">&lt;-</span> small_data<span class="sc">$</span>father <span class="sc">-</span> <span class="fu">mean</span>(small_data<span class="sc">$</span>father)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>s_c <span class="ot">&lt;-</span> small_data<span class="sc">$</span>child <span class="sc">-</span> <span class="fu">mean</span>(small_data<span class="sc">$</span>child)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit regression on small sample</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>lm_small <span class="ot">&lt;-</span> <span class="fu">lm</span>(s_c <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> m_c <span class="sc">+</span> f_c)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>s_hat_c <span class="ot">&lt;-</span> <span class="fu">fitted</span>(lm_small)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the column view, we have:</p>
+<ul>
+<li><span class="math inline">\(\dot{m}_\bullet\)</span>: a vector in <span class="math inline">\(\mathbb{R}^{10}\)</span> (centered mother heights)</li>
+<li><span class="math inline">\(\dot{f}_\bullet\)</span>: a vector in <span class="math inline">\(\mathbb{R}^{10}\)</span> (centered father heights)</li>
+<li><span class="math inline">\(\dot{s}_\bullet\)</span>: a vector in <span class="math inline">\(\mathbb{R}^{10}\)</span> (centered son heights)</li>
+<li><span class="math inline">\(\hat{\dot{s}}_\bullet\)</span>: the projection of <span class="math inline">\(\dot{s}_\bullet\)</span> onto <span class="math inline">\(\text{span}(\dot{m}_\bullet, \dot{f}_\bullet)\)</span></li>
+</ul>
+<p>The regression coefficients express <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> as a linear combination:</p>
+<p><span class="math display">\[
+\hat{\dot{s}}_\bullet = 0.085 \times \dot{m}_\bullet + 0.54 \times \dot{f}_\bullet
+\]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the projection is in the span</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>s_reconstructed <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_small)[<span class="dv">1</span>] <span class="sc">*</span> m_c <span class="sc">+</span> <span class="fu">coef</span>(lm_small)[<span class="dv">2</span>] <span class="sc">*</span> f_c</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Max difference |s_hat - reconstruction|:"</span>, </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">max</span>(<span class="fu">abs</span>(s_hat_c <span class="sc">-</span> s_reconstructed)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Max difference |s_hat - reconstruction|: 8.881784e-16 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify orthogonality of residual to both features</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>resid_c <span class="ot">&lt;-</span> s_c <span class="sc">-</span> s_hat_c</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Residual · mother:"</span>, <span class="fu">round</span>(<span class="fu">sum</span>(resid_c <span class="sc">*</span> m_c), <span class="dv">6</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Residual · mother: 0 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Residual · father:"</span>, <span class="fu">round</span>(<span class="fu">sum</span>(resid_c <span class="sc">*</span> f_c), <span class="dv">6</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Residual · father: 0 </code></pre>
+</div>
+</div>
+<p>The residual vector is orthogonal to both feature vectors, confirming it lies in the orthogonal complement of <span class="math inline">\(\text{col}(X)\)</span>.</p>
+</section>
+</section>
+<section id="connections-to-machine-learning" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="connections-to-machine-learning"><span class="header-section-number">7.9</span> Connections to Machine Learning</h2>
+<p>The projection perspective on regression is not merely a mathematical curiosity—it connects to fundamental ideas throughout machine learning.</p>
+<section id="regularization" class="level3" data-number="7.9.1">
+<h3 data-number="7.9.1" class="anchored" data-anchor-id="regularization"><span class="header-section-number">7.9.1</span> Regularization</h3>
+<p>When <span class="math inline">\(X^\top X\)</span> is nearly singular or when we want to prevent overfitting, <em>ridge regression</em> adds a penalty term:</p>
+<p><span class="math display">\[
+\hat{\beta}_{\text{ridge}} = (X^\top X + \lambda I)^{-1} X^\top y
+\]</span></p>
+<p>The penalty <span class="math inline">\(\lambda I\)</span> makes the matrix invertible and shrinks coefficients toward zero. Geometrically, this modifies the projection to avoid directions of high variance.</p>
+</section>
+<section id="dimension-reduction" class="level3" data-number="7.9.2">
+<h3 data-number="7.9.2" class="anchored" data-anchor-id="dimension-reduction"><span class="header-section-number">7.9.2</span> Dimension Reduction</h3>
+<p><em>Principal Component Analysis</em> (<span class="quarto-unresolved-ref">?sec-pca</span>) finds the directions of maximum variance in the feature space. These directions are orthogonal and can be used as a new basis. Projecting onto the top <span class="math inline">\(k\)</span> principal components gives a lower-dimensional representation that captures most of the information.</p>
+</section>
+<section id="linear-discriminant-analysis" class="level3" data-number="7.9.3">
+<h3 data-number="7.9.3" class="anchored" data-anchor-id="linear-discriminant-analysis"><span class="header-section-number">7.9.3</span> Linear Discriminant Analysis</h3>
+<p><em>Linear Discriminant Analysis</em> (<span class="quarto-unresolved-ref">?sec-lda</span>) finds directions that maximize separation between classes. Like PCA, it involves projection onto subspaces, but the criterion is discrimination rather than variance.</p>
+</section>
+<section id="kernel-methods" class="level3" data-number="7.9.4">
+<h3 data-number="7.9.4" class="anchored" data-anchor-id="kernel-methods"><span class="header-section-number">7.9.4</span> Kernel Methods</h3>
+<p>Kernel methods do not require explicit computation of the coordinates in higher-dimensional space. These methods use kernel functions based on inner products of the form <span class="math inline">\(\left  &lt; \phi(x_{\bullet, j}), \, \phi(x_{\bullet, k}) \right &gt;\)</span>, in which the user chooses from a curated set of functions <span class="math inline">\(\phi (\cdot)\)</span>.</p>
+</section>
+<section id="neural-networks" class="level3" data-number="7.9.5">
+<h3 data-number="7.9.5" class="anchored" data-anchor-id="neural-networks"><span class="header-section-number">7.9.5</span> Neural Networks</h3>
+<p>Each layer of a neural network performs a linear transformation followed by a nonlinear activation. The linear transformation is a projection (plus translation), and the nonlinearity allows the composition of many such operations to represent complex functions.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="summary"><span class="header-section-number">7.10</span> Summary</h2>
+<p>This chapter presents linear regression from the perspective of linear algebra. The key insights are:</p>
+<ol type="1">
+<li><p><strong>Regression is projection.</strong> The least-squares fitted values <span class="math inline">\(\hat{y}\)</span> are the orthogonal projection of the response vector <span class="math inline">\(y\)</span> onto the feature space <span class="math inline">\(\text{col}(X)\)</span>. This is not an analogy—it is exactly what the normal equations compute.</p></li>
+<li><p><strong>Row versus column perspectives.</strong> The row view (observations as points) is natural for visualization; the column view (features as vectors) is natural for algebra. Both describe the same mathematical object.</p></li>
+<li><p><strong>Centering simplifies geometry.</strong> Centering data (subtracting means) eliminates the intercept term, making the regression surface a proper subspace through the origin.</p></li>
+<li><p><strong>The projection matrix encapsulates regression.</strong> The matrix <span class="math inline">\(P = X(X^\top X)^{-1}X^\top\)</span> maps any response vector to its least-squares prediction. Its properties (symmetric, idempotent) reflect the geometry of orthogonal projection.</p></li>
+<li><p><strong>Residuals are orthogonal to features.</strong> The residual vector <span class="math inline">\(\epsilon = y - \hat{y}\)</span> is perpendicular to every column of <span class="math inline">\(X\)</span>. This orthogonality is the defining property of least squares.</p></li>
+<li><p><strong>Variance decomposes (Pythagorean Theorem).</strong> For centered data, <span class="math inline">\(\|y\|^2 = \|\hat{y}\|^2 + \|\epsilon\|^2\)</span>. The coefficient <span class="math inline">\(R^2 = \|\hat{y}\|^2 / \|y\|^2\)</span> measures the proportion of variance explained.</p></li>
+</ol>
+<p>These ideas recur throughout machine learning. Principal component analysis finds subspaces that maximize variance; linear discriminant analysis finds subspaces that maximize class separation; regularization modifies the projection to improve generalization. Understanding regression as projection provides a foundation for all of these methods.</p>
+</section>
+<section id="exercises" class="level2" data-number="7.11">
+<h2 data-number="7.11" class="anchored" data-anchor-id="exercises"><span class="header-section-number">7.11</span> Exercises</h2>
+<section id="concepts" class="level3" data-number="7.11.1">
+<h3 data-number="7.11.1" class="anchored" data-anchor-id="concepts"><span class="header-section-number">7.11.1</span> Concepts</h3>
+<section id="row-vs-column-perspective" class="level4" data-number="7.11.1.1">
+<h4 data-number="7.11.1.1" class="anchored" data-anchor-id="row-vs-column-perspective"><span class="header-section-number">7.11.1.1</span> Row vs Column Perspective</h4>
+<p>Consider a dataset with <span class="math inline">\(n = 5\)</span> observations and <span class="math inline">\(d = 2\)</span> features plus a response variable.</p>
+<ol type="a">
+<li><p>Describe what “row space” means in the context of visualizing this data. What dimension is it?</p></li>
+<li><p>Describe what “column space” or “feature space” means. What dimension is it?</p></li>
+<li><p>In which space does the orthogonal projection for least-squares regression actually occur?</p></li>
+</ol>
+</section>
+<section id="feature-space-1" class="level4" data-number="7.11.1.2">
+<h4 data-number="7.11.1.2" class="anchored" data-anchor-id="feature-space-1"><span class="header-section-number">7.11.1.2</span> Feature Space</h4>
+<p>Explain in your own words why the fitted values <span class="math inline">\(\hat{y}_\bullet\)</span> must lie in <span class="math inline">\(\text{col}(X_{\bullet,\bullet})\)</span>, the column space of the feature matrix.</p>
+</section>
+<section id="orthogonality" class="level4" data-number="7.11.1.3">
+<h4 data-number="7.11.1.3" class="anchored" data-anchor-id="orthogonality"><span class="header-section-number">7.11.1.3</span> Orthogonality</h4>
+<ol type="a">
+<li><p>Explain why the residual vector <span class="math inline">\(\epsilon_\bullet = y_\bullet - \hat{y}_\bullet\)</span> is orthogonal to <span class="math inline">\(\text{col}(X_{\bullet,\bullet})\)</span>.</p></li>
+<li><p>What does this orthogonality imply about the relationship between <span class="math inline">\(\epsilon_\bullet\)</span> and each column of <span class="math inline">\(X_{\bullet,\bullet}\)</span>?</p></li>
+</ol>
+</section>
+<section id="centering-data-1" class="level4" data-number="7.11.1.4">
+<h4 data-number="7.11.1.4" class="anchored" data-anchor-id="centering-data-1"><span class="header-section-number">7.11.1.4</span> Centering Data</h4>
+<p>Explain why centering the feature vectors (subtracting the mean from each column of <span class="math inline">\(X_{\bullet,\bullet}\)</span>) eliminates the need for an intercept term in linear regression. What happens geometrically when data is centered?</p>
+</section>
+<section id="projection-matrix-properties" class="level4" data-number="7.11.1.5">
+<h4 data-number="7.11.1.5" class="anchored" data-anchor-id="projection-matrix-properties"><span class="header-section-number">7.11.1.5</span> Projection Matrix Properties</h4>
+<ol type="a">
+<li><p>What does it mean for the projection matrix <span class="math inline">\(P\)</span> to be <em>idempotent</em> (<span class="math inline">\(P^2 = P\)</span>)? Give an intuitive explanation.</p></li>
+<li><p>What does it mean for <span class="math inline">\(P\)</span> to be <em>symmetric</em> (<span class="math inline">\(P^\top = P\)</span>)? Why is this necessary for <em>orthogonal</em> projection?</p></li>
+</ol>
+</section>
+</section>
+<section id="calculations" class="level3" data-number="7.11.2">
+<h3 data-number="7.11.2" class="anchored" data-anchor-id="calculations"><span class="header-section-number">7.11.2</span> Calculations</h3>
+<section id="d-projection" class="level4" data-number="7.11.2.1">
+<h4 data-number="7.11.2.1" class="anchored" data-anchor-id="d-projection"><span class="header-section-number">7.11.2.1</span> 1D Projection</h4>
+<p>Let <span class="math inline">\(y_\bullet^\top = (3, 1, 2)\)</span> and <span class="math inline">\(x_\bullet^\top = (1, 2, 2)\)</span>.</p>
+<ol type="a">
+<li><p>Find the orthogonal projection <span class="math inline">\(\hat{y}_\bullet\)</span> of <span class="math inline">\(y_\bullet\)</span> onto <span class="math inline">\(\text{span}(x_\bullet)\)</span>.</p></li>
+<li><p>Calculate the residual vector <span class="math inline">\(\epsilon_\bullet = y_\bullet - \hat{y}_\bullet\)</span>.</p></li>
+<li><p>Verify that the residual vector is orthogonal to <span class="math inline">\(x_\bullet\)</span> by computing their inner product.</p></li>
+<li><p>Sketch the vectors <span class="math inline">\((y_\bullet, x_\bullet, \hat{y}_\bullet, \epsilon_\bullet)\)</span> in 3D space.</p></li>
+</ol>
+</section>
+<section id="distance-measures" class="level4" data-number="7.11.2.2">
+<h4 data-number="7.11.2.2" class="anchored" data-anchor-id="distance-measures"><span class="header-section-number">7.11.2.2</span> Distance Measures</h4>
+<p>For the vectors <span class="math inline">\(u_\bullet = (1, 2, 3)\)</span> and <span class="math inline">\(v_\bullet = (4, 1, 2)\)</span>:</p>
+<ol type="a">
+<li><p>Compute the Euclidean (<span class="math inline">\(\ell_2\)</span>) distance between <span class="math inline">\(u_\bullet\)</span> and <span class="math inline">\(v_\bullet\)</span>.</p></li>
+<li><p>Compute the Manhattan (<span class="math inline">\(\ell_1\)</span>) distance.</p></li>
+<li><p>Which distance measure is affected more by outliers? Why?</p></li>
+</ol>
+</section>
+<section id="d-projection-1" class="level4" data-number="7.11.2.3">
+<h4 data-number="7.11.2.3" class="anchored" data-anchor-id="d-projection-1"><span class="header-section-number">7.11.2.3</span> 2D Projection</h4>
+<p>Let:</p>
+<p><span class="math display">\[
+y_\bullet = \begin{pmatrix} 5 \\ 2 \\ 3 \\ 4 \end{pmatrix}
+\quad \text{and} \quad
+X_{\bullet,\bullet} = \begin{pmatrix} 1 &amp; 0 \\ 0 &amp; 1 \\ 1 &amp; 1 \\ 1 &amp; 0 \end{pmatrix}
+\]</span></p>
+<ol type="a">
+<li><p>Find the least-squares coefficient vector <span class="math inline">\(\hat{\beta}_\bullet\)</span> by solving the normal equations <span class="math inline">\(X^\top X \hat{\beta} = X^\top y\)</span>.</p></li>
+<li><p>Calculate <span class="math inline">\(\hat{y}_\bullet = X_{\bullet,\bullet} \hat{\beta}_\bullet\)</span>.</p></li>
+<li><p>Verify that <span class="math inline">\(\hat{y}_\bullet\)</span> is in <span class="math inline">\(\text{col}(X_{\bullet,\bullet})\)</span> by expressing it as a linear combination of the columns of <span class="math inline">\(X\)</span>.</p></li>
+<li><p>Calculate <span class="math inline">\(\|\epsilon_\bullet\|^2\)</span> where <span class="math inline">\(\epsilon_\bullet = y_\bullet - \hat{y}_\bullet\)</span>.</p></li>
+</ol>
+</section>
+<section id="pythagorean-decomposition" class="level4" data-number="7.11.2.4">
+<h4 data-number="7.11.2.4" class="anchored" data-anchor-id="pythagorean-decomposition"><span class="header-section-number">7.11.2.4</span> Pythagorean Decomposition</h4>
+<p>For the 2D projection exercise above:</p>
+<ol type="a">
+<li><p>Compute <span class="math inline">\(\|y_\bullet\|^2\)</span>, <span class="math inline">\(\|\hat{y}_\bullet\|^2\)</span>, and <span class="math inline">\(\|\epsilon_\bullet\|^2\)</span>.</p></li>
+<li><p>Verify that <span class="math inline">\(\|y_\bullet\|^2 = \|\hat{y}_\bullet\|^2 + \|\epsilon_\bullet\|^2\)</span>.</p></li>
+<li><p>Explain geometrically why this relationship holds.</p></li>
+</ol>
+</section>
+</section>
+<section id="programming" class="level3" data-number="7.11.3">
+<h3 data-number="7.11.3" class="anchored" data-anchor-id="programming"><span class="header-section-number">7.11.3</span> Programming</h3>
+<section id="centering-heights" class="level4" data-number="7.11.3.1">
+<h4 data-number="7.11.3.1" class="anchored" data-anchor-id="centering-heights"><span class="header-section-number">7.11.3.1</span> Centering Heights</h4>
+<p>Using the <code>galton_families</code> data from <code>eda4mldata</code>:</p>
+<ol type="a">
+<li><p>Filter to sons only and center the mother, father, and child height vectors by subtracting their means.</p></li>
+<li><p>Fit a linear model predicting centered son height from centered mother and father heights (without an intercept term).</p></li>
+<li><p>Compare the coefficients from part (b) to those from an uncentered model with intercept. What changed and what stayed the same?</p></li>
+<li><p>Verify that the predictions from both models are identical.</p></li>
+</ol>
+</section>
+<section id="visualizing-residuals" class="level4" data-number="7.11.3.2">
+<h4 data-number="7.11.3.2" class="anchored" data-anchor-id="visualizing-residuals"><span class="header-section-number">7.11.3.2</span> Visualizing Residuals</h4>
+<p>For the simple regression of son’s height on father’s height:</p>
+<ol type="a">
+<li><p>Create a scatter plot with the regression line.</p></li>
+<li><p>Add vertical line segments showing the residuals for each observation.</p></li>
+<li><p>Compute the sum of squared residuals.</p></li>
+<li><p>Pick a different slope coefficient (not the least-squares value) and verify that it gives a larger sum of squared residuals.</p></li>
+</ol>
+</section>
+<section id="constructing-the-projection-matrix" class="level4" data-number="7.11.3.3">
+<h4 data-number="7.11.3.3" class="anchored" data-anchor-id="constructing-the-projection-matrix"><span class="header-section-number">7.11.3.3</span> Constructing the Projection Matrix</h4>
+<p>Using a small subset (e.g., <span class="math inline">\(n = 10\)</span>) of the Galton data:</p>
+<ol type="a">
+<li><p>Construct the design matrix <span class="math inline">\(X\)</span> with columns for the intercept, mother’s height, and father’s height.</p></li>
+<li><p>Compute the projection matrix <span class="math inline">\(P = X(X^\top X)^{-1}X^\top\)</span>.</p></li>
+<li><p>Verify that <span class="math inline">\(P\)</span> is symmetric and idempotent.</p></li>
+<li><p>Compute <span class="math inline">\(\hat{y} = Py\)</span> and verify it matches the output of <code>lm()</code>.</p></li>
+</ol>
+</section>
+</section>
+<section id="advanced" class="level3" data-number="7.11.4">
+<h3 data-number="7.11.4" class="anchored" data-anchor-id="advanced"><span class="header-section-number">7.11.4</span> Advanced</h3>
+<section id="covariance-and-inner-product" class="level4" data-number="7.11.4.1">
+<h4 data-number="7.11.4.1" class="anchored" data-anchor-id="covariance-and-inner-product"><span class="header-section-number">7.11.4.1</span> Covariance and Inner Product</h4>
+<p>Consider the pair of <span class="math inline">\(n\)</span>-dimensional vectors <span class="math inline">\((v_\bullet, w_\bullet)\)</span>. Recall that <span class="math inline">\(\bar{v}\)</span> denotes the arithmetic mean and <span class="math inline">\(\dot{v}_\bullet = v_\bullet - \bar{v} \mathbf{1}_\bullet\)</span> denotes the centered vector. The sample covariance is:</p>
+<p><span class="math display">\[
+\text{cov}(v_\bullet, w_\bullet) = \frac{1}{n-1} \sum_{i=1}^n (v_i - \bar{v})(w_i - \bar{w})
+\]</span></p>
+<ol type="a">
+<li><p>Express the sample covariance using inner-product notation.</p></li>
+<li><p>The sample variance is <span class="math inline">\(\text{var}(v_\bullet) = \text{cov}(v_\bullet, v_\bullet)\)</span>. Express <span class="math inline">\(\text{var}(v_\bullet)\)</span> using norm notation.</p></li>
+<li><p>The sample standard deviation is <span class="math inline">\(\text{sd}(v_\bullet) = \sqrt{\text{var}(v_\bullet)}\)</span>. Express this using norm notation.</p></li>
+<li><p>Use inner-product notation to express the sample correlation: <span class="math display">\[
+\text{cor}(v_\bullet, w_\bullet) = \frac{1}{n-1} \sum_{i=1}^n \frac{v_i - \bar{v}}{\text{sd}(v_\bullet)} \cdot \frac{w_i - \bar{w}}{\text{sd}(w_\bullet)}
+\]</span></p></li>
+</ol>
+</section>
+<section id="correlated-features" class="level4" data-number="7.11.4.2">
+<h4 data-number="7.11.4.2" class="anchored" data-anchor-id="correlated-features"><span class="header-section-number">7.11.4.2</span> Correlated Features</h4>
+<ol type="a">
+<li><p>Generate synthetic data <span class="math inline">\((y_\bullet, x_{\bullet,1}, x_{\bullet,2})\)</span> such that the two features are orthogonal (correlation = 0). Fit a regression model.</p></li>
+<li><p>Generate similar data with highly correlated features (correlation &gt; 0.9). Fit a regression model.</p></li>
+<li><p>Compare the standard errors of the coefficient estimates. Why are they different?</p></li>
+<li><p>Visualize the column spaces in both cases. How does the geometry explain the difference in precision?</p></li>
+</ol>
+</section>
+<section id="sum-of-squares-decomposition" class="level4" data-number="7.11.4.3">
+<h4 data-number="7.11.4.3" class="anchored" data-anchor-id="sum-of-squares-decomposition"><span class="header-section-number">7.11.4.3</span> Sum of Squares Decomposition</h4>
+<p>For any linear regression:</p>
+<ol type="a">
+<li><p>Show algebraically that for centered data, <span class="math inline">\(\|\dot{y}_\bullet\|^2 = \|\hat{\dot{y}}_\bullet\|^2 + \|\dot{\epsilon}_\bullet\|^2\)</span>.</p></li>
+<li><p>Explain this geometrically using the Pythagorean theorem in <span class="math inline">\(n\)</span>-dimensional space.</p></li>
+<li><p>Verify this numerically with the Galton heights data.</p></li>
+<li><p>Comment on the characterization: (total variation) = (explained variation) + (unexplained variation).</p></li>
+</ol>
+</section>
+<section id="projection-matrix-properties-1" class="level4" data-number="7.11.4.4">
+<h4 data-number="7.11.4.4" class="anchored" data-anchor-id="projection-matrix-properties-1"><span class="header-section-number">7.11.4.4</span> Projection Matrix Properties</h4>
+<p>The projection matrix <span class="math inline">\(P\)</span> is defined by <span class="math inline">\(P = X(X^\top X)^{-1}X^\top\)</span>.</p>
+<ol type="a">
+<li><p>Show that <span class="math inline">\(P\)</span> is symmetric: <span class="math inline">\(P^\top = P\)</span>.</p></li>
+<li><p>Show that <span class="math inline">\(P\)</span> is idempotent: <span class="math inline">\(P^2 = P\)</span>.</p></li>
+<li><p>What does the idempotent property mean geometrically?</p></li>
+<li><p>Compute <span class="math inline">\(P\)</span> for a small (<span class="math inline">\(n = 5\)</span>) subset of the Galton heights data and verify these properties numerically.</p></li>
+</ol>
+</section>
+<section id="feature-basis-vectors" class="level4" data-number="7.11.4.5">
+<h4 data-number="7.11.4.5" class="anchored" data-anchor-id="feature-basis-vectors"><span class="header-section-number">7.11.4.5</span> Feature Basis Vectors</h4>
+<p>Using centered Galton height data:</p>
+<ol type="a">
+<li><p>The regression coefficients <span class="math inline">\((\hat{\beta}_m, \hat{\beta}_f)\)</span> are coordinates in the non-orthogonal basis <span class="math inline">\((\dot{m}_\bullet, \dot{f}_\bullet)\)</span>. Express <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> in this basis.</p></li>
+<li><p>Transform to an orthogonal basis using the Gram-Schmidt process.</p></li>
+<li><p>Express <span class="math inline">\(\hat{\dot{s}}_\bullet\)</span> in the orthogonal basis.</p></li>
+<li><p>Verify that the projection is the same in both coordinate systems.</p></li>
+</ol>
+
+
+</section>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://glmnet.stanford.edu/reference/glmnet.html">LASSO</a> stands for the Least Absolute Shrinkage and Selection Operator.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./info-theory.html" class="pagination-link" aria-label="Information Theory">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./reduce-dim.html" class="pagination-link" aria-label="Dimension Reduction">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/lin-reg.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

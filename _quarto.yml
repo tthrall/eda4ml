@@ -48,7 +48,7 @@ book:
         - info-theory.qmd
     - part: Linear Algebra
       chapters: 
-        - la-intro.qmd
+        - lin-reg.qmd
         - reduce-dim.qmd
     - part: Text Data
       chapters:

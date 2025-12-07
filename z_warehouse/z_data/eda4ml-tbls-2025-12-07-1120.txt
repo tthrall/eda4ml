@@ -1,0 +1,22 @@
+topic	tbl	n_obs	n_vars	source	dt_complete	dscr
+Handedness by Sex	handedness	6	3	Freedman, Pisani & Purves	30-Nov-2025	Handedness counts by sex for chi-squared independence test
+MNIST subsets	mnist_example	10	5	Yann LeCun's MNIST	30-Nov-2025	Sample (10 images; 7,840 rows in long format) MNIST handwritten digit images (one per digit 0:9)
+MNIST subsets	mnist_test	1000	5	Yann LeCun's MNIST	30-Nov-2025	Subset (1000 images; 784,000 rows in long format) of the MNIST test database of handwritten digits, in long format
+MNIST subsets	mnist_train	1000	5	Yann LeCun's MNIST	30-Nov-2025	Subset (1000 images; 784,000 rows in long format) of the MNIST training database of handwritten digits, in long format
+NB10 Repeated Weighings	nb10	100	2	Freedman, Pisani & Purves	2-Dec-2025	Repeated weighings of a standard weight (deficit in micrograms below 10g)
+OECD Better Life Index	oecd_bli	36	26	OECD Better Life Index (2015)	30-Nov-2025	OECD Better Life indicators by country (2015)
+OECD Better Life Index	oecd_bli_indicators	24	5	OECD Better Life Index (2015)	30-Nov-2025	Metadata for OECD Better Life indicators
+Olympics	olympic_running	312	4	Olympics.com via tsibbledata	30-Nov-2025	Olympic track event winning times (1896:2016)
+Polling and Elections	lit_digest	4	2	Freedman, Pisani & Purves	2-Dec-2025	1936 Literary Digest poll predictions vs. actual result
+Polling and Elections	truman_dewey	4	5	Freedman, Pisani & Purves	2-Dec-2025	1948 election polling predictions vs. actual result
+Polling and Elections	us_elections	14	6	Freedman, Pisani & Purves	2-Dec-2025	Gallup poll accuracy for US presidential elections (1952:2004)
+Portacaval Shunt	portacaval_studies	3	4	Freedman, Pisani & Purves	2-Dec-2025	Study counts by design type and reported improvement level
+Portacaval Shunt	portacaval_survival	2	3	Freedman, Pisani & Purves	2-Dec-2025	Survival rates comparing randomized vs. non-randomized designs
+Salk Vaccine Trial	salk_blind	3	3	Freedman, Pisani & Purves	2-Dec-2025	Randomized controlled double-blind trial results
+Salk Vaccine Trial	salk_nfip	3	4	Freedman, Pisani & Purves	2-Dec-2025	NFIP observed-control design results
+UC Berkeley Admissions	ucb_admissions	24	4	Freedman, Pisani & Purves	2-Dec-2025	Graduate admissions by department and sex (Simpson's paradox)
+Wine Quality	wine_quality	6497	13	UCI ML Repository	29-Nov-2025	Wine physicochemical properties and quality ratings
+Galton Family Heights	galton_families	205	5	HistData::GaltonFamilies		Adult heights of father, mother, and oldest child, along with oldest child gender
+US Arrests	us_arrests	50	6	datasets::USArrests		Violent crime rates per US state in 1973: state abbreviation and name, percent pop in urban areas, arrest rates for assault, rape, and murder
+US Colleges	us_colleges	777	19	ISLR2::College		US college statistics from the 1995 issue of US News and World Report
+Bean Shapes	dry_beans	13611	17	beans::beans		Shape measurements of dry bean varieties
