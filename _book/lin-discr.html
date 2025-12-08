@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>9&nbsp; Linear Discriminant Analysis – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./text-analysis.html" rel="next">
+<link href="./pca.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lin-reg.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./lin-discr.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-lda-intro" id="toc-sec-lda-intro" class="nav-link active" data-scroll-target="#sec-lda-intro"><span class="header-section-number">9.1</span> Introduction</a></li>
+  <li><a href="#sec-lda-toy-example" id="toc-sec-lda-toy-example" class="nav-link" data-scroll-target="#sec-lda-toy-example"><span class="header-section-number">9.2</span> Motivating Example: Book Prices</a></li>
+  <li><a href="#sec-lda-binary" id="toc-sec-lda-binary" class="nav-link" data-scroll-target="#sec-lda-binary"><span class="header-section-number">9.3</span> The Binary Classification Problem</a>
+  <ul>
+  <li><a href="#loss-and-risk" id="toc-loss-and-risk" class="nav-link" data-scroll-target="#loss-and-risk"><span class="header-section-number">9.3.1</span> Loss and Risk</a></li>
+  <li><a href="#the-bayes-decision-rule" id="toc-the-bayes-decision-rule" class="nav-link" data-scroll-target="#the-bayes-decision-rule"><span class="header-section-number">9.3.2</span> The Bayes Decision Rule</a></li>
+  <li><a href="#gaussian-assumption-and-linear-boundaries" id="toc-gaussian-assumption-and-linear-boundaries" class="nav-link" data-scroll-target="#gaussian-assumption-and-linear-boundaries"><span class="header-section-number">9.3.3</span> Gaussian Assumption and Linear Boundaries</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-multivariate" id="toc-sec-lda-multivariate" class="nav-link" data-scroll-target="#sec-lda-multivariate"><span class="header-section-number">9.4</span> Multiple Features and Classes</a>
+  <ul>
+  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">9.4.1</span> Model Assumptions</a></li>
+  <li><a href="#discriminant-functions" id="toc-discriminant-functions" class="nav-link" data-scroll-target="#discriminant-functions"><span class="header-section-number">9.4.2</span> Discriminant Functions</a></li>
+  <li><a href="#decision-boundaries" id="toc-decision-boundaries" class="nav-link" data-scroll-target="#decision-boundaries"><span class="header-section-number">9.4.3</span> Decision Boundaries</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-fisher" id="toc-sec-lda-fisher" class="nav-link" data-scroll-target="#sec-lda-fisher"><span class="header-section-number">9.5</span> Fisher’s Discriminant Criterion</a>
+  <ul>
+  <li><a href="#the-central-question" id="toc-the-central-question" class="nav-link" data-scroll-target="#the-central-question"><span class="header-section-number">9.5.1</span> The Central Question</a></li>
+  <li><a href="#within-class-and-between-class-covariance" id="toc-within-class-and-between-class-covariance" class="nav-link" data-scroll-target="#within-class-and-between-class-covariance"><span class="header-section-number">9.5.2</span> Within-Class and Between-Class Covariance</a></li>
+  <li><a href="#fishers-criterion" id="toc-fishers-criterion" class="nav-link" data-scroll-target="#fishers-criterion"><span class="header-section-number">9.5.3</span> Fisher’s Criterion</a></li>
+  <li><a href="#the-eigenvalue-problem" id="toc-the-eigenvalue-problem" class="nav-link" data-scroll-target="#the-eigenvalue-problem"><span class="header-section-number">9.5.4</span> The Eigenvalue Problem</a></li>
+  <li><a href="#rank-constraint-and-multiple-directions" id="toc-rank-constraint-and-multiple-directions" class="nav-link" data-scroll-target="#rank-constraint-and-multiple-directions"><span class="header-section-number">9.5.5</span> Rank Constraint and Multiple Directions</a></li>
+  <li><a href="#connection-to-the-gaussian-derivation" id="toc-connection-to-the-gaussian-derivation" class="nav-link" data-scroll-target="#connection-to-the-gaussian-derivation"><span class="header-section-number">9.5.6</span> Connection to the Gaussian Derivation</a></li>
+  <li><a href="#connection-to-pca" id="toc-connection-to-pca" class="nav-link" data-scroll-target="#connection-to-pca"><span class="header-section-number">9.5.7</span> Connection to PCA</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-computation" id="toc-sec-lda-computation" class="nav-link" data-scroll-target="#sec-lda-computation"><span class="header-section-number">9.6</span> Computation in R</a>
+  <ul>
+  <li><a href="#using-masslda" id="toc-using-masslda" class="nav-link" data-scroll-target="#using-masslda"><span class="header-section-number">9.6.1</span> Using MASS::lda()</a></li>
+  <li><a href="#using-tidymodels" id="toc-using-tidymodels" class="nav-link" data-scroll-target="#using-tidymodels"><span class="header-section-number">9.6.2</span> Using tidymodels</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-wine-color" id="toc-sec-lda-wine-color" class="nav-link" data-scroll-target="#sec-lda-wine-color"><span class="header-section-number">9.7</span> Example: Wine Color Classification</a>
+  <ul>
+  <li><a href="#two-features-density-and-residual-sugar" id="toc-two-features-density-and-residual-sugar" class="nav-link" data-scroll-target="#two-features-density-and-residual-sugar"><span class="header-section-number">9.7.1</span> Two Features: Density and Residual Sugar</a></li>
+  <li><a href="#all-eleven-features" id="toc-all-eleven-features" class="nav-link" data-scroll-target="#all-eleven-features"><span class="header-section-number">9.7.2</span> All Eleven Features</a></li>
+  <li><a href="#comparison-with-pca" id="toc-comparison-with-pca" class="nav-link" data-scroll-target="#comparison-with-pca"><span class="header-section-number">9.7.3</span> Comparison with PCA</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-wine-quality" id="toc-sec-lda-wine-quality" class="nav-link" data-scroll-target="#sec-lda-wine-quality"><span class="header-section-number">9.8</span> Example: Wine Quality Classification</a></li>
+  <li><a href="#sec-lda-vs-logistic" id="toc-sec-lda-vs-logistic" class="nav-link" data-scroll-target="#sec-lda-vs-logistic"><span class="header-section-number">9.9</span> LDA versus Logistic Regression</a></li>
+  <li><a href="#sec-lda-other-methods" id="toc-sec-lda-other-methods" class="nav-link" data-scroll-target="#sec-lda-other-methods"><span class="header-section-number">9.10</span> Other Dimension Reduction Methods</a>
+  <ul>
+  <li><a href="#supervised-versus-unsupervised" id="toc-supervised-versus-unsupervised" class="nav-link" data-scroll-target="#supervised-versus-unsupervised"><span class="header-section-number">9.10.1</span> Supervised versus Unsupervised</a></li>
+  <li><a href="#linear-versus-nonlinear" id="toc-linear-versus-nonlinear" class="nav-link" data-scroll-target="#linear-versus-nonlinear"><span class="header-section-number">9.10.2</span> Linear versus Nonlinear</a></li>
+  <li><a href="#what-is-preserved" id="toc-what-is-preserved" class="nav-link" data-scroll-target="#what-is-preserved"><span class="header-section-number">9.10.3</span> What Is Preserved?</a></li>
+  <li><a href="#practical-guidance" id="toc-practical-guidance" class="nav-link" data-scroll-target="#practical-guidance"><span class="header-section-number">9.10.4</span> Practical Guidance</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-summary" id="toc-sec-lda-summary" class="nav-link" data-scroll-target="#sec-lda-summary"><span class="header-section-number">9.11</span> Summary</a>
+  <ul>
+  <li><a href="#key-results" id="toc-key-results" class="nav-link" data-scroll-target="#key-results"><span class="header-section-number">9.11.1</span> Key Results</a></li>
+  <li><a href="#connections-to-book-themes" id="toc-connections-to-book-themes" class="nav-link" data-scroll-target="#connections-to-book-themes"><span class="header-section-number">9.11.2</span> Connections to Book Themes</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">9.11.3</span> Looking Ahead</a></li>
+  </ul></li>
+  <li><a href="#sec-lda-exercises" id="toc-sec-lda-exercises" class="nav-link" data-scroll-target="#sec-lda-exercises"><span class="header-section-number">9.12</span> Exercises</a>
+  <ul>
+  <li><a href="#computational-exercises" id="toc-computational-exercises" class="nav-link" data-scroll-target="#computational-exercises"><span class="header-section-number">9.12.1</span> Computational Exercises</a></li>
+  <li><a href="#conceptual-exercises" id="toc-conceptual-exercises" class="nav-link" data-scroll-target="#conceptual-exercises"><span class="header-section-number">9.12.2</span> Conceptual Exercises</a></li>
+  <li><a href="#theoretical-exercises" id="toc-theoretical-exercises" class="nav-link" data-scroll-target="#theoretical-exercises"><span class="header-section-number">9.12.3</span> Theoretical Exercises</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/lin-discr.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lin-reg.html">Linear Algebra</a></li><li class="breadcrumb-item"><a href="./lin-discr.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-lda" class="quarto-section-identifier"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">15:24 Mon 8-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="sec-lda-intro" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="sec-lda-intro"><span class="header-section-number">9.1</span> Introduction</h2>
+<p>In <a href="pca.html" class="quarto-xref"><span>Chapter 8</span></a> we developed Principal Component Analysis as a method for finding directions of maximum variance in high-dimensional data. PCA is <em>unsupervised</em>: it seeks structure in the feature matrix without reference to any response variable. The directions of maximum variance may or may not be useful for distinguishing among groups of observations.</p>
+<p>This chapter develops <em>Linear Discriminant Analysis</em> (LDA), the supervised counterpart to PCA. Where PCA asks “along which directions do the features vary most?”, LDA asks “along which directions are the classes best separated?” When class labels are available, LDA exploits them to find projections optimized for classification rather than variance.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+A Note on Acronyms
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The abbreviation “LDA” appears twice in this book with different meanings. In this chapter LDA denotes <em>Linear Discriminant Analysis</em>—a supervised method for classification and dimension reduction. In Part III (Text Data), we will encounter <em>Latent Dirichlet Allocation</em>—a topic model for discovering thematic structure in document collections. The name collision is unfortunate but standard in the literature. Context should make clear which method is intended.</p>
+</div>
+</div>
+<p>LDA connects to several themes developed throughout this book:</p>
+<ul>
+<li><p><strong>Geometry</strong>: Like PCA, LDA finds optimal linear subspaces via orthogonal projection. The difference lies in what “optimal” means: PCA maximises variance; LDA maximises class separation.</p></li>
+<li><p><strong>Closed-form solution</strong>: LDA, like PCA, admits an exact analytical solution via eigenvalue decomposition. We do not iterate toward an optimum; we solve directly for the discriminant directions. This places both methods in the classical tradition, even as they address modern high-dimensional challenges.</p></li>
+<li><p><strong>Supervised versus unsupervised</strong>: The distinction between LDA (supervised) and PCA (unsupervised) exemplifies a fundamental choice in statistical learning: whether or not to guide analysis toward a specific prediction task.</p></li>
+<li><p><strong>Connection to linear regression</strong>: In <a href="lin-reg.html" class="quarto-xref"><span>Chapter 7</span></a> we projected a response vector onto the column space of a design matrix. LDA involves a related but distinct projection: we project observations onto directions that separate class means while minimising within-class spread.</p></li>
+</ul>
+<p>We begin with a simple one-dimensional example in order to introduce the key ideas, develop the mathematical framework for multiple features and classes, examine Fisher’s geometric perspective, and then apply LDA to the wine quality data introduced in <a href="pca.html" class="quarto-xref"><span>Chapter 8</span></a>.</p>
+</section>
+<section id="sec-lda-toy-example" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="sec-lda-toy-example"><span class="header-section-number">9.2</span> Motivating Example: Book Prices</h2>
+<p>Consider a simple classification problem. A bookstore stocks two types of books: <em>general</em> books (fiction, business, self-help) and <em>technical</em> books (programming, mathematics, science). Technical books tend to be more expensive. Given only the price of a book, can we classify it as general or technical?</p>
+<p>This toy example illustrates the essential structure of discriminant analysis. We have one predictor (price), two classes (general, technical), and we seek a decision rule that minimises classification error.</p>
+<p><a href="#fig-toy-example-hist" class="quarto-xref">Figure&nbsp;<span>9.1</span></a> shows three scenarios that differ in class proportions and price variability:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-toy-example-hist" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-toy-example-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-discr_files/figure-html/fig-toy-example-hist-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-toy-example-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.1: Book prices: three classification scenarios
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In scenario (a), technical and general books have equal proportions and equal price variability. The optimal decision boundary (vertical line) lies midway between the class means.</p>
+<p>In scenario (b), the store stocks fewer technical books (20%) than general books (80%). Even though the price distributions have the same shape, the decision boundary shifts rightward: we require stronger evidence (a higher price) before classifying a book as technical, because technical books are less common <em>a priori</em>.</p>
+<p>In scenario (c), technical books have not only lower proportion but also higher price variability. The wider spread of technical book prices increases the risk of misclassifying an expensive general book as technical. The optimal boundary accounts for this asymmetry.</p>
+<p>The first two scenarios admit <em>linear</em> decision rules, the domain of Linear Discriminant Analysis. The third scenario, with unequal variances, calls for <em>Quadratic</em> Discriminant Analysis (QDA), which we introduce later.</p>
+</section>
+<section id="sec-lda-binary" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="sec-lda-binary"><span class="header-section-number">9.3</span> The Binary Classification Problem</h2>
+<p>We now formalize the classification problem for two classes. Let <span class="math inline">\(Y \in \{\mathcal{C}_1, \mathcal{C}_2\}\)</span> denote the class label (general or technical), and let <span class="math inline">\(x\)</span> denote the observed feature (price).</p>
+<section id="loss-and-risk" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="loss-and-risk"><span class="header-section-number">9.3.1</span> Loss and Risk</h3>
+<p>A decision rule <span class="math inline">\(\mathcal{D}(x)\)</span> maps an observed feature value to a predicted class. Classification errors incur costs: let <span class="math inline">\(c_{j,k} \ge 0\)</span> denote the cost of predicting class <span class="math inline">\(\mathcal{C}_j\)</span> when the true class is <span class="math inline">\(\mathcal{C}_k\)</span>. Correct classifications incur no cost: <span class="math inline">\(c_{1,1} = c_{2,2} = 0\)</span>.</p>
+<p>The <em>risk</em> of decision rule <span class="math inline">\(\mathcal{D}\)</span> is its expected misclassification cost:</p>
+<p><span id="eq-mis-class-risk"><span class="math display">\[
+\begin{align}
+  \rho(\mathcal{D})
+  &amp;=
+    c_{2,1} \, \pi_1 \, P(\mathcal{D}(x) = 2 \mid Y = \mathcal{C}_1) \\
+  &amp; \quad + \; c_{1,2} \, \pi_2 \, P(\mathcal{D}(x) = 1 \mid Y = \mathcal{C}_2)
+\end{align}
+\qquad(9.1)\]</span></span></p>
+<p>where <span class="math inline">\(\pi_k = P(Y = \mathcal{C}_k)\)</span> is the prior probability of class <span class="math inline">\(k\)</span>.</p>
+</section>
+<section id="the-bayes-decision-rule" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="the-bayes-decision-rule"><span class="header-section-number">9.3.2</span> The Bayes Decision Rule</h3>
+<p>Let <span class="math inline">\(f_k(x)\)</span> denote the probability density of <span class="math inline">\(x\)</span> given class <span class="math inline">\(\mathcal{C}_k\)</span>. The rule that minimises risk assigns observation <span class="math inline">\(x\)</span> to the class with higher weighted density:</p>
+<p><span id="eq-bayes-decision-rule"><span class="math display">\[
+\begin{align}
+  \mathcal{D}(x)
+  &amp;=
+  \begin{cases}
+    \mathcal{C}_1 &amp; \text{if } c_{2,1} \, \pi_1 \, f_1(x) &gt; c_{1,2} \, \pi_2 \, f_2(x) \\
+    \mathcal{C}_2 &amp; \text{otherwise}
+  \end{cases}
+\end{align}
+\qquad(9.2)\]</span></span></p>
+<p>Equivalently, we can express this in terms of the likelihood ratio:</p>
+<p><span id="eq-likelihood-ratio-rule"><span class="math display">\[
+\begin{align}
+  \mathcal{D}(x)
+  &amp;=
+  \begin{cases}
+    \mathcal{C}_1 &amp; \text{if } \dfrac{f_1(x)}{f_2(x)} &gt; \dfrac{c_{1,2} \, \pi_2}{c_{2,1} \, \pi_1} \\
+    \mathcal{C}_2 &amp; \text{otherwise}
+  \end{cases}
+\end{align}
+\qquad(9.3)\]</span></span></p>
+<p>This is the <em>Bayes decision rule</em>. When misclassification costs are symmetric (<span class="math inline">\(c_{1,2} = c_{2,1}\)</span>) and classes are equally prevalent (<span class="math inline">\(\pi_1 = \pi_2\)</span>), the threshold simplifies to: classify according to whichever density is larger.</p>
+</section>
+<section id="gaussian-assumption-and-linear-boundaries" class="level3" data-number="9.3.3">
+<h3 data-number="9.3.3" class="anchored" data-anchor-id="gaussian-assumption-and-linear-boundaries"><span class="header-section-number">9.3.3</span> Gaussian Assumption and Linear Boundaries</h3>
+<p>Suppose the feature <span class="math inline">\(x\)</span> follows a normal distribution within each class:</p>
+<p><span id="eq-gaussian-density-1d"><span class="math display">\[
+f_k(x) = \frac{1}{\sqrt{2\pi}\,\sigma_k} \exp\left( -\frac{(x - \mu_k)^2}{2\sigma_k^2} \right)
+\qquad(9.4)\]</span></span></p>
+<p>Taking logarithms of the Bayes rule yields a decision based on the log-likelihood ratio, which expands to a quadratic function of <span class="math inline">\(x\)</span>.</p>
+<p><strong>When variances are equal</strong> (<span class="math inline">\(\sigma_1 = \sigma_2 = \sigma\)</span>), the quadratic terms cancel, leaving a <em>linear</em> function of <span class="math inline">\(x\)</span>:</p>
+<p><span id="eq-log-likelihood-equal-var"><span class="math display">\[
+\log\frac{f_1(x)}{f_2(x)} = \frac{\mu_1 - \mu_2}{\sigma^2} x - \frac{\mu_1^2 - \mu_2^2}{2\sigma^2}
+\qquad(9.5)\]</span></span></p>
+<p>The decision boundary occurs where this expression equals the log of the cost-prior ratio. Solving for <span class="math inline">\(x\)</span> yields a single threshold and a linear decision rule.</p>
+<p><strong>When variances differ</strong>, the quadratic terms remain, and the decision boundary may consist of two points. This scenario is addressed by Quadratic Discriminant Analysis (QDA), which relaxes the equal-variance assumption.</p>
+<p>The key insight for LDA: <em>equal within-class variances yield linear decision boundaries</em>.</p>
+</section>
+</section>
+<section id="sec-lda-multivariate" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="sec-lda-multivariate"><span class="header-section-number">9.4</span> Multiple Features and Classes</h2>
+<section id="model-assumptions" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="model-assumptions"><span class="header-section-number">9.4.1</span> Model Assumptions</h3>
+<p>We now extend to <span class="math inline">\(d\)</span> features and <span class="math inline">\(K\)</span> classes. Each observation <span class="math inline">\(x_{i, \bullet} \in \mathbb{R}^d\)</span> belongs to one of <span class="math inline">\(K\)</span> categories <span class="math inline">\((\mathcal{C}_1, \ldots, \mathcal{C}_K)\)</span> identified by label <span class="math inline">\(Y\)</span>.</p>
+<p>Let <span class="math inline">\(\pi_k = P(Y = \mathcal{C}_k)\)</span> denote the prior probability of class <span class="math inline">\(k\)</span>, estimated by:</p>
+<p><span id="eq-estimate-prior"><span class="math display">\[
+\hat{\pi}_k = \frac{n_k}{n}
+\qquad(9.6)\]</span></span></p>
+<p>where <span class="math inline">\(n_k\)</span> is the number of observations in class <span class="math inline">\(k\)</span>.</p>
+<p>The LDA model assumes that within each class, features follow a multivariate normal distribution with class-specific mean <span class="math inline">\(\mu_{\bullet, k}\)</span> but <em>common</em> covariance matrix <span class="math inline">\(Cov_{\bullet, \bullet}\)</span>:</p>
+<p><span id="eq-multivariate-normal"><span class="math display">\[
+f_k(x_\bullet) = \frac{1}{(2\pi)^{d/2} |Cov_{\bullet, \bullet}|^{1/2}} \exp\left( -\frac{1}{2} (x_\bullet - \mu_{\bullet, k})^\top Cov_{\bullet, \bullet}^{-1} (x_\bullet - \mu_{\bullet, k}) \right)
+\qquad(9.7)\]</span></span></p>
+<p>The common covariance assumption is what makes LDA <em>linear</em>.</p>
+</section>
+<section id="discriminant-functions" class="level3" data-number="9.4.2">
+<h3 data-number="9.4.2" class="anchored" data-anchor-id="discriminant-functions"><span class="header-section-number">9.4.2</span> Discriminant Functions</h3>
+<p>Applying the Bayes rule and simplifying (the quadratic terms cancel due to common covariance), we obtain the <em>linear discriminant function</em> for class <span class="math inline">\(k\)</span>:</p>
+<p><span id="eq-discriminant-function"><span class="math display">\[
+\delta_k(x_\bullet) = x_\bullet^\top \, Cov_{\bullet, \bullet}^{-1} \, \mu_{\bullet, k} - \frac{1}{2} \mu_{\bullet, k}^\top \, Cov_{\bullet, \bullet}^{-1} \, \mu_{\bullet, k} + \log(\pi_k)
+\qquad(9.8)\]</span></span></p>
+<p>To simplify notation we now assume that the cost of mis-classification is the same for all pairs of classes. Then the Bayes classification rule assigns <span class="math inline">\(x_\bullet\)</span> to the class with the largest discriminant value:</p>
+<p><span id="eq-bayes-classification"><span class="math display">\[
+\hat{Y}(x_\bullet) = \mathcal{C}_\eta \quad \text{if } \delta_\eta(x_\bullet) = \max_{k} \delta_k(x_\bullet)
+\qquad(9.9)\]</span></span></p>
+<p>In practice, we replace unknown parameters with estimates:</p>
+<p><span id="eq-estimated-discriminant"><span class="math display">\[
+\hat{\delta}_k(x_\bullet) = x_\bullet^\top \, \hat{Cov}_{\bullet, \bullet}^{-1} \, \hat{\mu}_{\bullet, k} - \frac{1}{2} \hat{\mu}_{\bullet, k}^\top \, \hat{Cov}_{\bullet, \bullet}^{-1} \, \hat{\mu}_{\bullet, k} + \log(\hat{\pi}_k)
+\qquad(9.10)\]</span></span></p>
+</section>
+<section id="decision-boundaries" class="level3" data-number="9.4.3">
+<h3 data-number="9.4.3" class="anchored" data-anchor-id="decision-boundaries"><span class="header-section-number">9.4.3</span> Decision Boundaries</h3>
+<p>The boundary between classes <span class="math inline">\(\mathcal{C}_j\)</span> and <span class="math inline">\(\mathcal{C}_k\)</span> is the set of points where <span class="math inline">\(\delta_j(x_\bullet) = \delta_k(x_\bullet)\)</span>. Because the discriminant functions are linear (affine) in <span class="math inline">\(x_\bullet\)</span>, these boundaries are hyperplanes in <span class="math inline">\(\mathbb{R}^d\)</span>.</p>
+<p>For <span class="math inline">\(K\)</span> classes, there are <span class="math inline">\(\binom{K}{2}\)</span> pairwise boundaries. In two dimensions, these are lines; in three dimensions, planes. The boundaries partition feature space into <span class="math inline">\(K\)</span> decision regions.</p>
+</section>
+</section>
+<section id="sec-lda-fisher" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="sec-lda-fisher"><span class="header-section-number">9.5</span> Fisher’s Discriminant Criterion</h2>
+<p>The Bayesian derivation of LDA assumes Gaussian distributions with common covariance. R.A. Fisher (1936) arrived at the same discriminant directions from a purely geometric perspective—one that makes no distributional assumptions. Fisher’s approach provides valuable insight into what LDA accomplishes.</p>
+<section id="the-central-question" class="level3" data-number="9.5.1">
+<h3 data-number="9.5.1" class="anchored" data-anchor-id="the-central-question"><span class="header-section-number">9.5.1</span> The Central Question</h3>
+<p>Given <span class="math inline">\(K\)</span> classes in <span class="math inline">\(d\)</span>-dimensional feature space, Fisher asked: <em>what linear combination <span class="math inline">\(z = a_\bullet^\top x_\bullet\)</span> best separates the classes?</em></p>
+<p>The scalar <span class="math inline">\(z\)</span> is a one-dimensional projection of observation <span class="math inline">\(x_\bullet\)</span> onto direction <span class="math inline">\(a_\bullet\)</span>. “Best separation” means that projected class means should be spread apart while projected observations within each class remain tightly clustered.</p>
+</section>
+<section id="within-class-and-between-class-covariance" class="level3" data-number="9.5.2">
+<h3 data-number="9.5.2" class="anchored" data-anchor-id="within-class-and-between-class-covariance"><span class="header-section-number">9.5.2</span> Within-Class and Between-Class Covariance</h3>
+<p>To formalize this, we define two covariance matrices.</p>
+<p>The <em>within-class covariance matrix</em> <span class="math inline">\(W_{\bullet, \bullet}\)</span> measures spread of observations about their respective class means:</p>
+<p><span id="eq-within-class-cov"><span class="math display">\[
+W_{\bullet, \bullet} = \frac{1}{n - K} \sum_{k=1}^K \sum_{x_{i,\bullet} \in \mathcal{C}_k} (x_{i,\bullet} - \mu_{\bullet, k})(x_{i,\bullet} - \mu_{\bullet, k})^\top
+\qquad(9.11)\]</span></span></p>
+<p>This is the pooled within-class sample covariance—the same as the common covariance matrix in the Gaussian formulation.</p>
+<p>The <em>between-class covariance matrix</em> <span class="math inline">\(B_{\bullet, \bullet}\)</span> measures spread of class means about the overall mean <span class="math inline">\(\mu_\bullet = \sum_k \pi_k \mu_{\bullet, k}\)</span>:</p>
+<p><span id="eq-between-class-cov"><span class="math display">\[
+B_{\bullet, \bullet} = \sum_{k=1}^K \pi_k (\mu_{\bullet, k} - \mu_\bullet)(\mu_{\bullet, k} - \mu_\bullet)^\top
+\qquad(9.12)\]</span></span></p>
+<p>These matrices satisfy the identity <span class="math inline">\(T_{\bullet, \bullet} = W_{\bullet, \bullet} + B_{\bullet, \bullet}\)</span>, where <span class="math inline">\(T_{\bullet, \bullet}\)</span> is the total covariance computed by ignoring class labels.</p>
+</section>
+<section id="fishers-criterion" class="level3" data-number="9.5.3">
+<h3 data-number="9.5.3" class="anchored" data-anchor-id="fishers-criterion"><span class="header-section-number">9.5.3</span> Fisher’s Criterion</h3>
+<p>When we project onto direction <span class="math inline">\(a_\bullet\)</span>, the projected data have:</p>
+<ul>
+<li>Between-class variance: <span class="math inline">\(a_\bullet^\top B_{\bullet, \bullet} \, a_\bullet\)</span></li>
+<li>Within-class variance: <span class="math inline">\(a_\bullet^\top W_{\bullet, \bullet} \, a_\bullet\)</span></li>
+</ul>
+<p>Fisher’s criterion seeks the direction that maximises the ratio:</p>
+<p><span id="eq-fisher-criterion"><span class="math display">\[
+\max_{a_\bullet} \; \frac{a_\bullet^\top B_{\bullet, \bullet} \, a_\bullet}{a_\bullet^\top W_{\bullet, \bullet} \, a_\bullet}
+\qquad(9.13)\]</span></span></p>
+<p>This <em>Rayleigh quotient</em> is scale-invariant: multiplying <span class="math inline">\(a_\bullet\)</span> by any nonzero constant leaves the ratio unchanged.</p>
+</section>
+<section id="the-eigenvalue-problem" class="level3" data-number="9.5.4">
+<h3 data-number="9.5.4" class="anchored" data-anchor-id="the-eigenvalue-problem"><span class="header-section-number">9.5.4</span> The Eigenvalue Problem</h3>
+<p>Maximising the Rayleigh quotient is equivalent to solving the generalised eigenvalue problem:</p>
+<p><span id="eq-generalised-eigen"><span class="math display">\[
+B_{\bullet, \bullet} \, a_\bullet = \lambda \, W_{\bullet, \bullet} \, a_\bullet
+\qquad(9.14)\]</span></span></p>
+<p>When <span class="math inline">\(W_{\bullet, \bullet}\)</span> is invertible, this reduces to the standard eigenvalue problem:</p>
+<p><span id="eq-standard-eigen"><span class="math display">\[
+W_{\bullet, \bullet}^{-1} B_{\bullet, \bullet} \, a_\bullet = \lambda \, a_\bullet
+\qquad(9.15)\]</span></span></p>
+<p>The eigenvector corresponding to the largest eigenvalue is the direction that best separates the classes according to Fisher’s criterion.</p>
+</section>
+<section id="rank-constraint-and-multiple-directions" class="level3" data-number="9.5.5">
+<h3 data-number="9.5.5" class="anchored" data-anchor-id="rank-constraint-and-multiple-directions"><span class="header-section-number">9.5.5</span> Rank Constraint and Multiple Directions</h3>
+<p>The matrix <span class="math inline">\(W_{\bullet, \bullet}^{-1} B_{\bullet, \bullet}\)</span> is <span class="math inline">\(d \times d\)</span>, but its rank is at most <span class="math inline">\(\min(d, K-1)\)</span>. This is because <span class="math inline">\(B_{\bullet, \bullet}\)</span> has rank at most <span class="math inline">\(K - 1\)</span>: the <span class="math inline">\(K\)</span> class means lie in an affine subspace of dimension at most <span class="math inline">\(K - 1\)</span> (they are constrained by their weighted average).</p>
+<p>Consequently, there are at most <span class="math inline">\(\min(d, K-1)\)</span> discriminant directions with nonzero eigenvalues. For binary classification (<span class="math inline">\(K = 2\)</span>), there is exactly <em>one</em> discriminant direction. For three classes, at most two. This is a powerful dimension reduction: regardless of <span class="math inline">\(d\)</span>, we need at most <span class="math inline">\(K - 1\)</span> dimensions to capture all information relevant to LDA classification.</p>
+<p>The successive eigenvectors <span class="math inline">\((a_{\bullet, 1}, a_{\bullet, 2}, \ldots)\)</span> are called <em>Fisher’s discriminant coordinates</em>, <em>canonical variates</em>, or <em>linear discriminants</em>. They are labeled LD1, LD2, etc., in the output of <code>MASS::lda()</code>.</p>
+</section>
+<section id="connection-to-the-gaussian-derivation" class="level3" data-number="9.5.6">
+<h3 data-number="9.5.6" class="anchored" data-anchor-id="connection-to-the-gaussian-derivation"><span class="header-section-number">9.5.6</span> Connection to the Gaussian Derivation</h3>
+<p>Although Fisher’s derivation makes no distributional assumptions, the resulting directions coincide exactly with those from the Gaussian/Bayesian approach when class covariances are equal.</p>
+<p>This equivalence is both theoretically satisfying and practically useful. The Gaussian framework provides posterior probabilities and a principled classification rule. Fisher’s perspective offers distribution-free geometric intuition about what the discriminant directions accomplish.</p>
+</section>
+<section id="connection-to-pca" class="level3" data-number="9.5.7">
+<h3 data-number="9.5.7" class="anchored" data-anchor-id="connection-to-pca"><span class="header-section-number">9.5.7</span> Connection to PCA</h3>
+<p>In the “sphered” space—where we transform <span class="math inline">\(\tilde{x}_\bullet = Cov_{\bullet, \bullet}^{-1/2} x_\bullet\)</span> so that the within-class covariance becomes the identity—Fisher’s criterion reduces to maximising variance of the transformed class means. This is equivalent to PCA of the transformed class means.</p>
+<p>Thus LDA can be interpreted as a two-step process: (1) “sphere” the data to equalize within-class spread, then (2) find the principal directions of the class centroids. PCA ignores class structure and finds directions of overall variance; LDA accounts for class structure by first removing within-class variation.</p>
+</section>
+</section>
+<section id="sec-lda-computation" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="sec-lda-computation"><span class="header-section-number">9.6</span> Computation in R</h2>
+<section id="using-masslda" class="level3" data-number="9.6.1">
+<h3 data-number="9.6.1" class="anchored" data-anchor-id="using-masslda"><span class="header-section-number">9.6.1</span> Using MASS::lda()</h3>
+<p>The classic R implementation is <code>MASS::lda()</code>:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit LDA model</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>lda_fit <span class="ot">&lt;-</span> <span class="fu">lda</span>(class <span class="sc">~</span> feature1 <span class="sc">+</span> feature2, <span class="at">data =</span> training_data)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine scaling matrix (discriminant directions)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>lda_fit<span class="sc">$</span>scaling</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict class labels</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lda_fit, <span class="at">newdata =</span> test_data)<span class="sc">$</span>class</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Get posterior probabilities</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lda_fit, <span class="at">newdata =</span> test_data)<span class="sc">$</span>posterior</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>scaling</code> matrix contains the discriminant directions: columns LD1, LD2, etc. For <span class="math inline">\(K\)</span> classes, there are at most <span class="math inline">\(K - 1\)</span> columns.</p>
+</section>
+<section id="using-tidymodels" class="level3" data-number="9.6.2">
+<h3 data-number="9.6.2" class="anchored" data-anchor-id="using-tidymodels"><span class="header-section-number">9.6.2</span> Using tidymodels</h3>
+<p>The tidymodels framework provides a consistent interface via <code>discrim_linear()</code>:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(discrim)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify model</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>lda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_linear</span>()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit model</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>lda_fit <span class="ot">&lt;-</span> lda_spec <span class="sc">|&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(class <span class="sc">~</span> ., <span class="at">data =</span> training_data)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Or using fit_xy()</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>lda_fit <span class="ot">&lt;-</span> lda_spec <span class="sc">|&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_xy</span>(<span class="at">x =</span> training_features, <span class="at">y =</span> training_labels)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict classes</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lda_fit, <span class="at">new_data =</span> test_data, <span class="at">type =</span> <span class="st">"class"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict probabilities</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lda_fit, <span class="at">new_data =</span> test_data, <span class="at">type =</span> <span class="st">"prob"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The underlying engine is still <code>MASS::lda()</code>, but the interface integrates smoothly with other tidymodels components.</p>
+</section>
+</section>
+<section id="sec-lda-wine-color" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="sec-lda-wine-color"><span class="header-section-number">9.7</span> Example: Wine Color Classification</h2>
+<p>In <a href="pca.html#sec-pca-wine-example" class="quarto-xref"><span>Section 8.8</span></a> we discovered through unsupervised PCA that the first principal component of the wine quality data separates red and white wines almost perfectly. This discovery emerged from the correlation structure alone, without using color labels.</p>
+<p>Now we approach the same data with a different question: <em>given</em> that we want to distinguish red from white wines, what linear combination of features achieves the best separation? This is the LDA question.</p>
+<section id="two-features-density-and-residual-sugar" class="level3" data-number="9.7.1">
+<h3 data-number="9.7.1" class="anchored" data-anchor-id="two-features-density-and-residual-sugar"><span class="header-section-number">9.7.1</span> Two Features: Density and Residual Sugar</h3>
+<p>We begin with just two features—<code>density</code> and <code>res_sugar</code> (residual sugar)—so that we can visualize the decision boundary. To facilitate interpretation, we first standardize each feature to z-scores.</p>
+<p><a href="#tbl-2D-lda-coefficients" class="quarto-xref">Table&nbsp;<span>9.1</span></a> shows the LDA coefficients.</p>
+<div class="cell">
+<div id="tbl-2D-lda-coefficients" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-2D-lda-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.1: Wine Color LDA: coefficients for two features
+</figcaption>
+<div aria-describedby="tbl-2D-lda-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Wine Color LDA: coefficients for two features</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">feature</th>
+<th style="text-align: right;">LD1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-1.72</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">res_sugar</td>
+<td style="text-align: right;">1.67</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The discriminant function LD1 has coefficients approximately <span class="math inline">\(-1.7\)</span> for density and <span class="math inline">\(+1.7\)</span> for residual sugar. This means wines with lower density and higher residual sugar are classified as white; wines with higher density and lower residual sugar are classified as red.</p>
+<p><a href="#fig-wclr-2D-lda-xy" class="quarto-xref">Figure&nbsp;<span>9.2</span></a> shows the data with the LDA decision boundary.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-wclr-2D-lda-xy" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wclr-2D-lda-xy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-discr_files/figure-html/fig-wclr-2D-lda-xy-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wclr-2D-lda-xy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.2: Wine color: LDA decision boundary with two features
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The decision boundary is a line (as expected for LDA). Note the outlying observations—these merit investigation but we set them aside for now.</p>
+<div class="cell">
+<div id="tbl-lda-2D-xtabs-color" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lda-2D-xtabs-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.2: Wine color classification: two features
+</figcaption>
+<div aria-describedby="tbl-lda-2D-xtabs-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Wine color: actual versus LDA prediction (2 features)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">class</th>
+<th style="text-align: right;">red</th>
+<th style="text-align: right;">white</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">c.red</td>
+<td style="text-align: right;">1403</td>
+<td style="text-align: right;">151</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c.white</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">4747</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>With just two features, LDA achieves about 88% accuracy on red wines and 97% on white wines. Can we do better with more features?</p>
+</section>
+<section id="all-eleven-features" class="level3" data-number="9.7.2">
+<h3 data-number="9.7.2" class="anchored" data-anchor-id="all-eleven-features"><span class="header-section-number">9.7.2</span> All Eleven Features</h3>
+<p>We now use all 11 chemical features. <a href="#tbl-lda-coefficients" class="quarto-xref">Table&nbsp;<span>9.3</span></a> shows the LDA coefficients.</p>
+<div class="cell">
+<div id="tbl-lda-coefficients" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lda-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.3: Wine Color LDA: coefficients for all features
+</figcaption>
+<div aria-describedby="tbl-lda-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Wine Color LDA: coefficients for all features</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">feature</th>
+<th style="text-align: right;">LD1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">fix_acidity</td>
+<td style="text-align: right;">0.42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vol_acidity</td>
+<td style="text-align: right;">-0.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">citric_acid</td>
+<td style="text-align: right;">0.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">res_sugar</td>
+<td style="text-align: right;">1.67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">chlorides</td>
+<td style="text-align: right;">-0.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">free_so2</td>
+<td style="text-align: right;">-0.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">total_so2</td>
+<td style="text-align: right;">1.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-2.73</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pH</td>
+<td style="text-align: right;">0.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sulphates</td>
+<td style="text-align: right;">-0.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alcohol</td>
+<td style="text-align: right;">-0.98</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The features with largest magnitude coefficients—residual sugar, total sulfur dioxide, density, and alcohol—contribute most to the discriminant function.</p>
+<div class="cell">
+<div id="tbl-lda-xtabs-color" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lda-xtabs-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.4: Wine color classification: all features
+</figcaption>
+<div aria-describedby="tbl-lda-xtabs-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Wine color: actual versus LDA prediction (11 features)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.pred_class</th>
+<th style="text-align: right;">red</th>
+<th style="text-align: right;">white</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">c.red</td>
+<td style="text-align: right;">1580</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c.white</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">4882</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>With all features, misclassification rates drop dramatically: about 1.2 percent for red wines and 0.3 percent for white wines. The additional features provide information that substantially improves discrimination.</p>
+<p><a href="#fig-wclr-lda-probs" class="quarto-xref">Figure&nbsp;<span>9.3</span></a> shows the distribution of posterior probabilities, broken down by actual color and predicted class.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-wclr-lda-probs" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wclr-lda-probs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-discr_files/figure-html/fig-wclr-lda-probs-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wclr-lda-probs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.3: Posterior probabilities by actual and predicted color
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>For correctly classified wines (diagonal cells), the posterior probabilities are decisively near 0 or 1. (The violin plot collapses to a “T” figure, either right-side up or upside-down. Also, note that within each cell of the figure and for each observation within that cell, the two probabilities are complemenrary: <span class="math inline">\(P(red) + P(white) = 1\)</span>.) The classifier is confident in these diagonal cells. For the small number of misclassified wines (off-diagonal cells), probabilities tend to be more ambiguous—the classifier is less certain, appropriately so.</p>
+</section>
+<section id="comparison-with-pca" class="level3" data-number="9.7.3">
+<h3 data-number="9.7.3" class="anchored" data-anchor-id="comparison-with-pca"><span class="header-section-number">9.7.3</span> Comparison with PCA</h3>
+<p>In <a href="pca.html" class="quarto-xref"><span>Chapter 8</span></a> we found that unsupervised PCA identified wine color as the dominant source of variation. How do the PCA and LDA directions compare?</p>
+<p>Both approaches discover that color is the primary structure in these data. However, they arrive at this conclusion differently:</p>
+<ul>
+<li><p><strong>PCA</strong> finds directions of maximum overall variance, without knowing about color. The red/white distinction happens to align with high variance.</p></li>
+<li><p><strong>LDA</strong> explicitly seeks directions that separate red from white. It is optimized for this task.</p></li>
+</ul>
+<p>When the classes differ primarily along directions of high variance—as here—PCA and LDA yield similar results. But this need not be the case. If red and white wines differed along a direction of <em>low</em> overall variance, PCA would miss it while LDA would find it. We explore this in the exercises.</p>
+</section>
+</section>
+<section id="sec-lda-wine-quality" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="sec-lda-wine-quality"><span class="header-section-number">9.8</span> Example: Wine Quality Classification</h2>
+<p>We now consider a three-class problem: predicting wine quality as low, medium, or high based on chemical properties. This is more challenging than color classification—quality ratings are subjective, and the classes may not be well separated in feature space.</p>
+<p><a href="#fig-wqual-hist" class="quarto-xref">Figure&nbsp;<span>9.4</span></a> shows the distribution of quality ratings with our classification scheme.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-wqual-hist" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wqual-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-discr_files/figure-html/fig-wqual-hist-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wqual-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.4: Wine quality groupings
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The classes are imbalanced: most wines receive medium quality ratings.</p>
+<p>For visualization, we focus on white wines and use two features: <code>alcohol</code> and <code>res_sugar</code>. With <span class="math inline">\(K = 3\)</span> classes, we obtain <span class="math inline">\(K - 1 = 2\)</span> discriminant directions, enabling full visualization of the LDA projection.</p>
+<div class="cell">
+<div id="tbl-wqual-lda-coefficients" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-wqual-lda-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.5: Wine quality LDA: discriminant directions
+</figcaption>
+<div aria-describedby="tbl-wqual-lda-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Wine quality LDA: coefficients (white wines, 2 features)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">feature</th>
+<th style="text-align: right;">LD1</th>
+<th style="text-align: right;">LD2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">alcohol</td>
+<td style="text-align: right;">1.19</td>
+<td style="text-align: right;">-0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">res_sugar</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">-1.05</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p><a href="#fig-wqual-LD-scatter" class="quarto-xref">Figure&nbsp;<span>9.5</span></a> shows the data projected onto the two discriminant coordinates.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-wqual-LD-scatter" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wqual-LD-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="lin-discr_files/figure-html/fig-wqual-LD-scatter-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wqual-LD-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.5: Wine quality in discriminant coordinates (white wines)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The three quality levels show substantial overlap—classification will be imperfect. LD1 (the first discriminant direction) provides the best single-direction separation, primarily driven by alcohol content: higher-quality wines tend to have higher alcohol.</p>
+<div class="cell">
+<div id="tbl-wqual-confusion" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-wqual-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.6: Wine quality classification confusion matrix
+</figcaption>
+<div aria-describedby="tbl-wqual-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Wine quality: actual versus predicted (white wines)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">.pred_class</th>
+<th style="text-align: right;">low</th>
+<th style="text-align: right;">medium</th>
+<th style="text-align: right;">high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">c.low</td>
+<td style="text-align: right;">935</td>
+<td style="text-align: right;">620</td>
+<td style="text-align: right;">129</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c.medium</td>
+<td style="text-align: right;">669</td>
+<td style="text-align: right;">1263</td>
+<td style="text-align: right;">540</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c.high</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">312</td>
+<td style="text-align: right;">391</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The confusion matrix shows that most wines are classified as medium quality, reflecting both the class imbalance and the genuine difficulty of the task. High-quality wines are sometimes mis-classified as medium; low-quality wines are sometimes mis-classified as medium. Distinguishing quality levels from chemical properties alone is inherently challenging.</p>
+</section>
+<section id="sec-lda-vs-logistic" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="sec-lda-vs-logistic"><span class="header-section-number">9.9</span> LDA versus Logistic Regression</h2>
+<p>Both LDA and logistic regression produce linear decision boundaries for classification. When should we prefer one over the other?</p>
+<p><strong>LDA assumptions:</strong></p>
+<ul>
+<li>Features are normally distributed within each class</li>
+<li>All classes share a common covariance matrix</li>
+<li>Decision boundaries are derived from these assumptions</li>
+</ul>
+<p><strong>Logistic regression assumptions:</strong></p>
+<ul>
+<li>The log-odds of class membership is a linear function of features</li>
+<li>No assumptions about the distribution of features</li>
+<li>Decision boundaries are estimated directly</li>
+</ul>
+<p><strong>When to prefer LDA:</strong></p>
+<ul>
+<li>When the Gaussian assumptions are approximately satisfied</li>
+<li>When sample sizes are small (LDA uses data more efficiently under correct assumptions)</li>
+<li>When modeling the data-generating process (or population probability structure)</li>
+</ul>
+<p><strong>When to prefer logistic regression:</strong></p>
+<ul>
+<li>When features are far from normally distributed</li>
+<li>When class covariances are clearly unequal</li>
+<li>When robustness to model misspecification is important</li>
+<li>When the focus is predicted classes rather than modeling the data-generating process</li>
+</ul>
+<p>In practice, both methods often yield similar results. The wine color classification example is a case where both methods work well. For the exercises, you are invited to fit logistic regression and compare decision boundaries.</p>
+</section>
+<section id="sec-lda-other-methods" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="sec-lda-other-methods"><span class="header-section-number">9.10</span> Other Dimension Reduction Methods</h2>
+<p>We have examined PCA and LDA in depth because they are foundational, computationally tractable, and geometrically interpretable. Many other dimension reduction methods exist, each with different objectives.</p>
+<section id="supervised-versus-unsupervised" class="level3" data-number="9.10.1">
+<h3 data-number="9.10.1" class="anchored" data-anchor-id="supervised-versus-unsupervised"><span class="header-section-number">9.10.1</span> Supervised versus Unsupervised</h3>
+<p><strong>Unsupervised methods</strong> find structure in features alone:</p>
+<ul>
+<li><strong>PCA</strong>: Maximises variance</li>
+<li><strong>Factor analysis</strong>: Separates common from unique variance</li>
+<li><strong>Independent Component Analysis (ICA)</strong>: Seeks statistically independent components</li>
+<li><strong>Clustering</strong>: Partitions observations into groups</li>
+</ul>
+<p><strong>Supervised methods</strong> use response labels:</p>
+<ul>
+<li><strong>LDA</strong>: Maximises between-class separation</li>
+<li><strong>Logistic regression</strong>: Models class probabilities</li>
+<li><strong>Partial Least Squares (PLS)</strong>: Maximises covariance with response</li>
+<li><strong>Sufficient dimension reduction</strong>: Finds subspaces containing all predictive information</li>
+</ul>
+</section>
+<section id="linear-versus-nonlinear" class="level3" data-number="9.10.2">
+<h3 data-number="9.10.2" class="anchored" data-anchor-id="linear-versus-nonlinear"><span class="header-section-number">9.10.2</span> Linear versus Nonlinear</h3>
+<p>PCA and LDA are linear: the reduced representation is a linear combination of original features. When data lie on curved manifolds, nonlinear methods may be needed:</p>
+<ul>
+<li><strong>Kernel PCA</strong>: Applies PCA in a feature space defined by a kernel function</li>
+<li><strong>t-SNE</strong>: Preserves local neighborhood structure; excellent for visualization</li>
+<li><strong>UMAP</strong>: Similar to t-SNE but often faster and may preserve more global structure</li>
+<li><strong>Autoencoders</strong>: Neural networks that learn nonlinear compressions</li>
+</ul>
+</section>
+<section id="what-is-preserved" class="level3" data-number="9.10.3">
+<h3 data-number="9.10.3" class="anchored" data-anchor-id="what-is-preserved"><span class="header-section-number">9.10.3</span> What Is Preserved?</h3>
+<p>Different methods optimize different objectives:</p>
+<div id="tbl-method-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-method-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.7: Dimension reduction methods compared
+</figcaption>
+<div aria-describedby="tbl-method-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Preserves</th>
+<th>Supervised?</th>
+<th>Linear?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PCA</td>
+<td>Variance</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td>LDA</td>
+<td>Class separation</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Factor analysis</td>
+<td>Common variance</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td>MDS</td>
+<td>Pairwise distances</td>
+<td>No</td>
+<td>Depends</td>
+</tr>
+<tr class="odd">
+<td>t-SNE</td>
+<td>Local neighborhoods</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>UMAP</td>
+<td>Local neighborhoods</td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="practical-guidance" class="level3" data-number="9.10.4">
+<h3 data-number="9.10.4" class="anchored" data-anchor-id="practical-guidance"><span class="header-section-number">9.10.4</span> Practical Guidance</h3>
+<p>A reasonable workflow:</p>
+<ol type="1">
+<li>Begin with PCA for exploratory visualization</li>
+<li>If class labels are available and classification is the goal, try LDA</li>
+<li>If linear methods reveal limited structure, consider t-SNE or UMAP for visualization</li>
+<li>When <span class="math inline">\(d &gt; n\)</span>, regularisation becomes essential; consider penalised methods</li>
+</ol>
+</section>
+</section>
+<section id="sec-lda-summary" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="sec-lda-summary"><span class="header-section-number">9.11</span> Summary</h2>
+<p>Linear Discriminant Analysis addresses the question: <em>along which directions are the classes best separated?</em> When class labels are available, LDA finds projections optimized for classification rather than variance.</p>
+<section id="key-results" class="level3" data-number="9.11.1">
+<h3 data-number="9.11.1" class="anchored" data-anchor-id="key-results"><span class="header-section-number">9.11.1</span> Key Results</h3>
+<ol type="1">
+<li><p><strong>Discriminant functions</strong> are linear combinations of features derived from Bayesian decision theory under Gaussian assumptions with common covariance.</p></li>
+<li><p><strong>Fisher’s criterion</strong> provides a distribution-free geometric interpretation: maximise between-class variance relative to within-class variance.</p></li>
+<li><p><strong>Dimension reduction</strong>: With <span class="math inline">\(K\)</span> classes, LDA produces at most <span class="math inline">\(K - 1\)</span> discriminant directions. For visualization or subsequent modelling, this can be a dramatic reduction from <span class="math inline">\(d\)</span> features.</p></li>
+<li><p><strong>Closed-form solution</strong>: Like PCA, LDA reduces to an eigenvalue problem. We solve directly for discriminant directions without iteration.</p></li>
+</ol>
+</section>
+<section id="connections-to-book-themes" class="level3" data-number="9.11.2">
+<h3 data-number="9.11.2" class="anchored" data-anchor-id="connections-to-book-themes"><span class="header-section-number">9.11.2</span> Connections to Book Themes</h3>
+<ul>
+<li><p><strong>Geometry</strong>: LDA, like PCA, finds optimal linear subspaces. The within-class covariance plays the role that total covariance plays in PCA—it defines the metric for measuring spread.</p></li>
+<li><p><strong>Closed-form versus algorithmic</strong>: Both PCA and LDA admit exact solutions. This contrasts with clustering (<a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a>), topic models (Part III), and neural networks, which require iterative algorithms.</p></li>
+<li><p><strong>Supervised versus unsupervised</strong>: The PCA/LDA pair illustrates how the same geometric framework—orthogonal projection—can serve different goals depending on whether labels are used.</p></li>
+</ul>
+</section>
+<section id="looking-ahead" class="level3" data-number="9.11.3">
+<h3 data-number="9.11.3" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">9.11.3</span> Looking Ahead</h3>
+<p>In Part III we turn to text data, where dimension reduction takes new forms. The term-document matrix is typically very high-dimensional and sparse. Topic models—including <em>Latent Dirichlet Allocation</em> (the other LDA)—provide probabilistic approaches to discovering thematic structure. The geometric intuition developed here for linear methods will help us understand what these more complex models accomplish.</p>
+</section>
+</section>
+<section id="sec-lda-exercises" class="level2" data-number="9.12">
+<h2 data-number="9.12" class="anchored" data-anchor-id="sec-lda-exercises"><span class="header-section-number">9.12</span> Exercises</h2>
+<section id="computational-exercises" class="level3" data-number="9.12.1">
+<h3 data-number="9.12.1" class="anchored" data-anchor-id="computational-exercises"><span class="header-section-number">9.12.1</span> Computational Exercises</h3>
+<p><strong>Exercise 9.1</strong> (LDA on wine data) Using the wine quality data with color (red vs.&nbsp;white) as the response:</p>
+<ol type="a">
+<li><p>Fit an LDA model using <code>MASS::lda()</code> with predictors <code>density</code> and <code>alcohol</code>. Extract the scaling matrix and interpret the LD1 coefficients.</p></li>
+<li><p>Compute the projected LD1 scores for all observations. Create a histogram of LD1 scores, colored by wine color. How well does LD1 separate the two classes?</p></li>
+<li><p>Compare the LDA decision boundary to logistic regression. Fit a logistic regression model with the same predictors and plot both decision boundaries on a scatter plot of the data.</p></li>
+</ol>
+<p><strong>Exercise 9.2</strong> (LDA with <span class="math inline">\(K = 3\)</span>) Using the wine quality data, create a three-level quality variable (low, medium, high) as described in the chapter.</p>
+<ol type="a">
+<li><p>Fit an LDA model using predictors <code>alcohol</code>, <code>volatile_acidity</code>, and <code>sulphates</code>. How many discriminant directions are there?</p></li>
+<li><p>Extract the LD1 and LD2 scores and create a scatter plot colored by quality level. How well do the discriminant coordinates separate the three classes?</p></li>
+<li><p>Compute the training set classification accuracy. Which quality levels are most often confused?</p></li>
+</ol>
+<p><strong>Exercise 9.3</strong> (Comparing PCA and LDA directions) Using the dry beans data (<code>beans::beans</code>), select four numeric features of your choice.</p>
+<ol type="a">
+<li><p>Perform PCA and record the first two principal component directions.</p></li>
+<li><p>Perform LDA using <code>class</code> as the response and record the first two discriminant directions.</p></li>
+<li><p>Compute the angles between PC1 and LD1, and between PC2 and LD2. Are the directions similar or quite different?</p></li>
+<li><p>Create side-by-side scatter plots: one showing the data in (PC1, PC2) coordinates, the other in (LD1, LD2) coordinates, both colored by bean class. Which representation better separates the classes?</p></li>
+</ol>
+</section>
+<section id="conceptual-exercises" class="level3" data-number="9.12.2">
+<h3 data-number="9.12.2" class="anchored" data-anchor-id="conceptual-exercises"><span class="header-section-number">9.12.2</span> Conceptual Exercises</h3>
+<p><strong>Exercise 9.4</strong> (When PCA fails) Construct a simple 2D example where the first principal component is orthogonal to the direction that best separates two classes. (Hint: consider two classes with means that differ along one axis, but with much larger variance along the perpendicular axis.)</p>
+<p>Sketch the data, the PC1 direction, and the LDA direction. What does this example illustrate about unsupervised versus supervised dimension reduction?</p>
+<p><strong>Exercise 9.5</strong> (Fisher’s criterion) For a two-class problem in <span class="math inline">\(d\)</span> dimensions:</p>
+<ol type="a">
+<li><p>Explain in words what the within-class covariance matrix <span class="math inline">\(W\)</span> measures.</p></li>
+<li><p>Explain in words what the between-class covariance matrix <span class="math inline">\(B\)</span> measures.</p></li>
+<li><p>Why does maximising the Rayleigh quotient <span class="math inline">\(a^\top B a / a^\top W a\)</span> yield a direction good for classification?</p></li>
+<li><p>For <span class="math inline">\(K = 2\)</span> classes, the matrix <span class="math inline">\(B\)</span> has rank 1. Why? What is the single eigenvector of <span class="math inline">\(W^{-1}B\)</span> in this case?</p></li>
+</ol>
+<p><strong>Exercise 9.6</strong> (The role of equal covariances) LDA assumes that all classes share a common covariance matrix.</p>
+<ol type="a">
+<li><p>If this assumption holds, explain why the decision boundary between any two classes is a hyperplane.</p></li>
+<li><p>If the assumption is violated—say, one class has much larger variance than another—how might the LDA decision boundary be suboptimal? Sketch a 1D example.</p></li>
+<li><p>What is QDA, and how does it address this issue?</p></li>
+</ol>
+<p><strong>Exercise 9.7</strong> (Supervised vs.&nbsp;unsupervised) For each scenario below, indicate whether you would start with PCA, LDA, or another method, and explain your reasoning.</p>
+<ol type="a">
+<li><p>You have gene expression measurements for 20,000 genes on 200 patients, with no clinical outcome data. Your goal is to identify groups of patients with similar expression profiles.</p></li>
+<li><p>You have the same gene expression data, but now you also know which patients responded to a treatment. Your goal is to find genes predictive of treatment response.</p></li>
+<li><p>You have images represented as 784-dimensional vectors (28×28 pixels) with digit labels (0–9). Your goal is to visualize how the digit classes cluster.</p></li>
+<li><p>You have customer transaction data with 50 features, and you want to reduce dimensionality before applying a classifier. You have class labels for a training set.</p></li>
+</ol>
+</section>
+<section id="theoretical-exercises" class="level3" data-number="9.12.3">
+<h3 data-number="9.12.3" class="anchored" data-anchor-id="theoretical-exercises"><span class="header-section-number">9.12.3</span> Theoretical Exercises</h3>
+<p><strong>Exercise 9.8</strong> (Rank of the between-class matrix) For <span class="math inline">\(K\)</span> classes with centroids <span class="math inline">\(\mu_1, \ldots, \mu_K\)</span> in <span class="math inline">\(\mathbb{R}^d\)</span>, the between-class covariance matrix is</p>
+<p><span class="math display">\[
+B = \sum_{k=1}^{K} \pi_k (\mu_k - \bar{\mu})(\mu_k - \bar{\mu})^\top
+\]</span></p>
+<p>where <span class="math inline">\(\bar{\mu} = \sum_{k=1}^{K} \pi_k \mu_k\)</span> is the overall mean.</p>
+<ol type="a">
+<li><p>Show that <span class="math inline">\(B\)</span> can be written as <span class="math inline">\(M^\top D_\pi M\)</span> where <span class="math inline">\(M\)</span> is a <span class="math inline">\(K \times d\)</span> matrix of centerd class means and <span class="math inline">\(D_\pi\)</span> is diagonal.</p></li>
+<li><p>Conclude that <span class="math inline">\(\text{rank}(B) \le K - 1\)</span>. Why is it <span class="math inline">\(K-1\)</span> rather than <span class="math inline">\(K\)</span>?</p></li>
+<li><p>What does this imply about the maximum number of Fisher discriminant directions?</p></li>
+</ol>
+<p><strong>Exercise 9.9</strong> (Equivalence for <span class="math inline">\(K = 2\)</span>) For a two-class problem, show that the Fisher discriminant direction is proportional to <span class="math inline">\(W^{-1}(\mu_1 - \mu_2)\)</span>.</p>
+<p>(Hint: Use the fact that for <span class="math inline">\(K = 2\)</span>, the between-class matrix <span class="math inline">\(B\)</span> is proportional to <span class="math inline">\((\mu_1 - \mu_2)(\mu_1 - \mu_2)^\top\)</span>.)</p>
+<p><strong>Exercise 9.10</strong> (Projection preserves classification) For LDA, suppose we project onto the first <span class="math inline">\(\ell\)</span> discriminant directions. Argue that this projection preserves all information needed for LDA classification when <span class="math inline">\(\ell = \min(d, K-1)\)</span>.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./pca.html" class="pagination-link" aria-label="Principal Component Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./text-analysis.html" class="pagination-link" aria-label="Text Analysis">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/lin-discr.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

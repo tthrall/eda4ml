@@ -86,7 +86,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./reduce-dim.html" rel="next">
+<link href="./lin-discr.html" rel="next">
 <link href="./lin-reg.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -295,8 +295,8 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -543,7 +543,7 @@ window.Quarto = {
 <section id="us-arrests" class="level3" data-number="8.2.1">
 <h3 data-number="8.2.1" class="anchored" data-anchor-id="us-arrests"><span class="header-section-number">8.2.1</span> US Arrests</h3>
 <p>Data analysis often begins with exploration, using tables and figures to learn about the data before formulating specific questions or hypotheses. The exploration becomes more challenging as the dimensions of the data increase. Here is a modest example.</p>
-<p><span class="citation" data-cites="McNeil_1977">McNeil (<a href="references.html#ref-McNeil_1977" role="doc-biblioref">1977</a>)</span> reviewed the relationship among violent crime statistics per US state and the percentage of the population living in urban areas, variables described in <a href="reduce-dim.html#tbl-arrests-per-us-state-1973" class="quarto-xref">Table&nbsp;<span>8.1</span></a> below. With just four variables, we can visualize the full data structure using scatter plot matrices (<a href="reduce-dim.html#fig-arrests-2d-scatter-matrix" class="quarto-xref">Figure&nbsp;<span>8.3</span></a>). However, even this preliminary exploration reveals strong correlations among the three crime variables (Murder, Assault, Rape), suggesting that the data may effectively lie in fewer than four dimensions.</p>
+<p><span class="citation" data-cites="McNeil_1977">McNeil (<a href="references.html#ref-McNeil_1977" role="doc-biblioref">1977</a>)</span> reviewed the relationship among violent crime statistics per US state and the percentage of the population living in urban areas, variables described in <a href="#tbl-arrests-per-us-state-1973" class="quarto-xref">Table&nbsp;<span>8.1</span></a> below. With just four variables, we can visualize the full data structure using scatter plot matrices (<a href="#fig-arrests-2d-scatter-matrix" class="quarto-xref">Figure&nbsp;<span>8.3</span></a>). However, even this preliminary exploration reveals strong correlations among the three crime variables (Murder, Assault, Rape), suggesting that the data may effectively lie in fewer than four dimensions.</p>
 <div class="cell">
 <div id="tbl-arrests-per-us-state-1973" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -594,7 +594,7 @@ Table&nbsp;8.1: Arrests per US State (1973)
 </figure>
 </div>
 </div>
-<p><a href="reduce-dim.html#fig-arrests-violin" class="quarto-xref">Figure&nbsp;<span>8.1</span></a> below (a so-called “violin” plot <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>) shows the distribution across the 50 states of each type of violent crime. Rates are calculated as arrests per 100,000 population. The figure shows these rates on a <span class="math inline">\(\log_{10}\)</span> scale, since assault arrests are many times more common than rape or murder arrests.</p>
+<p><a href="#fig-arrests-violin" class="quarto-xref">Figure&nbsp;<span>8.1</span></a> below (a so-called “violin” plot <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>) shows the distribution across the 50 states of each type of violent crime. Rates are calculated as arrests per 100,000 population. The figure shows these rates on a <span class="math inline">\(\log_{10}\)</span> scale, since assault arrests are many times more common than rape or murder arrests.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-arrests-violin" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -609,7 +609,7 @@ Figure&nbsp;8.1: Violent Crime Rates per US State (1973)
 </div>
 </div>
 </div>
-<p>The figure above gives a view of three data variables—that is, three columns of the data matrix. <a href="reduce-dim.html#fig-arrests-3d-scatter" class="quarto-xref">Figure&nbsp;<span>8.2</span></a> below, a 3D scatterplot, gives a complementary view: each of the 50 states appears as a point whose coordinates are the respective arrest rates for assault, rape, and murder, with colour indicating <code>UrbanPop</code>, the percentage of the state’s population living in an urban area. Since individual states correspond to the rows of the data matrix, this figure provides a row-based perspective.</p>
+<p>The figure above gives a view of three data variables—that is, three columns of the data matrix. <a href="#fig-arrests-3d-scatter" class="quarto-xref">Figure&nbsp;<span>8.2</span></a> below, a 3D scatterplot, gives a complementary view: each of the 50 states appears as a point whose coordinates are the respective arrest rates for assault, rape, and murder, with colour indicating <code>UrbanPop</code>, the percentage of the state’s population living in an urban area. Since individual states correspond to the rows of the data matrix, this figure provides a row-based perspective.</p>
 <div class="cell">
 <div id="fig-arrests-3d-scatter" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -623,7 +623,7 @@ Figure&nbsp;8.2: Violent Crime Rates in each US State (1973)
 </figure>
 </div>
 </div>
-<p><a href="reduce-dim.html#fig-arrests-2d-scatter-matrix" class="quarto-xref">Figure&nbsp;<span>8.3</span></a> below exemplifies a matrix of 2D scatter plots, a display method that accommodates more than 3 variables (but not many more, practically speaking).</p>
+<p><a href="#fig-arrests-2d-scatter-matrix" class="quarto-xref">Figure&nbsp;<span>8.3</span></a> below exemplifies a matrix of 2D scatter plots, a display method that accommodates more than 3 variables (but not many more, practically speaking).</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-arrests-2d-scatter-matrix" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -645,7 +645,7 @@ Figure&nbsp;8.3: Arrests Variables: Relationships and Correlations
 <p><span class="citation" data-cites="Koklu_Ozkan_2020_multiclass">Koklu and Ozkan (<a href="references.html#ref-Koklu_Ozkan_2020_multiclass" role="doc-biblioref">2020</a>)</span> published a data set of visual characteristics of dried beans “… in order to obtain uniform seed classification. For the classification model, images of 13,611 grains of 7 different registered dry beans were taken with a high-resolution camera.” The resulting data set contains 16 morphological features extracted from each bean image, including measures of area, perimeter, compactness, length, width, and various shape factors.</p>
 <p>The classification goal is to predict bean variety from these morphological measurements. Successful classification could improve sorting systems in agricultural processing. However, many of these 16 features are inherently redundant: area and perimeter are strongly correlated, as are various length and width measurements. Dimension reduction can reveal whether bean varieties differ primarily in size, shape, or both, and whether a smaller subset of derived features might achieve comparable classification accuracy with greater interpretability.</p>
 <p>The data are available in <code>R</code> package <code>beans</code>, containing a data matrix (tibble) of dimension <span class="math inline">\(13611 \times 17\)</span>. The last column is the response variable <code>class</code> that assigns one of seven types of bean to each bean image. The remaining 16 columns are morphological measurements.</p>
-<p><span class="citation" data-cites="Kuhn_Silge_tmwr">Kuhn and Silge (<a href="references.html#ref-Kuhn_Silge_tmwr" role="doc-biblioref">2022</a>)</span> develop and evaluate classification models for these data. They begin by examining the correlation coefficients for each pair of the 16 feature vectors. <a href="reduce-dim.html#fig-beans-corrplot" class="quarto-xref">Figure&nbsp;<span>8.4</span></a> follows their example.</p>
+<p><span class="citation" data-cites="Kuhn_Silge_tmwr">Kuhn and Silge (<a href="references.html#ref-Kuhn_Silge_tmwr" role="doc-biblioref">2022</a>)</span> develop and evaluate classification models for these data. They begin by examining the correlation coefficients for each pair of the 16 feature vectors. <a href="#fig-beans-corrplot" class="quarto-xref">Figure&nbsp;<span>8.4</span></a> follows their example.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-beans-corrplot" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -784,7 +784,7 @@ Table&nbsp;8.2: Wine Quality: chemical properties (11) and other variables (2)
 <p>Before developing the algebra of PCA, we build geometric intuition using examples where visualization is possible.</p>
 <section id="d-example-galton-heights" class="level3" data-number="8.4.1">
 <h3 data-number="8.4.1" class="anchored" data-anchor-id="d-example-galton-heights"><span class="header-section-number">8.4.1</span> 2D Example: Galton Heights</h3>
-<p><a href="reduce-dim.html#fig-fs-pca" class="quarto-xref">Figure&nbsp;<span>8.6</span></a> illustrates PCA for (father, son) centred heights from the Galton data introduced in <span class="quarto-unresolved-ref">?sec-la-intro</span>.</p>
+<p><a href="#fig-fs-pca" class="quarto-xref">Figure&nbsp;<span>8.5</span></a> illustrates PCA for (father, son) centred heights from the Galton data introduced in <span class="quarto-unresolved-ref">?sec-la-intro</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-fs-pca" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -807,7 +807,7 @@ Figure&nbsp;8.5: Principal Components: (father, son) centred heights
 <h3 data-number="8.4.2" class="anchored" data-anchor-id="d-example-us-arrests"><span class="header-section-number">8.4.2</span> 3D Example: US Arrests</h3>
 <p>We now revisit <code>datasets::USArrests</code> to illustrate PCA in three dimensions. A practical goal might be to define a single index of violent crime from the three crime types.</p>
 <p>The arrest rates for assault, rape, and murder are on quite different scales. Without adjustment, assault rates would dominate total variance and consequently the determination of principal components. As an initial adjustment, we transform each rate to a z-score by subtracting the mean and dividing by the standard deviation (calculated across the 50 states).</p>
-<p><a href="reduce-dim.html#fig-arm-pca" class="quarto-xref">Figure&nbsp;<span>8.7</span></a> is a 3D scatterplot of these z-scores, also showing the three principal components <span class="math inline">\((c_1, c_2, c_3)\)</span> in respective colours: orange, purple, and green.</p>
+<p><a href="#fig-arm-pca" class="quarto-xref">Figure&nbsp;<span>8.6</span></a> is a 3D scatterplot of these z-scores, also showing the three principal components <span class="math inline">\((c_1, c_2, c_3)\)</span> in respective colours: orange, purple, and green.</p>
 <div class="cell">
 <div id="fig-arm-pca" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -821,7 +821,7 @@ Figure&nbsp;8.6: US Arrest Z-scores: Principal Components
 </figure>
 </div>
 </div>
-<p>The first principal component <span class="math inline">\((c_1)\)</span> is a promising representative of overall violent crime level. As <a href="reduce-dim.html#fig-arm-loadings" class="quarto-xref">Figure&nbsp;<span>8.8</span></a> shows, the coefficient (loading) of each z-score variable on <span class="math inline">\(c_1\)</span> is positive. A violent crime index aligned with <span class="math inline">\(c_1\)</span> would respond to an increase in any of the three crime types. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>The first principal component <span class="math inline">\((c_1)\)</span> is a promising representative of overall violent crime level. As <a href="#fig-arm-loadings" class="quarto-xref">Figure&nbsp;<span>8.7</span></a> shows, the coefficient (loading) of each z-score variable on <span class="math inline">\(c_1\)</span> is positive. A violent crime index aligned with <span class="math inline">\(c_1\)</span> would respond to an increase in any of the three crime types. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-arm-loadings" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -836,7 +836,7 @@ Figure&nbsp;8.7: US Arrests: coefficients (loadings) of each principal component
 </div>
 </div>
 </div>
-<p>We want any crime index to account for a substantial proportion of total variation. Since the z-scores are constrained to have unit variance, total variation among the three z-scores is 3. <a href="reduce-dim.html#tbl-z-arm-pc-stats" class="quarto-xref">Table&nbsp;<span>8.5</span></a> shows how this variation is distributed across principal components.</p>
+<p>We want any crime index to account for a substantial proportion of total variation. Since the z-scores are constrained to have unit variance, total variation among the three z-scores is 3. <a href="#tbl-z-arm-pc-stats" class="quarto-xref">Table&nbsp;<span>8.3</span></a> shows how this variation is distributed across principal components.</p>
 <div class="cell">
 <div id="tbl-z-arm-pc-stats" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -881,7 +881,7 @@ Table&nbsp;8.3: Arrest z-scores: variance of principal components
 </figure>
 </div>
 </div>
-<p>The first principal component accounts for 79 percent of total variation—a strong candidate for a violent crime index. The second component captures differences between states with high rape rates versus high murder rates (note the opposite signs of these loadings in <a href="reduce-dim.html#fig-arm-loadings" class="quarto-xref">Figure&nbsp;<span>8.8</span></a>), accounting for an additional 15 percent.</p>
+<p>The first principal component accounts for 79 percent of total variation—a strong candidate for a violent crime index. The second component captures differences between states with high rape rates versus high murder rates (note the opposite signs of these loadings in <a href="#fig-arm-loadings" class="quarto-xref">Figure&nbsp;<span>8.7</span></a>), accounting for an additional 15 percent.</p>
 </section>
 </section>
 <section id="sec-pca-algebra" class="level2" data-number="8.5">
@@ -1009,7 +1009,7 @@ Figure&nbsp;8.8: Wine Quality PCA: variance of each component (scree plot)
 </div>
 </div>
 </div>
-<p><a href="reduce-dim.html#tbl-wq-pc-stats" class="quarto-xref">Table&nbsp;<span>8.7</span></a> provides numeric detail, including cumulative variance explained.</p>
+<p><a href="#tbl-wq-pc-stats" class="quarto-xref">Table&nbsp;<span>8.4</span></a> provides numeric detail, including cumulative variance explained.</p>
 <div class="cell">
 <div id="tbl-wq-pc-stats" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1318,7 +1318,7 @@ Figure&nbsp;8.11: PC1 scores: density from a Gaussian mixture model
 </div>
 </div>
 </div>
-<p>The two Gaussian components correspond closely to wine colour. <a href="reduce-dim.html#tbl-xtabs-class-color" class="quarto-xref">Table&nbsp;<span>8.8</span></a> shows the cross-tabulation.</p>
+<p>The two Gaussian components correspond closely to wine colour. <a href="#tbl-xtabs-class-color" class="quarto-xref">Table&nbsp;<span>8.6</span></a> shows the cross-tabulation.</p>
 <div class="cell">
 <div id="tbl-xtabs-class-color" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1408,13 +1408,13 @@ X_{\bullet, \bullet} = \sum_{k=1}^r \sigma_k u_{\bullet, k} v_{\bullet, k}^\top
 <h3 data-number="8.10.1" class="anchored" data-anchor-id="linear-structure-only"><span class="header-section-number">8.10.1</span> Linear Structure Only</h3>
 <p>PCA finds linear structure: the principal components are linear combinations of features, and the reduced representation is a linear projection. When data lie on or near a curved manifold, PCA may fail to capture the underlying structure.</p>
 <p>Consider data distributed along a spiral or S-curve in 3D space. The data are intrinsically one-dimensional (position along the curve), but PCA will find directions of maximum variance that cut across the curve rather than along it.</p>
-<p>Nonlinear methods such as kernel PCA, t-SNE, and UMAP address this limitation, though at the cost of interpretability and computational complexity. These methods are surveyed in <span class="quarto-unresolved-ref">?sec-lda-other-methods</span>.</p>
+<p>Nonlinear methods such as kernel PCA, t-SNE, and UMAP address this limitation, though at the cost of interpretability and computational complexity. These methods are surveyed in <a href="lin-discr.html#sec-lda-other-methods" class="quarto-xref"><span>Section 9.10</span></a>.</p>
 </section>
 <section id="unsupervised-labels-are-ignored" class="level3" data-number="8.10.2">
 <h3 data-number="8.10.2" class="anchored" data-anchor-id="unsupervised-labels-are-ignored"><span class="header-section-number">8.10.2</span> Unsupervised: Labels Are Ignored</h3>
 <p>PCA maximises variance without reference to any response variable. The directions of maximum variance may not be the directions most useful for prediction or classification.</p>
 <p>For example, in a two-class problem, the classes might differ primarily along a direction of <em>low</em> overall variance. PCA would rank this direction last, potentially discarding the very information needed for classification.</p>
-<p>Linear Discriminant Analysis (LDA), developed in <span class="quarto-unresolved-ref">?sec-lda</span>, addresses this by seeking directions that maximise <em>between-class</em> variance relative to <em>within-class</em> variance. LDA is the supervised counterpart to PCA.</p>
+<p>Linear Discriminant Analysis (LDA), developed in <a href="lin-discr.html" class="quarto-xref"><span>Chapter 9</span></a>, addresses this by seeking directions that maximise <em>between-class</em> variance relative to <em>within-class</em> variance. LDA is the supervised counterpart to PCA.</p>
 </section>
 <section id="when-variance-is-uninformative" class="level3" data-number="8.10.3">
 <h3 data-number="8.10.3" class="anchored" data-anchor-id="when-variance-is-uninformative"><span class="header-section-number">8.10.3</span> When Variance Is Uninformative</h3>
@@ -1446,12 +1446,12 @@ X_{\bullet, \bullet} = \sum_{k=1}^r \sigma_k u_{\bullet, k} v_{\bullet, k}^\top
 <li><p><strong>Geometric thinking</strong>: PCA is fundamentally about orthogonal projection onto data-determined subspaces. The geometry of inner products, norms, and perpendicularity underlies both the theory and interpretation.</p></li>
 <li><p><strong>Closed-form versus algorithmic</strong>: PCA represents the classical tradition of analytical solutions. In <a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a> we encountered <span class="math inline">\(k\)</span>-means, which iterates toward local optima. In subsequent chapters we will meet MCMC and EM, general algorithmic strategies for problems beyond analytical reach. PCA’s closed-form solution is available precisely because variance maximisation with a norm constraint yields a linear eigenvalue problem.</p></li>
 <li><p><strong>Information and variance</strong>: Directions of high variance carry information about differences among observations. Truncating to the first few principal components preserves the most informative directions—a connection to <a href="info-theory.html" class="quarto-xref"><span>Chapter 6</span></a>.</p></li>
-<li><p><strong>Supervised versus unsupervised</strong>: PCA is unsupervised; it finds structure in features without reference to any response. <span class="quarto-unresolved-ref">?sec-lda</span> develops LDA as the supervised counterpart, seeking directions that separate known classes.</p></li>
+<li><p><strong>Supervised versus unsupervised</strong>: PCA is unsupervised; it finds structure in features without reference to any response. <a href="lin-discr.html" class="quarto-xref"><span>Chapter 9</span></a> develops LDA as the supervised counterpart, seeking directions that separate known classes.</p></li>
 </ul>
 </section>
 <section id="looking-ahead" class="level3" data-number="8.11.3">
 <h3 data-number="8.11.3" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">8.11.3</span> Looking Ahead</h3>
-<p>PCA provides a foundation for dimension reduction in subsequent chapters. In <span class="quarto-unresolved-ref">?sec-lda</span>, we develop Linear Discriminant Analysis for supervised settings. In Part III (Text Data), dimension reduction techniques will help represent documents in manageable spaces. In Part IV (Time Series), spectral methods will decompose temporal variation. Throughout, the geometric intuition developed here—projection onto informative subspaces—will guide our understanding.</p>
+<p>PCA provides a foundation for dimension reduction in subsequent chapters. In <a href="lin-discr.html" class="quarto-xref"><span>Chapter 9</span></a>, we develop Linear Discriminant Analysis for supervised settings. In Part III (Text Data), dimension reduction techniques will help represent documents in manageable spaces. In Part IV (Time Series), spectral methods will decompose temporal variation. Throughout, the geometric intuition developed here—projection onto informative subspaces—will guide our understanding.</p>
 </section>
 </section>
 <section id="sec-pca-exercises" class="level2" data-number="8.12">
@@ -2008,8 +2008,8 @@ McNeil, Donald R. 1977. <em>Interactive Data Analysis: A Practical Primer</em>. 
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./reduce-dim.html" class="pagination-link" aria-label="Dimension Reduction">
-        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lin-discr.html" class="pagination-link" aria-label="Linear Discriminant Analysis">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

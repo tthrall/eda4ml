@@ -50,7 +50,7 @@ book:
       chapters: 
         - lin-reg.qmd
         - pca.qmd
-        - reduce-dim.qmd
+        - lin-discr.qmd
     - part: Text Data
       chapters:
         - text-analysis.qmd
