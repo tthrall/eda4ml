@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -426,6 +446,7 @@ window.Quarto = {
   <li><a href="#linear-versus-nonlinear" id="toc-linear-versus-nonlinear" class="nav-link" data-scroll-target="#linear-versus-nonlinear"><span class="header-section-number">9.10.2</span> Linear versus Nonlinear</a></li>
   <li><a href="#what-is-preserved" id="toc-what-is-preserved" class="nav-link" data-scroll-target="#what-is-preserved"><span class="header-section-number">9.10.3</span> What Is Preserved?</a></li>
   <li><a href="#practical-guidance" id="toc-practical-guidance" class="nav-link" data-scroll-target="#practical-guidance"><span class="header-section-number">9.10.4</span> Practical Guidance</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.10.5</span> Further Reading</a></li>
   </ul></li>
   <li><a href="#sec-lda-summary" id="toc-sec-lda-summary" class="nav-link" data-scroll-target="#sec-lda-summary"><span class="header-section-number">9.11</span> Summary</a>
   <ul>
@@ -464,7 +485,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:24 Mon 8-Dec-2025</p>
+      <p class="date">16:56 Mon 8-Dec-2025</p>
     </div>
   </div>
   
@@ -1120,37 +1141,38 @@ Table&nbsp;9.6: Wine quality classification confusion matrix
 </section>
 <section id="sec-lda-other-methods" class="level2" data-number="9.10">
 <h2 data-number="9.10" class="anchored" data-anchor-id="sec-lda-other-methods"><span class="header-section-number">9.10</span> Other Dimension Reduction Methods</h2>
-<p>We have examined PCA and LDA in depth because they are foundational, computationally tractable, and geometrically interpretable. Many other dimension reduction methods exist, each with different objectives.</p>
+<p>We have examined PCA and LDA in depth because they are foundational, computationally tractable, and geometrically interpretable. Many other dimension reduction methods exist, each with different objectives. This section provides a brief survey to orient readers who wish to explore further.</p>
 <section id="supervised-versus-unsupervised" class="level3" data-number="9.10.1">
 <h3 data-number="9.10.1" class="anchored" data-anchor-id="supervised-versus-unsupervised"><span class="header-section-number">9.10.1</span> Supervised versus Unsupervised</h3>
-<p><strong>Unsupervised methods</strong> find structure in features alone:</p>
+<p><strong>Unsupervised methods</strong> find structure in features alone, without reference to a response variable:</p>
 <ul>
-<li><strong>PCA</strong>: Maximises variance</li>
-<li><strong>Factor analysis</strong>: Separates common from unique variance</li>
-<li><strong>Independent Component Analysis (ICA)</strong>: Seeks statistically independent components</li>
-<li><strong>Clustering</strong>: Partitions observations into groups</li>
+<li><p><strong>PCA</strong>: Finds directions of maximum variance, as developed in <a href="pca.html" class="quarto-xref"><span>Chapter 8</span></a>.</p></li>
+<li><p><strong>Factor analysis</strong>: Like PCA, factor analysis represents observed variables as linear combinations of a smaller number of latent factors. Unlike PCA, factor analysis explicitly models <em>common variance</em> (shared among variables) separately from <em>unique variance</em> (specific to each variable). Factor analysis assumes a generative model—that observations arise from latent factors plus noise—whereas PCA is purely descriptive. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
+<li><p><strong>Independent Component Analysis (ICA)</strong>: While PCA seeks <em>uncorrelated</em> components, ICA seeks components that are statistically <em>independent</em>—a stronger condition. ICA is particularly useful for source separation problems, such as isolating individual voices from a recording of simultaneous speakers (the “cocktail party problem”). <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p></li>
+<li><p><strong>Clustering</strong>: Methods such as <span class="math inline">\(k\)</span>-means (<a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a>) and hierarchical clustering partition observations into groups based on feature similarity. Although clustering does not reduce dimension in the same sense as PCA, it provides a discrete, low-dimensional summary of the data (each observation’s cluster membership).</p></li>
 </ul>
-<p><strong>Supervised methods</strong> use response labels:</p>
+<p><strong>Supervised methods</strong> exploit a response variable to guide dimension reduction:</p>
 <ul>
-<li><strong>LDA</strong>: Maximises between-class separation</li>
-<li><strong>Logistic regression</strong>: Models class probabilities</li>
-<li><strong>Partial Least Squares (PLS)</strong>: Maximises covariance with response</li>
-<li><strong>Sufficient dimension reduction</strong>: Finds subspaces containing all predictive information</li>
+<li><p><strong>LDA</strong>: Finds directions that maximize between-class separation, as developed in this chapter.</p></li>
+<li><p><strong>Logistic regression</strong>: For classification problems, logistic regression models the log-odds of class membership as a linear function of predictors. Like LDA, it produces linear decision boundaries, but it makes no assumption about the distribution of features within classes. When the LDA assumptions hold, both methods yield similar results; when violated, logistic regression may be more robust.</p></li>
+<li><p><strong>Partial Least Squares (PLS)</strong>: PLS finds linear combinations of predictors that have maximum covariance with the response. Unlike PCA (which ignores <span class="math inline">\(Y\)</span>) or ordinary regression (which may overfit when <span class="math inline">\(d\)</span> is large), PLS balances variance explained in <span class="math inline">\(X\)</span> with predictive power for <span class="math inline">\(Y\)</span>. PLS is particularly useful when predictors are highly collinear. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p></li>
+<li><p><strong>Sufficient dimension reduction</strong>: Methods such as Sliced Inverse Regression (SIR) seek the lowest-dimensional subspace of predictors that captures all information relevant to predicting <span class="math inline">\(Y\)</span>. Unlike variable selection (which chooses a subset of original predictors), sufficient dimension reduction finds linear combinations that may involve all predictors. These methods generalize Fisher’s discriminant analysis to continuous responses and more flexible model structures. <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p></li>
 </ul>
 </section>
 <section id="linear-versus-nonlinear" class="level3" data-number="9.10.2">
 <h3 data-number="9.10.2" class="anchored" data-anchor-id="linear-versus-nonlinear"><span class="header-section-number">9.10.2</span> Linear versus Nonlinear</h3>
-<p>PCA and LDA are linear: the reduced representation is a linear combination of original features. When data lie on curved manifolds, nonlinear methods may be needed:</p>
+<p>PCA and LDA are linear methods: the reduced representation is a linear combination of original features. When data lie on or near a curved manifold embedded in high-dimensional space, nonlinear methods may reveal structure that linear methods miss.</p>
 <ul>
-<li><strong>Kernel PCA</strong>: Applies PCA in a feature space defined by a kernel function</li>
-<li><strong>t-SNE</strong>: Preserves local neighborhood structure; excellent for visualization</li>
-<li><strong>UMAP</strong>: Similar to t-SNE but often faster and may preserve more global structure</li>
-<li><strong>Autoencoders</strong>: Neural networks that learn nonlinear compressions</li>
+<li><p><strong>Kernel PCA</strong>: Applies PCA in a high-dimensional feature space defined implicitly by a kernel function. The “kernel trick” allows computation without explicitly constructing the high-dimensional features. Different kernel choices (polynomial, radial basis function, etc.) capture different notions of nonlinear structure. <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p></li>
+<li><p><strong>Multidimensional Scaling (MDS)</strong>: MDS finds a low-dimensional configuration of points that preserves pairwise distances as well as possible. <em>Classical</em> MDS assumes Euclidean distances and is equivalent to PCA. <em>Non-metric</em> MDS relaxes this, seeking only to preserve the rank order of distances, which can accommodate more general dissimilarity measures. <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p></li>
+<li><p><strong>t-SNE (t-distributed Stochastic Neighbor Embedding)</strong>: t-SNE converts pairwise distances to probabilities (nearby points have high probability of being “neighbors”) and seeks a low-dimensional embedding with similar neighborhood probabilities. It excels at visualization, often revealing cluster structure invisible to linear methods. However, t-SNE is primarily a visualization tool—distances in the embedding do not have a simple interpretation, and results can be sensitive to hyperparameter choices. <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p></li>
+<li><p><strong>UMAP (Uniform Manifold Approximation and Projection)</strong>: Like t-SNE, UMAP preserves local neighborhood structure and is widely used for visualization. UMAP is generally faster than t-SNE and often better preserves global structure, though both methods are primarily exploratory tools rather than inferential techniques. <a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p></li>
+<li><p><strong>Autoencoders</strong>: A neural network architecture that learns to compress data to a low-dimensional “bottleneck” layer and then reconstruct it. The bottleneck representation serves as a nonlinear dimension reduction. Autoencoders can learn highly flexible transformations but require substantial data and computation, and the learned representation may be difficult to interpret. <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p></li>
 </ul>
 </section>
 <section id="what-is-preserved" class="level3" data-number="9.10.3">
 <h3 data-number="9.10.3" class="anchored" data-anchor-id="what-is-preserved"><span class="header-section-number">9.10.3</span> What Is Preserved?</h3>
-<p>Different methods optimize different objectives:</p>
+<p>Different methods optimize different objectives. The choice of method depends on what structure you hope to find or preserve:</p>
 <div id="tbl-method-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-method-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1186,18 +1208,24 @@ Table&nbsp;9.7: Dimension reduction methods compared
 <td>Yes</td>
 </tr>
 <tr class="even">
+<td>PLS</td>
+<td>Covariance with <span class="math inline">\(Y\)</span></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
 <td>MDS</td>
 <td>Pairwise distances</td>
 <td>No</td>
 <td>Depends</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>t-SNE</td>
 <td>Local neighborhoods</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>UMAP</td>
 <td>Local neighborhoods</td>
 <td>No</td>
@@ -1211,13 +1239,24 @@ Table&nbsp;9.7: Dimension reduction methods compared
 </section>
 <section id="practical-guidance" class="level3" data-number="9.10.4">
 <h3 data-number="9.10.4" class="anchored" data-anchor-id="practical-guidance"><span class="header-section-number">9.10.4</span> Practical Guidance</h3>
-<p>A reasonable workflow:</p>
+<p>A reasonable workflow for dimension reduction:</p>
 <ol type="1">
-<li>Begin with PCA for exploratory visualization</li>
-<li>If class labels are available and classification is the goal, try LDA</li>
-<li>If linear methods reveal limited structure, consider t-SNE or UMAP for visualization</li>
-<li>When <span class="math inline">\(d &gt; n\)</span>, regularisation becomes essential; consider penalised methods</li>
+<li><p><strong>Begin with PCA</strong> for exploratory visualization and to assess intrinsic dimensionality. Examine the scree plot to gauge how many dimensions capture most of the variance.</p></li>
+<li><p><strong>If class labels are available</strong> and classification is the goal, apply LDA. Compare the discriminant directions to the principal components—substantial differences suggest that class structure does not align with directions of maximum variance.</p></li>
+<li><p><strong>If linear methods reveal limited structure</strong>, consider t-SNE or UMAP for visualization. These methods can uncover nonlinear structure but require careful interpretation.</p></li>
+<li><p><strong>When <span class="math inline">\(d &gt; n\)</span></strong>, regularization becomes essential. Consider regularized discriminant analysis, penalized regression (ridge, lasso), or methods designed for high-dimensional settings.</p></li>
+<li><p><strong>Match the method to the goal</strong>: Use supervised methods (LDA, PLS) when prediction is the objective; use unsupervised methods (PCA, t-SNE) when exploration or visualization is the priority.</p></li>
 </ol>
+</section>
+<section id="further-reading" class="level3" data-number="9.10.5">
+<h3 data-number="9.10.5" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">9.10.5</span> Further Reading</h3>
+<p>For readers wishing to explore these methods in greater depth:</p>
+<ul>
+<li><p><span class="citation" data-cites="ISLR_2021">James et al. (<a href="references.html#ref-ISLR_2021" role="doc-biblioref">2021</a>)</span> (Chapters 6 and 12) provides an accessible introduction to dimension reduction in the context of statistical learning, including PCA, clustering, and regularization methods.</p></li>
+<li><p><span class="citation" data-cites="Hastie_2009_ESL">Hastie, Tibshirani, and Friedman (<a href="references.html#ref-Hastie_2009_ESL" role="doc-biblioref">2009</a>)</span> (Chapters 14 and 18) offers a more advanced treatment of unsupervised learning and high-dimensional methods.</p></li>
+<li><p><span class="citation" data-cites="Kuhn_Silge_tmwr">Kuhn and Silge (<a href="references.html#ref-Kuhn_Silge_tmwr" role="doc-biblioref">2022</a>)</span> demonstrates practical workflows for dimension reduction using tidymodels, including PCA and PLS as preprocessing steps for modeling.</p></li>
+<li><p>For nonlinear methods, the documentation and tutorials accompanying the respective R packages (referenced in footnotes above) provide the most current guidance.</p></li>
+</ul>
 </section>
 </section>
 <section id="sec-lda-summary" class="level2" data-number="9.11">
@@ -1311,7 +1350,38 @@ B = \sum_{k=1}^{K} \pi_k (\mu_k - \bar{\mu})(\mu_k - \bar{\mu})^\top
 <p><strong>Exercise 9.10</strong> (Projection preserves classification) For LDA, suppose we project onto the first <span class="math inline">\(\ell\)</span> discriminant directions. Argue that this projection preserves all information needed for LDA classification when <span class="math inline">\(\ell = \min(d, K-1)\)</span>.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Hastie_2009_ESL" class="csl-entry" role="listitem">
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2009. <em>The Elements of Statistical Learning: Data Mining, Inference and Prediction</em>. 2nd ed. Springer. <a href="http://www-stat.stanford.edu/~tibs/ElemStatLearn/">http://www-stat.stanford.edu/~tibs/ElemStatLearn/</a>.
+</div>
+<div id="ref-ISLR_2021" class="csl-entry" role="listitem">
+James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2021. <em>An Introduction to Statistical Learning: With Applications in r</em>. Springer US Springer. https://doi.org/<a href="https://doi.org/10.1007/978-1-0716-1418-1">https://doi.org/10.1007/978-1-0716-1418-1</a>.
+</div>
+<div id="ref-Kuhn_Silge_tmwr" class="csl-entry" role="listitem">
+Kuhn, Max, and Julia Silge. 2022. <em>Tidy Modeling with r</em>. O’Reilly Media. <a href="https://www.tmwr.org/">https://www.tmwr.org/</a>.
+</div>
+<div id="ref-Li_2018_SDR" class="csl-entry" role="listitem">
+Li, B. 2018. <em>Sufficient Dimension Reduction: Methods and Applications with r</em>. Chapman &amp; Hall/CRC Monographs on Statistics and Applied Probability. CRC Press. <a href="https://books.google.co.uk/books?id=5pdYDwAAQBAJ">https://books.google.co.uk/books?id=5pdYDwAAQBAJ</a>.
+</div>
+<div id="ref-vanDerMaaten_2008_tSNE" class="csl-entry" role="listitem">
+Maaten, Laurens van der, and Geoffrey Hinton. 2008. <span>“Visualizing Data Using <span class="nocase">t-SNE</span>.”</span> <em>Journal of Machine Learning Research</em> 9: 2579–2605. <a href="http://www.jmlr.org/papers/v9/vandermaaten08a.html">http://www.jmlr.org/papers/v9/vandermaaten08a.html</a>.
+</div>
+</div>
 </section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>See <code>psych::fa()</code> for factor analysis in R. The package vignette provides an accessible introduction: <code>vignette("psych_for_sem", package = "psych")</code>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See <code>fastICA::fastICA()</code> for Independent Component Analysis in R.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>See <code>pls::plsr()</code> for Partial Least Squares Regression in R. The package vignette provides a comprehensive introduction: <code>vignette("pls-manual", package = "pls")</code>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>See <code>dr::dr()</code> for Sliced Inverse Regression and related methods in R. <span class="citation" data-cites="Li_2018_SDR">Li (<a href="references.html#ref-Li_2018_SDR" role="doc-biblioref">2018</a>)</span> provides a book-length treatment.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>See <code>kernlab::kpca()</code> for Kernel PCA in R.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>See <code>stats::cmdscale()</code> for classical MDS and <code>MASS::isoMDS()</code> for non-metric MDS in R.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>See <code>Rtsne::Rtsne()</code> for t-SNE in R. The original paper by <span class="citation" data-cites="vanDerMaaten_2008_tSNE">Maaten and Hinton (<a href="references.html#ref-vanDerMaaten_2008_tSNE" role="doc-biblioref">2008</a>)</span> provides theoretical background.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>See the <code>umap</code> package for UMAP in R. The Python implementation <code>umap-learn</code> has extensive documentation at <a href="https://umap-learn.readthedocs.io/" class="uri">https://umap-learn.readthedocs.io/</a>.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>See the <code>keras3</code> package for building autoencoders in R. The RStudio Keras documentation at <a href="https://keras.posit.co/" class="uri">https://keras.posit.co/</a> provides tutorials.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

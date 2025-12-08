@@ -1019,72 +1019,42 @@ In practice, both methods often yield similar results.  The wine color classific
 
 ## Other Dimension Reduction Methods {#sec-lda-other-methods}
 
-We have examined PCA and LDA in depth because they are foundational, computationally tractable, and geometrically interpretable.  Many other dimension reduction methods exist, each with different objectives.  This section provides a brief survey to orient readers who wish to explore further.
+We have examined PCA and LDA in depth because they are foundational, computationally tractable, and geometrically interpretable.  Many other dimension reduction methods exist, each with different objectives.
 
 ### Supervised versus Unsupervised
 
-**Unsupervised methods** find structure in features alone, without reference to a response variable:
+**Unsupervised methods** find structure in features alone:
 
-- **PCA**: Finds directions of maximum variance, as developed in @sec-pca.
+- **PCA**: Maximises variance
+- **Factor analysis**: Separates common from unique variance
+- **Independent Component Analysis (ICA)**: Seeks statistically independent components
+- **Clustering**: Partitions observations into groups
 
-- **Factor analysis**: Like PCA, factor analysis represents observed variables as linear combinations of a smaller number of latent factors.  Unlike PCA, factor analysis explicitly models *common variance* (shared among variables) separately from *unique variance* (specific to each variable).  Factor analysis assumes a generative model—that observations arise from latent factors plus noise—whereas PCA is purely descriptive. [^fa-pkg]
+**Supervised methods** use response labels:
 
-- **Independent Component Analysis (ICA)**: While PCA seeks *uncorrelated* components, ICA seeks components that are statistically *independent*—a stronger condition.  ICA is particularly useful for source separation problems, such as isolating individual voices from a recording of simultaneous speakers (the "cocktail party problem"). [^ica-pkg]
-
-- **Clustering**: Methods such as $k$-means (@sec-clustering) and hierarchical clustering partition observations into groups based on feature similarity.  Although clustering does not reduce dimension in the same sense as PCA, it provides a discrete, low-dimensional summary of the data (each observation's cluster membership).
-
-[^fa-pkg]: See `psych::fa()` for factor analysis in R.  The package vignette provides an accessible introduction: `vignette("psych_for_sem", package = "psych")`.
-
-[^ica-pkg]: See `fastICA::fastICA()` for Independent Component Analysis in R.
-
-**Supervised methods** exploit a response variable to guide dimension reduction:
-
-- **LDA**: Finds directions that maximize between-class separation, as developed in this chapter.
-
-- **Logistic regression**: For classification problems, logistic regression models the log-odds of class membership as a linear function of predictors.  Like LDA, it produces linear decision boundaries, but it makes no assumption about the distribution of features within classes.  When the LDA assumptions hold, both methods yield similar results; when violated, logistic regression may be more robust.
-
-- **Partial Least Squares (PLS)**: PLS finds linear combinations of predictors that have maximum covariance with the response.  Unlike PCA (which ignores $Y$) or ordinary regression (which may overfit when $d$ is large), PLS balances variance explained in $X$ with predictive power for $Y$.  PLS is particularly useful when predictors are highly collinear. [^pls-pkg]
-
-- **Sufficient dimension reduction**: Methods such as Sliced Inverse Regression (SIR) seek the lowest-dimensional subspace of predictors that captures all information relevant to predicting $Y$.  Unlike variable selection (which chooses a subset of original predictors), sufficient dimension reduction finds linear combinations that may involve all predictors.  These methods generalize Fisher's discriminant analysis to continuous responses and more flexible model structures. [^sdr-ref]
-
-[^pls-pkg]: See `pls::plsr()` for Partial Least Squares Regression in R.  The package vignette provides a comprehensive introduction: `vignette("pls-manual", package = "pls")`.
-
-[^sdr-ref]: See `dr::dr()` for Sliced Inverse Regression and related methods in R.  @Li_2018_SDR provides a book-length treatment.
+- **LDA**: Maximises between-class separation
+- **Logistic regression**: Models class probabilities
+- **Partial Least Squares (PLS)**: Maximises covariance with response
+- **Sufficient dimension reduction**: Finds subspaces containing all predictive information
 
 ### Linear versus Nonlinear
 
-PCA and LDA are linear methods: the reduced representation is a linear combination of original features.  When data lie on or near a curved manifold embedded in high-dimensional space, nonlinear methods may reveal structure that linear methods miss.
+PCA and LDA are linear: the reduced representation is a linear combination of original features.  When data lie on curved manifolds, nonlinear methods may be needed:
 
-- **Kernel PCA**: Applies PCA in a high-dimensional feature space defined implicitly by a kernel function.  The "kernel trick" allows computation without explicitly constructing the high-dimensional features.  Different kernel choices (polynomial, radial basis function, etc.) capture different notions of nonlinear structure. [^kpca-pkg]
-
-- **Multidimensional Scaling (MDS)**: MDS finds a low-dimensional configuration of points that preserves pairwise distances as well as possible.  *Classical* MDS assumes Euclidean distances and is equivalent to PCA.  *Non-metric* MDS relaxes this, seeking only to preserve the rank order of distances, which can accommodate more general dissimilarity measures. [^mds-pkg]
-
-- **t-SNE (t-distributed Stochastic Neighbor Embedding)**: t-SNE converts pairwise distances to probabilities (nearby points have high probability of being "neighbors") and seeks a low-dimensional embedding with similar neighborhood probabilities.  It excels at visualization, often revealing cluster structure invisible to linear methods.  However, t-SNE is primarily a visualization tool—distances in the embedding do not have a simple interpretation, and results can be sensitive to hyperparameter choices. [^tsne-pkg]
-
-- **UMAP (Uniform Manifold Approximation and Projection)**: Like t-SNE, UMAP preserves local neighborhood structure and is widely used for visualization.  UMAP is generally faster than t-SNE and often better preserves global structure, though both methods are primarily exploratory tools rather than inferential techniques. [^umap-pkg]
-
-- **Autoencoders**: A neural network architecture that learns to compress data to a low-dimensional "bottleneck" layer and then reconstruct it.  The bottleneck representation serves as a nonlinear dimension reduction.  Autoencoders can learn highly flexible transformations but require substantial data and computation, and the learned representation may be difficult to interpret. [^ae-pkg]
-
-[^kpca-pkg]: See `kernlab::kpca()` for Kernel PCA in R.
-
-[^mds-pkg]: See `stats::cmdscale()` for classical MDS and `MASS::isoMDS()` for non-metric MDS in R.
-
-[^tsne-pkg]: See `Rtsne::Rtsne()` for t-SNE in R.  The original paper by @vanDerMaaten_2008_tSNE provides theoretical background.
-
-[^umap-pkg]: See the `umap` package for UMAP in R.  The Python implementation `umap-learn` has extensive documentation at <https://umap-learn.readthedocs.io/>.
-
-[^ae-pkg]: See the `keras3` package for building autoencoders in R.  The RStudio Keras documentation at <https://keras.posit.co/> provides tutorials.
+- **Kernel PCA**: Applies PCA in a feature space defined by a kernel function
+- **t-SNE**: Preserves local neighborhood structure; excellent for visualization
+- **UMAP**: Similar to t-SNE but often faster and may preserve more global structure
+- **Autoencoders**: Neural networks that learn nonlinear compressions
 
 ### What Is Preserved?
 
-Different methods optimize different objectives.  The choice of method depends on what structure you hope to find or preserve:
+Different methods optimize different objectives:
 
 | Method | Preserves | Supervised? | Linear? |
 |--------|-----------|-------------|---------|
 | PCA | Variance | No | Yes |
 | LDA | Class separation | Yes | Yes |
 | Factor analysis | Common variance | No | Yes |
-| PLS | Covariance with $Y$ | Yes | Yes |
 | MDS | Pairwise distances | No | Depends |
 | t-SNE | Local neighborhoods | No | No |
 | UMAP | Local neighborhoods | No | No |
@@ -1093,29 +1063,12 @@ Different methods optimize different objectives.  The choice of method depends o
 
 ### Practical Guidance
 
-A reasonable workflow for dimension reduction:
+A reasonable workflow:
 
-1. **Begin with PCA** for exploratory visualization and to assess intrinsic dimensionality.  Examine the scree plot to gauge how many dimensions capture most of the variance.
-
-2. **If class labels are available** and classification is the goal, apply LDA.  Compare the discriminant directions to the principal components—substantial differences suggest that class structure does not align with directions of maximum variance.
-
-3. **If linear methods reveal limited structure**, consider t-SNE or UMAP for visualization.  These methods can uncover nonlinear structure but require careful interpretation.
-
-4. **When $d > n$**, regularization becomes essential.  Consider regularized discriminant analysis, penalized regression (ridge, lasso), or methods designed for high-dimensional settings.
-
-5. **Match the method to the goal**: Use supervised methods (LDA, PLS) when prediction is the objective; use unsupervised methods (PCA, t-SNE) when exploration or visualization is the priority.
-
-### Further Reading
-
-For readers wishing to explore these methods in greater depth:
-
-- @ISLR_2021 (Chapters 6 and 12) provides an accessible introduction to dimension reduction in the context of statistical learning, including PCA, clustering, and regularization methods.
-
-- @Hastie_2009_ESL (Chapters 14 and 18) offers a more advanced treatment of unsupervised learning and high-dimensional methods.
-
-- @Kuhn_Silge_tmwr demonstrates practical workflows for dimension reduction using tidymodels, including PCA and PLS as preprocessing steps for modeling.
-
-- For nonlinear methods, the documentation and tutorials accompanying the respective R packages (referenced in footnotes above) provide the most current guidance.
+1. Begin with PCA for exploratory visualization
+2. If class labels are available and classification is the goal, try LDA
+3. If linear methods reveal limited structure, consider t-SNE or UMAP for visualization
+4. When $d > n$, regularisation becomes essential; consider penalised methods
 
 ## Summary {#sec-lda-summary}
 
