@@ -49,6 +49,7 @@ book:
     - part: Linear Algebra
       chapters: 
         - lin-reg.qmd
+        - pca.qmd
         - reduce-dim.qmd
     - part: Text Data
       chapters:
