@@ -1,0 +1,796 @@
+---
+title: "Text as Data"
+subtitle: "From Documents to Discoveries"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 10"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: CRAN-libraries
+
+library(here)
+library(knitr)
+library(tidyverse)
+library(tidytext)
+library(janeaustenr)
+library(SnowballC)
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "eda4ml_set_seed.R"))
+```
+
+# What Questions Can We Ask of Text?
+
+## The Investment Analyst's Problem
+
+You work at an investment firm. Your task:
+
+. . .
+
+> Review 500 quarterly reports and analyst reactions from companies in your portfolio. Identify emerging themes. Flag concerns. Recommend adjustments.
+
+. . .
+
+You cannot read 500 reports carefully. What do you do?
+
+## Questions About Text
+
+Given a collection of documents (a *corpus*), we might ask:
+
+. . .
+
+1. **What words distinguish this document?** (distinctive terms)
+
+. . .
+
+2. **What themes appear across the corpus?** (topic discovery)
+
+. . .
+
+3. **How similar are two documents?** (document comparison)
+
+. . .
+
+4. **How has language changed over time?** (temporal patterns)
+
+. . .
+
+5. **What is this document about?** (summarization, classification)
+
+## Two Eras of Text Analysis
+
+**Classical methods** (1990s–2010s):
+
+- Statistical summaries: word counts, tf-idf, topic models
+- Fast, interpretable, scalable
+- Computers "measure" text; humans interpret
+
+. . .
+
+**Large Language Models** (2020s–):
+
+- Direct summarization, Q&A, classification
+- Flexible, expensive, less transparent
+- Computers "understand" text (or appear to)
+
+. . .
+
+::: {.callout-note}
+## The Goal of This Chapter
+
+Build intuition about text-as-data so you can **ask better questions** and **evaluate answers critically**—whether from classical methods or LLMs.
+:::
+
+# Text as High-Dimensional Data
+
+## From Text to Numbers
+
+To analyze text computationally, we must convert it to numbers.
+
+. . .
+
+**Step 1: Tokenization** — Break text into units (usually words)
+
+**Step 2: Vocabulary** — Identify the set of unique terms
+
+**Step 3: Counting** — Record which terms appear in which documents
+
+. . .
+
+The result: a **term-document matrix** (or document-term matrix).
+
+## Example: Macbeth's Soliloquy
+
+```{r}
+#| label: macbeth-example
+
+macbeth <- tibble::tibble(
+  line_id = 1:5,
+  text = c(
+    "Life's but a walking shadow, a poor player",
+    "That struts and frets his hour upon the stage",
+    "And then is heard no more: it is a tale",
+    "Told by an idiot, full of sound and fury",
+    "Signifying nothing"
+  )
+)
+```
+
+```{r}
+#| label: macbeth-tokens
+#| echo: true
+
+macbeth_tokens <- macbeth |>
+  tidytext::unnest_tokens(word, text)
+
+macbeth_tokens |> head(10)
+```
+
+## The Stop Words Problem
+
+```{r}
+#| label: macbeth-counts
+
+macbeth_counts <- macbeth_tokens |>
+  dplyr::count(word, sort = TRUE)
+```
+
+Most frequent words:
+
+```{r}
+macbeth_counts |> head(8) |> knitr::kable()
+```
+
+. . .
+
+"A" and "is" tell us nothing about Macbeth. These are **stop words**—common words that carry little information.
+
+## After Removing Stop Words
+
+```{r}
+#| label: macbeth-no-stop
+#| echo: true
+
+macbeth_meaningful <- macbeth_tokens |>
+  dplyr::anti_join(tidytext::stop_words, by = "word") |>
+  dplyr::count(word, sort = TRUE)
+
+macbeth_meaningful |> knitr::kable()
+```
+
+. . .
+
+Now we see content words: shadow, player, stage, tale, sound, fury...
+
+## The Term-Document Matrix
+
+For a corpus of $D$ documents with vocabulary of $V$ terms:
+
+. . .
+
+$$
+\mathbf{M}_{V \times D} = \begin{pmatrix} 
+m_{1,1} & m_{1,2} & \cdots & m_{1,D} \\
+m_{2,1} & m_{2,2} & \cdots & m_{2,D} \\
+\vdots & \vdots & \ddots & \vdots \\
+m_{V,1} & m_{V,2} & \cdots & m_{V,D}
+\end{pmatrix}
+$$
+
+. . .
+
+where $m_{v,d}$ = count of term $v$ in document $d$.
+
+. . .
+
+**Key property**: This matrix is extremely **sparse**. Most entries are zero.
+
+## Connection to Part 2
+
+::: {.callout-tip}
+## Text is Just Another Feature Matrix
+
+The term-document matrix is an $n \times d$ matrix where:
+
+- Each document is an observation (row)
+- Each term is a feature (column)
+- The "curse of dimensionality" applies—$d$ can be tens of thousands
+:::
+
+. . .
+
+Everything we learned about high-dimensional data applies:
+
+- PCA can find directions of variation
+- Clustering can group similar documents
+- Distance measures can compare documents
+
+## The Sparsity Challenge
+
+```{r}
+#| label: sparsity-visual
+#| fig-cap: "Term-document matrices are extremely sparse"
+#| fig-height: 4
+
+# Simulate sparse matrix visualization
+set.seed(42)
+n_docs <- 50
+n_terms <- 100
+sparsity <- 0.95
+
+sparse_mat <- matrix(
+  rbinom(n_docs * n_terms, 1, 1 - sparsity),
+  nrow = n_terms, ncol = n_docs
+)
+
+sparse_df <- sparse_mat |>
+  as.data.frame() |>
+  tibble::rownames_to_column("term") |>
+  tidyr::pivot_longer(-term, names_to = "doc", values_to = "present") |>
+  dplyr::mutate(
+    term = as.integer(term),
+    doc = as.integer(gsub("V", "", doc))
+  )
+
+ggplot2::ggplot(sparse_df, aes(x = doc, y = term, fill = factor(present))) +
+  ggplot2::geom_tile() +
+  ggplot2::scale_fill_manual(values = c("0" = "gray20", "1" = "steelblue")) +
+  ggplot2::labs(
+    title = "Term-Document Matrix (simulated)",
+    subtitle = "Blue = term present; ~95% of entries are zero",
+    x = "Document", y = "Term"
+  ) +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(legend.position = "none")
+```
+
+. . .
+
+Typical corpora: 99% zeros. Most words don't appear in most documents.
+
+# Which Words Matter?
+
+## The Problem with Raw Counts
+
+If we rank words by frequency across a corpus, we get:
+
+. . .
+
+*the, and, to, of, a, in, that, is, was, for...*
+
+. . .
+
+These words appear in *every* document. They don't distinguish anything.
+
+. . .
+
+We need a measure that asks:
+
+> Which words are **distinctive** to this document?
+
+## Term Frequency (TF)
+
+**Term frequency** measures how often a term appears in a document:
+
+$$
+\text{tf}(t, d) = \frac{\text{count of term } t \text{ in document } d}{\text{total terms in document } d}
+$$
+
+. . .
+
+High tf means the term is prominent *in this document*.
+
+. . .
+
+But "the" has high tf in every document—not distinctive.
+
+## Inverse Document Frequency (IDF)
+
+**Inverse document frequency** measures how rare a term is across the corpus:
+
+$$
+\text{idf}(t) = \log \frac{\text{total documents}}{\text{documents containing term } t}
+$$
+
+. . .
+
+- If term appears in **all** documents: $\text{idf} = \log(1) = 0$
+- If term appears in **one** document: $\text{idf} = \log(D)$ (large)
+
+. . .
+
+IDF downweights common terms, upweights rare ones.
+
+## TF-IDF: The Product
+
+$$
+\text{tf-idf}(t, d) = \text{tf}(t, d) \times \text{idf}(t)
+$$
+
+. . .
+
+::: {.callout-tip}
+## TF-IDF Intuition
+
+A term has high tf-idf if it is:
+
+- **Frequent in this document** (high tf), AND
+- **Rare across the corpus** (high idf)
+:::
+
+. . .
+
+This surfaces *distinctive* words—the words that make this document different.
+
+## Example: Jane Austen's Novels
+
+```{r}
+#| label: austen-tfidf-prep
+
+austen_words <- janeaustenr::austen_books() |>
+  tidytext::unnest_tokens(word, text) |>
+  dplyr::count(book, word, sort = TRUE)
+
+austen_total <- austen_words |>
+  dplyr::group_by(book) |>
+  dplyr::summarise(total = sum(n))
+
+austen_words <- austen_words |>
+  dplyr::left_join(austen_total, by = "book")
+
+austen_tfidf <- austen_words |>
+  tidytext::bind_tf_idf(word, book, n)
+```
+
+```{r}
+#| label: fig-austen-tfidf
+#| fig-cap: "Top tf-idf words for each Jane Austen novel"
+#| fig-height: 5
+
+austen_tfidf |>
+  dplyr::group_by(book) |>
+  dplyr::slice_max(tf_idf, n = 5) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(word = tidytext::reorder_within(word, tf_idf, book)) |>
+  ggplot2::ggplot(aes(x = tf_idf, y = word, fill = book)) +
+  ggplot2::geom_col(show.legend = FALSE) +
+  ggplot2::facet_wrap(~book, scales = "free_y") +
+  tidytext::scale_y_reordered() +
+  ggplot2::labs(
+    title = "Most Distinctive Words by Novel",
+    x = "tf-idf", y = NULL
+  ) +
+  ggplot2::theme_minimal(base_size = 11)
+```
+
+## What TF-IDF Reveals
+
+Each novel's distinctive words are **character names**:
+
+- *Emma*: Emma, Harriet, Weston, Knightley
+- *Pride and Prejudice*: Darcy, Bennet, Bingley, Elizabeth
+- *Sense and Sensibility*: Elinor, Marianne, Willoughby
+
+. . .
+
+TF-IDF automatically surfaces what makes each document unique.
+
+. . .
+
+::: {.callout-note}
+## For Your Investment Analyst
+
+TF-IDF on quarterly reports would surface: company-specific terms, unusual product names, emerging risk language...
+:::
+
+# Finding Themes: Topic Models
+
+## Beyond Individual Words
+
+TF-IDF tells us which words are distinctive.
+
+But words cluster into **themes**:
+
+. . .
+
+- "inflation", "rates", "Fed", "monetary" → *Macroeconomic concerns*
+- "supply", "chain", "shortage", "logistics" → *Supply chain issues*
+- "AI", "automation", "workforce", "efficiency" → *Technology transformation*
+
+. . .
+
+**Topic models** discover these latent themes automatically.
+
+## The Topic Model Idea
+
+::: {.callout-tip}
+## Two Key Assumptions
+
+1. **Each document is a mixture of topics**
+   - Document A: 60% finance, 30% technology, 10% politics
+
+2. **Each topic is a mixture of words**
+   - "Finance" topic: high probability for "market", "stock", "earnings"...
+:::
+
+. . .
+
+Given a corpus, the algorithm discovers both:
+- What topics exist
+- Which topics each document expresses
+
+## Latent Dirichlet Allocation (LDA)
+
+The most common topic model is **Latent Dirichlet Allocation**.
+
+. . .
+
+Yes—the *other* LDA! (Recall Chapter 9's Linear Discriminant Analysis.)
+
+. . .
+
+**The name**: 
+- *Latent*: The topics are hidden; we infer them from word patterns
+- *Dirichlet*: A probability distribution used to model mixtures
+- *Allocation*: Assigning words to topics
+
+## LDA: The Generative Story
+
+Imagine each document was generated as follows:
+
+. . .
+
+1. **Choose a topic mixture** for this document
+   - "This document is 70% Topic A, 30% Topic B"
+
+. . .
+
+2. **For each word position**:
+   - Roll the dice to pick a topic
+   - From that topic's word distribution, generate a word
+
+. . .
+
+LDA inverts this process: given documents, infer the topics.
+
+## Example: AP News Articles
+
+```{r}
+#| label: ap-topics-prep
+
+# Pre-computed LDA results from eda4mldata
+ap_topics <- eda4mldata::ap_topics
+```
+
+2,246 Associated Press articles, fit with $K = 2$ topics:
+
+```{r}
+#| label: fig-ap-topics
+#| fig-cap: "Top words in each topic (AP articles, K=2)"
+#| fig-height: 4
+
+ap_top_terms <- ap_topics |>
+  dplyr::group_by(topic) |>
+  dplyr::slice_max(beta, n = 10) |>
+  dplyr::ungroup()
+
+ap_top_terms |>
+  dplyr::mutate(
+    term = tidytext::reorder_within(term, beta, topic),
+    topic = paste("Topic", topic)
+  ) |>
+  ggplot2::ggplot(aes(x = beta, y = term, fill = topic)) +
+  ggplot2::geom_col(show.legend = FALSE) +
+  ggplot2::facet_wrap(~topic, scales = "free_y") +
+  tidytext::scale_y_reordered() +
+  ggplot2::labs(
+    title = "Two Topics Discovered in AP Articles",
+    x = "Word probability (β)", y = NULL
+  ) +
+  ggplot2::theme_minimal(base_size = 12)
+```
+
+## Interpreting the Topics
+
+**Topic 1**: percent, million, billion, company, market...
+
+→ *Business/Finance*
+
+. . .
+
+**Topic 2**: president, government, party, members, congress...
+
+→ *Politics/Government*
+
+. . .
+
+The algorithm knew nothing about these categories—it discovered them from word co-occurrence patterns.
+
+## Choosing K: The Number of Topics
+
+Like $k$-means clustering, you must choose $K$.
+
+. . .
+
+**Too few topics**: Themes are too broad, mix unrelated content
+
+**Too many topics**: Themes are too narrow, hard to interpret
+
+. . .
+
+**Practical approaches**:
+
+- Domain knowledge: "I expect 5–10 themes in this corpus"
+- Coherence metrics: Do top words in each topic make sense together?
+- Iterative exploration: Try several values of $K$
+
+## Document-Topic Mixtures
+
+LDA also tells you each document's topic composition:
+
+. . .
+
+```{r}
+#| label: doc-topic-example
+
+# Simulated document-topic proportions
+doc_topics <- tibble::tibble(
+  document = c("Article 127", "Article 203", "Article 891"),
+  `Topic 1 (Business)` = c(0.89, 0.23, 0.52),
+  `Topic 2 (Politics)` = c(0.11, 0.77, 0.48)
+)
+
+doc_topics |> knitr::kable(digits = 2)
+```
+
+. . .
+
+- Article 127: Mostly business
+- Article 203: Mostly politics  
+- Article 891: Mixed coverage
+
+# The LLM Perspective
+
+## What LLMs Do Well
+
+Large Language Models excel at tasks that once required topic models:
+
+. . .
+
+- **Summarization**: "Summarize this quarterly report in 3 bullet points"
+- **Classification**: "Is this article about politics, business, or sports?"
+- **Theme extraction**: "What are the main concerns in these documents?"
+- **Question answering**: "What did the CEO say about supply chains?"
+
+. . .
+
+Why learn classical methods at all?
+
+## When Classical Methods Still Win
+
+::: {.callout-tip}
+## Use Classical Methods When:
+
+1. **Scale**: Processing 100,000 documents with an LLM is slow and expensive
+2. **Auditability**: You need to explain exactly how conclusions were reached
+3. **Exploration**: You don't yet know what questions to ask
+4. **Quantification**: You need precise statistics (tf-idf scores, topic proportions)
+:::
+
+. . .
+
+Classical methods are often a **first pass**—filter, cluster, and then use LLMs on selected subsets.
+
+## How Classical Concepts Help with LLMs
+
+Even if you use LLMs for analysis, understanding text-as-data helps you:
+
+. . .
+
+1. **Ask better questions**: "Which topics dominate?" is a topic model question
+
+. . .
+
+2. **Evaluate outputs critically**: Is this term really distinctive? Is this theme coherent?
+
+. . .
+
+3. **Recognize failure modes**: LLMs hallucinate; topic models produce incoherent topics
+
+. . .
+
+4. **Design hybrid workflows**: tf-idf to find distinctive documents → LLM to summarize them
+
+## A Modern Workflow
+
+```{r}
+#| label: workflow-diagram
+#| fig-cap: "Text EDA workflow combining classical and LLM methods"
+#| fig-height: 3.5
+
+# Simple workflow visualization
+workflow <- tibble::tibble(
+  step = factor(c(
+    "1. Explore vocabulary",
+    "2. Compute tf-idf",
+    "3. Topic model or cluster",
+    "4. LLM deep dives",
+    "5. Synthesize findings"
+  ), levels = c(
+    "1. Explore vocabulary",
+    "2. Compute tf-idf", 
+    "3. Topic model or cluster",
+    "4. LLM deep dives",
+    "5. Synthesize findings"
+  )),
+  method = c("Classical", "Classical", "Classical", "LLM", "Human"),
+  purpose = c(
+    "What terms appear? How often?",
+    "What's distinctive?",
+    "What themes exist?",
+    "Summarize key documents",
+    "Draw conclusions"
+  )
+)
+
+ggplot2::ggplot(workflow, aes(y = step, x = 1, fill = method)) +
+  ggplot2::geom_tile(width = 0.8, height = 0.8, color = "white", linewidth = 2) +
+  ggplot2::geom_text(aes(label = purpose), size = 4, color = "white") +
+  ggplot2::scale_fill_manual(values = c(
+    "Classical" = "steelblue", 
+    "LLM" = "coral",
+    "Human" = "seagreen"
+  )) +
+  ggplot2::labs(
+    title = "Text EDA Workflow",
+    fill = "Method"
+  ) +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(
+    axis.text.x = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "bottom"
+  )
+```
+
+# Summary
+
+## Key Takeaways
+
+1. **Text is high-dimensional, sparse data** — the term-document matrix perspective
+
+. . .
+
+2. **TF-IDF surfaces distinctive words** — frequent here, rare elsewhere
+
+. . .
+
+3. **Topic models discover latent themes** — documents as mixtures of topics
+
+. . .
+
+4. **Choose tools appropriately** — classical for scale/exploration, LLMs for depth
+
+. . .
+
+5. **Concepts transfer** — understanding text-as-data makes you a better LLM user
+
+## Key Formulas
+
+**Term frequency:**
+$$\text{tf}(t, d) = \frac{n_{t,d}}{\sum_t n_{t,d}}$$
+
+. . .
+
+**Inverse document frequency:**
+$$\text{idf}(t) = \log \frac{|D|}{|\{d : t \in d\}|}$$
+
+. . .
+
+**TF-IDF:**
+$$\text{tf-idf}(t, d) = \text{tf}(t, d) \times \text{idf}(t)$$
+
+## Connections to Earlier Material
+
+| Part 1–2 Concept | Text Application |
+|------------------|------------------|
+| Feature matrix | Term-document matrix |
+| Curse of dimensionality | Vocabulary size (10,000+ terms) |
+| PCA | Topic models reduce dimensions |
+| Clustering | Documents cluster by theme |
+| Information theory | IDF relates to entropy/surprisal |
+
+## The Two LDAs
+
+::: {.callout-note}
+## A Name Collision Resolved
+
+**Chapter 9**: Linear Discriminant Analysis — supervised, finds directions that separate classes
+
+**Chapter 10**: Latent Dirichlet Allocation — unsupervised, finds topics in text
+
+Both involve "allocation" to categories. Context makes the meaning clear.
+:::
+
+# Exercises
+
+## Team Exercise 1: TF-IDF Interpretation
+
+Using the Jane Austen tf-idf results:
+
+1. Why are character names the most distinctive words?
+2. What would happen to tf-idf scores if we combined all six novels into one document?
+3. How might you modify tf-idf to find distinctive *non-name* words?
+
+## Team Exercise 2: Topic Model Exploration
+
+For the AP news articles:
+
+1. What would you expect to see with $K = 4$ topics instead of $K = 2$?
+2. How would you validate whether the discovered topics are "good"?
+3. Propose a metric for topic coherence.
+
+## Team Exercise 3: Classical vs LLM
+
+Your firm has 10,000 customer reviews of a new product.
+
+1. Design a workflow using only classical methods.
+2. Design a workflow using only an LLM.
+3. Design a hybrid workflow. Which approach would you recommend and why?
+
+## Team Exercise 4: Investment Analyst Revisited
+
+Return to the quarterly report scenario:
+
+1. What tf-idf patterns might indicate risk? Opportunity?
+2. How would you track themes over time (Q1 → Q2 → Q3)?
+3. What questions would you ask an LLM after classical exploration?
+
+# Resources
+
+## References
+
+- [Text Mining with R: A Tidy Approach](https://www.tidytextmining.com/) — Silge & Robinson
+
+- [Latent Dirichlet Allocation](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) — Blei, Ng, & Jordan (2003)
+
+- [tidytext package](https://juliasilge.github.io/tidytext/) — R tools for tidy text analysis
+
+- [CRAN Task View: Natural Language Processing](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html)
+
+## R Functions Reference
+
+| Function | Package | Purpose |
+|----------|---------|---------|
+| `unnest_tokens()` | tidytext | Tokenize text |
+| `bind_tf_idf()` | tidytext | Compute tf-idf |
+| `LDA()` | topicmodels | Fit topic model |
+| `tidy()` | tidytext | Convert to tidy format |
+| `dfm()` | quanteda | Document-feature matrix |
