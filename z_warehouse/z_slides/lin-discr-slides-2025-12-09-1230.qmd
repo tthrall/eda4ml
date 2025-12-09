@@ -1,0 +1,972 @@
+---
+title: "Linear Discriminant Analysis"
+subtitle: "Finding Directions of Maximum Class Separation"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 9"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: CRAN-libraries
+
+library(here)
+library(knitr)
+library(tidyverse)
+library(MASS)
+library(plotly)
+library(patchwork)
+library(discrim)
+library(tidymodels)
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "eda4ml_set_seed.R"))
+source(here("code", "lda_2D.R"))
+source(here("code", "pc_aesthetics.R"))
+source(here("code", "wine_quality_uci.R"))
+```
+
+```{r}
+#| label: ld-aesthetics-helpers
+
+# Standard colors for discriminant directions (parallel to PC colors)
+get_ld_colors <- function() {
+  tibble::tibble(
+    idx   = 1:3,
+    color = c("darkorange", "purple", "darkgreen"),
+    ref   = c("orange", "purple", "green")
+  )
+}
+
+# Get LDA scaling as tibble (wide and long)
+get_lda_scaling_lst <- function(lda_obj) {
+  scaling_wide <- lda_obj$scaling |>
+    tibble::as_tibble(rownames = "var") |>
+    dplyr::mutate(i_var = row_number()) |>
+    dplyr::select(i_var, everything())
+  
+  scaling_long <- scaling_wide |>
+    tidyr::pivot_longer(
+      cols = -c(i_var, var),
+      names_to = "i_ld",
+      names_prefix = "LD",
+      values_to = "coeff"
+    ) |>
+    dplyr::mutate(
+      i_ld = as.integer(i_ld),
+      ld   = paste0("LD", i_ld)
+    ) |>
+    dplyr::select(i_var, var, i_ld, ld, everything())
+  
+  list(scaling_wide = scaling_wide, scaling_long = scaling_long)
+}
+```
+
+# What is LDA?
+
+## The Core Question
+
+In Chapter 8, PCA asked: "Along which directions do features vary most?"
+
+. . .
+
+Now we ask a different question:
+
+. . .
+
+::: {.callout-note}
+## Core Question
+
+Along which directions are the **classes** best separated?
+:::
+
+. . .
+
+When class labels are available, we can do better than maximizing variance.
+
+## PCA vs LDA: The Key Distinction
+
+| | PCA | LDA |
+|---|-----|-----|
+| **Input** | Features only | Features + class labels |
+| **Objective** | Maximize variance | Maximize class separation |
+| **Type** | Unsupervised | Supervised |
+
+. . .
+
+Both find directions for projection—but "best" means different things.
+
+## When PCA Fails
+
+```{r}
+#| label: pca-fails-example
+#| fig-cap: "When the direction of maximum variance is useless for classification"
+#| fig-height: 4.5
+
+set.seed(42)
+
+# Create two classes: means differ along x, but variance is much larger along y
+n <- 100
+class_a <- tibble::tibble(
+  x = rnorm(n, mean = -1, sd = 0.5),
+  y = rnorm(n, mean = 0, sd = 3),
+  class = "A"
+)
+class_b <- tibble::tibble(
+  x = rnorm(n, mean = 1, sd = 0.5),
+  y = rnorm(n, mean = 0, sd = 3),
+  class = "B"
+)
+pca_fail_data <- dplyr::bind_rows(class_a, class_b)
+
+# PCA direction (will be nearly vertical due to y variance)
+pca_fit <- prcomp(pca_fail_data[, c("x", "y")])
+pc1_slope <- pca_fit$rotation[2, 1] / pca_fit$rotation[1, 1]
+
+# LDA direction (will be horizontal, separating means)
+lda_fit <- MASS::lda(class ~ x + y, data = pca_fail_data)
+ld1_coeff <- lda_fit$scaling[, 1]
+ld1_slope <- ld1_coeff[2] / ld1_coeff[1]
+
+ld_colors <- get_ld_colors()
+
+ggplot2::ggplot(pca_fail_data, aes(x = x, y = y, color = class)) +
+
+geom_point(alpha = 0.6) +
+  ggplot2::geom_abline(
+    intercept = 0, slope = pc1_slope,
+    color = "steelblue", linewidth = 1.2, linetype = "dashed"
+  ) +
+  ggplot2::geom_abline(
+    intercept = 0, slope = ld1_slope,
+    color = ld_colors$color[1], linewidth = 1.2
+  ) +
+  ggplot2::annotate(
+    "text", x = 0.3, y = 5, label = "PC1",
+    color = "steelblue", size = 5, fontface = "bold"
+  ) +
+  ggplot2::annotate(
+    "text", x = 2.5, y = 0.5, label = "LD1",
+    color = ld_colors$color[1], size = 5, fontface = "bold"
+  ) +
+  ggplot2::coord_fixed() +
+  ggplot2::scale_color_manual(values = c("A" = "coral", "B" = "seagreen")) +
+  ggplot2::labs(
+    title = "PC1 follows variance; LD1 separates classes",
+    x = "Feature 1", y = "Feature 2"
+  ) +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(legend.position = "top")
+```
+
+. . .
+
+**PC1** (dashed): Maximum variance—but useless for classification!
+
+**LD1** (solid): Maximum class separation—the direction we need.
+
+## The LDA Solution
+
+LDA finds the direction(s) that:
+
+. . .
+
+1. **Maximize** the spread of class means (between-class variance)
+
+. . .
+
+2. **Minimize** the spread within each class (within-class variance)
+
+. . .
+
+::: {.callout-tip}
+## LDA in One Sentence
+
+Maximize separation between classes while keeping each class tight.
+:::
+
+# Fisher's Geometric View
+
+## Two Types of Variance
+
+When we project data onto a direction $a$, we can measure:
+
+. . .
+
+**Between-class variance**: How spread out are the projected class means?
+
+. . .
+
+**Within-class variance**: How spread out are observations around their class mean?
+
+. . .
+
+Good classification directions have **high between-class** and **low within-class** variance.
+
+## Visual: Within vs Between
+
+```{r}
+#| label: fig-within-between
+#| fig-cap: "Within-class spread (ellipses) vs between-class spread (line connecting means)"
+#| fig-height: 4.5
+
+# Reuse pca_fail_data
+class_means <- pca_fail_data |>
+  dplyr::summarise(
+    .by = class,
+    x = mean(x),
+    y = mean(y)
+  )
+
+ggplot2::ggplot(pca_fail_data, aes(x = x, y = y, color = class)) +
+  ggplot2::geom_point(alpha = 0.4) +
+  ggplot2::stat_ellipse(level = 0.68, linewidth = 1.2) +
+  ggplot2::geom_point(
+    data = class_means, 
+    aes(x = x, y = y, color = class),
+    size = 5, shape = 18
+  ) +
+  ggplot2::geom_line(
+    data = class_means,
+    aes(x = x, y = y),
+    color = "white", linewidth = 1.5, linetype = "dashed",
+    inherit.aes = FALSE
+  ) +
+  ggplot2::scale_color_manual(values = c("A" = "coral", "B" = "seagreen")) +
+  ggplot2::annotate(
+    "text", x = 0, y = -5, 
+    label = "Between-class: distance between means",
+    color = "white", size = 4
+  ) +
+  ggplot2::annotate(
+    "text", x = -2.5, y = 4, 
+    label = "Within-class:\nspread around mean",
+    color = "coral", size = 3.5
+  ) +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(x = "Feature 1", y = "Feature 2") +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(legend.position = "none")
+```
+
+## Fisher's Criterion
+
+R.A. Fisher (1936) proposed: find direction $a$ that maximizes the ratio
+
+$$
+\frac{\text{Between-class variance}}{\text{Within-class variance}} = \frac{a^\top B \, a}{a^\top W \, a}
+$$
+
+. . .
+
+where:
+
+- $B$ = between-class covariance matrix
+- $W$ = within-class (pooled) covariance matrix
+
+. . .
+
+This **Rayleigh quotient** balances separation against spread.
+
+## The Eigenvalue Solution
+
+::: {.callout-tip}
+## Key Result
+
+The optimal direction $a$ is the eigenvector of $W^{-1}B$ with the largest eigenvalue.
+:::
+
+. . .
+
+$$
+W^{-1} B \, a = \lambda \, a
+$$
+
+. . .
+
+Like PCA, LDA reduces to an eigenvalue problem—we solve directly, no iteration.
+
+## How Many Directions?
+
+With $K$ classes, the matrix $B$ has rank at most $K - 1$.
+
+. . .
+
+**Why?** The $K$ class means live in an affine subspace of dimension $K - 1$.
+
+. . .
+
+::: {.callout-note}
+## Dimension Reduction
+
+LDA produces at most $\min(d, K-1)$ discriminant directions.
+
+- $K = 2$ classes → **1 direction** (LD1)
+- $K = 3$ classes → **2 directions** (LD1, LD2)
+:::
+
+. . .
+
+Regardless of how many features $d$ you start with!
+
+## Connection to PCA
+
+Both PCA and LDA find optimal projection directions:
+
+| | PCA | LDA |
+|---|-----|-----|
+| **Maximizes** | $\dfrac{a^\top T \, a}{a^\top I \, a}$ | $\dfrac{a^\top B \, a}{a^\top W \, a}$ |
+| **Matrix** | Total covariance $T$ | Between/Within ratio |
+| **Constraint** | Unit length | Unit length (in $W$ metric) |
+
+. . .
+
+**Key insight**: LDA is like PCA, but measuring spread relative to within-class variation rather than identity.
+
+# Why Linear Boundaries?
+
+## The Gaussian Assumption
+
+LDA assumes each class has a multivariate normal distribution:
+
+$$
+f_k(x) = \frac{1}{(2\pi)^{d/2} |\Sigma|^{1/2}} \exp\left( -\frac{1}{2} (x - \mu_k)^\top \Sigma^{-1} (x - \mu_k) \right)
+$$
+
+. . .
+
+**Key assumption**: All classes share the **same covariance** $\Sigma$.
+
+. . .
+
+Different means $\mu_k$, but same shape and orientation.
+
+## From Bayes Rule to Linear Boundaries
+
+The optimal classifier assigns $x$ to the class with highest posterior probability.
+
+. . .
+
+Under Gaussian assumptions with common covariance, this simplifies to:
+
+$$
+\delta_k(x) = x^\top \Sigma^{-1} \mu_k - \frac{1}{2} \mu_k^\top \Sigma^{-1} \mu_k + \log(\pi_k)
+$$
+
+. . .
+
+::: {.callout-note}
+## Discriminant Function
+
+$\delta_k(x)$ is **linear in $x$**—it tells you how much class $k$ "likes" observation $x$.
+:::
+
+## Decision Boundaries
+
+Classify to class $k$ if $\delta_k(x) > \delta_j(x)$ for all $j \neq k$.
+
+. . .
+
+The boundary between classes $j$ and $k$ is where $\delta_j(x) = \delta_k(x)$.
+
+. . .
+
+Since both are linear in $x$, the boundary is a **hyperplane**:
+
+- In 2D: a line
+- In 3D: a plane
+- In $d$ dimensions: a $(d-1)$-dimensional hyperplane
+
+## Two Routes, Same Destination
+
+::: {.callout-tip}
+## Equivalence
+
+Fisher's geometric criterion and the Bayesian/Gaussian derivation yield **exactly the same** discriminant directions—when class covariances are equal.
+:::
+
+. . .
+
+**Fisher**: No distributional assumptions, purely geometric
+
+**Bayes**: Provides posterior probabilities, principled classification rule
+
+. . .
+
+Use whichever perspective helps your intuition!
+
+# LDA vs QDA
+
+## What If Covariances Differ?
+
+LDA assumes all classes share the same covariance matrix.
+
+. . .
+
+**Quadratic Discriminant Analysis (QDA)** relaxes this:
+
+- Each class $k$ has its own covariance $\Sigma_k$
+- Decision boundaries become **quadratic** (curved)
+
+## Visual Comparison
+
+```{r}
+#| label: fig-lda-vs-qda
+#| fig-cap: "LDA (linear boundary) vs QDA (curved boundary)"
+#| fig-height: 4
+
+set.seed(123)
+n <- 150
+
+# Class A: small variance
+qda_a <- tibble::tibble(
+  x = rnorm(n, mean = -1.5, sd = 0.6),
+  y = rnorm(n, mean = 0, sd = 0.6),
+  class = "A"
+)
+
+# Class B: large variance
+qda_b <- tibble::tibble(
+  x = rnorm(n, mean = 1.5, sd = 1.5),
+  y = rnorm(n, mean = 0, sd = 1.5),
+  class = "B"
+)
+
+qda_data <- dplyr::bind_rows(qda_a, qda_b)
+
+# Create decision boundary grid
+grid <- expand.grid(
+  x = seq(-4, 5, length.out = 200),
+  y = seq(-4, 4, length.out = 200)
+)
+
+# Fit LDA and QDA
+lda_qda_fit <- MASS::lda(class ~ x + y, data = qda_data)
+qda_qda_fit <- MASS::qda(class ~ x + y, data = qda_data)
+
+# Predict on grid
+grid$lda_pred <- predict(lda_qda_fit, grid)$class
+grid$qda_pred <- predict(qda_qda_fit, grid)$class
+
+p_lda <- ggplot2::ggplot() +
+  ggplot2::geom_tile(
+    data = grid, 
+    aes(x = x, y = y, fill = lda_pred),
+    alpha = 0.3
+  ) +
+  ggplot2::geom_point(
+    data = qda_data, 
+    aes(x = x, y = y, color = class),
+    alpha = 0.7
+  ) +
+  ggplot2::scale_fill_manual(values = c("A" = "coral", "B" = "seagreen")) +
+  ggplot2::scale_color_manual(values = c("A" = "darkred", "B" = "darkgreen")) +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(title = "LDA: Linear Boundary", x = NULL, y = NULL) +
+  ggplot2::theme_minimal(base_size = 12) +
+  ggplot2::theme(legend.position = "none")
+
+p_qda <- ggplot2::ggplot() +
+  ggplot2::geom_tile(
+    data = grid, 
+    aes(x = x, y = y, fill = qda_pred),
+    alpha = 0.3
+  ) +
+  ggplot2::geom_point(
+    data = qda_data, 
+    aes(x = x, y = y, color = class),
+    alpha = 0.7
+  ) +
+  ggplot2::scale_fill_manual(values = c("A" = "coral", "B" = "seagreen")) +
+  ggplot2::scale_color_manual(values = c("A" = "darkred", "B" = "darkgreen")) +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(title = "QDA: Curved Boundary", x = NULL, y = NULL) +
+  ggplot2::theme_minimal(base_size = 12) +
+  ggplot2::theme(legend.position = "none")
+
+p_lda + p_qda
+```
+
+## LDA vs QDA: Trade-offs
+
+| | LDA | QDA |
+|---|-----|-----|
+| **Assumption** | Common covariance | Class-specific covariances |
+| **Boundary** | Linear (hyperplane) | Quadratic (curved) |
+| **Parameters** | Fewer | More |
+| **Bias** | Higher if assumption violated | Lower |
+| **Variance** | Lower | Higher |
+
+. . .
+
+**Rule of thumb**: Use LDA unless you have strong evidence of unequal covariances *and* enough data to estimate them reliably.
+
+# Example: Wine Color
+
+## The Wine Quality Data
+
+```{r}
+#| label: wine-data-prep
+
+wq_abbrev_tbl  <- abbreviate_wq_var_names()
+wq_data        <- get_wine_quality()
+names(wq_data) <- wq_abbrev_tbl$abbrev
+
+# Scale features to z-scores
+wq_z <- wq_data |>
+  dplyr::select(-c(quality, color)) |>
+  dplyr::mutate(dplyr::across(everything(), scale)) |>
+  dplyr::mutate(dplyr::across(everything(), as.vector)) |>
+  dplyr::mutate(
+    quality = wq_data$quality,
+    color   = wq_data$color
+  )
+```
+
+In Chapter 8, PCA discovered that wine color was the dominant source of variation—*without using color labels*.
+
+. . .
+
+Now we ask: **given** that we want to classify red vs white, what direction achieves the best separation?
+
+. . .
+
+This is the LDA question.
+
+## Two Features: Density and Residual Sugar
+
+```{r}
+#| label: wine-2d-lda
+
+# LDA model with 2 features
+wclr_2D_lda <- MASS::lda(
+  color ~ density + res_sugar,
+  data = wq_z
+)
+
+# Get coefficients for boundary
+ld1_coeff <- wclr_2D_lda$scaling[, 1]
+
+# Class means
+class_means_2d <- wq_z |>
+  dplyr::summarise(
+    .by = color,
+    density = mean(density),
+    res_sugar = mean(res_sugar)
+  )
+
+# Decision boundary: where delta_red = delta_white
+# Simplified: goes through midpoint of class means, perpendicular to LD1
+midpoint <- colMeans(class_means_2d[, c("density", "res_sugar")])
+boundary_slope <- -ld1_coeff["density"] / ld1_coeff["res_sugar"]
+boundary_intercept <- midpoint["res_sugar"] - boundary_slope * midpoint["density"]
+```
+
+```{r}
+#| label: fig-wine-2d-lda
+#| fig-cap: "Wine color: LDA decision boundary with two features"
+#| fig-height: 4.5
+
+ld_colors <- get_ld_colors()
+
+ggplot2::ggplot(wq_z, aes(x = density, y = res_sugar, color = color)) +
+  ggplot2::geom_point(alpha = 0.3) +
+  ggplot2::geom_abline(
+    intercept = boundary_intercept,
+    slope = boundary_slope,
+    linewidth = 1.2, color = "white"
+  ) +
+  ggplot2::scale_color_manual(values = c("red" = "darkred", "white" = "gold3")) +
+  ggplot2::labs(
+    title = "Wine Color: LDA Decision Boundary",
+    subtitle = "(features in standard units)",
+    x = "Density (z-score)",
+    y = "Residual Sugar (z-score)",
+    color = "Color"
+  ) +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(legend.position = "top")
+```
+
+## Two-Feature LDA: Coefficients
+
+```{r}
+#| label: tbl-wine-2d-coefficients
+
+wclr_2D_lda$scaling |>
+  tibble::as_tibble(rownames = "Feature") |>
+  knitr::kable(
+    digits = 2,
+    col.names = c("Feature", "LD1 Coefficient")
+  )
+```
+
+. . .
+
+**Interpretation**: Wines with lower density and higher residual sugar → white
+
+Wines with higher density and lower residual sugar → red
+
+## Two-Feature Performance
+
+```{r}
+#| label: wine-2d-confusion
+
+pred_2d <- predict(wclr_2D_lda)$class
+
+confusion_2d <- table(Predicted = pred_2d, Actual = wq_z$color)
+
+confusion_2d |>
+  knitr::kable(caption = "Confusion matrix: 2 features")
+```
+
+. . .
+
+With just 2 features: ~88% accuracy on red, ~97% on white.
+
+Can we do better with more features?
+
+## All Eleven Features
+
+```{r}
+#| label: wine-full-lda
+
+# LDA model with all 11 chemical features
+wclr_lda <- MASS::lda(
+  color ~ . - quality,
+  data = wq_z
+)
+
+# Predictions
+pred_full <- predict(wclr_lda)$class
+```
+
+```{r}
+#| label: tbl-wine-full-coefficients
+#| tbl-cap: "LD1 coefficients for all 11 features"
+
+lda_scaling <- get_lda_scaling_lst(wclr_lda)
+
+lda_scaling$scaling_wide |>
+  dplyr::select(var, LD1) |>
+  dplyr::mutate(var = stringr::str_remove_all(var, "`")) |>
+  dplyr::arrange(dplyr::desc(abs(LD1))) |>
+  knitr::kable(
+    digits = 2,
+    col.names = c("Feature", "LD1 Coefficient")
+  )
+```
+
+## Eleven-Feature Performance
+
+```{r}
+#| label: wine-full-confusion
+
+confusion_full <- table(Predicted = pred_full, Actual = wq_z$color)
+
+# Calculate error rates
+red_total <- sum(wq_z$color == "red")
+white_total <- sum(wq_z$color == "white")
+red_errors <- sum(pred_full == "white" & wq_z$color == "red")
+white_errors <- sum(pred_full == "red" & wq_z$color == "white")
+
+confusion_full |>
+  knitr::kable(caption = "Confusion matrix: 11 features")
+```
+
+. . .
+
+Misclassification drops to ~`r round(100 * red_errors / red_total, 1)`% for red and ~`r round(100 * white_errors / white_total, 1)`% for white.
+
+## LD1 Score Distribution
+
+```{r}
+#| label: fig-wine-ld1-hist
+#| fig-cap: "Distribution of LD1 scores by wine color"
+#| fig-height: 4
+
+ld1_scores <- tibble::tibble(
+  LD1   = predict(wclr_lda)$x[, 1],
+  color = wq_z$color
+)
+
+ggplot2::ggplot(ld1_scores, aes(x = LD1, fill = color)) +
+  ggplot2::geom_histogram(bins = 50, alpha = 0.7, position = "identity") +
+  ggplot2::scale_fill_manual(values = c("red" = "darkred", "white" = "gold3")) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "white") +
+  ggplot2::labs(
+    title = "LD1 Separates Red and White Wines",
+    x = "LD1 Score",
+    y = "Count",
+    fill = "Color"
+  ) +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(legend.position = "top")
+```
+
+. . .
+
+The decision boundary (dashed line) falls between the two distributions.
+
+## LDA vs PCA: Same Answer?
+
+In Chapter 8, PCA found that PC1 separated wine colors.
+
+. . .
+
+Here, LDA's LD1 also separates wine colors.
+
+. . .
+
+**Are they the same direction?**
+
+. . .
+
+In this case, nearly so—because the classes differ primarily along directions of high variance.
+
+. . .
+
+::: {.callout-note}
+## When They Differ
+
+If classes differed along a direction of *low* variance, PCA would miss it while LDA would find it.
+:::
+
+# Example: Wine Quality (K = 3)
+
+## A Harder Problem
+
+```{r}
+#| label: wine-quality-prep
+
+wqual_z <- wq_z |>
+  dplyr::mutate(
+    q_level = dplyr::case_when(
+      quality <= 5 ~ "low",
+      quality <  7 ~ "medium",
+      quality >= 7 ~ "high"
+    ),
+    q_level = factor(q_level, levels = c("low", "medium", "high"))
+  )
+
+# Counts per class
+quality_counts <- wqual_z |>
+  dplyr::count(q_level)
+```
+
+Now classify wines by quality level (low/medium/high) instead of color.
+
+```{r}
+#| label: quality-counts
+
+quality_counts |>
+  knitr::kable(col.names = c("Quality Level", "Count"))
+```
+
+. . .
+
+**Note**: Classes are imbalanced—most wines are "medium" quality.
+
+## Three Classes → Two Directions
+
+```{r}
+#| label: wine-quality-lda
+
+# LDA for quality classification (white wines only, for simplicity)
+wqual_white <- wqual_z |>
+  dplyr::filter(color == "white")
+
+wqual_lda <- MASS::lda(
+  q_level ~ alcohol + volatile_acidity + sulphates,
+  data = wqual_white
+)
+```
+
+With $K = 3$ classes, LDA produces at most $K - 1 = 2$ directions.
+
+```{r}
+#| label: fig-wine-quality-ld
+#| fig-cap: "White wines projected onto LD1 and LD2 (3 quality levels)"
+#| fig-height: 4.5
+
+ld_scores <- predict(wqual_lda)$x |>
+  tibble::as_tibble() |>
+  dplyr::mutate(q_level = wqual_white$q_level)
+
+ggplot2::ggplot(ld_scores, aes(x = LD1, y = LD2, color = q_level)) +
+  ggplot2::geom_point(alpha = 0.5) +
+  ggplot2::scale_color_manual(
+    values = c("low" = "coral", "medium" = "steelblue", "high" = "seagreen")
+  ) +
+  ggplot2::labs(
+    title = "Wine Quality: LD1 vs LD2",
+    color = "Quality"
+  ) +
+  ggplot2::theme_minimal(base_size = 14) +
+  ggplot2::theme(legend.position = "top")
+```
+
+## Quality Classification: Results
+
+```{r}
+#| label: wine-quality-confusion
+
+pred_quality <- predict(wqual_lda)$class
+confusion_quality <- table(Predicted = pred_quality, Actual = wqual_white$q_level)
+
+confusion_quality |>
+  knitr::kable(caption = "Confusion matrix: wine quality (white wines)")
+```
+
+. . .
+
+Most wines are classified as "medium"—the classifier struggles to separate quality levels.
+
+. . .
+
+::: {.callout-note}
+## Reality Check
+
+LDA can't work miracles. Predicting quality from chemistry alone is genuinely hard—winemaking involves factors not captured in these measurements.
+:::
+
+# Summary
+
+## Key Takeaways
+
+1. **LDA finds directions of maximum class separation**—not just maximum variance
+
+. . .
+
+2. **Fisher's criterion**: Maximize between-class variance relative to within-class variance
+
+. . .
+
+3. **Closed-form solution** via eigenvalue decomposition—like PCA
+
+. . .
+
+4. **Dimension reduction**: $K$ classes → at most $K - 1$ discriminant directions
+
+. . .
+
+5. **Linear boundaries** arise from equal covariance assumption; **QDA** relaxes this
+
+## Key Formulas
+
+**Fisher's criterion:**
+$$\max_a \; \frac{a^\top B \, a}{a^\top W \, a}$$
+
+. . .
+
+**Eigenvalue problem:**
+$$W^{-1} B \, a = \lambda \, a$$
+
+. . .
+
+**Discriminant function:**
+$$\delta_k(x) = x^\top \Sigma^{-1} \mu_k - \frac{1}{2} \mu_k^\top \Sigma^{-1} \mu_k + \log(\pi_k)$$
+
+. . .
+
+**Classification rule:** Assign $x$ to class $k$ with largest $\delta_k(x)$
+
+## Connections to Part 2
+
+| Chapter | Subspace Basis | Determined by | Used for |
+|---------|----------------|---------------|----------|
+| 7: Regression | $\text{col}(X)$ | Model specification | Prediction |
+| 8: PCA | Principal components | Data covariance | Exploration |
+| 9: LDA | Discriminant directions | Class labels | Classification |
+
+. . .
+
+All three use **orthogonal projection**—they differ in how the target subspace is determined and used.
+
+## Looking Ahead
+
+**Part III: Text Data**
+
+- A new kind of high-dimensional data: term-document matrices
+- Topic models for discovering thematic structure
+- *Latent Dirichlet Allocation*—the other LDA!
+
+. . .
+
+::: {.callout-note}
+## The Name Collision
+
+"LDA" means Linear Discriminant Analysis here, but Latent Dirichlet Allocation in text analysis. Context makes clear which is intended.
+:::
+
+# Exercises
+
+## Team Exercise 1: Fisher's Criterion
+
+For a two-class problem in 2D:
+
+1. Explain in words what the within-class covariance matrix $W$ measures.
+2. Explain in words what the between-class covariance matrix $B$ measures.
+3. Why does maximizing $a^\top B a / a^\top W a$ yield a good classification direction?
+4. For $K = 2$ classes, $B$ has rank 1. Why?
+
+## Team Exercise 2: When PCA Fails
+
+Construct a 2D example where PC1 is perpendicular to LD1:
+
+1. Sketch two classes whose means differ along the x-axis, but with much larger variance along the y-axis.
+2. What direction will PCA find? What direction will LDA find?
+3. What does this illustrate about supervised vs unsupervised dimension reduction?
+
+## Team Exercise 3: LDA vs Logistic Regression
+
+Both LDA and logistic regression produce linear decision boundaries.
+
+1. What distributional assumptions does LDA make? What about logistic regression?
+2. When would you prefer LDA? When logistic regression?
+3. Fit both to the wine color data and compare decision boundaries.
+
+## Team Exercise 4: QDA
+
+Using the wine data:
+
+1. Compute the covariance matrix of features separately for red and white wines.
+2. Are they similar? How would you test this?
+3. Fit QDA and compare its decision boundary to LDA.
+4. Does QDA improve classification accuracy?
+
+# Resources
+
+## References
+
+- [An Introduction to Statistical Learning (ISLR2)](https://www.statlearning.com/) — Chapter 4 covers LDA
+
+- [The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/) — Chapter 4 for advanced treatment
+
+- [MASS::lda() documentation](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/lda.html) — R's classic LDA implementation
+
+- [discrim package](https://discrim.tidymodels.org/) — tidymodels interface to discriminant analysis
