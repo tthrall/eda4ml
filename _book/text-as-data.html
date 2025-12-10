@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>10&nbsp; Text as Data – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./text-analysis.html" rel="next">
+<link href="./lin-discr.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-as-data.html">Text Data</a></li><li class="breadcrumb-item"><a href="./text-as-data.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">10.1</span> Introduction</a>
+  <ul>
+  <li><a href="#two-eras-of-text-analysis" id="toc-two-eras-of-text-analysis" class="nav-link" data-scroll-target="#two-eras-of-text-analysis"><span class="header-section-number">10.1.1</span> Two Eras of Text Analysis</a></li>
+  <li><a href="#a-tale-of-two-authors" id="toc-a-tale-of-two-authors" class="nav-link" data-scroll-target="#a-tale-of-two-authors"><span class="header-section-number">10.1.2</span> A Tale of Two Authors</a></li>
+  </ul></li>
+  <li><a href="#text-as-high-dimensional-data" id="toc-text-as-high-dimensional-data" class="nav-link" data-scroll-target="#text-as-high-dimensional-data"><span class="header-section-number">10.2</span> Text as High-Dimensional Data</a>
+  <ul>
+  <li><a href="#tokenization" id="toc-tokenization" class="nav-link" data-scroll-target="#tokenization"><span class="header-section-number">10.2.1</span> Tokenization</a></li>
+  <li><a href="#the-stop-words-problem" id="toc-the-stop-words-problem" class="nav-link" data-scroll-target="#the-stop-words-problem"><span class="header-section-number">10.2.2</span> The Stop Words Problem</a></li>
+  <li><a href="#vocabulary-and-the-term-document-matrix" id="toc-vocabulary-and-the-term-document-matrix" class="nav-link" data-scroll-target="#vocabulary-and-the-term-document-matrix"><span class="header-section-number">10.2.3</span> Vocabulary and the Term-Document Matrix</a></li>
+  <li><a href="#connection-to-part-2" id="toc-connection-to-part-2" class="nav-link" data-scroll-target="#connection-to-part-2"><span class="header-section-number">10.2.4</span> Connection to Part 2</a></li>
+  <li><a href="#example-associated-press-articles" id="toc-example-associated-press-articles" class="nav-link" data-scroll-target="#example-associated-press-articles"><span class="header-section-number">10.2.5</span> Example: Associated Press Articles</a></li>
+  </ul></li>
+  <li><a href="#which-words-matter-tf-idf" id="toc-which-words-matter-tf-idf" class="nav-link" data-scroll-target="#which-words-matter-tf-idf"><span class="header-section-number">10.3</span> Which Words Matter? TF-IDF</a>
+  <ul>
+  <li><a href="#term-frequency" id="toc-term-frequency" class="nav-link" data-scroll-target="#term-frequency"><span class="header-section-number">10.3.1</span> Term Frequency</a></li>
+  <li><a href="#inverse-document-frequency" id="toc-inverse-document-frequency" class="nav-link" data-scroll-target="#inverse-document-frequency"><span class="header-section-number">10.3.2</span> Inverse Document Frequency</a></li>
+  <li><a href="#tf-idf-the-product" id="toc-tf-idf-the-product" class="nav-link" data-scroll-target="#tf-idf-the-product"><span class="header-section-number">10.3.3</span> TF-IDF: The Product</a></li>
+  <li><a href="#example-jane-austens-novels" id="toc-example-jane-austens-novels" class="nav-link" data-scroll-target="#example-jane-austens-novels"><span class="header-section-number">10.3.4</span> Example: Jane Austen’s Novels</a></li>
+  </ul></li>
+  <li><a href="#finding-themes-topic-models" id="toc-finding-themes-topic-models" class="nav-link" data-scroll-target="#finding-themes-topic-models"><span class="header-section-number">10.4</span> Finding Themes: Topic Models</a>
+  <ul>
+  <li><a href="#the-topic-model-idea" id="toc-the-topic-model-idea" class="nav-link" data-scroll-target="#the-topic-model-idea"><span class="header-section-number">10.4.1</span> The Topic Model Idea</a></li>
+  <li><a href="#latent-dirichlet-allocation" id="toc-latent-dirichlet-allocation" class="nav-link" data-scroll-target="#latent-dirichlet-allocation"><span class="header-section-number">10.4.2</span> Latent Dirichlet Allocation</a></li>
+  <li><a href="#example-ap-news-articles-with-k-2-topics" id="toc-example-ap-news-articles-with-k-2-topics" class="nav-link" data-scroll-target="#example-ap-news-articles-with-k-2-topics"><span class="header-section-number">10.4.3</span> Example: AP News Articles with K = 2 Topics</a></li>
+  <li><a href="#choosing-k" id="toc-choosing-k" class="nav-link" data-scroll-target="#choosing-k"><span class="header-section-number">10.4.4</span> Choosing K</a></li>
+  </ul></li>
+  <li><a href="#the-llm-perspective" id="toc-the-llm-perspective" class="nav-link" data-scroll-target="#the-llm-perspective"><span class="header-section-number">10.5</span> The LLM Perspective</a>
+  <ul>
+  <li><a href="#when-classical-methods-still-win" id="toc-when-classical-methods-still-win" class="nav-link" data-scroll-target="#when-classical-methods-still-win"><span class="header-section-number">10.5.1</span> When Classical Methods Still Win</a></li>
+  <li><a href="#how-classical-concepts-help-with-llms" id="toc-how-classical-concepts-help-with-llms" class="nav-link" data-scroll-target="#how-classical-concepts-help-with-llms"><span class="header-section-number">10.5.2</span> How Classical Concepts Help with LLMs</a></li>
+  <li><a href="#a-modern-workflow" id="toc-a-modern-workflow" class="nav-link" data-scroll-target="#a-modern-workflow"><span class="header-section-number">10.5.3</span> A Modern Workflow</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">10.6</span> Summary</a></li>
+  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">10.7</span> Team Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">10.8</span> Resources</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/text-as-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-as-data.html">Text Data</a></li><li class="breadcrumb-item"><a href="./text-as-data.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-text-as-data" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">19:04 Wed 10-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="introduction" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">10.1</span> Introduction</h2>
+<p>Imagine you work at an investment firm. Your task: review 500 quarterly reports and analyst reactions from companies in your portfolio. Identify emerging themes. Flag concerns. Recommend adjustments.</p>
+<p>You cannot read 500 reports carefully. What do you do?</p>
+<p>This is the fundamental challenge that text analysis addresses. A corpus of documents—whether quarterly reports, customer reviews, scientific papers, or novels—contains information that exceeds human capacity to process manually. Text analysis methods convert documents into numerical representations that enable systematic exploration, comparison, and discovery.</p>
+<section id="two-eras-of-text-analysis" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="two-eras-of-text-analysis"><span class="header-section-number">10.1.1</span> Two Eras of Text Analysis</h3>
+<p>Text analysis has undergone a fundamental transformation. In the classical era (roughly 1990s–2010s), statistical methods such as word counts, tf-idf, and topic models enabled computers to <em>measure</em> text while humans interpreted the results. These methods remain fast, interpretable, and scalable.</p>
+<p>The LLM era (2020s–) introduced large language models capable of direct summarization, question answering, and classification. These models appear to <em>understand</em> text, but they are computationally expensive, less transparent, and prone to hallucination.</p>
+<p>This chapter focuses on classical methods because understanding text-as-data makes you a better user of any text analysis tool, including LLMs. The concepts developed here—tokenization, term-document matrices, tf-idf, topic models—provide vocabulary for asking better questions and evaluating answers critically.</p>
+</section>
+<section id="a-tale-of-two-authors" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="a-tale-of-two-authors"><span class="header-section-number">10.1.2</span> A Tale of Two Authors</h3>
+<p>To motivate the power of text analysis, consider two authors separated by a century: Jane Austen (1775–1817) and H.G. Wells (1866–1946). Austen wrote novels of manners set in English gentry society; Wells pioneered science fiction with tales of time travel, alien invasion, and scientific hubris.</p>
+<p>Can text analysis distinguish these authors automatically? What words characterize each? Let us find out.</p>
+<p>Here are the ten most frequent content words (excluding stop words) for each author:</p>
+<div class="cell">
+<div id="tbl-austen-wells-top-words" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-austen-wells-top-words-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10.1: Most frequent content words by author
+</figcaption>
+<div aria-describedby="tbl-austen-wells-top-words-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Austen</th>
+<th style="text-align: right;">n (Austen)</th>
+<th style="text-align: left;">Wells</th>
+<th style="text-align: right;">n (Wells)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">miss</td>
+<td style="text-align: right;">1855</td>
+<td style="text-align: left;">time</td>
+<td style="text-align: right;">461</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">time</td>
+<td style="text-align: right;">1337</td>
+<td style="text-align: left;">people</td>
+<td style="text-align: right;">302</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">fanny</td>
+<td style="text-align: right;">862</td>
+<td style="text-align: left;">door</td>
+<td style="text-align: right;">260</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dear</td>
+<td style="text-align: right;">822</td>
+<td style="text-align: left;">heard</td>
+<td style="text-align: right;">249</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lady</td>
+<td style="text-align: right;">817</td>
+<td style="text-align: left;">black</td>
+<td style="text-align: right;">232</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sir</td>
+<td style="text-align: right;">806</td>
+<td style="text-align: left;">stood</td>
+<td style="text-align: right;">229</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">day</td>
+<td style="text-align: right;">797</td>
+<td style="text-align: left;">white</td>
+<td style="text-align: right;">224</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">emma</td>
+<td style="text-align: right;">787</td>
+<td style="text-align: left;">hand</td>
+<td style="text-align: right;">218</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sister</td>
+<td style="text-align: right;">727</td>
+<td style="text-align: left;">kemp</td>
+<td style="text-align: right;">213</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">house</td>
+<td style="text-align: right;">699</td>
+<td style="text-align: left;">eyes</td>
+<td style="text-align: right;">210</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Even this simple analysis reveals clear differences. Austen’s most frequent words—names like “Elinor”, “Emma”, “Fanny”—reflect her focus on individual characters navigating social relationships. Wells’s vocabulary—“time”, “black”, “white”, “door”—suggests settings, physical descriptions, and the speculative elements of science fiction.</p>
+<p>This comparison raises the central questions of text analysis: How do we convert text to numbers? Which words matter? What patterns emerge across documents? The remainder of this chapter develops the tools to answer these questions systematically.</p>
+</section>
+</section>
+<section id="text-as-high-dimensional-data" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="text-as-high-dimensional-data"><span class="header-section-number">10.2</span> Text as High-Dimensional Data</h2>
+<p>To analyze text computationally, we must convert it to numbers. This conversion proceeds in three steps: tokenization (breaking text into units), vocabulary construction (identifying unique terms), and counting (recording which terms appear in which documents).</p>
+<section id="tokenization" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="tokenization"><span class="header-section-number">10.2.1</span> Tokenization</h3>
+<p>A <em>token</em> is a meaningful unit of text to be used as the unit of analysis. Typically, tokens are words, though they might also be sentences, n-grams (sequences of n consecutive words), or other units. <em>Tokenization</em> is the process of splitting text into tokens.</p>
+<p>Consider the famous soliloquy from Shakespeare’s Macbeth (Act V, Scene V):</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Tokenizing Macbeth's soliloquy"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>macbeth_tokens <span class="ot">&lt;-</span> macbeth <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  tidytext<span class="sc">::</span><span class="fu">unnest_tokens</span>(word, text)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>macbeth_tokens <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   line_id word   
+     &lt;int&gt; &lt;chr&gt;  
+ 1       1 life's 
+ 2       1 but    
+ 3       1 a      
+ 4       1 walking
+ 5       1 shadow 
+ 6       1 a      
+ 7       1 poor   
+ 8       1 player 
+ 9       2 that   
+10       2 struts </code></pre>
+</div>
+</div>
+<p>The <code>unnest_tokens()</code> function from the <code>tidytext</code> package performs tokenization, converting each line of text into multiple rows—one per word. The function also converts words to lowercase and removes punctuation. The soliloquy yields 38 word tokens in total.</p>
+</section>
+<section id="the-stop-words-problem" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="the-stop-words-problem"><span class="header-section-number">10.2.2</span> The Stop Words Problem</h3>
+<p>If we count word frequencies across the soliloquy, the most common words are unrevealing:</p>
+<div class="cell">
+<div id="tbl-macbeth-counts" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-macbeth-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10.2: Most frequent words in Macbeth’s soliloquy
+</figcaption>
+<div aria-describedby="tbl-macbeth-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Word</th>
+<th style="text-align: right;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">a</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">and</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">is</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">an</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">but</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">by</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">frets</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">full</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Words like “a”, “is”, and “and” tell us nothing about Macbeth or the themes of the soliloquy. These are <em>stop words</em>—common words that provide grammatical structure but carry little semantic information. The <code>tidytext</code> package provides a data frame of such words:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Stop words from tidytext"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tidytext<span class="sc">::</span>stop_words <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   word        lexicon
+   &lt;chr&gt;       &lt;chr&gt;  
+ 1 a           SMART  
+ 2 a's         SMART  
+ 3 able        SMART  
+ 4 about       SMART  
+ 5 above       SMART  
+ 6 according   SMART  
+ 7 accordingly SMART  
+ 8 across      SMART  
+ 9 actually    SMART  
+10 after       SMART  </code></pre>
+</div>
+</div>
+<p>Removing stop words reveals the content words:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5" data-lst-cap="Content words in Macbeth's soliloquy"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>macbeth_meaningful <span class="ot">&lt;-</span> macbeth_tokens <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">anti_join</span>(tidytext<span class="sc">::</span>stop_words, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(word, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>macbeth_meaningful</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 2
+   word           n
+   &lt;chr&gt;      &lt;int&gt;
+ 1 frets          1
+ 2 fury           1
+ 3 heard          1
+ 4 hour           1
+ 5 idiot          1
+ 6 life's         1
+ 7 player         1
+ 8 poor           1
+ 9 shadow         1
+10 signifying     1
+11 sound          1
+12 stage          1
+13 struts         1
+14 tale           1
+15 told           1
+16 walking        1</code></pre>
+</div>
+</div>
+<p>Now we see words that evoke the soliloquy’s themes: shadow, player, stage, tale, sound, fury. The text has been converted to a form amenable to analysis.</p>
+</section>
+<section id="vocabulary-and-the-term-document-matrix" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="vocabulary-and-the-term-document-matrix"><span class="header-section-number">10.2.3</span> Vocabulary and the Term-Document Matrix</h3>
+<p>Given a corpus of <span class="math inline">\(D\)</span> documents, we define the <em>vocabulary</em> <span class="math inline">\(V\)</span> as the set of unique terms appearing in at least one document. The <em>term-document matrix</em> (TDM) is a <span class="math inline">\(|V| \times D\)</span> matrix where entry <span class="math inline">\(m_{v,d}\)</span> records the count of term <span class="math inline">\(v\)</span> in document <span class="math inline">\(d\)</span>.</p>
+<p><span id="eq-term-doc-matrix"><span class="math display">\[
+\underset{|V| \times D}{\mathbf{M}} = \begin{pmatrix}
+m_{1,1} &amp; m_{1,2} &amp; \cdots &amp; m_{1,D} \\
+m_{2,1} &amp; m_{2,2} &amp; \cdots &amp; m_{2,D} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+m_{|V|,1} &amp; m_{|V|,2} &amp; \cdots &amp; m_{|V|,D}
+\end{pmatrix}
+\qquad(10.1)\]</span></span></p>
+<p>The transpose—a <span class="math inline">\(D \times |V|\)</span> matrix with documents as rows and terms as columns—is called a <em>document-term matrix</em> (DTM). The <code>quanteda</code> package uses the term <em>document-feature matrix</em> (DFM) to emphasize that features need not be single words.</p>
+</section>
+<section id="connection-to-part-2" class="level3" data-number="10.2.4">
+<h3 data-number="10.2.4" class="anchored" data-anchor-id="connection-to-part-2"><span class="header-section-number">10.2.4</span> Connection to Part 2</h3>
+<p>The document-term matrix should look familiar from Part 2. It is simply another feature matrix where each document is an observation (row in DTM form) and each term is a feature (column). Everything we learned about high-dimensional data applies: PCA can find directions of variation, clustering can group similar documents, and distance measures can compare documents.</p>
+<p>The distinctive property of text data is extreme <em>sparsity</em>. Most words do not appear in most documents. A vocabulary of 10,000 terms across 1,000 documents yields a matrix with 10 million entries, but typically 99% or more are zeros. Specialized data structures (sparse matrices) and algorithms are essential for efficient computation.</p>
+</section>
+<section id="example-associated-press-articles" class="level3" data-number="10.2.5">
+<h3 data-number="10.2.5" class="anchored" data-anchor-id="example-associated-press-articles"><span class="header-section-number">10.2.5</span> Example: Associated Press Articles</h3>
+<p>The <code>topicmodels</code> package includes a document-term matrix of 2,246 Associated Press articles with a vocabulary of 10,473 terms. The <code>eda4mldata</code> package provides this data in tidy format:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7" data-lst-cap="Associated Press articles in tidy format"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ap_tidy <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>ap_tidy</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ap_tidy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 302,031 × 3
+   document term       count
+      &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
+ 1        1 adding         1
+ 2        1 adult          2
+ 3        1 ago            1
+ 4        1 alcohol        1
+ 5        1 allegedly      1
+ 6        1 allen          1
+ 7        1 apparently     2
+ 8        1 appeared       1
+ 9        1 arrested       1
+10        1 assault        1
+# ℹ 302,021 more rows</code></pre>
+</div>
+</div>
+<p>This tidy representation has one row per (document, term) pair, with columns for the document index, term, and count. The sparsity is evident: of the potential <span class="math inline">\(2246 \times 10473 \approx 23.5\)</span> million entries, only about 302,000 are non-zero—a sparsity of 99%.</p>
+</section>
+</section>
+<section id="which-words-matter-tf-idf" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="which-words-matter-tf-idf"><span class="header-section-number">10.3</span> Which Words Matter? TF-IDF</h2>
+<p>Raw word counts have a fundamental limitation: the most frequent words across any corpus are stop words and near-stop words that appear in every document. We need a measure that identifies words <em>distinctive</em> to particular documents.</p>
+<section id="term-frequency" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="term-frequency"><span class="header-section-number">10.3.1</span> Term Frequency</h3>
+<p><em>Term frequency</em> measures how prominent a term is within a single document:</p>
+<p><span id="eq-term-freq"><span class="math display">\[
+\text{tf}(t, d) = \frac{n_{t,d}}{\sum_{t'} n_{t',d}}
+\qquad(10.2)\]</span></span></p>
+<p>where <span class="math inline">\(n_{t,d}\)</span> is the count of term <span class="math inline">\(t\)</span> in document <span class="math inline">\(d\)</span>, and the denominator is the total number of terms in document <span class="math inline">\(d\)</span>. High term frequency indicates the term is prominent in this document—but “the” has high term frequency in every document.</p>
+</section>
+<section id="inverse-document-frequency" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="inverse-document-frequency"><span class="header-section-number">10.3.2</span> Inverse Document Frequency</h3>
+<p><em>Inverse document frequency</em> measures how rare a term is across the corpus:</p>
+<p><span id="eq-inv-doc-freq"><span class="math display">\[
+\text{idf}(t) = \log \frac{|D|}{|\{d : t \in d\}|}
+\qquad(10.3)\]</span></span></p>
+<p>where <span class="math inline">\(|D|\)</span> is the total number of documents and <span class="math inline">\(|\{d : t \in d\}|\)</span> is the number of documents containing term <span class="math inline">\(t\)</span>. If a term appears in all documents, <span class="math inline">\(\text{idf} = \log(1) = 0\)</span>. If a term appears in only one document, <span class="math inline">\(\text{idf} = \log(|D|)\)</span>, which is large. The logarithm dampens the effect of very rare terms.</p>
+<p>The IDF measure connects to information theory from Chapter 6. A term appearing in all documents conveys no information about which document we are examining; a rare term conveys substantial information. The IDF is essentially the log-inverse of the term’s document probability—a measure of <em>surprisal</em>.</p>
+</section>
+<section id="tf-idf-the-product" class="level3" data-number="10.3.3">
+<h3 data-number="10.3.3" class="anchored" data-anchor-id="tf-idf-the-product"><span class="header-section-number">10.3.3</span> TF-IDF: The Product</h3>
+<p>Combining these measures yields <em>tf-idf</em>:</p>
+<p><span id="eq-tf-idf"><span class="math display">\[
+\text{tf-idf}(t, d) = \text{tf}(t, d) \times \text{idf}(t)
+\qquad(10.4)\]</span></span></p>
+<p>A term has high tf-idf if it is frequent in this document (high tf) AND rare across the corpus (high idf). This product surfaces <em>distinctive</em> words—terms that characterize a particular document relative to the corpus.</p>
+</section>
+<section id="example-jane-austens-novels" class="level3" data-number="10.3.4">
+<h3 data-number="10.3.4" class="anchored" data-anchor-id="example-jane-austens-novels"><span class="header-section-number">10.3.4</span> Example: Jane Austen’s Novels</h3>
+<p>To illustrate tf-idf, we compute it for each word in each of Jane Austen’s six novels, treating each novel as a separate document:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-austen-tfidf" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-austen-tfidf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="text-as-data_files/figure-html/fig-austen-tfidf-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-austen-tfidf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.1: Most distinctive words (by tf-idf) in each Jane Austen novel
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The results are striking: each novel’s most distinctive words are <em>character names</em>. “Emma” and “Harriet” distinguish <em>Emma</em>; “Elinor” and “Marianne” distinguish <em>Sense and Sensibility</em>; “Elizabeth” and “Darcy” distinguish <em>Pride and Prejudice</em>. TF-IDF automatically surfaces what makes each document unique—in this case, the characters around whom each novel revolves.</p>
+<p>For the investment analyst reviewing quarterly reports, tf-idf would surface company-specific terminology, unusual product names, and distinctive risk language—precisely the information needed to identify what makes each report different from the others.</p>
+</section>
+</section>
+<section id="finding-themes-topic-models" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="finding-themes-topic-models"><span class="header-section-number">10.4</span> Finding Themes: Topic Models</h2>
+<p>TF-IDF identifies distinctive individual words. But words cluster into <em>themes</em>: “inflation”, “rates”, “Fed”, and “monetary” might all relate to macroeconomic concerns; “supply”, “chain”, “shortage”, and “logistics” might relate to supply chain issues. <em>Topic models</em> discover such latent themes automatically.</p>
+<section id="the-topic-model-idea" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="the-topic-model-idea"><span class="header-section-number">10.4.1</span> The Topic Model Idea</h3>
+<p>A topic model makes two key assumptions:</p>
+<ol type="1">
+<li><p><strong>Each document is a mixture of topics.</strong> The topics in a single news article might be 60% business, 30% politics, and 10% sports. A quarterly report might be 40% financial performance, 30% strategic outlook, and 30% risk factors.</p></li>
+<li><p><strong>Each topic is a mixture of words.</strong> The “business” topic assigns high probability to words like “market”, “profit”, and “growth”; the “politics” topic assigns high probability to “congress”, “vote”, and “campaign”.</p></li>
+</ol>
+<p>Given a corpus, a topic model discovers both the topics (as distinct probability distributions over words) and the distribution of topics within each document.</p>
+</section>
+<section id="latent-dirichlet-allocation" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="latent-dirichlet-allocation"><span class="header-section-number">10.4.2</span> Latent Dirichlet Allocation</h3>
+<p>The most common topic model is <em>Latent Dirichlet Allocation</em> (LDA). Yes—the <em>other</em> LDA! Chapter 9 introduced Linear Discriminant Analysis, a supervised method for classification. Latent Dirichlet Allocation is unsupervised, discovering structure without labels. The name reflects the method’s components:</p>
+<ul>
+<li><em>Latent</em>: The topics are hidden; we infer them from observed word patterns.</li>
+<li><em>Dirichlet</em>: The probability distributions governing topic and word mixtures follow the Dirichlet distribution (a generalization of the beta distribution to multiple categories).</li>
+<li><em>Allocation</em>: Words are allocated to topics probabilistically.</li>
+</ul>
+<p>The intuition behind LDA is a <em>generative story</em>: imagine each document was generated by first choosing a mixture of topics, then for each word position, rolling the dice to select a topic and sampling a word from that topic’s distribution. LDA inverts this process, inferring the topics that best explain the observed documents. Chapter 11 develops this model in depth; here we illustrate what topic models reveal.</p>
+</section>
+<section id="example-ap-news-articles-with-k-2-topics" class="level3" data-number="10.4.3">
+<h3 data-number="10.4.3" class="anchored" data-anchor-id="example-ap-news-articles-with-k-2-topics"><span class="header-section-number">10.4.3</span> Example: AP News Articles with K = 2 Topics</h3>
+<p>We fit an LDA model with <span class="math inline">\(K = 2\)</span> topics to the Associated Press articles:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ap-top-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ap-top-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="text-as-data_files/figure-html/fig-ap-top-terms-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ap-top-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.2: Top words by probability in each of two topics discovered in AP articles
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Topic 1’s most probable words—percent, million, billion, company, market—suggest <em>business and finance</em>. Topic 2’s most probable words—president, government, party, members, congress—suggest <em>politics and government</em>. The algorithm knew nothing about these categories; it discovered them from patterns of word co-occurrence.</p>
+<p>Note that some words (“new”, “people”) appear prominently in both topics. This is expected: topics are distinct probability distributions across the entire vocabulary, but may nevertheless share some prominent terms. The power of topic models lies in using them to identify words that <em>are</em> topic-specific, an thus to interpret model-generated topics as themes.</p>
+</section>
+<section id="choosing-k" class="level3" data-number="10.4.4">
+<h3 data-number="10.4.4" class="anchored" data-anchor-id="choosing-k"><span class="header-section-number">10.4.4</span> Choosing K</h3>
+<p>Like <span class="math inline">\(K\)</span>-means clustering, LDA requires the user to specify the number of topics <span class="math inline">\(K\)</span>. Too few topics yield themes that are too broad, mixing unrelated content. Too many topics yield themes that are too narrow, fragmenting coherent content.</p>
+<p>Practical approaches to choosing <span class="math inline">\(K\)</span> include domain knowledge (“I expect 5–10 themes in this corpus”), coherence metrics (do top words in each topic make sense together?), and iterative exploration (fit models with several values of <span class="math inline">\(K\)</span> and compare). Chapter 11 discusses these considerations further.</p>
+</section>
+</section>
+<section id="the-llm-perspective" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="the-llm-perspective"><span class="header-section-number">10.5</span> The LLM Perspective</h2>
+<p>Large language models have transformed what is possible with text. Tasks that once required topic models—summarization, theme extraction, classification—can now be accomplished by prompting an LLM directly: “Summarize this quarterly report in three bullet points” or “What are the main concerns expressed in these customer reviews?”</p>
+<p>Why, then, learn classical text analysis methods?</p>
+<section id="when-classical-methods-still-win" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="when-classical-methods-still-win"><span class="header-section-number">10.5.1</span> When Classical Methods Still Win</h3>
+<p>Classical methods retain important advantages in several scenarios:</p>
+<p><strong>Scale.</strong> Processing 100,000 documents with an LLM is slow and expensive. Classical methods—tokenization, tf-idf, topic models—process the same corpus in seconds or minutes.</p>
+<p><strong>Auditability.</strong> Classical methods produce explicit, reproducible statistics. A tf-idf score has a precise definition; a topic model’s word probabilities can be examined and validated. LLM outputs, by contrast, emerge from opaque processes that are difficult to audit or explain.</p>
+<p><strong>Exploration.</strong> When you don’t yet know what questions to ask, classical methods provide systematic exploration. What words are distinctive? What themes exist? How do documents cluster? These questions can be answered without formulating specific prompts.</p>
+<p><strong>Quantification.</strong> Classical methods produce precise statistics: tf-idf scores, topic proportions, similarity measures. These statistics enable downstream analysis, visualization, and comparison in ways that free-text LLM outputs do not.</p>
+<p>In practice, classical methods often serve as a <em>first pass</em>—filtering, clustering, and characterizing a corpus before using LLMs for targeted deep dives on selected subsets.</p>
+</section>
+<section id="how-classical-concepts-help-with-llms" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="how-classical-concepts-help-with-llms"><span class="header-section-number">10.5.2</span> How Classical Concepts Help with LLMs</h3>
+<p>Even when using LLMs for analysis, understanding text-as-data makes you more effective:</p>
+<p><strong>Ask better questions.</strong> “Which topics dominate this corpus?” is a topic model question. Understanding this framing helps you prompt LLMs more precisely.</p>
+<p><strong>Evaluate outputs critically.</strong> Is a term really distinctive? Is a theme coherent? Classical concepts provide frameworks for assessing LLM outputs.</p>
+<p><strong>Recognize failure modes.</strong> LLMs hallucinate; topic models produce incoherent topics. Understanding both failure modes helps you design robust workflows.</p>
+<p><strong>Design hybrid workflows.</strong> Use tf-idf to identify the most distinctive documents, then ask an LLM to summarize them. Use topic models to segment a corpus, then ask an LLM to characterize each segment. Classical and LLM methods complement each other.</p>
+</section>
+<section id="a-modern-workflow" class="level3" data-number="10.5.3">
+<h3 data-number="10.5.3" class="anchored" data-anchor-id="a-modern-workflow"><span class="header-section-number">10.5.3</span> A Modern Workflow</h3>
+<p>A contemporary text analysis workflow might proceed as follows:</p>
+<ol type="1">
+<li><strong>Explore vocabulary.</strong> What terms appear? How often? What are the stop words?</li>
+<li><strong>Compute tf-idf.</strong> What distinguishes each document? Which documents are most distinctive?</li>
+<li><strong>Topic model or cluster.</strong> What themes exist? How do documents group?</li>
+<li><strong>LLM deep dives.</strong> Summarize key documents. Answer specific questions about selected subsets.</li>
+<li><strong>Synthesize findings.</strong> Draw conclusions informed by both quantitative patterns and LLM-generated insights.</li>
+</ol>
+<p>This workflow combines the scale and auditability of classical methods with the flexibility of LLMs.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">10.6</span> Summary</h2>
+<p>This chapter introduced text as high-dimensional, sparse data amenable to the techniques developed in Parts 1 and 2 of this book.</p>
+<p><strong>Key concepts:</strong></p>
+<ul>
+<li><em>Tokenization</em> converts text to sequences of words (or other units).</li>
+<li>The <em>document-term matrix</em> represents a corpus as a feature matrix where each document is an observation and each term is a feature.</li>
+<li>Text data is extremely <em>sparse</em>—most words do not appear in most documents.</li>
+<li><em>TF-IDF</em> identifies distinctive words by combining term frequency (prominence in a document) with inverse document frequency (rarity across the corpus).</li>
+<li><em>Topic models</em> discover latent themes, treating documents as mixtures of topics and topics as mixtures of words.</li>
+<li>Classical methods and LLMs complement each other in modern text analysis workflows.</li>
+</ul>
+<p><strong>Key formulas:</strong></p>
+<p><span class="math display">\[
+\text{tf}(t, d) = \frac{n_{t,d}}{\sum_{t'} n_{t',d}}
+\]</span></p>
+<p><span class="math display">\[
+\text{idf}(t) = \log \frac{|D|}{|\{d : t \in d\}|}
+\]</span></p>
+<p><span class="math display">\[
+\text{tf-idf}(t, d) = \text{tf}(t, d) \times \text{idf}(t)
+\]</span></p>
+<p><strong>Connections to earlier material:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Part 1–2 Concept</th>
+<th>Text Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Feature matrix</td>
+<td>Document-term matrix</td>
+</tr>
+<tr class="even">
+<td>Curse of dimensionality</td>
+<td>Vocabulary size (10,000+ terms)</td>
+</tr>
+<tr class="odd">
+<td>PCA</td>
+<td>Topic models reduce dimensions</td>
+</tr>
+<tr class="even">
+<td>Clustering</td>
+<td>Documents cluster by theme</td>
+</tr>
+<tr class="odd">
+<td>Information theory</td>
+<td>IDF relates to entropy/surprisal</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The Two LDAs:</strong></p>
+<p>Chapter 9 introduced <em>Linear Discriminant Analysis</em>—a supervised method that finds directions separating known classes. This chapter introduced <em>Latent Dirichlet Allocation</em>—an unsupervised method that discovers topics in text. Both involve “allocation” to categories; context makes the meaning clear.</p>
+</section>
+<section id="team-exercises" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">10.7</span> Team Exercises</h2>
+<ol type="1">
+<li><p><strong>TF-IDF Interpretation.</strong> Using the Jane Austen tf-idf results: (a) Why are character names the most distinctive words? (b) What would happen to tf-idf scores if we combined all six novels into one document? (c) How might you modify tf-idf to find distinctive <em>non-name</em> words?</p></li>
+<li><p><strong>Comparing Authors.</strong> Design an analysis to compare the vocabularies of Jane Austen and H.G. Wells more systematically. What words are shared most? Least? Should stop words be included or excluded? What would tf-idf reveal if we treated each author’s collected works as a single document?</p></li>
+<li><p><strong>Topic Model Exploration.</strong> For the AP news articles: (a) What would you expect to see with <span class="math inline">\(K = 4\)</span> topics instead of <span class="math inline">\(K = 2\)</span>? (b) How would you validate whether the discovered topics are “good”? (c) Propose a metric for topic coherence.</p></li>
+<li><p><strong>Classical vs.&nbsp;LLM.</strong> Your firm has 10,000 customer reviews of a new product. (a) Design a workflow using only classical methods. (b) Design a workflow using only an LLM. (c) Design a hybrid workflow. Which approach would you recommend and why?</p></li>
+<li><p><strong>Investment Analyst Revisited.</strong> Return to the quarterly report scenario from the introduction: (a) What tf-idf patterns might indicate risk? Opportunity? (b) How would you track themes over time (Q1 → Q2 → Q3)? (c) What questions would you ask an LLM after classical exploration?</p></li>
+</ol>
+</section>
+<section id="resources" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="resources"><span class="header-section-number">10.8</span> Resources</h2>
+<p><a href="https://www.tidytextmining.com/">Text Mining with R: A Tidy Approach</a> by Julia Silge and David Robinson. The authoritative guide to text analysis using <code>tidytext</code> and the tidyverse.</p>
+<p><a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf">Latent Dirichlet Allocation</a> by David Blei, Andrew Ng, and Michael Jordan. JMLR (2003). The foundational paper introducing LDA.</p>
+<p><a href="https://cran.r-project.org/web/views/NaturalLanguageProcessing.html">CRAN Task View: Natural Language Processing</a>. Comprehensive listing of R packages for text analysis.</p>
+<p><a href="https://juliasilge.github.io/tidytext/">tidytext package documentation</a>. Reference for the <code>tidytext</code> package used throughout this chapter.</p>
+<p><a href="https://quanteda.io/">quanteda package documentation</a>. Reference for the <code>quanteda</code> package, which provides efficient data structures and functions for text analysis.</p>
+<p><strong>R Functions Reference:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>unnest_tokens()</code></td>
+<td>tidytext</td>
+<td>Tokenize text</td>
+</tr>
+<tr class="even">
+<td><code>bind_tf_idf()</code></td>
+<td>tidytext</td>
+<td>Compute tf-idf</td>
+</tr>
+<tr class="odd">
+<td><code>stop_words</code></td>
+<td>tidytext</td>
+<td>Data frame of common stop words</td>
+</tr>
+<tr class="even">
+<td><code>anti_join()</code></td>
+<td>dplyr</td>
+<td>Remove stop words</td>
+</tr>
+<tr class="odd">
+<td><code>dfm()</code></td>
+<td>quanteda</td>
+<td>Create document-feature matrix</td>
+</tr>
+<tr class="even">
+<td><code>LDA()</code></td>
+<td>topicmodels</td>
+<td>Fit topic model</td>
+</tr>
+<tr class="odd">
+<td><code>tidy()</code></td>
+<td>tidytext</td>
+<td>Convert to tidy format</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./lin-discr.html" class="pagination-link" aria-label="Linear Discriminant Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./text-analysis.html" class="pagination-link" aria-label="Text Analysis">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Text Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/text-as-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
