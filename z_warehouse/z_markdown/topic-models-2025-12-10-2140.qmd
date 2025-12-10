@@ -559,8 +559,8 @@ This chapter developed the intuition and mechanics of topic models, focusing on 
 | Symbol | Meaning |
 |--------|---------|
 | $K$ | Number of topics (analyst's choice) |
-| $\alpha_\bullet$ | Dirichlet parameter for topic mixture per document |
-| $\eta_\bullet$ | Dirichlet parameter for word mixture per topic |
+| $\alpha_\bullet$ | Dirichlet parameter for document-topic mixtures |
+| $\eta_\bullet$ | Dirichlet parameter for topic-word distributions |
 | $\beta_{k,v}$ | Probability of term $v$ in topic $k$ |
 | $\gamma_{d,k}$ | Proportion of topic $k$ in document $d$ |
 
@@ -574,8 +574,8 @@ This chapter developed the intuition and mechanics of topic models, focusing on 
 | Earlier Concept | Topic Model Analog |
 |-----------------|-------------------|
 | $K$-means clustering | LDA (documents → topics) |
-| Cluster centroids | Word mixture ($\beta_{k,\bullet}$) per topic |
-| Cluster assignments | Topic mixture ($\gamma_{d,\bullet}$) per document |
+| Cluster centroids | Word distributions ($\beta_{k,\bullet}$) per topic |
+| Cluster assignments | Topic mixtures ($\gamma_{d,\bullet}$) per document |
 | Hard vs. soft clustering | $K$-means (hard) vs. LDA (soft) |
 | PCA loadings | Word weights per topic |
 
@@ -690,9 +690,9 @@ That is, we simply add the observed counts to the prior parameters. This elegant
 
 In LDA, Dirichlet distributions serve as priors in two places:
 
-1. **Topic mixture per document**: Each document's topic proportions $\gamma_{d,\bullet}$ are drawn from $\text{Dir}(\alpha_\bullet)$. A small $\alpha$ encourages documents to focus on few topics.
+1. **Document-topic mixtures**: Each document's topic proportions $\gamma_{d,\bullet}$ are drawn from $\text{Dir}(\alpha_\bullet)$. A small $\alpha$ encourages documents to focus on few topics.
 
-2. **Word mixture per topic**: Each topic's word probabilities $\beta_{k,\bullet}$ are drawn from $\text{Dir}(\eta_\bullet)$. A small $\eta$ encourages topics to assign high probability to few words.
+2. **Topic-word distributions**: Each topic's word probabilities $\beta_{k,\bullet}$ are drawn from $\text{Dir}(\eta_\bullet)$. A small $\eta$ encourages topics to assign high probability to few words.
 
 The conjugacy property means that as we observe words in documents and update our beliefs about topic assignments, the posterior distributions remain Dirichlet, enabling efficient iterative inference.
 
