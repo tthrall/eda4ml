@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>11&nbsp; Topic Models – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ts-intro.html" rel="next">
+<link href="./text-as-data.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-as-data.html">Text Data</a></li><li class="breadcrumb-item"><a href="./topic-models.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">11.1</span> Introduction</a>
+  <ul>
+  <li><a href="#the-core-insight" id="toc-the-core-insight" class="nav-link" data-scroll-target="#the-core-insight"><span class="header-section-number">11.1.1</span> The Core Insight</a></li>
+  </ul></li>
+  <li><a href="#the-generative-story" id="toc-the-generative-story" class="nav-link" data-scroll-target="#the-generative-story"><span class="header-section-number">11.2</span> The Generative Story</a></li>
+  <li><a href="#toy-example-two-books" id="toc-toy-example-two-books" class="nav-link" data-scroll-target="#toy-example-two-books"><span class="header-section-number">11.3</span> Toy Example: Two Books</a>
+  <ul>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">11.3.1</span> The Data</a></li>
+  <li><a href="#fitting-lda-with-k-2" id="toc-fitting-lda-with-k-2" class="nav-link" data-scroll-target="#fitting-lda-with-k-2"><span class="header-section-number">11.3.2</span> Fitting LDA with K = 2</a></li>
+  <li><a href="#examining-the-results-word-distributions-β" id="toc-examining-the-results-word-distributions-β" class="nav-link" data-scroll-target="#examining-the-results-word-distributions-β"><span class="header-section-number">11.3.3</span> Examining the Results: Word Distributions (β)</a></li>
+  <li><a href="#log-ratio-visualization" id="toc-log-ratio-visualization" class="nav-link" data-scroll-target="#log-ratio-visualization"><span class="header-section-number">11.3.4</span> Log-Ratio Visualization</a></li>
+  <li><a href="#toy-example-takeaways" id="toc-toy-example-takeaways" class="nav-link" data-scroll-target="#toy-example-takeaways"><span class="header-section-number">11.3.5</span> Toy Example: Takeaways</a></li>
+  </ul></li>
+  <li><a href="#scaling-up-ap-news-articles" id="toc-scaling-up-ap-news-articles" class="nav-link" data-scroll-target="#scaling-up-ap-news-articles"><span class="header-section-number">11.4</span> Scaling Up: AP News Articles</a>
+  <ul>
+  <li><a href="#fitting-lda-with-k-4" id="toc-fitting-lda-with-k-4" class="nav-link" data-scroll-target="#fitting-lda-with-k-4"><span class="header-section-number">11.4.1</span> Fitting LDA with K = 4</a></li>
+  <li><a href="#document-topic-mixtures-gamma" id="toc-document-topic-mixtures-gamma" class="nav-link" data-scroll-target="#document-topic-mixtures-gamma"><span class="header-section-number">11.4.2</span> Document-Topic Mixtures <span class="math inline">\((\gamma)\)</span></a></li>
+  </ul></li>
+  <li><a href="#the-dirichlet-distribution" id="toc-the-dirichlet-distribution" class="nav-link" data-scroll-target="#the-dirichlet-distribution"><span class="header-section-number">11.5</span> The Dirichlet Distribution</a>
+  <ul>
+  <li><a href="#a-distribution-over-mixtures" id="toc-a-distribution-over-mixtures" class="nav-link" data-scroll-target="#a-distribution-over-mixtures"><span class="header-section-number">11.5.1</span> A Distribution Over Mixtures</a></li>
+  <li><a href="#the-concentration-parameter" id="toc-the-concentration-parameter" class="nav-link" data-scroll-target="#the-concentration-parameter"><span class="header-section-number">11.5.2</span> The Concentration Parameter</a></li>
+  <li><a href="#two-dirichlet-distributions-in-lda" id="toc-two-dirichlet-distributions-in-lda" class="nav-link" data-scroll-target="#two-dirichlet-distributions-in-lda"><span class="header-section-number">11.5.3</span> Two Dirichlet Distributions in LDA</a></li>
+  </ul></li>
+  <li><a href="#choosing-k" id="toc-choosing-k" class="nav-link" data-scroll-target="#choosing-k"><span class="header-section-number">11.6</span> Choosing K</a>
+  <ul>
+  <li><a href="#comparing-k-values" id="toc-comparing-k-values" class="nav-link" data-scroll-target="#comparing-k-values"><span class="header-section-number">11.6.1</span> Comparing K Values</a></li>
+  <li><a href="#practical-guidance" id="toc-practical-guidance" class="nav-link" data-scroll-target="#practical-guidance"><span class="header-section-number">11.6.2</span> Practical Guidance</a></li>
+  </ul></li>
+  <li><a href="#mathematical-framework" id="toc-mathematical-framework" class="nav-link" data-scroll-target="#mathematical-framework"><span class="header-section-number">11.7</span> Mathematical Framework</a>
+  <ul>
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">11.7.1</span> Notation</a></li>
+  <li><a href="#the-generative-model" id="toc-the-generative-model" class="nav-link" data-scroll-target="#the-generative-model"><span class="header-section-number">11.7.2</span> The Generative Model</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">11.7.3</span> Inference</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">11.8</span> Summary</a></li>
+  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">11.9</span> Team Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">11.10</span> Resources</a></li>
+  <li><a href="#appendix-11.a-the-dirichlet-distribution" id="toc-appendix-11.a-the-dirichlet-distribution" class="nav-link" data-scroll-target="#appendix-11.a-the-dirichlet-distribution"><span class="header-section-number">11.11</span> Appendix 11.A: The Dirichlet Distribution</a>
+  <ul>
+  <li><a href="#the-multinomial-distribution" id="toc-the-multinomial-distribution" class="nav-link" data-scroll-target="#the-multinomial-distribution"><span class="header-section-number">11.11.1</span> The Multinomial Distribution</a></li>
+  <li><a href="#bayesian-inference-and-conjugate-priors" id="toc-bayesian-inference-and-conjugate-priors" class="nav-link" data-scroll-target="#bayesian-inference-and-conjugate-priors"><span class="header-section-number">11.11.2</span> Bayesian Inference and Conjugate Priors</a></li>
+  <li><a href="#the-dirichlet-distribution-1" id="toc-the-dirichlet-distribution-1" class="nav-link" data-scroll-target="#the-dirichlet-distribution-1"><span class="header-section-number">11.11.3</span> The Dirichlet Distribution</a></li>
+  <li><a href="#the-concentration-parameter-1" id="toc-the-concentration-parameter-1" class="nav-link" data-scroll-target="#the-concentration-parameter-1"><span class="header-section-number">11.11.4</span> The Concentration Parameter</a></li>
+  <li><a href="#conjugacy-and-posterior-updating" id="toc-conjugacy-and-posterior-updating" class="nav-link" data-scroll-target="#conjugacy-and-posterior-updating"><span class="header-section-number">11.11.5</span> Conjugacy and Posterior Updating</a></li>
+  <li><a href="#role-in-lda" id="toc-role-in-lda" class="nav-link" data-scroll-target="#role-in-lda"><span class="header-section-number">11.11.6</span> Role in LDA</a></li>
+  <li><a href="#references-for-appendix" id="toc-references-for-appendix" class="nav-link" data-scroll-target="#references-for-appendix"><span class="header-section-number">11.11.7</span> References for Appendix</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/topic-models.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./text-as-data.html">Text Data</a></li><li class="breadcrumb-item"><a href="./topic-models.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-topic-models" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">21:01 Wed 10-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="introduction" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">11.1</span> Introduction</h2>
+<p>Chapter 10 established that text can be represented as high-dimensional, sparse data. We learned to tokenize documents, construct term-document matrices, and use tf-idf to identify distinctive words. We also introduced topic models as methods for discovering latent themes—but deferred the question of <em>how</em> they work.</p>
+<p>This chapter answers that question. We develop the intuition behind Latent Dirichlet Allocation (LDA), the most widely used topic model, through examples ranging from a toy corpus of two books to thousands of news articles. Along the way, we encounter the Dirichlet distribution—a probability distribution over probability vectors that gives LDA its name and its power.</p>
+<section id="the-core-insight" class="level3" data-number="11.1.1">
+<h3 data-number="11.1.1" class="anchored" data-anchor-id="the-core-insight"><span class="header-section-number">11.1.1</span> The Core Insight</h3>
+<p>A topic model rests on two assumptions:</p>
+<ol type="1">
+<li><p><strong>Each document is a mixture of topics.</strong> A news article might be 70% business and 30% politics; a quarterly report might be 40% financial performance, 35% strategic outlook, and 25% risk factors.</p></li>
+<li><p><strong>Each topic is a mixture of words.</strong> The “business” topic assigns high probability to words like “market”, “profit”, and “growth”; the “politics” topic assigns high probability to “congress”, “vote”, and “campaign”.</p></li>
+</ol>
+<p>Given a corpus of documents, a topic model discovers both the topics (as probability distributions over words) and the topic mixture for each document. The model knows nothing about business or politics <em>a priori</em>—it infers topics from patterns of word co-occurrence.</p>
+</section>
+</section>
+<section id="the-generative-story" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="the-generative-story"><span class="header-section-number">11.2</span> The Generative Story</h2>
+<p>The key to understanding LDA is the <em>generative story</em>: a fictional account of how each document was created. Imagine generating a document as follows:</p>
+<p><strong>Step 1: Choose a topic mixture for this document.</strong></p>
+<p>Before writing anything, decide what proportion of the document will be devoted to each topic. For instance: “This document will be 70% Topic A and 30% Topic B.” This mixture is represented as a probability vector <span class="math inline">\(\boldsymbol{\gamma}_d = (\gamma_{d,1}, \ldots, \gamma_{d,K})\)</span> summing to 1.</p>
+<p><strong>Step 2: For each word position in the document:</strong></p>
+<ol type="a">
+<li>Roll the topic dice according to <span class="math inline">\(\boldsymbol{\gamma}_d\)</span> to select a topic.</li>
+<li>From that topic’s word distribution, generate a word.</li>
+</ol>
+<p>Repeat until the document is complete.</p>
+<p>This process is called a <em>bag-of-words</em> model because word order does not matter—only which words appear and how often. The generative story is fictional; no author actually writes this way. But if documents <em>were</em> generated this way, the resulting word patterns would resemble what we observe in real corpora.</p>
+<p><strong>LDA inverts this process.</strong> Given observed documents, LDA infers the topics and mixtures that best explain the data. The algorithm asks: “What topics, and what document-specific mixtures of those topics, would make these documents likely?”</p>
+</section>
+<section id="toy-example-two-books" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="toy-example-two-books"><span class="header-section-number">11.3</span> Toy Example: Two Books</h2>
+<p>To build intuition, we begin with a corpus where we know the ground truth. Can LDA distinguish two very different books without being told which paragraphs came from which?</p>
+<section id="the-data" class="level3" data-number="11.3.1">
+<h3 data-number="11.3.1" class="anchored" data-anchor-id="the-data"><span class="header-section-number">11.3.1</span> The Data</h3>
+<p><em>Animal Farm</em> (George Orwell, 1945) tells of farm animals who overthrow their human masters, only to see the pigs become tyrants—an allegory for Soviet communism. <em>The Butter Battle Book</em> (Dr.&nbsp;Seuss, 1984) depicts Yooks and Zooks in escalating conflict over which side to butter bread—an allegory for the Cold War nuclear arms race.</p>
+<p>We use Wikipedia’s plot summaries of these books, treating each paragraph as a separate “document.” This yields a small corpus where we know each document’s true source.</p>
+<div class="cell">
+<div id="tbl-corpus-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-corpus-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11.1: Mini-corpus: paragraphs from two book summaries
+</figcaption>
+<div aria-describedby="tbl-corpus-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Book</th>
+<th style="text-align: right;">Paragraphs</th>
+<th style="text-align: right;">Words (excl. stop words)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Animal Farm</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">553</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">The Butter Battle Book</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">172</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="fitting-lda-with-k-2" class="level3" data-number="11.3.2">
+<h3 data-number="11.3.2" class="anchored" data-anchor-id="fitting-lda-with-k-2"><span class="header-section-number">11.3.2</span> Fitting LDA with K = 2</h3>
+<p>We construct a document-term matrix and fit LDA requesting <span class="math inline">\(K = 2\)</span> topics—matching the number of source books.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Fitting LDA with K = 2 topics"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>af_bbb_lda <span class="ot">&lt;-</span> topicmodels<span class="sc">::</span><span class="fu">LDA</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x       =</span> af_bbb_dtm,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">k       =</span> <span class="dv">2</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method  =</span> <span class="st">"Gibbs"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">42</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>LDA()</code> function from the <code>topicmodels</code> package fits the model using Gibbs sampling, an iterative algorithm that infers topic assignments. Setting a seed ensures reproducibility.</p>
+</section>
+<section id="examining-the-results-word-distributions-β" class="level3" data-number="11.3.3">
+<h3 data-number="11.3.3" class="anchored" data-anchor-id="examining-the-results-word-distributions-β"><span class="header-section-number">11.3.3</span> Examining the Results: Word Distributions (β)</h3>
+<p>Each topic is a probability distribution over words. We extract these distributions and examine the highest-probability words for each topic:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-af-bbb-top-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-af-bbb-top-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="topic-models_files/figure-html/fig-af-bbb-top-terms-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-af-bbb-top-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.1: Top words by probability in each topic (Animal Farm vs Butter Battle corpus)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Topic 1’s top words include “animals”, “napoleon”, “farm”, and “snowball”—clearly <em>Animal Farm</em>. Topic 2’s top words include “yooks”, “zooks”, “wall”, and “battle”—clearly <em>The Butter Battle Book</em>. LDA successfully separated the two sources without being told which paragraphs came from which book.</p>
+</section>
+<section id="log-ratio-visualization" class="level3" data-number="11.3.4">
+<h3 data-number="11.3.4" class="anchored" data-anchor-id="log-ratio-visualization"><span class="header-section-number">11.3.4</span> Log-Ratio Visualization</h3>
+<p>Another way to compare topics is to examine which words most strongly distinguish them. For words appearing in both topics, we compute the log-ratio of probabilities:</p>
+<p><span id="eq-log-ratio"><span class="math display">\[
+\log_2 \left( \frac{\beta_2}{\beta_1} \right)
+\qquad(11.1)\]</span></span></p>
+<p>Positive values indicate words more probable in Topic 2; negative values indicate words more probable in Topic 1.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-af-bbb-log-ratio" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-af-bbb-log-ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="topic-models_files/figure-html/fig-af-bbb-log-ratio-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-af-bbb-log-ratio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.2: Words distinguishing Topic 2 (Butter Battle) from Topic 1 (Animal Farm)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The character names “yooks” and “zooks” strongly distinguish Topic 2, while “napoleon”, “snowball”, and “animals” strongly distinguish Topic 1. This visualization complements the top-words bar chart by highlighting <em>contrast</em> rather than absolute probability.</p>
+</section>
+<section id="toy-example-takeaways" class="level3" data-number="11.3.5">
+<h3 data-number="11.3.5" class="anchored" data-anchor-id="toy-example-takeaways"><span class="header-section-number">11.3.5</span> Toy Example: Takeaways</h3>
+<p>This toy example demonstrates that LDA works—it recovered the two sources without supervision. But interpretation requires judgment: “yooks” means nothing without context. And with only 9 documents (paragraphs), this is far from a realistic application. Real corpora have thousands of documents, and the topics discovered may not correspond to obvious categories.</p>
+</section>
+</section>
+<section id="scaling-up-ap-news-articles" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="scaling-up-ap-news-articles"><span class="header-section-number">11.4</span> Scaling Up: AP News Articles</h2>
+<p>We now turn to a larger corpus: 2,246 Associated Press articles from around 1988, provided by the <code>topicmodels</code> package. In Chapter 10, we fit <span class="math inline">\(K = 2\)</span> topics and found one resembling business/finance and another resembling politics/government. What happens with more topics?</p>
+<section id="fitting-lda-with-k-4" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="fitting-lda-with-k-4"><span class="header-section-number">11.4.1</span> Fitting LDA with K = 4</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ap-k4-topics" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ap-k4-topics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="topic-models_files/figure-html/fig-ap-k4-topics-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ap-k4-topics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.3: Top words in each of four topics discovered in AP articles
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>With four topics, we see finer distinctions emerge:</p>
+<div class="cell">
+<div id="tbl-interpret-ap-k4-beta" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-interpret-ap-k4-beta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11.2
+</figcaption>
+<div aria-describedby="tbl-interpret-ap-k4-beta-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 69%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Topic</th>
+<th style="text-align: left;">Top Words</th>
+<th style="text-align: left;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">i, court, years, time, state, case, says, get</td>
+<td style="text-align: left;">Legal</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">police, two, people, officials, three, city, air, wednesday</td>
+<td style="text-align: left;">Local News/Crime</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">percent, million, year, new, billion, last, company, market</td>
+<td style="text-align: left;">Business/Finance</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">president, government, states, united, soviet, bush, party, house</td>
+<td style="text-align: left;">International/Cold War</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>These interpretations require domain knowledge. The algorithm provides word distributions; the analyst provides labels. Note that the 1988 publication date explains the prominence of Cold War vocabulary in Topic 4.</p>
+</section>
+<section id="document-topic-mixtures-gamma" class="level3" data-number="11.4.2">
+<h3 data-number="11.4.2" class="anchored" data-anchor-id="document-topic-mixtures-gamma"><span class="header-section-number">11.4.2</span> Document-Topic Mixtures <span class="math inline">\((\gamma)\)</span></h3>
+<p>LDA also estimates each document’s topic mixture. We extract these as the <span class="math inline">\(\gamma\)</span> matrix:</p>
+<div class="cell">
+<div id="tbl-gamma-examples" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-gamma-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11.3: Topic mixtures for selected AP articles
+</figcaption>
+<div aria-describedby="tbl-gamma-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Doc ID</th>
+<th style="text-align: right;">Topic 1</th>
+<th style="text-align: right;">Topic 2</th>
+<th style="text-align: right;">Topic 3</th>
+<th style="text-align: right;">Topic 4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">195</td>
+<td style="text-align: right;">0.53</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.14</td>
+<td style="text-align: right;">0.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">526</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1842</td>
+<td style="text-align: right;">0.12</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">0.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2227</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.72</td>
+<td style="text-align: right;">0.09</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Some documents lean heavily toward one topic; others are more evenly mixed. This “soft clustering” is a key feature of topic models: unlike <span class="math inline">\(K\)</span>-means, which assigns each observation to exactly one cluster, LDA allows documents to belong partially to multiple topics.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-gamma-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gamma-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="topic-models_files/figure-html/fig-gamma-distribution-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gamma-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.4: Distribution of dominant topic proportions across AP articles
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The histogram shows that while some articles are dominated by a single topic (<span class="math inline">\(\gamma &gt; 0.8\)</span>), many are mixtures. This reflects the reality that news articles often cover multiple themes—a story about government economic policy might blend politics and business.</p>
+</section>
+</section>
+<section id="the-dirichlet-distribution" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="the-dirichlet-distribution"><span class="header-section-number">11.5</span> The Dirichlet Distribution</h2>
+<p>Why is this method called Latent <em>Dirichlet</em> Allocation? The Dirichlet distribution is the mathematical engine that makes LDA work. Understanding it conceptually—without diving into the full mathematical treatment—illuminates the model’s behavior.</p>
+<section id="a-distribution-over-mixtures" class="level3" data-number="11.5.1">
+<h3 data-number="11.5.1" class="anchored" data-anchor-id="a-distribution-over-mixtures"><span class="header-section-number">11.5.1</span> A Distribution Over Mixtures</h3>
+<p>Recall that each document has a topic mixture: a probability vector like <span class="math inline">\((0.7, 0.2, 0.1)\)</span> indicating proportions devoted to each topic. Where do these mixtures come from?</p>
+<p>LDA assumes topic mixtures are drawn from a <em>Dirichlet distribution</em>—a probability distribution whose outcomes are themselves probability vectors. Just as a normal distribution generates real numbers, the Dirichlet distribution generates vectors of positive numbers that sum to 1.</p>
+</section>
+<section id="the-concentration-parameter" class="level3" data-number="11.5.2">
+<h3 data-number="11.5.2" class="anchored" data-anchor-id="the-concentration-parameter"><span class="header-section-number">11.5.2</span> The Concentration Parameter</h3>
+<p>The Dirichlet distribution has a <em>concentration parameter</em> <span class="math inline">\(\alpha\)</span> that controls how “spread out” or “concentrated” the generated mixtures are:</p>
+<p><strong>Small <span class="math inline">\(\alpha\)</span> (&lt; 1)</strong>: Generates <em>sparse</em> mixtures. Documents tend toward one dominant topic. “This article is 95% politics.”</p>
+<p><strong>Large <span class="math inline">\(\alpha\)</span> (&gt; 1)</strong>: Generates <em>uniform</em> mixtures. Documents spread across many topics. “This article is 30% politics, 35% business, 35% international.”</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="topic-models_files/figure-html/dirichlet-samples-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Samples from Dirichlet distributions with different concentration parameters</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>With <span class="math inline">\(\alpha = 0.1\)</span>, most samples cluster near the corners of the simplex—indicating dominance by one topic. With <span class="math inline">\(\alpha = 5\)</span>, samples cluster near the center—indicating balanced mixtures. LDA typically uses small <span class="math inline">\(\alpha\)</span>, reflecting the intuition that documents are usually <em>about</em> something specific.</p>
+</section>
+<section id="two-dirichlet-distributions-in-lda" class="level3" data-number="11.5.3">
+<h3 data-number="11.5.3" class="anchored" data-anchor-id="two-dirichlet-distributions-in-lda"><span class="header-section-number">11.5.3</span> Two Dirichlet Distributions in LDA</h3>
+<p>LDA actually uses <em>two</em> Dirichlet distributions:</p>
+<ol type="1">
+<li><p>The one just noted, having concentration parameter <span class="math inline">\(\alpha\)</span>, controls topic mixtures per document. Small <span class="math inline">\(\alpha\)</span>-values mean documents focus on few topics.</p></li>
+<li><p>The other, having concentration parameter <span class="math inline">\(\beta\)</span> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, controls word mixtures per topic. Small values mean topics focus on specific words rather than spreading probability across the vocabulary.</p></li>
+</ol>
+<p>These are hyper-parameters that can be tuned, though default values often work well. For a fuller mathematical treatment of the Dirichlet distribution, including its density function and conjugacy to the multinomial distribution, see Appendix 11.A.</p>
+</section>
+</section>
+<section id="choosing-k" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="choosing-k"><span class="header-section-number">11.6</span> Choosing K</h2>
+<p>Like <span class="math inline">\(K\)</span>-means clustering, LDA requires specifying the number of topics <span class="math inline">\(K\)</span>. This choice significantly affects the results.</p>
+<p><strong>Too few topics</strong>: Themes are too broad. Business and finance might be lumped together; important distinctions are lost.</p>
+<p><strong>Too many topics</strong>: Themes are too narrow. Redundant topics emerge; interpretation becomes difficult.</p>
+<section id="comparing-k-values" class="level3" data-number="11.6.1">
+<h3 data-number="11.6.1" class="anchored" data-anchor-id="comparing-k-values"><span class="header-section-number">11.6.1</span> Comparing K Values</h3>
+<p>With <span class="math inline">\(K = 2\)</span>, we get broad themes (business vs.&nbsp;politics). With <span class="math inline">\(K = 4\)</span>, we see finer distinctions (domestic politics vs.&nbsp;international affairs). With <span class="math inline">\(K = 8\)</span>, we might discover additional themes like sports, legal affairs, or technology—or we might see redundant, hard-to-interpret topics.</p>
+<div class="cell">
+<div id="tbl-k-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-k-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11.4: Top words by topic for different values of K
+</figcaption>
+<div aria-describedby="tbl-k-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 27%">
+<col style="width: 33%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Topic</th>
+<th style="text-align: left;">K = 2</th>
+<th style="text-align: left;">K = 4</th>
+<th style="text-align: left;">K = 8</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Topic 1</td>
+<td style="text-align: left;">i, people, two, president, government</td>
+<td style="text-align: left;">i, court, years, time, state</td>
+<td style="text-align: left;">soviet, government, party, union, president</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Topic 2</td>
+<td style="text-align: left;">percent, new, year, million, last</td>
+<td style="text-align: left;">police, two, people, officials, three</td>
+<td style="text-align: left;">bush, president, house, i, dukakis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Topic 3</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">percent, million, year, new, billion</td>
+<td style="text-align: left;">i, years, time, like, first</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Topic 4</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">president, government, states, united, soviet</td>
+<td style="text-align: left;">police, people, city, two, miles</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Topic 5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">percent, million, year, billion, new</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Topic 6</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">court, case, federal, state, attorney</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Topic 7</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">military, united, two, force, air</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Topic 8</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">year, workers, program, new, report</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="practical-guidance" class="level3" data-number="11.6.2">
+<h3 data-number="11.6.2" class="anchored" data-anchor-id="practical-guidance"><span class="header-section-number">11.6.2</span> Practical Guidance</h3>
+<p>There is no universally reliable method for choosing <span class="math inline">\(K\)</span>. Practical approaches include:</p>
+<ol type="1">
+<li><p><strong>Domain knowledge.</strong> How many themes do you expect? For news articles, 4–10 might be reasonable; for academic papers in a narrow field, 3–5 might suffice.</p></li>
+<li><p><strong>Interpretability.</strong> Can you name each topic? Do the top words cohere? If topics are redundant or incoherent, try fewer.</p></li>
+<li><p><strong>Iteration.</strong> Fit models with <span class="math inline">\(K = 2, 3, 5, 10\)</span>. Compare results. Look for the value where topics are distinct and interpretable.</p></li>
+<li><p><strong>Coherence metrics.</strong> Statistical measures of topic quality exist (e.g., based on word co-occurrence), but they do not always align with human judgment.</p></li>
+<li><p><strong>Consider your goal.</strong> For exploration (getting a broad sense of themes), fewer topics may suffice. For fine-grained analysis, more topics may be warranted.</p></li>
+</ol>
+</section>
+</section>
+<section id="mathematical-framework" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="mathematical-framework"><span class="header-section-number">11.7</span> Mathematical Framework</h2>
+<p>For readers seeking a more formal treatment, this section presents the mathematical notation and generative model underlying LDA. The full Bayesian framework, including the Dirichlet distribution’s density and its conjugacy to the multinomial, appears in Appendix 11.A.</p>
+<section id="notation" class="level3" data-number="11.7.1">
+<h3 data-number="11.7.1" class="anchored" data-anchor-id="notation"><span class="header-section-number">11.7.1</span> Notation</h3>
+<p>Let <span class="math inline">\(\mathcal{D}\)</span> denote a corpus of documents. Each document <span class="math inline">\(d \in \mathcal{D}\)</span> is a sequence of words:</p>
+<p><span class="math display">\[
+d = (w_1, w_2, \ldots, w_{|d|})
+\]</span></p>
+<p>where <span class="math inline">\(|d|\)</span> denotes the number of words in document <span class="math inline">\(d\)</span>. The <em>vocabulary</em> <span class="math inline">\(V\)</span> is the set of distinct terms appearing in the corpus, with <span class="math inline">\(|V| = N\)</span> terms indexed as <span class="math inline">\(v_1, \ldots, v_N\)</span>.</p>
+<p>We specify <span class="math inline">\(K\)</span> topics. Each topic <span class="math inline">\(k\)</span> is a probability distribution over the vocabulary, represented as a vector <span class="math inline">\(\boldsymbol{\beta}_k = (\beta_{k,1}, \ldots, \beta_{k,N})\)</span> where <span class="math inline">\(\beta_{k,v}\)</span> is the probability of term <span class="math inline">\(v\)</span> under topic <span class="math inline">\(k\)</span>, and <span class="math inline">\(\sum_v \beta_{k,v} = 1\)</span>.</p>
+<p>Each document <span class="math inline">\(d\)</span> has a topic mixture <span class="math inline">\(\boldsymbol{\gamma}_d = (\gamma_{d,1}, \ldots, \gamma_{d,K})\)</span> where <span class="math inline">\(\gamma_{d,k}\)</span> is the proportion of document <span class="math inline">\(d\)</span> devoted to topic <span class="math inline">\(k\)</span>, and <span class="math inline">\(\sum_k \gamma_{d,k} = 1\)</span>.</p>
+</section>
+<section id="the-generative-model" class="level3" data-number="11.7.2">
+<h3 data-number="11.7.2" class="anchored" data-anchor-id="the-generative-model"><span class="header-section-number">11.7.2</span> The Generative Model</h3>
+<p>LDA posits that documents are generated as follows:</p>
+<ol type="1">
+<li><p>For each topic <span class="math inline">\(k \in \{1, \ldots, K\}\)</span>: Draw word distribution <span class="math inline">\(\boldsymbol{\beta}_k \sim \text{Dir}(\boldsymbol{\eta})\)</span>.</p></li>
+<li><p>For each document <span class="math inline">\(d \in \mathcal{D}\)</span>:</p>
+<ol type="a">
+<li>Draw topic mixture <span class="math inline">\(\boldsymbol{\gamma}_d \sim \text{Dir}(\boldsymbol{\alpha})\)</span>.</li>
+<li>For each word position <span class="math inline">\(j \in \{1, \ldots, |d|\}\)</span>:
+<ul>
+<li>Draw topic assignment <span class="math inline">\(z_{d,j} \sim \text{Multinomial}(\boldsymbol{\gamma}_d)\)</span>.</li>
+<li>Draw word <span class="math inline">\(w_{d,j} \sim \text{Multinomial}(\boldsymbol{\beta}_{z_{d,j}})\)</span>.</li>
+</ul></li>
+</ol></li>
+</ol>
+<p>Here <span class="math inline">\(\text{Dir}(\cdot)\)</span> denotes the Dirichlet distribution and <span class="math inline">\(\boldsymbol{\alpha}\)</span>, <span class="math inline">\(\boldsymbol{\eta}\)</span> are hyperparameters controlling the concentration of topic and word mixtures respectively.</p>
+</section>
+<section id="inference" class="level3" data-number="11.7.3">
+<h3 data-number="11.7.3" class="anchored" data-anchor-id="inference"><span class="header-section-number">11.7.3</span> Inference</h3>
+<p>Given observed documents, we wish to infer the latent variables: topic distributions <span class="math inline">\(\boldsymbol{\beta}_k\)</span>, document mixtures <span class="math inline">\(\boldsymbol{\gamma}_d\)</span>, and word-level topic assignments <span class="math inline">\(z_{d,j}\)</span>. Exact inference is intractable, so practical implementations use approximate methods.</p>
+<p>The <code>topicmodels</code> package offers two approaches: Variational Expectation-Maximization (VEM, the default) and Gibbs sampling. Gibbs sampling iteratively updates each word’s topic assignment conditional on all other assignments, eventually converging to a sample from the posterior distribution. The Dirichlet distribution’s conjugacy to the multinomial makes these updates computationally efficient.</p>
+<p>For further details on inference algorithms, see 2 and <span class="citation" data-cites="BNJ_2003_LDA">Blei, Ng, and Jordan (<a href="references.html#ref-BNJ_2003_LDA" role="doc-biblioref">2003</a>)</span>.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">11.8</span> Summary</h2>
+<p>This chapter developed the intuition and mechanics of topic models, focusing on Latent Dirichlet Allocation.</p>
+<p><strong>Key concepts:</strong></p>
+<ul>
+<li>Topic models assume documents are mixtures of topics, and topics are mixtures of words.</li>
+<li>The <em>generative story</em> imagines documents created by first choosing a topic mixture, then generating each word from a topic-specific distribution.</li>
+<li>LDA inverts this process, inferring topics from observed word patterns.</li>
+<li>The <em>Dirichlet distribution</em> generates probability vectors; its concentration parameter controls whether mixtures are sparse (one dominant topic) or uniform (many topics).</li>
+<li>Choosing <span class="math inline">\(K\)</span> requires domain knowledge and iterative exploration; there is no automatic method.</li>
+</ul>
+<p><strong>Key notation:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 47%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(K\)</span></td>
+<td>Number of topics (analyst’s choice)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\boldsymbol{\alpha}\)</span></td>
+<td>Dirichlet parameter for document-topic mixtures</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\beta_{k,v}\)</span></td>
+<td>Probability of term <span class="math inline">\(v\)</span> in topic <span class="math inline">\(k\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\gamma_{d,k}\)</span></td>
+<td>Proportion of topic <span class="math inline">\(k\)</span> in document <span class="math inline">\(d\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>For each topic <span class="math inline">\(k\)</span>: <span class="math inline">\(\sum_v \beta_{k,v} = 1\)</span></li>
+<li>For each document <span class="math inline">\(d\)</span>: <span class="math inline">\(\sum_k \gamma_{d,k} = 1\)</span></li>
+</ul>
+<p><strong>Connections to earlier material:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 47%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Earlier Concept</th>
+<th>Topic Model Analog</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(K\)</span>-means clustering</td>
+<td>LDA (documents → topics)</td>
+</tr>
+<tr class="even">
+<td>Cluster centroids</td>
+<td>Word distributions (<span class="math inline">\(\boldsymbol{\beta}\)</span>) per topic</td>
+</tr>
+<tr class="odd">
+<td>Cluster assignments</td>
+<td>Topic mixtures (<span class="math inline">\(\boldsymbol{\gamma}\)</span>) per document</td>
+</tr>
+<tr class="even">
+<td>Hard vs.&nbsp;soft clustering</td>
+<td><span class="math inline">\(K\)</span>-means (hard) vs.&nbsp;LDA (soft)</td>
+</tr>
+<tr class="odd">
+<td>PCA loadings</td>
+<td>Word weights per topic</td>
+</tr>
+</tbody>
+</table>
+<p>Topic models are “soft clustering”—documents belong partially to multiple topics, just as factor analysis allows observations to load on multiple factors.</p>
+<p><strong>The Two LDAs:</strong></p>
+<p>Chapter 9 introduced <em>Linear Discriminant Analysis</em>—a supervised method that finds directions separating known classes. This chapter presented <em>Latent Dirichlet Allocation</em>—an unsupervised method that discovers topics from word co-occurrence. Both “allocate” observations to categories, but with very different goals and methods.</p>
+</section>
+<section id="team-exercises" class="level2" data-number="11.9">
+<h2 data-number="11.9" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">11.9</span> Team Exercises</h2>
+<ol type="1">
+<li><p><strong>Interpret Topics.</strong> Using the AP News <span class="math inline">\(K = 4\)</span> results: (a) Propose alternative labels for each topic, justifying with top words. (b) Which topic is most coherent? Least coherent? Why? (c) Find a word that appears prominently in multiple topics. What does this suggest about that word?</p></li>
+<li><p><strong>Document Mixtures.</strong> For a document with <span class="math inline">\(\boldsymbol{\gamma} = (0.4, 0.3, 0.2, 0.1)\)</span>: (a) What does this mixture tell you about the document’s content? (b) How would you explain this to a non-technical colleague? (c) Would you classify this document into one topic or multiple? What are the tradeoffs?</p></li>
+<li><p><strong>Choosing K.</strong> You have a corpus of 5,000 customer support tickets. (a) What value of <span class="math inline">\(K\)</span> would you start with? Why? (b) Design an evaluation process to compare different values of <span class="math inline">\(K\)</span>. (c) How would you explain your final choice to stakeholders?</p></li>
+<li><p><strong>LDA vs.&nbsp;LLMs.</strong> For theme discovery in a large corpus: (a) When would you prefer LDA over asking an LLM to identify themes? (b) When would you prefer an LLM? (c) Design a hybrid workflow that combines both approaches, specifying which tool you would use at each stage and why.</p></li>
+</ol>
+</section>
+<section id="resources" class="level2" data-number="11.10">
+<h2 data-number="11.10" class="anchored" data-anchor-id="resources"><span class="header-section-number">11.10</span> Resources</h2>
+<p><strong>Foundational papers:</strong></p>
+<ul>
+<li><ol class="example" type="1">
+<li>Latent Dirichlet Allocation. <em>Journal of Machine Learning Research</em>. The original LDA paper.</li>
+</ol></li>
+<li><ol start="2" class="example" type="1">
+<li>Probabilistic Topic Models. In <em>Handbook of Latent Semantic Analysis</em>. Accessible introduction with details on Gibbs sampling.</li>
+</ol></li>
+</ul>
+<p><strong>Practical guidance:</strong></p>
+<ul>
+<li><p>Silge and Robinson. <a href="https://www.tidytextmining.com/">Text Mining with R</a>, Chapter 6. Tidy approach to topic modeling in R.</p></li>
+<li><ol start="3" class="example" type="1">
+<li><a href="https://maria-antoniak.github.io/2023/01/06/lda.html">LDA in Practice</a>. Blog post with practical advice on hyperparameters and evaluation.</li>
+</ol></li>
+</ul>
+<p><strong>R functions reference:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 35%">
+<col style="width: 32%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>LDA()</code></td>
+<td>topicmodels</td>
+<td>Fit LDA model</td>
+</tr>
+<tr class="even">
+<td><code>tidy()</code></td>
+<td>tidytext</td>
+<td>Extract β (word-topic) or γ (document-topic) matrices</td>
+</tr>
+<tr class="odd">
+<td><code>cast_dtm()</code></td>
+<td>tidytext</td>
+<td>Convert tidy data to document-term matrix</td>
+</tr>
+<tr class="even">
+<td><code>perplexity()</code></td>
+<td>topicmodels</td>
+<td>Compute model fit metric</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="appendix-11.a-the-dirichlet-distribution" class="level2 appendix" data-number="11.11">
+<h2 class="appendix anchored" data-number="11.11" data-anchor-id="appendix-11.a-the-dirichlet-distribution"><span class="header-section-number">11.11</span> Appendix 11.A: The Dirichlet Distribution</h2>
+<p>This appendix provides the mathematical foundation for the Dirichlet distribution, which underlies the “mixture” structure in LDA. We begin with the multinomial distribution, introduce Bayesian inference with conjugate priors, and then present the Dirichlet distribution as the natural generalization.</p>
+<section id="the-multinomial-distribution" class="level3" data-number="11.11.1">
+<h3 data-number="11.11.1" class="anchored" data-anchor-id="the-multinomial-distribution"><span class="header-section-number">11.11.1</span> The Multinomial Distribution</h3>
+<p>Consider a categorical random variable <span class="math inline">\(X\)</span> that selects one of <span class="math inline">\(K\)</span> distinct categories <span class="math inline">\(\{c_1, \ldots, c_K\}\)</span> with probabilities <span class="math inline">\(\mathbf{p} = (p_1, \ldots, p_K)\)</span> where <span class="math inline">\(\sum_k p_k = 1\)</span> and each <span class="math inline">\(p_k &gt; 0\)</span>.</p>
+<p>If we observe <span class="math inline">\(n\)</span> independent draws from this distribution, the counts <span class="math inline">\(\mathbf{S} = (S_1, \ldots, S_K)\)</span> follow a <em>multinomial distribution</em>:</p>
+<p><span id="eq-multinomial"><span class="math display">\[
+P(\mathbf{S} = \mathbf{s} \mid \mathbf{p}) = \binom{n}{\mathbf{s}} \prod_{k=1}^{K} p_k^{s_k}
+\qquad(11.2)\]</span></span></p>
+<p>where <span class="math inline">\(\binom{n}{\mathbf{s}} = \frac{n!}{s_1! \cdots s_K!}\)</span> is the multinomial coefficient.</p>
+<p>For <span class="math inline">\(K = 2\)</span>, this reduces to the binomial distribution.</p>
+</section>
+<section id="bayesian-inference-and-conjugate-priors" class="level3" data-number="11.11.2">
+<h3 data-number="11.11.2" class="anchored" data-anchor-id="bayesian-inference-and-conjugate-priors"><span class="header-section-number">11.11.2</span> Bayesian Inference and Conjugate Priors</h3>
+<p>In Bayesian inference, we represent uncertainty about the probability vector <span class="math inline">\(\mathbf{p}\)</span> with a <em>prior distribution</em>. After observing data, we update to a <em>posterior distribution</em>.</p>
+<p>A prior is <em>conjugate</em> to a likelihood if the posterior belongs to the same family as the prior. This property simplifies computation enormously.</p>
+<p>For the binomial distribution (i.e., <span class="math inline">\(K = 2\)</span>), the conjugate prior is the <em>beta distribution</em>:</p>
+<p><span id="eq-beta-dist"><span class="math display">\[
+P(p) = \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)} p^{\alpha - 1}(1-p)^{\beta - 1}
+\qquad(11.3)\]</span></span></p>
+<p>where <span class="math inline">\(\alpha, \beta &gt; 0\)</span> are shape parameters and <span class="math inline">\(\Gamma(\cdot)\)</span> is the gamma function.</p>
+<p>If we observe <span class="math inline">\(s_1\)</span> successes and <span class="math inline">\(s_2 = n - s_1\)</span> failures, the posterior is <span class="math inline">\(\text{Beta}(\alpha + s_1, \beta + s_2)\)</span>—the same family, with updated parameters.</p>
+</section>
+<section id="the-dirichlet-distribution-1" class="level3" data-number="11.11.3">
+<h3 data-number="11.11.3" class="anchored" data-anchor-id="the-dirichlet-distribution-1"><span class="header-section-number">11.11.3</span> The Dirichlet Distribution</h3>
+<p>The <em>Dirichlet distribution</em> generalizes the beta distribution to <span class="math inline">\(K \geq 2\)</span> categories. It is the conjugate prior for the multinomial distribution.</p>
+<p>The Dirichlet distribution with parameter vector <span class="math inline">\(\boldsymbol{\alpha} = (\alpha_1, \ldots, \alpha_K)\)</span> has density:</p>
+<p><span id="eq-dirichlet-density"><span class="math display">\[
+P(\mathbf{p}) = \frac{\Gamma(\alpha_1 + \cdots + \alpha_K)}{\Gamma(\alpha_1) \times \cdots \times \Gamma(\alpha_K)} \prod_{k=1}^{K} p_k^{\alpha_k - 1}
+\qquad(11.4)\]</span></span></p>
+<p>where each <span class="math inline">\(\alpha_k &gt; 0\)</span> and the probability vector <span class="math inline">\(\mathbf{p}\)</span> lies on the <span class="math inline">\((K-1)\)</span>-dimensional simplex (i.e., <span class="math inline">\(p_k \geq 0\)</span> and <span class="math inline">\(\sum_k p_k = 1\)</span>).</p>
+</section>
+<section id="the-concentration-parameter-1" class="level3" data-number="11.11.4">
+<h3 data-number="11.11.4" class="anchored" data-anchor-id="the-concentration-parameter-1"><span class="header-section-number">11.11.4</span> The Concentration Parameter</h3>
+<p>In the <em>symmetric</em> case where all <span class="math inline">\(\alpha_k = \bar{\alpha}\)</span>, the sum <span class="math inline">\(\alpha_+ = K\bar{\alpha}\)</span> is called the <em>concentration parameter</em>. Its value controls the distribution’s shape:</p>
+<ul>
+<li><p><span class="math inline">\(\bar{\alpha} &lt; 1\)</span>: The distribution concentrates near the corners of the simplex, generating sparse probability vectors dominated by one or few categories.</p></li>
+<li><p><span class="math inline">\(\bar{\alpha} = 1\)</span>: The distribution is uniform over the simplex.</p></li>
+<li><p><span class="math inline">\(\bar{\alpha} &gt; 1\)</span>: The distribution concentrates near the center of the simplex, generating probability vectors spread more evenly across categories.</p></li>
+</ul>
+<p>Different technical communities parameterize the Dirichlet differently. Some use <span class="math inline">\(\alpha_+\)</span> directly; others use <span class="math inline">\(\bar{\alpha} = \alpha_+/K\)</span>. The <code>topicmodels</code> package uses a symmetric Dirichlet with a single concentration value. When reading the literature, check which convention is in use.</p>
+</section>
+<section id="conjugacy-and-posterior-updating" class="level3" data-number="11.11.5">
+<h3 data-number="11.11.5" class="anchored" data-anchor-id="conjugacy-and-posterior-updating"><span class="header-section-number">11.11.5</span> Conjugacy and Posterior Updating</h3>
+<p>If the prior on <span class="math inline">\(\mathbf{p}\)</span> is <span class="math inline">\(\text{Dir}(\boldsymbol{\alpha})\)</span> and we observe multinomial counts <span class="math inline">\(\mathbf{s} = (s_1, \ldots, s_K)\)</span>, the posterior is:</p>
+<p><span id="eq-dirichlet-posterior"><span class="math display">\[
+\mathbf{p} \mid \mathbf{s} \sim \text{Dir}(\boldsymbol{\alpha} + \mathbf{s})
+\qquad(11.5)\]</span></span></p>
+<p>That is, we simply add the observed counts to the prior parameters. This elegant updating rule is why the Dirichlet distribution is central to LDA: it makes the Gibbs sampling updates computationally tractable.</p>
+</section>
+<section id="role-in-lda" class="level3" data-number="11.11.6">
+<h3 data-number="11.11.6" class="anchored" data-anchor-id="role-in-lda"><span class="header-section-number">11.11.6</span> Role in LDA</h3>
+<p>In LDA, Dirichlet distributions serve as priors in two places:</p>
+<ol type="1">
+<li><p><strong>Document-topic mixtures</strong>: Each document’s topic proportions <span class="math inline">\(\boldsymbol{\gamma}_d\)</span> are drawn from <span class="math inline">\(\text{Dir}(\boldsymbol{\alpha})\)</span>. A small <span class="math inline">\(\alpha\)</span> encourages documents to focus on few topics.</p></li>
+<li><p><strong>Topic-word distributions</strong>: Each topic’s word probabilities <span class="math inline">\(\boldsymbol{\beta}_k\)</span> are drawn from <span class="math inline">\(\text{Dir}(\boldsymbol{\eta})\)</span>. A small <span class="math inline">\(\eta\)</span> encourages topics to assign high probability to few words.</p></li>
+</ol>
+<p>The conjugacy property means that as we observe words in documents and update our beliefs about topic assignments, the posterior distributions remain Dirichlet, enabling efficient iterative inference.</p>
+</section>
+<section id="references-for-appendix" class="level3" data-number="11.11.7">
+<h3 data-number="11.11.7" class="anchored" data-anchor-id="references-for-appendix"><span class="header-section-number">11.11.7</span> References for Appendix</h3>
+<ul>
+<li><span class="citation" data-cites="wiki_Dirichlet_dstn"><span>“Dirichlet Distribution | Wikipedia”</span> (<a href="references.html#ref-wiki_Dirichlet_dstn" role="doc-biblioref">2025</a>)</span> for an accessible introduction.</li>
+<li><span class="citation" data-cites="BNJ_2003_LDA">Blei, Ng, and Jordan (<a href="references.html#ref-BNJ_2003_LDA" role="doc-biblioref">2003</a>)</span> for the original application to topic modeling.</li>
+<li>2 for details on the Gibbs sampling algorithm.</li>
+</ul>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-BNJ_2003_LDA" class="csl-entry" role="listitem">
+Blei, David M., Andrew Y. Ng, and Michael I. Jordan. 2003. <span>“Latent Dirichlet Allocation.”</span> <em>J. Mach. Learn. Res.</em> 3 (null): 993–1022.
+</div>
+<div id="ref-wiki_Dirichlet_dstn" class="csl-entry" role="listitem">
+<span>“Dirichlet Distribution | Wikipedia.”</span> 2025. <em>Wikipedia</em>, July. <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution">https://en.wikipedia.org/wiki/Dirichlet_distribution</a>.
+</div>
+</div>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>The topic modeling literature also uses <span class="math inline">\(\delta\)</span> or <span class="math inline">\(\eta\)</span> in place of <span class="math inline">\(\beta\)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./text-as-data.html" class="pagination-link" aria-label="Text as Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ts-intro.html" class="pagination-link" aria-label="Time Series Data Analysis">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/topic-models.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

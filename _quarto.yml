@@ -54,9 +54,7 @@ book:
     - part: Text Data
       chapters:
         - text-as-data.qmd
-        - text-analysis.qmd
-        - dirichlet-dstn.qmd
-        - latent-dirichlet-alloc.qmd
+        - topic-models.qmd
     - part: Time Series Data
       chapters:
         - ts-intro.qmd
