@@ -1,0 +1,830 @@
+---
+title: "Topic Models"
+subtitle: "Discovering Latent Themes"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 11"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: CRAN-libraries
+
+library(here)
+library(knitr)
+library(tidyverse)
+library(tidytext)
+library(topicmodels)
+library(tm)
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+```
+
+```{r}
+#| label: local-source
+
+source(here::here("code", "eda4ml_set_seed.R"))
+source(here::here("code", "text_helpers.R"))
+```
+
+# Generative Model Recap
+
+## From Chapter 10
+
+We established:
+  
+. . .
+
+- Text → tokens → term-document matrix
+
+. . .
+
+- TF-IDF surfaces distinctive words
+
+. . .
+
+- Topic models discover latent themes
+
+. . .
+
+Now we go deeper: **How do topic models work?**
+
+## The Core Insight
+
+A topic model makes two key assumptions:
+
+. . .
+
+1. **Each document is a mixture of topics**
+   - "This article is 70% business, 30% politics"
+
+. . .
+
+2. **Each topic is a mixture of words**
+   - Business topic: "market", "profit", "growth" have high probability
+   - Politics topic: "congress", "vote", "campaign" have high probability
+
+## The Generative Story
+
+Imagine *generating* a document:
+
+. . .
+
+**Step 1**: Choose a mixture of topics for this document
+   
+   - Topic mixture: "70% Topic A, 30% Topic B"
+
+. . .
+
+**Step 2**: For each word position:
+
+   - Roll the topic dice → generate a topic
+   - From that topic's word distribution → generate a word
+
+. . .
+
+**LDA inverts this process**: Given documents, infer the topics.
+
+# Toy Example: Two Books
+
+## The Experiment
+
+Can LDA distinguish two very different books?
+
+. . .
+
+**Animal Farm** (George Orwell, 1945)
+
+- Farm animals overthrow humans, pigs become tyrants
+- Allegory for Soviet communism
+
+. . .
+
+**The Butter Battle Book** (Dr. Seuss, 1984)
+
+- Yooks vs Zooks over which side to butter bread
+- Allegory for Cold War nuclear arms race
+
+. . .
+
+We use Wikipedia's plot summaries, treating each paragraph as a "document."
+
+## Loading the Texts
+
+```{r}
+#| label: load-animal-farm
+
+# Animal Farm: story plot from Wikipedia
+af_pst_lst <- para2token(
+  file = here::here(
+    "data", "retain", "Animal_Farm_summary.txt" ) )
+
+af_token_tbl <- af_pst_lst$ token_tbl |>
+  dplyr::mutate(src = "AF") |>
+  dplyr::select(src, dplyr::everything())
+
+af_para_tbl <- af_pst_lst$ para_tbl |>
+  dplyr::mutate(src = "AF") |>
+  dplyr::select(src, dplyr::everything())
+```
+
+```{r}
+#| label: load-butter-battle
+
+# The Butter Battle Book: story plot from Wikipedia
+bbb_pst_lst <- para2token(
+  file = here::here(
+    "data", "retain", "Butter_Battle_summary.txt" ) )
+
+bbb_token_tbl <- bbb_pst_lst$ token_tbl |>
+  dplyr::mutate(src = "BBB") |>
+  dplyr::select(src, dplyr::everything())
+
+bbb_para_tbl <- bbb_pst_lst$ para_tbl |>
+  dplyr::mutate(src = "BBB") |>
+  dplyr::select(src, dplyr::everything())
+```
+
+```{r}
+#| label: combine-tokens
+
+af_bbb_token_tbl <- dplyr::bind_rows(
+  af_token_tbl, 
+  bbb_token_tbl )
+
+af_bbb_para_tbl <- dplyr::bind_rows(
+  af_para_tbl, 
+  bbb_para_tbl )
+```
+
+```{r}
+#| label: corpus-summary
+
+corpus_summary <- af_bbb_token_tbl |>
+  dplyr::summarise(
+    .by = src,
+    n_paragraphs = dplyr::n_distinct(pdx),
+    n_words      = dplyr::n()
+  )
+```
+
+Our mini-corpus of paragraphs within plot summaries:
+
+```{r}
+corpus_summary |> 
+  dplyr::rename(book = src) |> 
+  dplyr::mutate(book = dplyr::case_when(
+    book == "AF"  ~ "Animal Farm", 
+    book == "BBB" ~ "Butter Battle Book"
+  )) |> 
+  knitr::kable()
+```
+
+## Building the Document-Term Matrix
+
+```{r}
+#| label: build-dtm
+#| echo: true
+
+# Count words per paragraph (our "documents")
+af_bbb_counts <- af_bbb_token_tbl |>
+  dplyr::mutate(doc_id = paste(src, pdx, sep = "_")) |>
+  dplyr::count(doc_id, word)
+
+# Convert to document-term matrix
+af_bbb_dtm <- af_bbb_counts |>
+  tidytext::cast_dtm(document = doc_id, term = word, value = n)
+
+af_bbb_dtm
+```
+
+## Fitting LDA with K = 2
+
+```{r}
+#| label: fit-lda-k2
+#| echo: true
+
+af_bbb_lda <- topicmodels::LDA(
+  x      = af_bbb_dtm,
+  k      = 2,
+  method = "Gibbs",
+  control = list(seed = 42)
+)
+```
+
+. . .
+
+We asked for 2 topics—matching our 2 source books.
+
+Can LDA recover the distinction?
+
+## Word Distribution $(\beta)$ per Topic
+
+```{r}
+#| label: extract-beta
+
+af_bbb_topics <- tidytext::tidy(af_bbb_lda, matrix = "beta")
+```
+
+```{r}
+#| label: fig-af-bbb-topics
+#| fig-cap: "Top words in each topic (Animal Farm vs Butter Battle)"
+#| fig-height: 4.5
+
+af_bbb_top_terms <- af_bbb_topics |>
+  dplyr::group_by(topic) |>
+  dplyr::slice_max(beta, n = 10, with_ties = FALSE) |>
+  dplyr::ungroup()
+
+af_bbb_top_terms |>
+  dplyr::mutate(
+    term = tidytext::reorder_within(term, beta, topic),
+    topic = paste("Topic", topic)
+  ) |>
+  ggplot2::ggplot(ggplot2::aes(x = beta, y = term, fill = topic)) +
+  ggplot2::geom_col(show.legend = FALSE) +
+  ggplot2::facet_wrap(~topic, scales = "free_y") +
+  tidytext::scale_y_reordered() +
+  ggplot2::labs(
+    title = "Top Words by Topic",
+    x = "Word probability (β)", y = NULL
+  ) +
+  ggplot2::theme_minimal(base_size = 12)
+```
+
+## Interpreting the Results
+
+**Topic 1** top words: *animals*, *napoleon*, *farm*, *snowball*...
+
+→ Animal Farm ✓
+
+. . .
+
+**Topic 2** top words: *yooks*, *zooks*, *wall*, *battle*...
+
+→ The Butter Battle Book ✓
+
+. . .
+
+LDA successfully separated the two sources—without being told which paragraphs came from which book.
+
+## Log-Ratio Visualization
+
+Which words most distinguish the topics?
+
+```{r}
+#| label: compute-log-ratio
+
+af_bbb_log_ratio <- af_bbb_topics |>
+  dplyr::mutate(topic = paste0("beta_", topic)) |>
+  tidyr::pivot_wider(names_from = topic, values_from = beta) |>
+  dplyr::filter(
+    pmin(beta_1, beta_2) > 0,
+    pmax(beta_1, beta_2) > 0.001
+  ) |>
+  dplyr::mutate(log_ratio = log2(beta_2 / beta_1))
+```
+
+```{r}
+#| label: fig-log-ratio
+#| fig-cap: "Log₂ ratio: positive = Topic 2 (Butter Battle), negative = Topic 1 (Animal Farm)"
+#| fig-height: 4
+
+af_bbb_log_ratio |>
+  dplyr::group_by(direction = log_ratio > 0) |>
+  dplyr::slice_max(abs(log_ratio), n = 8) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(term = stats::reorder(term, log_ratio)) |>
+  ggplot2::ggplot(ggplot2::aes(x = log_ratio, y = term)) +
+  ggplot2::geom_col(ggplot2::aes(fill = log_ratio > 0), show.legend = FALSE) +
+  ggplot2::scale_fill_manual(values = c("steelblue", "coral")) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dashed") +
+  ggplot2::labs(
+    x = expression(log[2](beta[2] / beta[1])), 
+    y = NULL
+  ) +
+  ggplot2::theme_minimal(base_size = 12)
+```
+
+## Toy Example: Takeaways
+
+. . .
+
+1. **LDA works**: It found the two sources without supervision
+
+. . .
+
+2. **Interpretation requires judgment**: "yooks" means nothing without context
+
+. . .
+
+3. **Limitations exposed**: With only 9 documents (paragraphs), this is a toy. Real corpora have thousands of documents.
+
+. . .
+
+Let's see what happens at scale.
+
+# Real Corpus: AP News
+
+## Associated Press Articles
+
+2,246 news articles from the Associated Press.
+
+. . .
+
+In Chapter 10 we fit $K = 2$ topics and found:
+
+- Topic 1: Business/Finance
+- Topic 2: Politics/Government
+
+. . .
+
+**Now**: What if we ask for $K = 4$ topics?
+
+## Fitting LDA with K = 4
+
+```{r}
+#| label: load-ap-data
+
+# Load AP data from eda4mldata (tidy format)
+# Convert to document-term matrix for LDA
+ap_dtm <- eda4mldata::ap_tidy |>
+ tidytext::cast_dtm(document = document, term = term, value = count)
+```
+
+```{r}
+#| label: fit-ap-k4
+#| cache: true
+
+ap_lda_k4 <- topicmodels::LDA(
+  x       = ap_dtm,
+  k       = 4,
+  method  = "Gibbs",
+  control = list(seed = 42, iter = 1000)
+)
+```
+
+```{r}
+#| label: extract-ap-beta
+
+ap_topics_k4 <- tidytext::tidy(ap_lda_k4, matrix = "beta")
+```
+
+## Four Topics Discovered
+
+```{r}
+#| label: fig-ap-k4-topics
+#| fig-cap: "Top words in each of 4 topics (AP articles)"
+#| fig-height: 5
+
+ap_top_terms_k4 <- ap_topics_k4 |>
+  dplyr::group_by(topic) |>
+  dplyr::slice_max(beta, n = 8, with_ties = FALSE) |>
+  dplyr::ungroup()
+
+ap_top_terms_k4 |>
+  dplyr::mutate(
+    term = tidytext::reorder_within(term, beta, topic),
+    topic = paste("Topic", topic)
+  ) |>
+  ggplot2::ggplot(ggplot2::aes(x = beta, y = term, fill = topic)) +
+  ggplot2::geom_col(show.legend = FALSE) +
+  ggplot2::facet_wrap(~topic, scales = "free_y", ncol = 2) +
+  tidytext::scale_y_reordered() +
+  ggplot2::labs(
+    title = "Four Topics in AP News",
+    x = "Word probability (β)", y = NULL
+  ) +
+  ggplot2::theme_minimal(base_size = 11)
+```
+
+## Interpreting the Four Topics
+
+. . .
+
+| Topic | Top Words | Interpretation |
+|-------|-----------|----------------|
+| 1 | percent, million, market, stock | Business/Finance |
+| 2 | president, government, party | Politics (Domestic) |
+| 3 | soviet, united, states, military | International/Cold War |
+| 4 | police, people, city, reported | Local News/Crime |
+
+. . .
+
+These interpretations require domain knowledge. The algorithm provides the word distributions; you provide the labels.
+
+## Topic Mixtures per Document $(\gamma)$
+
+```{r}
+#| label: extract-ap-gamma
+
+ap_gamma_k4 <- tidytext::tidy(ap_lda_k4, matrix = "gamma")
+```
+
+Each document has a mixture of topics:
+
+```{r}
+#| label: gamma-examples
+
+set.seed(123)
+sample_docs <- sample(unique(ap_gamma_k4$document), 4)
+
+ap_gamma_k4 |>
+  dplyr::filter(document %in% sample_docs) |>
+  tidyr::pivot_wider(names_from = topic, values_from = gamma) |>
+  dplyr::rename(Doc = document) |>
+  knitr::kable(digits = 2, col.names = c("Doc ID", "Topic 1", "Topic 2", "Topic 3", "Topic 4"))
+```
+
+. . .
+
+Most documents lean toward one topic, but more even mixtures are common.
+
+## Visualizing Document Mixtures
+
+```{r}
+#| label: fig-gamma-distribution
+#| fig-cap: "Distribution of dominant topic proportions"
+#| fig-height: 4
+
+ap_gamma_k4 |>
+  dplyr::group_by(document) |>
+  dplyr::slice_max(gamma, n = 1) |>
+  dplyr::ungroup() |>
+  ggplot2::ggplot(ggplot2::aes(x = gamma)) +
+  ggplot2::geom_histogram(binwidth = 0.05, fill = "steelblue", color = "white") +
+  ggplot2::labs(
+    title = "How 'Pure' Are Documents?",
+    subtitle = "Distribution of highest topic proportion per document", 
+    x = expression(
+      "Dominant topic proportion "(gamma)
+    ), 
+    # x = "Dominant topic proportion (γ)",
+    y = "Number of documents"
+  ) +
+  ggplot2::theme_minimal(base_size = 12)
+```
+
+. . .
+
+A few articles are dominated by one topic $(\gamma > 0.8)$, but most articles are a mixture of two or more topics.
+
+# The Dirichlet Distribution
+
+## Why "Dirichlet" in LDA?
+
+LDA needs a probability distribution over *mixtures*.
+
+. . .
+
+- Each document has a particular mixture of topics
+- The mixture is given as probability vector like (0.7, 0.3)
+
+. . .
+
+The **Dirichlet distribution** is a distribution over such probability vectors.
+
+## A Distribution Over Mixtures
+
+```{r}
+#| label: dirichlet-samples
+#| fig-cap: "Samples from Dirichlet distributions with different concentrations"
+#| fig-height: 4
+
+# Simulate Dirichlet samples for K=3
+set.seed(42)
+n_samples <- 500
+
+# Helper to sample from Dirichlet
+# (This is essentially the same as gtools::rdirichlet)
+rdirichlet <- function(n, alpha) {
+  k <- length(alpha)
+  
+  x <- matrix(
+    data = stats::rgamma(
+      n * k, 
+      shape = rep(alpha, each = n) ), 
+    nrow = n, 
+    byrow = FALSE )
+  
+  return(x / rowSums(x))
+}
+
+# Low concentration (sparse mixtures)
+low_conc <- rdirichlet(
+  n = n_samples, 
+  alpha = c(0.1, 0.1, 0.1) ) |>
+  tibble::as_tibble(
+    .name_repair = ~c("Topic1", "Topic2", "Topic3") ) |>
+  dplyr::mutate(concentration = "α = 0.1 (sparse)")
+
+# High concentration (uniform mixtures)
+high_conc <- rdirichlet(n_samples, c(5, 5, 5)) |>
+  tibble::as_tibble(.name_repair = ~c("Topic1", "Topic2", "Topic3")) |>
+  dplyr::mutate(concentration = "α = 5 (dense)")
+
+dplyr::bind_rows(low_conc, high_conc) |>
+  ggplot2::ggplot(ggplot2::aes(x = Topic1, y = Topic2, color = concentration)) +
+  ggplot2::geom_point(alpha = 0.3, size = 1) +
+  ggplot2::facet_wrap(~concentration) +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(
+    title = "Dirichlet Samples (K = 3 topics)",
+    subtitle = "Each point is a mixture of topics",
+    x = "Proportion Topic 1",
+    y = "Proportion Topic 2"
+  ) +
+  ggplot2::theme_minimal(base_size = 12) +
+  ggplot2::theme(legend.position = "none")
+```
+
+## The Concentration Parameter
+
+The Dirichlet has a **concentration parameter** $\alpha$:
+
+. . .
+
+**Small $\alpha$ (< 1)**: Sparse mixtures
+
+- Documents tend toward *one* dominant topic
+- "This article is 95% politics"
+
+. . .
+
+**Large $\alpha$ (> 1)**: Uniform mixtures
+
+- Documents spread across *many* topics
+- "This article is 30% politics, 35% business, 35% international"
+
+. . .
+
+LDA typically uses small $\alpha$, reflecting the intuition that documents are usually *about* something specific.
+
+## Dirichlet in the LDA Model
+
+LDA uses *two* Dirichlet distributions:
+
+. . .
+
+1. **α** controls topic mixtures per document $(\gamma)$
+   - "How focused are documents on single topics?"
+
+. . .
+
+2. **β** (sometimes called $\delta$ or $\eta$) controls word mixtures per topic
+   - "How focused are topics on specific words?"
+
+. . .
+
+These are hyperparameters you can tune—but defaults often work well.
+
+# Choosing K
+
+## The Key Question
+
+How many topics should you request?
+
+. . .
+
+This is analogous to choosing $K$ in K-means clustering.
+
+. . .
+
+**Too few topics**: Themes are too broad
+
+- Business and finance lumped together
+- Important distinctions lost
+
+. . .
+
+**Too many topics**: Themes are too narrow
+
+- Redundant topics
+- Hard to interpret
+
+## No Perfect Answer
+
+Unlike clustering, there's no "elbow" method that works reliably.
+
+. . .
+
+**Practical approaches**:
+
+. . .
+
+1. **Domain knowledge**: "I expect 5–10 themes in this corpus"
+
+. . .
+
+2. **Interpretability**: Can you name each topic? Do the top words cohere?
+
+. . .
+
+3. **Iteration**: Fit K = 2, 3, 5, 10. Compare results.
+
+. . .
+
+4. **Coherence metrics**: Statistical measures of topic quality (advanced)
+
+## Example: K = 2 vs K = 4 vs K = 8
+
+```{r}
+#| label: fit-multiple-k
+#| cache: true
+
+ap_lda_k2 <- topicmodels::LDA(ap_dtm, k = 2, method = "Gibbs", 
+                               control = list(seed = 42, iter = 500))
+ap_lda_k8 <- topicmodels::LDA(ap_dtm, k = 8, method = "Gibbs", 
+                               control = list(seed = 42, iter = 500))
+```
+
+```{r}
+#| label: compare-k-values
+
+compare_topics <- function(lda_model, k_val) {
+  tidytext::tidy(lda_model, matrix = "beta") |>
+    dplyr::group_by(topic) |>
+    dplyr::slice_max(beta, n = 5, with_ties = FALSE) |>
+    dplyr::summarise(top_words = paste(term, collapse = ", ")) |>
+    dplyr::mutate(K = k_val)
+}
+
+k_comparison <- dplyr::bind_rows(
+  compare_topics(ap_lda_k2, 2),
+  compare_topics(ap_lda_k4, 4),
+  compare_topics(ap_lda_k8, 8)
+)
+```
+
+**K = 2**: `r k_comparison |> dplyr::filter(K == 2, topic == 1) |> dplyr::pull(top_words)`
+
+. . .
+
+**K = 4**: Splits into Business, Politics, International, Local
+
+. . .
+
+**K = 8**: Further splits may reveal Sports, Legal, Technology...
+
+. . .
+
+...or may produce redundant, uninterpretable topics.
+
+## Guidance for Choosing K
+
+::: {.callout-tip}
+## Practical Recommendations
+
+1. **Start with domain intuition** — How many themes do you expect?
+2. **Try a range** — e.g., K = 2, 3, 5, 10
+3. **Evaluate interpretability** — Can you name each topic?
+4. **Look for redundancy** — Do topics overlap too much?
+5. **Consider your goal** — Exploration (fewer topics) vs. fine-grained analysis (more topics)
+:::
+
+# Summary
+
+## Key Takeaways
+
+1. **Topic models assume** documents are mixtures of topics, and topics are mixtures of words
+
+. . .
+
+2. **LDA discovers** both word distributions $(\beta)$ per topic and topic distributions $(\gamma)$ per document
+
+. . .
+
+3. **Interpretation requires judgment** — the algorithm finds patterns; you provide meaning
+
+. . .
+
+4. **Choosing K is an art** — iterate, evaluate, use domain knowledge
+
+. . .
+
+5. **The Dirichlet distribution** provides the "mixture over mixtures" structure LDA needs
+
+## Key Notation
+
+| Symbol | Meaning |
+|--------|---------|
+| $K$ | Number of topics (you choose) |
+| $\alpha$ | Dirichlet concentration of topic mixtures per doc |
+| $\beta_{k,v}$ | Probability of term $v$ in topic $k$ |
+| $\gamma_{d,k}$ | Proportion of topic $k$ in document $d$ |
+
+. . .
+
+For each topic $k$: $\sum_v \beta_{k,v} = 1$
+
+For each document $d$: $\sum_k \gamma_{d,k} = 1$
+
+## Connections to Earlier Material
+
+| Earlier Concept | Topic Model Analog |
+|-----------------|-------------------|
+| K-means clustering | LDA (documents → topics) |
+| Cluster centroids | Word mixtures (β) per topic |
+| Cluster assignments | Topic mixtures (γ) per document |
+| Choosing K | Choosing K |
+| PCA loadings | Word weights per topic |
+
+. . .
+
+Topic models are "soft clustering" — documents belong partially to multiple topics.
+
+## The Two LDAs Resolved
+
+::: {.callout-note}
+## Two Different Techniques
+
+**Linear Discriminant Analysis** (Chapter 9)
+
+- Supervised: uses class labels
+- Finds directions that separate known classes
+
+**Latent Dirichlet Allocation** (Chapter 11)
+
+- Unsupervised: discovers latent structure  
+- Finds topics from word co-occurrence
+
+Both "allocate" observations to categories—but with very different goals.
+:::
+
+# Exercises
+
+## Team Exercise 1: Interpret Topics
+
+Using the AP News K = 4 results:
+
+1. Propose alternative labels for each topic. Justify with top words.
+2. Which topic is most coherent? Least coherent? Why?
+3. Find a word that appears in multiple topics. What does this suggest?
+
+## Team Exercise 2: Document Mixtures
+
+For a document with $\gamma = (0.4, 0.3, 0.2, 0.1)$:
+
+1. What does this mixture tell you about the document?
+2. How would you summarize this to a non-technical colleague?
+3. Would you classify this document into one topic or multiple? Why?
+
+## Team Exercise 3: Choosing K
+
+You have a corpus of 5,000 customer support tickets.
+
+1. What K would you start with? Why?
+2. Design an evaluation process to compare different values of K.
+3. How would you explain your choice to stakeholders?
+
+## Team Exercise 4: LDA vs LLMs
+
+For theme discovery in a large corpus:
+
+1. When would you prefer LDA over asking an LLM?
+2. When would you prefer an LLM over LDA?
+3. Design a hybrid workflow combining both approaches.
+
+# Resources
+
+## References
+
+**Foundational:**
+
+- Blei, Ng, & Jordan (2003). [Latent Dirichlet Allocation](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf). *JMLR*.
+
+- Steyvers & Griffiths (2007). [Probabilistic Topic Models](https://cocosci.princeton.edu/tom/papers/SteyversGriffiths.pdf). In *Handbook of Latent Semantic Analysis*.
+
+**Practical:**
+
+- Silge & Robinson. [Text Mining with R](https://www.tidytextmining.com/), Chapter 6.
+
+- Antoniak (2023). [LDA in Practice](https://maria-antoniak.github.io/2023/01/06/lda.html). Blog post with practical advice.
+
+## R Functions Reference
+
+| Function | Package | Purpose |
+|----------|---------|---------|
+| `LDA()` | topicmodels | Fit LDA model |
+| `tidy()` | tidytext | Extract β or γ matrices |
+| `cast_dtm()` | tidytext | Create document-term matrix |
+| `perplexity()` | topicmodels | Model fit metric |
