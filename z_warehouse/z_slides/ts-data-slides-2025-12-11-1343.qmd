@@ -36,22 +36,10 @@ Throughout this book we have seen that **understanding** and **decision support*
 
 . . .
 
-Time series analysis makes this especially vivid.
+Time series analysis makes this especially vivid:
 
-```{r}
-#| label: tf-questions
-
-tfq_tbl <- tibble::tibble(
-  domain = c("Time", "Frequency"), 
-  question = c(
-    "How does the past predict the future?", 
-    "What structure generated this process?")
-)
-
-tfq_tbl |> knitr::kable(
-  col.names = c("Domain", "Question")
-)
-```
+- The **time domain** asks: How does the past predict the future?
+- The **frequency domain** asks: What structure generated this process?
 
 . . .
 
@@ -149,13 +137,11 @@ tsplot(sunspot.month, ylab = "Sunspot count", col = 4, main = "")
 #| label: fig-sunspots-acf
 #| fig-cap: "ACF of monthly sunspot numbers"
 #| fig-height: 4
-
-# sunspot.month ACF: plot but don't print
-ss_acf <- acf1(sunspot.month, max.lag = 200, main = "")
+acf1(sunspot.month, max.lag = 200, main = "")
 ```
 
 - **Slow decay**: Strong persistence—the past predicts the future
-- **Oscillation**: Cycle of ~11 years
+- **Oscillation**: Peaks near lag 130 (~11 years) show cyclical structure
 - But cycle length is hard to read precisely
 
 ## Sunspots: Frequency Domain View
@@ -190,9 +176,7 @@ tsplot(gtemp_land, ylab = "°C deviation", col = 4, main = "")
 #| label: fig-gtemp-acf
 #| fig-cap: "ACF of global land temperatures"
 #| fig-height: 4
-
-# gtemp_land ACF: plot but don't print
-gtl_acf <- acf1(gtemp_land, main = "")
+acf1(gtemp_land, main = "")
 ```
 
 - **Very slow decay**: Each year strongly predicts the next
@@ -234,9 +218,7 @@ tsplot(rec, ylab = "Recruitment", col = 4, main = "")
 #| fig-cap: "SOI: ACF and Spectrum"
 #| fig-height: 4
 par(mfrow = c(1, 2))
-
-# soi ACF: plot but don't print
-soi_acf <- acf1(soi, main = "ACF")
+acf1(soi, main = "ACF")
 mvspec(soi, log = "no", main = "Spectrum", col = 4)
 ```
 
@@ -251,9 +233,7 @@ mvspec(soi, log = "no", main = "Spectrum", col = 4)
 #| fig-cap: "Recruitment: ACF and Spectrum"
 #| fig-height: 4
 par(mfrow = c(1, 2))
-
-# rec ACF: plot but don't print
-rec_acf <- acf1(rec, main = "ACF")
+acf1(rec, main = "ACF")
 mvspec(rec, log = "no", main = "Spectrum", col = 4)
 ```
 
@@ -287,17 +267,13 @@ set.seed(42)
 wn <- rnorm(500)
 par(mfrow = c(1, 3))
 tsplot(wn, main = "White noise", col = 4, ylab = "")
-
-# wn ACF: plot but don't print
-wn_acf <- acf1(wn, main = "ACF")
-mvspec(
-  wn, spans = c(25, 25), ci = 0.95, ci.lty = 2L, 
-  log = "no", main = "Spectrum", col = 4 )
+acf1(wn, main = "ACF")
+mvspec(wn, log = "no", main = "Spectrum", col = 4)
 ```
 
 - **Time series**: No visible pattern
 - **ACF**: All lags near zero (within confidence bands)
-- **Spectrum**: Flat (within confidence bands)—no frequency dominates
+- **Spectrum**: Roughly flat—no frequency dominates
 
 ## Departures from White Noise
 
@@ -320,9 +296,9 @@ The two views are complementary diagnostics.
 
 A process is **second-order stationary** (weakly stationary) if:
 
-1. $E\{X(t)\} = \mu$ (constant mean)
+1. $E\{X(t)\} = \mu$ — constant mean
 
-2. $\text{Cov}(X(t+u), X(t)) = \gamma(u)$ (depends only on lag $u$)
+2. $\text{Cov}(X(t+u), X(t)) = \gamma(u)$ — covariance depends only on lag $u$
 
 . . .
 
@@ -402,9 +378,7 @@ The ACF answers: **How predictable is the future from the past?**
 #| label: fig-acf-example
 #| fig-cap: "Sample ACF for SOI data"
 #| fig-height: 4
-
-# soi ACF: plot but don't print
-soi_acf <- acf1(soi, main = "Southern Oscillation Index")
+acf1(soi, main = "Southern Oscillation Index")
 ```
 
 - **Blue dashed lines**: 95% confidence bounds under white noise null
@@ -429,9 +403,7 @@ The PACF answers: **What is the direct effect of lag $u$, controlling for shorte
 #| label: fig-acf-pacf
 #| fig-cap: "ACF and PACF for SOI data"
 #| fig-height: 4
-
-# SOI ACF, PACF: plot but don't print
-soi_acf2 <- acf2(soi, main = "Southern Oscillation Index")
+acf2(soi, main = "Southern Oscillation Index")
 ```
 
 - **ACF**: Total correlation at each lag
@@ -550,7 +522,7 @@ When you encounter a new time series:
 
 1. **Plot the series**: Look for trend, seasonality, level shifts, changing variance
 
-2. **Check stationarity**: Does $X$ wander? Transform as needed
+2. **Check stationarity**: Does it wander? Transform if needed
 
 3. **Examine the ACF**: How fast does it decay? Any oscillation?
 

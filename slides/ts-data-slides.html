@@ -28,72 +28,6 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-      }
-    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-    div.sourceCode
-      { color: #f8f8f2;  }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span { color: #f8f8f2; } /* Normal */
-    code span.al { color: #f07178; } /* Alert */
-    code span.an { color: #d4d0ab; } /* Annotation */
-    code span.at { color: #00e0e0; } /* Attribute */
-    code span.bn { color: #d4d0ab; } /* BaseN */
-    code span.bu { color: #abe338; } /* BuiltIn */
-    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #abe338; } /* Char */
-    code span.cn { color: #ffd700; } /* Constant */
-    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
-    code span.cv { color: #ffd700; } /* CommentVar */
-    code span.do { color: #f8f8f2; } /* Documentation */
-    code span.dt { color: #ffa07a; } /* DataType */
-    code span.dv { color: #d4d0ab; } /* DecVal */
-    code span.er { color: #f07178; text-decoration: underline; } /* Error */
-    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
-    code span.fl { color: #d4d0ab; } /* Float */
-    code span.fu { color: #ffa07a; } /* Function */
-    code span.im { color: #abe338; } /* Import */
-    code span.in { color: #d4d0ab; } /* Information */
-    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
-    code span.op { color: #ffa07a; } /* Operator */
-    code span.ot { color: #00e0e0; } /* Other */
-    code span.pp { color: #dcc6e0; } /* Preprocessor */
-    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
-    code span.sc { color: #abe338; } /* SpecialChar */
-    code span.ss { color: #abe338; } /* SpecialString */
-    code span.st { color: #abe338; } /* String */
-    code span.va { color: #00e0e0; } /* Variable */
-    code span.vs { color: #abe338; } /* VerbatimString */
-    code span.wa { color: #dcc6e0; } /* Warning */
   </style>
   <link rel="stylesheet" href="ts-data-slides_files/libs/revealjs/dist/theme/quarto-0144685976e4030202a49018b3418199.css">
   <link href="ts-data-slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -194,7 +128,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Time Series Data</h1>
-  <p class="subtitle">Discovering Time Structure</p>
+  <p class="subtitle">Two Lenses, One Reality</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -208,82 +142,136 @@ EDA for Machine Learning
 <nav role="doc-toc"> 
 <h2 id="toc-title">Chapter 12</h2>
 <ul>
-<li><a href="#/overview" id="/toc-overview">Overview</a></li>
-<li><a href="#/examples" id="/toc-examples">Examples</a></li>
-<li><a href="#/mathematical-framework" id="/toc-mathematical-framework">Mathematical Framework</a></li>
-<li><a href="#/why-it-matters" id="/toc-why-it-matters">Why It Matters</a></li>
-<li><a href="#/two-paths-forward" id="/toc-two-paths-forward">Two Paths Forward</a></li>
+<li><a href="#/the-nature-of-time-series" id="/toc-the-nature-of-time-series">The Nature of Time Series</a></li>
+<li><a href="#/examples-two-perspectives" id="/toc-examples-two-perspectives">Examples: Two Perspectives</a></li>
+<li><a href="#/the-white-noise-baseline" id="/toc-the-white-noise-baseline">The White Noise Baseline</a></li>
+<li><a href="#/stationarity-and-time-invariance" id="/toc-stationarity-and-time-invariance">Stationarity and Time-Invariance</a></li>
+<li><a href="#/autocorrelation-in-detail" id="/toc-autocorrelation-in-detail">Autocorrelation in Detail</a></li>
+<li><a href="#/why-correct-inference-requires-understanding" id="/toc-why-correct-inference-requires-understanding">Why Correct Inference Requires Understanding</a></li>
+<li><a href="#/looking-ahead" id="/toc-looking-ahead">Looking Ahead</a></li>
 <li><a href="#/summary" id="/toc-summary">Summary</a></li>
 </ul>
 </nav>
 </section>
 <section>
-<section id="overview" class="title-slide slide level1 center">
-<h1>Overview</h1>
+<section id="the-nature-of-time-series" class="title-slide slide level1 center">
+<h1>The Nature of Time Series</h1>
 
 </section>
-<section id="learning-goals" class="slide level2">
-<h2>Learning Goals</h2>
-<p>After completing this chapter, you will be able to:</p>
-<ol type="1">
-<li><p><strong>Recognize and describe</strong> key features of time series data: trend, seasonality, cycles, and autocorrelation</p></li>
-<li><p><strong>Assess stationarity</strong> visually and understand why it matters</p></li>
-<li><p><strong>Interpret ACF and PACF plots</strong> as diagnostic tools for dependence structure</p></li>
-<li><p><strong>Understand effective sample size (ESS)</strong> and why autocorrelation affects variance estimation</p></li>
-</ol>
-</section>
-<section id="what-makes-time-series-different" class="slide level2">
-<h2>What Makes Time Series Different?</h2>
-<p><strong>Standard assumption in statistics:</strong> Observations are independent</p>
-<p><strong>Time series reality:</strong> Successive observations are dependent</p>
+<section id="understanding-and-prediction" class="slide level2">
+<h2>Understanding and Prediction</h2>
+<p>Throughout this book we have seen that <strong>understanding</strong> and <strong>decision support</strong> are intertwined.</p>
 <div class="fragment">
-<p>This dependence has consequences:</p>
-<ul>
-<li>Variance estimates are wrong if we ignore it</li>
-<li>Standard errors are wrong</li>
-<li>Confidence intervals are wrong</li>
-<li>Model validation requires special care</li>
-</ul>
-</div>
-</section>
-<section id="the-core-question" class="slide level2">
-<h2>The Core Question</h2>
-<blockquote>
-<p>Given a sequence of observations indexed by time, what is the <strong>dependence structure</strong>?</p>
-</blockquote>
-<div class="fragment">
-<p>Two complementary ways to answer:</p>
+<p>Time series analysis makes this especially vivid.</p>
+<div class="cell">
+<div class="cell-output-display">
 <table class="caption-top">
-<colgroup>
-<col style="width: 38%">
-<col style="width: 38%">
-<col style="width: 23%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Approach</th>
-<th>Question</th>
-<th>Tool</th>
+<th style="text-align: left;">Domain</th>
+<th style="text-align: left;">Question</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Time domain</strong></td>
-<td>How does <span class="math inline">\(X(t)\)</span> relate to <span class="math inline">\(X(t-1), X(t-2), \ldots\)</span>?</td>
-<td>ACF, PACF</td>
+<td style="text-align: left;">Time</td>
+<td style="text-align: left;">How does the past predict the future?</td>
 </tr>
 <tr class="even">
-<td><strong>Frequency domain</strong></td>
-<td>How much variance comes from periodic components?</td>
-<td>Periodogram</td>
+<td style="text-align: left;">Frequency</td>
+<td style="text-align: left;">What structure generated this process?</td>
 </tr>
 </tbody>
 </table>
 </div>
+</div>
+</div>
+<div class="fragment">
+<p>These are not competing approaches—they are <strong>dual perspectives</strong> on the same underlying reality, connected by mathematics.</p>
+</div>
+</section>
+<section id="time-series-have-memory" class="slide level2">
+<h2>Time Series Have Memory</h2>
+<p><strong>Standard assumption in statistics:</strong> Observations are independent</p>
+<p><strong>Time series reality:</strong> Successive observations are dependent</p>
+<div class="fragment">
+<p>This dependence is not merely a technical nuisance. It is <strong>information</strong>:</p>
+<ul>
+<li>Information about how the system evolves</li>
+<li>Information about underlying periodic structure</li>
+<li>Information we must understand to make correct inferences</li>
+</ul>
+</div>
+</section>
+<section id="two-equivalent-descriptions" class="slide level2">
+<h2>Two Equivalent Descriptions</h2>
+<p>The dependence structure of a stationary time series has two equivalent descriptions:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 30%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Domain</th>
+<th>Object</th>
+<th>Question</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Time</strong></td>
+<td>Autocorrelation function <span class="math inline">\(\rho(u)\)</span></td>
+<td>How does <span class="math inline">\(X(t)\)</span> correlate with <span class="math inline">\(X(t-u)\)</span>?</td>
+</tr>
+<tr class="even">
+<td><strong>Frequency</strong></td>
+<td>Spectral density <span class="math inline">\(f(\lambda)\)</span></td>
+<td>How much variance comes from frequency <span class="math inline">\(\lambda\)</span>?</td>
+</tr>
+</tbody>
+</table>
+<div class="fragment">
+<p>These contain the <strong>same information</strong>—they are Fourier transform pairs.</p>
+<p>Understanding both illuminates what either alone obscures.</p>
+</div>
+</section>
+<section id="why-fourier-analysis-is-fundamental" class="slide level2">
+<h2>Why Fourier Analysis Is Fundamental</h2>
+<p>This is not historical accident. There is a deep reason.</p>
+<div class="fragment">
+<p>The <strong>back-shift operator</strong> <span class="math inline">\(\mathcal{B}\)</span> shifts a process in time:</p>
+<p><span class="math display">\[[\mathcal{B}X](t) = X(t-1)\]</span></p>
+</div>
+<div class="fragment">
+<p>Complex exponentials <span class="math inline">\(e_\lambda(t) = e^{i\lambda t}\)</span> are <strong>eigenfunctions</strong> of <span class="math inline">\(\mathcal{B}\)</span>:</p>
+<p><span class="math display">\[\mathcal{B}(e_\lambda) = e^{-i\lambda} \cdot e_\lambda\]</span></p>
+</div>
+<div class="fragment">
+<p>Sinusoids are the natural “modes” of any time-invariant linear system.</p>
+</div>
+</section>
+<section id="the-creation-myth" class="slide level2">
+<h2>The Creation Myth</h2>
+<p>One way to think about stationary processes:</p>
+<div class="fragment">
+<p><strong>In the beginning</strong>: White noise—independent observations, no memory</p>
+</div>
+<div class="fragment">
+<p><strong>Then</strong>: A linear, time-invariant filter acts on the white noise</p>
+</div>
+<div class="fragment">
+<p><strong>Result</strong>: Autocorrelated output—the filter’s fingerprint</p>
+</div>
+<div class="fragment">
+<p>The <strong>spectrum</strong> tells you what the filter did.</p>
+<p>The <strong>ACF</strong> tells you how the present relates to the past.</p>
+</div>
 </section></section>
 <section>
-<section id="examples" class="title-slide slide level1 center">
-<h1>Examples</h1>
+<section id="examples-two-perspectives" class="title-slide slide level1 center">
+<h1>Examples: Two Perspectives</h1>
 
 </section>
 <section id="example-1-sunspots" class="slide level2">
@@ -292,287 +280,337 @@ EDA for Machine Learning
 <img data-src="ts-data-slides_files/figure-revealjs/fig-sunspots-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-sunspots"><p class="caption">
 Figure&nbsp;1: Monthly sunspot numbers, 1749–present
 </p><ul>
-<li><strong>Cycles</strong>: ~11-year solar magnetic cycle</li>
+<li><strong>Visible structure</strong>: ~11-year solar magnetic cycle</li>
 <li><strong>Irregular amplitude</strong>: Peak heights vary substantially</li>
-<li>Classic dataset for spectral analysis</li>
+<li>What do the two lenses reveal?</li>
 </ul>
 </section>
-<section id="example-2-global-surface-temperatures" class="slide level2">
-<h2>Example 2: Global Surface Temperatures</h2>
+<section id="sunspots-time-domain-view" class="slide level2">
+<h2>Sunspots: Time Domain View</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-sunspots-acf-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-sunspots-acf"><p class="caption">
+Figure&nbsp;2: ACF of monthly sunspot numbers
+</p><ul>
+<li><strong>Slow decay</strong>: Strong persistence—the past predicts the future</li>
+<li><strong>Oscillation</strong>: Cycle of ~11 years</li>
+<li>But cycle length is hard to read precisely</li>
+</ul>
+</section>
+<section id="sunspots-frequency-domain-view" class="slide level2">
+<h2>Sunspots: Frequency Domain View</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-sunspots-spectrum-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-sunspots-spectrum"><p class="caption">
+Figure&nbsp;3: Spectrum of monthly sunspot numbers
+</p><ul>
+<li><strong>Dominant peak</strong>: The ~11-year cycle appears as a sharp spectral peak</li>
+<li>Frequency ≈ 0.007 cycles/month → period ≈ 140 months ≈ 11.7 years</li>
+<li>The spectrum makes the periodicity <strong>immediately visible</strong></li>
+</ul>
+</section>
+<section id="example-2-global-temperatures" class="slide level2">
+<h2>Example 2: Global Temperatures</h2>
 
 <img data-src="ts-data-slides_files/figure-revealjs/fig-gtemp-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-gtemp"><p class="caption">
-Figure&nbsp;2: Annual temperature deviations from 1991–2020 average
+Figure&nbsp;4: Annual temperature deviations from 1991–2020 average
 </p><ul>
-<li><strong>Trend</strong>: Non-linear increase, especially post-1980</li>
-<li><strong>Two series</strong>: Land warms faster than ocean</li>
-<li>No simple periodic structure</li>
+<li><strong>Dominant feature</strong>: Non-linear trend, especially post-1980</li>
+<li><strong>No obvious periodicity</strong>: Unlike sunspots</li>
+<li>How do the two lenses handle trend?</li>
 </ul>
 </section>
-<section id="example-3-jj-quarterly-earnings" class="slide level2">
-<h2>Example 3: J&amp;J Quarterly Earnings</h2>
+<section id="global-temperatures-time-domain" class="slide level2">
+<h2>Global Temperatures: Time Domain</h2>
 
-<img data-src="ts-data-slides_files/figure-revealjs/fig-jj-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-jj"><p class="caption">
-Figure&nbsp;3: Johnson &amp; Johnson quarterly earnings per share, 1960–1980
+<img data-src="ts-data-slides_files/figure-revealjs/fig-gtemp-acf-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-gtemp-acf"><p class="caption">
+Figure&nbsp;5: ACF of global land temperatures
 </p><ul>
-<li><strong>Trend</strong>: Exponential growth → use log transform</li>
-<li><strong>Seasonality</strong>: Annual pattern (Q1 spike)</li>
-<li>Transformation reveals additive structure</li>
+<li><strong>Very slow decay</strong>: Each year strongly predicts the next</li>
+<li>This signals <strong>non-stationarity</strong>—the trend dominates</li>
+<li>Must remove trend before standard time series analysis</li>
 </ul>
 </section>
-<section id="example-4-el-niño-and-fish-recruitment" class="slide level2">
-<h2>Example 4: El Niño and Fish Recruitment</h2>
+<section id="global-temperatures-frequency-domain" class="slide level2">
+<h2>Global Temperatures: Frequency Domain</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-gtemp-spectrum-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-gtemp-spectrum"><p class="caption">
+Figure&nbsp;6: Spectrum of global land temperatures
+</p><ul>
+<li><strong>Low-frequency dominance</strong>: Most variance at lowest frequencies</li>
+<li>This is the spectral signature of <strong>trend</strong></li>
+<li>No periodic peaks—the story is secular change, not cycles</li>
+</ul>
+</section>
+<section id="example-3-soi-and-fish-recruitment" class="slide level2">
+<h2>Example 3: SOI and Fish Recruitment</h2>
 
 <img data-src="ts-data-slides_files/figure-revealjs/fig-soi-rec-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-soi-rec"><p class="caption">
-Figure&nbsp;4: Southern Oscillation Index and Recruitment, 1950–1987
+Figure&nbsp;7: Southern Oscillation Index and Recruitment, 1950–1987
 </p><ul>
-<li><strong>Two related series</strong>: Ocean temperature ↔︎ fish population</li>
-<li><strong>Multiple cycles</strong>: Annual + ~4-year El Niño cycle</li>
-<li>Sets up cross-correlation and coherence analysis</li>
+<li><strong>Two related series</strong>: Ocean temperature affects fish population</li>
+<li><strong>Multiple periodicities</strong>: Annual cycle + El Niño (~4 years)</li>
+<li>Perfect case for spectral analysis</li>
 </ul>
 </section>
-<section id="features-to-look-for" class="slide level2">
-<h2>Features to Look For</h2>
-<p>When you encounter a new time series:</p>
+<section id="soi-dual-perspective" class="slide level2">
+<h2>SOI: Dual Perspective</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-soi-dual-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-soi-dual"><p class="caption">
+Figure&nbsp;8: SOI: ACF and Spectrum
+</p><ul>
+<li><strong>ACF</strong>: Oscillates, showing cyclical structure, but which cycles?</li>
+<li><strong>Spectrum</strong>: Two clear peaks—annual (freq ≈ 1) and El Niño (freq ≈ 0.25)</li>
+<li>The frequency domain <strong>separates</strong> the periodicities</li>
+</ul>
+</section>
+<section id="recruitment-dual-perspective" class="slide level2">
+<h2>Recruitment: Dual Perspective</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-rec-dual-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-rec-dual"><p class="caption">
+Figure&nbsp;9: Recruitment: ACF and Spectrum
+</p><ul>
+<li><strong>Similar spectral peaks</strong> to SOI—the fish respond to the climate signal</li>
+<li>This correspondence leads to <strong>coherence analysis</strong> (Chapter 14)</li>
+<li>Understanding the mechanism enables better forecasting</li>
+</ul>
+</section></section>
+<section>
+<section id="the-white-noise-baseline" class="title-slide slide level1 center">
+<h1>The White Noise Baseline</h1>
+
+</section>
+<section id="white-noise-the-blank-slate" class="slide level2">
+<h2>White Noise: The Blank Slate</h2>
+<p><strong>White noise</strong> is the reference point—a process with no memory:</p>
+<ul>
+<li>Independent observations</li>
+<li>Constant variance</li>
+<li>Zero autocorrelation at all nonzero lags</li>
+</ul>
+<div class="fragment">
+<p><strong>Time domain</strong>: <span class="math inline">\(\rho(u) = 0\)</span> for all <span class="math inline">\(u \neq 0\)</span></p>
+<p><strong>Frequency domain</strong>: Flat spectrum—equal variance at all frequencies</p>
+</div>
+</section>
+<section id="white-noise-visual-signature" class="slide level2">
+<h2>White Noise: Visual Signature</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Bandwidth: 0.072 | Degrees of Freedom: 72.12 | split taper: 0% </code></pre>
+</div>
+
+</div>
+<img data-src="ts-data-slides_files/figure-revealjs/fig-white-noise-dual-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-white-noise-dual"><p class="caption">
+Figure&nbsp;10: White noise: time series, ACF, and spectrum
+</p><ul>
+<li><strong>Time series</strong>: No visible pattern</li>
+<li><strong>ACF</strong>: All lags near zero (within confidence bands)</li>
+<li><strong>Spectrum</strong>: Flat (within confidence bands)—no frequency dominates</li>
+</ul>
+</section>
+<section id="departures-from-white-noise" class="slide level2">
+<h2>Departures from White Noise</h2>
+<p>Any structure in ACF or spectrum reveals <strong>departure from independence</strong>:</p>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>Feature</th>
-<th>What to look for</th>
-<th>Example</th>
+<th>Observation</th>
+<th>Time Domain</th>
+<th>Frequency Domain</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Trend</strong></td>
-<td>Systematic increase/decrease</td>
-<td>Global temps</td>
+<td>Slow ACF decay</td>
+<td>Persistence/trend</td>
+<td>Low-freq dominance</td>
 </tr>
 <tr class="even">
-<td><strong>Seasonality</strong></td>
-<td>Regular periodic pattern</td>
-<td>J&amp;J earnings</td>
+<td>ACF oscillation</td>
+<td>Cyclical dependence</td>
+<td>Spectral peaks</td>
 </tr>
 <tr class="odd">
-<td><strong>Cycles</strong></td>
-<td>Irregular periodic behavior</td>
-<td>Sunspots</td>
+<td>Sharp ACF cutoff</td>
+<td>Short memory (MA)</td>
+<td>Smooth spectrum</td>
 </tr>
 <tr class="even">
-<td><strong>Level shifts</strong></td>
-<td>Abrupt changes in mean</td>
-<td>—</td>
-</tr>
-<tr class="odd">
-<td><strong>Changing variance</strong></td>
-<td>Heteroscedasticity</td>
-<td>Financial returns</td>
+<td>Gradual ACF decay</td>
+<td>Long memory (AR)</td>
+<td>Peaked spectrum</td>
 </tr>
 </tbody>
 </table>
+<div class="fragment">
+<p>The two views are complementary diagnostics.</p>
+</div>
 </section></section>
 <section>
-<section id="mathematical-framework" class="title-slide slide level1 center">
-<h1>Mathematical Framework</h1>
+<section id="stationarity-and-time-invariance" class="title-slide slide level1 center">
+<h1>Stationarity and Time-Invariance</h1>
 
 </section>
-<section id="random-process-notation" class="slide level2">
-<h2>Random Process Notation</h2>
-<p>A time series is modeled as a realization of a <strong>random process</strong>:</p>
-<p><span class="math display">\[X(t), \quad t \in \mathbb{Z}\]</span></p>
-<div class="fragment">
-<p>We observe a finite window: <span class="math inline">\(X(t_0), X(t_0 + 1), \ldots, X(t_0 + T - 1)\)</span></p>
-</div>
-<div class="fragment">
-<p><strong>Key quantities:</strong></p>
-<ul>
-<li>Mean function: <span class="math inline">\(m(t) = E\{X(t)\}\)</span></li>
-<li>Variance: <span class="math inline">\(\sigma_X^2 = \text{Var}\{X(t)\}\)</span></li>
-<li>Auto-covariance: <span class="math inline">\(\gamma_X(u) = \text{Cov}(X(t+u), X(t))\)</span></li>
-</ul>
-</div>
-</section>
-<section id="stationarity" class="slide level2">
-<h2>Stationarity</h2>
-<p>A process is <strong>second-order stationary</strong> (or weakly stationary) if:</p>
+<section id="stationarity-defined" class="slide level2">
+<h2>Stationarity Defined</h2>
+<p>A process is <strong>second-order stationary</strong> (weakly stationary) if:</p>
 <ol type="1">
 <li><p><span class="math inline">\(E\{X(t)\} = \mu\)</span> (constant mean)</p></li>
-<li><p><span class="math inline">\(\text{Cov}(X(t+u), X(t)) = \gamma(u)\)</span> (covariance depends only on lag <span class="math inline">\(u\)</span>)</p></li>
+<li><p><span class="math inline">\(\text{Cov}(X(t+u), X(t)) = \gamma(u)\)</span> (depends only on lag <span class="math inline">\(u\)</span>)</p></li>
 </ol>
 <div class="fragment">
 <p><strong>Why it matters:</strong></p>
 <ul>
 <li>Stationarity lets us estimate <span class="math inline">\(\gamma(u)\)</span> from a single realization</li>
-<li>Non-stationary series must be transformed first (differencing, detrending)</li>
+<li>The spectrum is only defined for stationary processes</li>
+<li>Non-stationary series must be transformed first</li>
 </ul>
+</div>
+</section>
+<section id="stationarity-and-time-invariance-1" class="slide level2">
+<h2>Stationarity and Time-Invariance</h2>
+<p>Stationarity is the <strong>statistical counterpart</strong> of time-invariance in systems theory.</p>
+<div class="fragment">
+<p>A linear filter is <strong>time-invariant</strong> if shifting the input shifts the output by the same amount—the filter doesn’t care what time it is.</p>
+</div>
+<div class="fragment">
+<p>Stationary processes are precisely those whose statistical properties don’t care what time it is.</p>
+</div>
+<div class="fragment">
+<p>This connection is why Fourier methods—natural for time-invariant systems—are fundamental for stationary processes.</p>
 </div>
 </section>
 <section id="stationarity-visual-assessment" class="slide level2">
 <h2>Stationarity: Visual Assessment</h2>
 
 <img data-src="ts-data-slides_files/figure-revealjs/fig-stationary-check-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-stationary-check"><p class="caption">
-Figure&nbsp;5: Stationary vs.&nbsp;non-stationary
+Figure&nbsp;11: Stationary vs.&nbsp;non-stationary
 </p><ul>
-<li><strong>Left</strong>: Fluctuates around constant level</li>
-<li><strong>Right</strong>: Wanders without returning</li>
+<li><strong>Left</strong>: Fluctuates around a constant level—stationary</li>
+<li><strong>Right</strong>: Wanders without returning—non-stationary</li>
 </ul>
 </section>
-<section id="autocorrelation-function-acf" class="slide level2">
-<h2>Autocorrelation Function (ACF)</h2>
-<p>The <strong>autocorrelation function</strong> normalizes auto-covariance:</p>
-<p><span class="math display">\[\rho_X(u) = \frac{\gamma_X(u)}{\gamma_X(0)} = \text{Corr}(X(t+u), X(t))\]</span></p>
-<div class="fragment">
-<p><strong>Properties:</strong></p>
-<ul>
-<li><span class="math inline">\(\rho_X(0) = 1\)</span></li>
-<li><span class="math inline">\(|\rho_X(u)| \leq 1\)</span></li>
-<li><span class="math inline">\(\rho_X(-u) = \rho_X(u)\)</span> (symmetric)</li>
-</ul>
-</div>
-</section>
-<section id="acf-sample-estimate" class="slide level2">
-<h2>ACF: Sample Estimate</h2>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code> [1]  0.60  0.37  0.21  0.05 -0.11 -0.19 -0.18 -0.10  0.05  0.22  0.36  0.41
-[13]  0.31  0.10 -0.06 -0.17 -0.29 -0.37 -0.32 -0.19 -0.04  0.15  0.31  0.35
-[25]  0.25  0.10 -0.03 -0.16 -0.28 -0.37 -0.32 -0.16 -0.02  0.17  0.33  0.39
-[37]  0.30  0.16  0.00 -0.13 -0.24 -0.27 -0.25 -0.13  0.06  0.21  0.38  0.40</code></pre>
-</div>
-
-</div>
-<img data-src="ts-data-slides_files/figure-revealjs/fig-acf-example-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-acf-example"><p class="caption">
-Figure&nbsp;6: Sample ACF for SOI data
-</p><ul>
-<li>Blue dashed lines: 95% confidence bounds under white noise null</li>
-<li>Slow decay suggests dependence structure</li>
-<li>Peaks at 12, 24, … suggest annual cycle</li>
-</ul>
-</section>
-<section id="partial-autocorrelation-function-pacf" class="slide level2">
-<h2>Partial Autocorrelation Function (PACF)</h2>
-<p>The <strong>PACF</strong> measures correlation between <span class="math inline">\(X(t+u)\)</span> and <span class="math inline">\(X(t)\)</span> after removing the linear effect of intervening values.</p>
-<p><span class="math display">\[\rho_X(u | u) = \text{Corr}(X(t+u) - \hat{X}(t+u), \; X(t) - \hat{X}(t))\]</span></p>
-<p>where <span class="math inline">\(\hat{X}\)</span> denotes the best linear predictor from <span class="math inline">\(X(t+1), \ldots, X(t+u-1)\)</span>.</p>
-</section>
-<section id="pacf-sample-estimate" class="slide level2">
-<h2>PACF: Sample Estimate</h2>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>     [,1] [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8] [,9] [,10] [,11] [,12] [,13]
-ACF   0.6 0.37  0.21  0.05 -0.11 -0.19 -0.18 -0.10 0.05  0.22  0.36  0.41  0.31
-PACF  0.6 0.01 -0.03 -0.11 -0.14 -0.06  0.03  0.09 0.16  0.19  0.17  0.07 -0.11
-     [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-ACF   0.10 -0.06 -0.17 -0.29 -0.37 -0.32 -0.19 -0.04  0.15  0.31  0.35  0.25
-PACF -0.25 -0.14 -0.04 -0.04 -0.05  0.03  0.04  0.03  0.08  0.11  0.05 -0.04
-     [,26] [,27] [,28] [,29] [,30] [,31] [,32] [,33] [,34] [,35] [,36] [,37]
-ACF    0.1 -0.03 -0.16 -0.28 -0.37 -0.32 -0.16 -0.02  0.17  0.33  0.39  0.30
-PACF  -0.1 -0.02 -0.02 -0.04 -0.09  0.01  0.06 -0.01  0.08  0.11  0.09 -0.01
-     [,38] [,39] [,40] [,41] [,42] [,43] [,44] [,45] [,46] [,47] [,48]
-ACF   0.16  0.00 -0.13 -0.24 -0.27 -0.25 -0.13  0.06  0.21  0.38  0.40
-PACF -0.04 -0.09 -0.03  0.02  0.08  0.00 -0.01  0.03 -0.01  0.10  0.02</code></pre>
-</div>
-
-</div>
-<img data-src="ts-data-slides_files/figure-revealjs/fig-pacf-example-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-pacf-example"><p class="caption">
-Figure&nbsp;7: Sample ACF and PACF for SOI data
-</p><ul>
-<li>PACF cuts off more sharply than ACF</li>
-<li>Useful for identifying AR model order</li>
-</ul>
-</section>
-<section id="acf-vs.-pacf-diagnostic-patterns" class="slide level2">
-<h2>ACF vs.&nbsp;PACF: Diagnostic Patterns</h2>
+<section id="achieving-stationarity" class="slide level2">
+<h2>Achieving Stationarity</h2>
+<p>Common transformations for non-stationary data:</p>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>Model</th>
-<th>ACF</th>
-<th>PACF</th>
+<th>Problem</th>
+<th>Transformation</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>AR(p)</td>
-<td>Decays gradually</td>
-<td>Cuts off after lag <span class="math inline">\(p\)</span></td>
+<td>Trend in mean</td>
+<td>Differencing: <span class="math inline">\(Y(t) = X(t) - X(t-1)\)</span></td>
 </tr>
 <tr class="even">
-<td>MA(q)</td>
-<td>Cuts off after lag <span class="math inline">\(q\)</span></td>
-<td>Decays gradually</td>
+<td>Exponential growth</td>
+<td>Log transform, then difference</td>
 </tr>
 <tr class="odd">
-<td>ARMA(p,q)</td>
-<td>Decays gradually</td>
-<td>Decays gradually</td>
+<td>Changing variance</td>
+<td>Log or Box-Cox transform</td>
 </tr>
 <tr class="even">
-<td>White noise</td>
-<td>All near zero</td>
-<td>All near zero</td>
+<td>Seasonality</td>
+<td>Seasonal differencing</td>
 </tr>
 </tbody>
 </table>
 <div class="fragment">
-<p>These patterns guide model identification in Chapter 13.</p>
-</div>
-</section>
-<section id="r-code-computing-acf-and-pacf" class="slide level2">
-<h2>R Code: Computing ACF and PACF</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="co"># Create a time series object</span></span>
-<span id="cb3-2"><a href=""></a>soi_ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(soi, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1950</span>, <span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">12</span>)</span>
-<span id="cb3-3"><a href=""></a></span>
-<span id="cb3-4"><a href=""></a><span class="co"># Compute and plot ACF</span></span>
-<span id="cb3-5"><a href=""></a><span class="fu">acf</span>(soi_ts, <span class="at">main =</span> <span class="st">"Southern Oscillation Index"</span>)</span>
-<span id="cb3-6"><a href=""></a></span>
-<span id="cb3-7"><a href=""></a><span class="co"># Compute and plot both ACF and PACF (astsa package)</span></span>
-<span id="cb3-8"><a href=""></a><span class="fu">acf2</span>(soi, <span class="at">main =</span> <span class="st">"Southern Oscillation Index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="fragment">
-<p>The <code>astsa</code> package provides convenient wrappers; base R <code>acf()</code> and <code>pacf()</code> also work.</p>
+<p>After transformation, check that ACF decays and spectrum is not dominated by lowest frequencies.</p>
 </div>
 </section></section>
 <section>
-<section id="why-it-matters" class="title-slide slide level1 center">
-<h1>Why It Matters</h1>
+<section id="autocorrelation-in-detail" class="title-slide slide level1 center">
+<h1>Autocorrelation in Detail</h1>
+
+</section>
+<section id="the-autocorrelation-function" class="slide level2">
+<h2>The Autocorrelation Function</h2>
+<p><span class="math display">\[\rho_X(u) = \frac{\gamma_X(u)}{\gamma_X(0)} = \text{Corr}(X(t+u), X(t))\]</span></p>
+<div class="fragment">
+<p><strong>Properties:</strong></p>
+<ul>
+<li><span class="math inline">\(\rho_X(0) = 1\)</span> (perfect self-correlation)</li>
+<li><span class="math inline">\(|\rho_X(u)| \leq 1\)</span> (it’s a correlation)</li>
+<li><span class="math inline">\(\rho_X(-u) = \rho_X(u)\)</span> (symmetric in lag)</li>
+</ul>
+</div>
+<div class="fragment">
+<p>The ACF answers: <strong>How predictable is the future from the past?</strong></p>
+</div>
+</section>
+<section id="sample-acf" class="slide level2">
+<h2>Sample ACF</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-acf-example-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-acf-example"><p class="caption">
+Figure&nbsp;12: Sample ACF for SOI data
+</p><ul>
+<li><strong>Blue dashed lines</strong>: 95% confidence bounds under white noise null</li>
+<li>Values outside bounds → significant autocorrelation</li>
+<li>Pattern of decay/oscillation suggests model structure</li>
+</ul>
+</section>
+<section id="partial-autocorrelation-function-pacf" class="slide level2">
+<h2>Partial Autocorrelation Function (PACF)</h2>
+<p>The <strong>PACF</strong> measures correlation between <span class="math inline">\(X(t+u)\)</span> and <span class="math inline">\(X(t)\)</span> <strong>after removing</strong> the linear effect of intervening values.</p>
+<div class="fragment">
+<p><span class="math display">\[\phi_{uu} = \text{Corr}(X(t+u) - \hat{X}(t+u), \; X(t) - \hat{X}(t))\]</span></p>
+</div>
+<div class="fragment">
+<p>The PACF answers: <strong>What is the direct effect of lag <span class="math inline">\(u\)</span>, controlling for shorter lags?</strong></p>
+</div>
+</section>
+<section id="acf-and-pacf-together" class="slide level2">
+<h2>ACF and PACF Together</h2>
+
+<img data-src="ts-data-slides_files/figure-revealjs/fig-acf-pacf-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-acf-pacf"><p class="caption">
+Figure&nbsp;13: ACF and PACF for SOI data
+</p><ul>
+<li><strong>ACF</strong>: Total correlation at each lag</li>
+<li><strong>PACF</strong>: Direct effect at each lag, controlling for others</li>
+<li>Together they suggest model structure (Chapter 13)</li>
+</ul>
+</section></section>
+<section>
+<section id="why-correct-inference-requires-understanding" class="title-slide slide level1 center">
+<h1>Why Correct Inference Requires Understanding</h1>
 
 </section>
 <section id="the-variance-problem" class="slide level2">
 <h2>The Variance Problem</h2>
-<p>Suppose we want to estimate the mean <span class="math inline">\(\mu_X\)</span> from <span class="math inline">\(T\)</span> observations.</p>
-<p><strong>If independent:</strong> <span class="math inline">\(\text{Var}(\bar{X}) = \frac{\sigma_X^2}{T}\)</span></p>
+<p>Suppose we estimate the mean <span class="math inline">\(\mu_X\)</span> from <span class="math inline">\(T\)</span> observations.</p>
+<p><strong>If independent:</strong> <span class="math display">\[\text{Var}(\bar{X}) = \frac{\sigma_X^2}{T}\]</span></p>
 <div class="fragment">
-<p><strong>If autocorrelated:</strong></p>
-<p><span class="math display">\[\text{Var}(\bar{X}) = \frac{\sigma_X^2}{T} \left(1 + 2\sum_{u=1}^{T-1}\left(1 - \frac{u}{T}\right)\rho_X(u)\right)\]</span></p>
+<p><strong>If autocorrelated:</strong> <span class="math display">\[\text{Var}(\bar{X}) = \frac{\sigma_X^2}{T} \left(1 + 2\sum_{u=1}^{T-1}\left(1 - \frac{u}{T}\right)\rho_X(u)\right)\]</span></p>
 </div>
 <div class="fragment">
 <p>Ignoring autocorrelation gives <strong>wrong standard errors</strong>.</p>
+<p>This is a failure of understanding producing a failure of inference.</p>
 </div>
 </section>
-<section id="effective-sample-size-ess" class="slide level2">
-<h2>Effective Sample Size (ESS)</h2>
+<section id="effective-sample-size" class="slide level2">
+<h2>Effective Sample Size</h2>
 <p><strong>Question:</strong> How many <em>independent</em> observations would give the same variance?</p>
-<p><span class="math display">\[N_d = \frac{T}{\displaystyle 1 + 2\sum_{u=1}^{T-1}\left(1 - \frac{u}{T}\right)\rho_X(u)}\]</span></p>
+<p><span class="math display">\[N_{\text{eff}} = \frac{T}{\displaystyle 1 + 2\sum_{u=1}^{T-1}\left(1 - \frac{u}{T}\right)\rho_X(u)}\]</span></p>
 <div class="fragment">
-<p><strong>Example:</strong> If <span class="math inline">\(\rho_X(1) = 0.8\)</span> and higher lags decay…</p>
+<p><strong>Example:</strong> If <span class="math inline">\(\rho_X(1) = 0.8\)</span> and higher lags decay geometrically…</p>
 <ul>
 <li><span class="math inline">\(T = 100\)</span> observations</li>
-<li><span class="math inline">\(N_d \approx 11\)</span> effective observations</li>
+<li><span class="math inline">\(N_{\text{eff}} \approx 11\)</span> effective observations</li>
 </ul>
-<p>Your sample is <strong>9× smaller</strong> than it looks!</p>
+<p>Your sample is <strong>9× smaller</strong> than it appears!</p>
 </div>
 </section>
-<section id="ess-practical-implications" class="slide level2">
-<h2>ESS: Practical Implications</h2>
+<section id="practical-consequences" class="slide level2">
+<h2>Practical Consequences</h2>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>Application</th>
 <th>If you ignore autocorrelation…</th>
+<th>Consequence</th>
 </tr>
 </thead>
 <tbody>
@@ -585,85 +623,57 @@ Figure&nbsp;7: Sample ACF and PACF for SOI data
 <td>Too many false positives</td>
 </tr>
 <tr class="odd">
-<td>Cross-validation</td>
-<td>Training/test sets not independent</td>
-</tr>
-<tr class="even">
 <td>Standard errors</td>
 <td>Underestimated</td>
 </tr>
+<tr class="even">
+<td>Cross-validation</td>
+<td>Training/test not independent</td>
+</tr>
 </tbody>
 </table>
 <div class="fragment">
-<p><strong>Bottom line:</strong> Always check for autocorrelation before inference.</p>
+<p><strong>The lesson:</strong> Understanding the dependence structure is essential for valid inference.</p>
+<p>This is not merely academic—it affects real decisions.</p>
 </div>
 </section></section>
 <section>
-<section id="two-paths-forward" class="title-slide slide level1 center">
-<h1>Two Paths Forward</h1>
+<section id="looking-ahead" class="title-slide slide level1 center">
+<h1>Looking Ahead</h1>
 
 </section>
-<section id="time-domain-vs.-frequency-domain" class="slide level2">
-<h2>Time Domain vs.&nbsp;Frequency Domain</h2>
-<p>We’ve established that time series have <strong>dependence structure</strong>.</p>
-<p>Two complementary approaches to characterize and model it:</p>
+<section id="two-chapters-two-emphases" class="slide level2">
+<h2>Two Chapters, Two Emphases</h2>
+<p><strong>Chapter 13: Time Domain Methods</strong></p>
+<ul>
+<li>ARIMA models: AR, MA, and their combinations</li>
+<li>Forecasting and prediction intervals</li>
+<li>Emphasis: <strong>predicting the future from the past</strong></li>
+</ul>
 <div class="fragment">
-<table class="caption-top">
-<colgroup>
-<col style="width: 3%">
-<col style="width: 40%">
-<col style="width: 56%">
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>Time Domain</th>
-<th>Frequency Domain</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Question</strong></td>
-<td>How does past predict future?</td>
-<td>What periodicities are present?</td>
-</tr>
-<tr class="even">
-<td><strong>Tool</strong></td>
-<td>ACF, PACF → ARIMA models</td>
-<td>Periodogram, spectral density</td>
-</tr>
-<tr class="odd">
-<td><strong>Emphasis</strong></td>
-<td>Forecasting</td>
-<td>Understanding variance decomposition</td>
-</tr>
-<tr class="even">
-<td><strong>Chapter</strong></td>
-<td>13</td>
-<td>14</td>
-</tr>
-</tbody>
-</table>
+<p><strong>Chapter 14: Frequency Domain Methods</strong></p>
+<ul>
+<li>Periodogram and spectral density estimation</li>
+<li>Coherence between series</li>
+<li>Emphasis: <strong>understanding periodic structure</strong></li>
+</ul>
+</div>
+<div class="fragment">
+<p>Both perspectives are needed for complete understanding.</p>
 </div>
 </section>
-<section id="when-to-use-which" class="slide level2">
-<h2>When to Use Which?</h2>
-<p><strong>Time domain methods</strong> when:</p>
-<ul>
-<li>Forecasting is the primary goal</li>
-<li>You need prediction intervals</li>
-<li>The process has no obvious periodicity</li>
-</ul>
+<section id="the-dual-aims-revisited" class="slide level2">
+<h2>The Dual Aims, Revisited</h2>
+<p>Time series analysis embodies the dual aims of data analysis:</p>
 <div class="fragment">
-<p><strong>Frequency domain methods</strong> when:</p>
-<ul>
-<li>You want to identify dominant cycles</li>
-<li>You’re asking “how much variance is seasonal?”</li>
-<li>Comparing periodic structure across series</li>
-</ul>
+<p><strong>Decision support</strong>: Forecast tomorrow’s value, next quarter’s earnings, next year’s climate</p>
 </div>
 <div class="fragment">
-<p><strong>Both</strong> when you want a complete picture.</p>
+<p><strong>Scientific understanding</strong>: What periodic phenomena drive the system? What filtering has occurred? What is the physics?</p>
+</div>
+<div class="fragment">
+<p>Effective forecasting rests on understanding; understanding is tested by predictive success.</p>
+<p>The two aims are inseparable.</p>
 </div>
 </section></section>
 <section>
@@ -671,29 +681,28 @@ Figure&nbsp;7: Sample ACF and PACF for SOI data
 <h1>Summary</h1>
 
 </section>
-<section id="key-takeaways" class="slide level2">
-<h2>Key Takeaways</h2>
+<section id="key-insights" class="slide level2">
+<h2>Key Insights</h2>
 <ol type="1">
-<li><p><strong>Time series are different</strong>: Observations are dependent, not independent</p></li>
-<li><p><strong>Stationarity matters</strong>: Transform non-stationary series before modeling</p></li>
-<li><p><strong>ACF and PACF are diagnostic tools</strong>: They reveal dependence structure</p></li>
-<li><p><strong>Ignoring autocorrelation is dangerous</strong>: ESS shows your effective sample size may be much smaller than <span class="math inline">\(T\)</span></p></li>
-<li><p><strong>Two complementary perspectives</strong>: Time domain (Chapter 13) and frequency domain (Chapter 14)</p></li>
+<li><p><strong>Time series have memory</strong>—the present depends on the past</p></li>
+<li><p><strong>Two equivalent descriptions</strong>: ACF (time domain) and spectrum (frequency domain)</p></li>
+<li><p><strong>Fourier analysis is fundamental</strong> because sinusoids are eigenfunctions of time-shift</p></li>
+<li><p><strong>Stationarity</strong> is the statistical counterpart of time-invariance</p></li>
+<li><p><strong>Ignoring structure invalidates inference</strong>—ESS reveals your true sample size</p></li>
+<li><p><strong>Understanding and prediction are intertwined</strong>—the dual aims made precise</p></li>
 </ol>
 </section>
-<section id="next-steps" class="slide level2">
-<h2>Next Steps</h2>
-<p><strong>Chapter 13: Time Domain Methods</strong></p>
-<ul>
-<li>ARIMA models</li>
-<li>Forecasting and prediction intervals</li>
-</ul>
-<p><strong>Chapter 14: Frequency Domain Methods</strong></p>
-<ul>
-<li>Periodogram and smoothed periodogram</li>
-<li>Spectral density estimation</li>
-<li>Coherence between series</li>
-</ul>
+<section id="diagnostic-checklist" class="slide level2">
+<h2>Diagnostic Checklist</h2>
+<p>When you encounter a new time series:</p>
+<ol type="1">
+<li><p><strong>Plot the series</strong>: Look for trend, seasonality, level shifts, changing variance</p></li>
+<li><p><strong>Check stationarity</strong>: Does <span class="math inline">\(X\)</span> wander? Transform as needed</p></li>
+<li><p><strong>Examine the ACF</strong>: How fast does it decay? Any oscillation?</p></li>
+<li><p><strong>Examine the spectrum</strong>: Any dominant peaks? Low-frequency dominance?</p></li>
+<li><p><strong>Consider ESS</strong>: How much independent information do you really have?</p></li>
+<li><p><strong>Ask both questions</strong>: What predicts the future? What structure is present?</p></li>
+</ol>
 
 </section></section>
     </div>
