@@ -143,6 +143,8 @@ As it turned out, Roosevelt won by a landslide: 62% versus 38%. The *Digest's* e
 
 Moral: a large sample size alone does not guarantee accuracy. Ask yourself how the sample was chosen.
 
+This is the first of several examples we will see where a failure of understanding—here, not recognizing selection bias—led directly to a failure of prediction. The *Digest* had data; what they lacked was comprehension of what their data could and could not represent.
+
 ::: {.callout-note}
 #### ML Connection
 The *Digest* poll illustrates *selection bias*: the sample systematically differed from the population in ways that affected the outcome of interest. In ML terms, the training data did not represent the deployment environment. A model trained on *Digest* respondents would have learned patterns (e.g., political preferences of car and telephone owners) that fail to generalize to the broader electorate.
