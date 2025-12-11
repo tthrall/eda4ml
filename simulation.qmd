@@ -287,6 +287,8 @@ The simulated variance ratio is `r round(var_ratio, 3)`, compared to the theoret
 
 In this example, simulation merely illustrates a property already determined mathematically. But in other situations, statistical simulation may be the best practical way to understand the properties of a proposed statistical procedure, or more generally, a system that entails random events.
 
+This example illustrates a recurring theme: understanding the properties of statistical procedures—here, variance and robustness under different distributional assumptions—is what allows us to choose wisely among them. The simulation confirms what mathematics predicts, but both the mathematics and the simulation serve the same end: grounding practical choices in principled understanding.
+
 ## Class Exercise {#sec-class-exr}
 
 With a teammate, verify the variance ratio result using your own simulation.
