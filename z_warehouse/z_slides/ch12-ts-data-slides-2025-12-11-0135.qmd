@@ -1,0 +1,360 @@
+---
+title: "Chapter 12: Time Series Data"
+subtitle: "Exploratory Data Analysis for Machine Learning"
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    toc: false
+    code-fold: true
+    fig-align: center
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(astsa)
+library(tidyverse)
+```
+
+# Overview
+
+## Learning Goals
+
+After completing this chapter, you will be able to:
+
+1. **Recognize and describe** key features of time series data: trend, seasonality, cycles, and autocorrelation
+
+2. **Assess stationarity** visually and understand why it matters
+
+3. **Interpret ACF and PACF plots** as diagnostic tools for dependence structure
+
+4. **Understand effective sample size (ESS)** and why autocorrelation affects variance estimation
+
+## What Makes Time Series Different?
+
+**Standard assumption in statistics:** Observations are independent
+
+**Time series reality:** Successive observations are dependent
+
+. . .
+
+This dependence has consequences:
+
+- Variance estimates are wrong if we ignore it
+- Standard errors are wrong
+- Confidence intervals are wrong
+- Model validation requires special care
+
+## The Core Question
+
+> Given a sequence of observations indexed by time, what is the **dependence structure**?
+
+. . .
+
+Two complementary ways to answer:
+
+| Approach | Question | Tool |
+|----------|----------|------|
+| **Time domain** | How does $X(t)$ relate to $X(t-1), X(t-2), \ldots$? | ACF, PACF |
+| **Frequency domain** | How much variance comes from periodic components? | Periodogram |
+
+# Examples
+
+## Example 1: Sunspots
+
+```{r}
+#| label: fig-sunspots
+#| fig-cap: "Monthly sunspot numbers, 1749–present"
+#| fig-height: 4
+tsplot(sunspot.month, ylab = "Sunspot count", col = 4, main = "")
+```
+
+- **Cycles**: ~11-year solar magnetic cycle
+- **Irregular amplitude**: Peak heights vary substantially
+- Classic dataset for spectral analysis
+
+## Example 2: Global Surface Temperatures
+
+```{r}
+#| label: fig-gtemp
+#| fig-cap: "Annual temperature deviations from 1991–2020 average"
+#| fig-height: 4
+tsplot(
+  cbind(gtemp_land, gtemp_ocean), 
+  spaghetti = TRUE, 
+  col = astsa.col(c(4, 2), 0.7), 
+  ylab = "°C", 
+  main = ""
+)
+legend("topleft", legend = c("Land", "Ocean"), col = c(4, 2), lty = 1)
+```
+
+- **Trend**: Non-linear increase, especially post-1980
+- **Two series**: Land warms faster than ocean
+- No simple periodic structure
+
+## Example 3: J&J Quarterly Earnings
+
+```{r}
+#| label: fig-jj
+#| fig-cap: "Johnson & Johnson quarterly earnings per share, 1960–1980"
+#| fig-height: 3.5
+par(mfrow = c(1, 2))
+tsplot(jj, ylab = "USD", col = 4, main = "Original scale")
+tsplot(jj, ylab = "log(USD)", col = 4, main = "Log scale", log = "y")
+```
+
+- **Trend**: Exponential growth → use log transform
+- **Seasonality**: Annual pattern (Q1 spike)
+- Transformation reveals additive structure
+
+## Example 4: El Niño and Fish Recruitment
+
+```{r}
+#| label: fig-soi-rec
+#| fig-cap: "Southern Oscillation Index and Recruitment, 1950–1987"
+#| fig-height: 4
+par(mfrow = c(2, 1), mar = c(2, 4, 1, 1))
+tsplot(soi, ylab = "SOI", col = 4, main = "")
+tsplot(rec, ylab = "Recruitment", col = 4, main = "")
+```
+
+- **Two related series**: Ocean temperature ↔ fish population
+- **Multiple cycles**: Annual + ~4-year El Niño cycle
+- Sets up cross-correlation and coherence analysis
+
+## Features to Look For
+
+When you encounter a new time series:
+
+| Feature | What to look for | Example |
+|---------|------------------|---------|
+| **Trend** | Systematic increase/decrease | Global temps |
+| **Seasonality** | Regular periodic pattern | J&J earnings |
+| **Cycles** | Irregular periodic behavior | Sunspots |
+| **Level shifts** | Abrupt changes in mean | — |
+| **Changing variance** | Heteroscedasticity | Financial returns |
+
+# Mathematical Framework
+
+## Random Process Notation
+
+A time series is modeled as a realization of a **random process**:
+
+$$X(t), \quad t \in \mathbb{Z}$$
+
+. . .
+
+We observe a finite window: $X(t_0), X(t_0 + 1), \ldots, X(t_0 + T - 1)$
+
+. . .
+
+**Key quantities:**
+
+- Mean function: $m(t) = E\{X(t)\}$
+- Variance: $\sigma_X^2 = \text{Var}\{X(t)\}$
+- Auto-covariance: $\gamma_X(u) = \text{Cov}(X(t+u), X(t))$
+
+## Stationarity
+
+A process is **second-order stationary** (or weakly stationary) if:
+
+1. $E\{X(t)\} = \mu$ (constant mean)
+
+2. $\text{Cov}(X(t+u), X(t)) = \gamma(u)$ (covariance depends only on lag $u$)
+
+. . .
+
+**Why it matters:**
+
+- Stationarity lets us estimate $\gamma(u)$ from a single realization
+- Non-stationary series must be transformed first (differencing, detrending)
+
+## Stationarity: Visual Assessment
+
+```{r}
+#| label: fig-stationary-check
+#| fig-cap: "Stationary vs. non-stationary"
+#| fig-height: 3.5
+par(mfrow = c(1, 2))
+set.seed(123)
+tsplot(arima.sim(list(ar = 0.8), n = 200), main = "Stationary (AR(1))", col = 4, ylab = "")
+tsplot(cumsum(rnorm(200)), main = "Non-stationary (random walk)", col = 2, ylab = "")
+```
+
+- **Left**: Fluctuates around constant level
+- **Right**: Wanders without returning
+
+## Autocorrelation Function (ACF)
+
+The **autocorrelation function** normalizes auto-covariance:
+
+$$\rho_X(u) = \frac{\gamma_X(u)}{\gamma_X(0)} = \text{Corr}(X(t+u), X(t))$$
+
+. . .
+
+**Properties:**
+
+- $\rho_X(0) = 1$
+- $|\rho_X(u)| \leq 1$
+- $\rho_X(-u) = \rho_X(u)$ (symmetric)
+
+## ACF: Sample Estimate
+
+```{r}
+#| label: fig-acf-example
+#| fig-cap: "Sample ACF for SOI data"
+#| fig-height: 4
+acf1(soi, main = "Southern Oscillation Index")
+```
+
+- Blue dashed lines: 95% confidence bounds under white noise null
+- Slow decay suggests dependence structure
+- Peaks at 12, 24, ... suggest annual cycle
+
+## Partial Autocorrelation Function (PACF)
+
+The **PACF** measures correlation between $X(t+u)$ and $X(t)$ after removing the linear effect of intervening values.
+
+$$\rho_X(u | u) = \text{Corr}(X(t+u) - \hat{X}(t+u), \; X(t) - \hat{X}(t))$$
+
+where $\hat{X}$ denotes the best linear predictor from $X(t+1), \ldots, X(t+u-1)$.
+
+## PACF: Sample Estimate
+
+```{r}
+#| label: fig-pacf-example
+#| fig-cap: "Sample PACF for SOI data"
+#| fig-height: 4
+pacf1(soi, main = "Southern Oscillation Index")
+```
+
+- PACF cuts off more sharply than ACF
+- Useful for identifying AR model order
+
+## ACF vs. PACF: Diagnostic Patterns
+
+| Model | ACF | PACF |
+|-------|-----|------|
+| AR(p) | Decays gradually | Cuts off after lag $p$ |
+| MA(q) | Cuts off after lag $q$ | Decays gradually |
+| ARMA(p,q) | Decays gradually | Decays gradually |
+| White noise | All near zero | All near zero |
+
+. . .
+
+These patterns guide model identification in Chapter 13.
+
+# Why It Matters
+
+## The Variance Problem
+
+Suppose we want to estimate the mean $\mu_X$ from $T$ observations.
+
+**If independent:** $\text{Var}(\bar{X}) = \frac{\sigma_X^2}{T}$
+
+. . .
+
+**If autocorrelated:**
+
+$$\text{Var}(\bar{X}) = \frac{\sigma_X^2}{T} \left(1 + 2\sum_{u=1}^{T-1}\left(1 - \frac{u}{T}\right)\rho_X(u)\right)$$
+
+. . .
+
+Ignoring autocorrelation gives **wrong standard errors**.
+
+## Effective Sample Size (ESS)
+
+**Question:** How many *independent* observations would give the same variance?
+
+$$N_d = \frac{T}{\displaystyle 1 + 2\sum_{u=1}^{T-1}\left(1 - \frac{u}{T}\right)\rho_X(u)}$$
+
+. . .
+
+**Example:** If $\rho_X(1) = 0.8$ and higher lags decay...
+
+- $T = 100$ observations
+- $N_d \approx 11$ effective observations
+
+Your sample is **9× smaller** than it looks!
+
+## ESS: Practical Implications
+
+| Application | If you ignore autocorrelation... |
+|-------------|----------------------------------|
+| Confidence intervals | Too narrow |
+| Hypothesis tests | Too many false positives |
+| Cross-validation | Training/test sets not independent |
+| Standard errors | Underestimated |
+
+. . .
+
+**Bottom line:** Always check for autocorrelation before inference.
+
+# Two Paths Forward
+
+## Time Domain vs. Frequency Domain
+
+We've established that time series have **dependence structure**.
+
+Two complementary approaches to characterize and model it:
+
+. . .
+
+| | Time Domain | Frequency Domain |
+|-|-------------|------------------|
+| **Question** | How does past predict future? | What periodicities are present? |
+| **Tool** | ACF, PACF → ARIMA models | Periodogram, spectral density |
+| **Emphasis** | Forecasting | Understanding variance decomposition |
+| **Chapter** | 13 | 14 |
+
+## When to Use Which?
+
+**Time domain methods** when:
+
+- Forecasting is the primary goal
+- You need prediction intervals
+- The process has no obvious periodicity
+
+. . .
+
+**Frequency domain methods** when:
+
+- You want to identify dominant cycles
+- You're asking "how much variance is seasonal?"
+- Comparing periodic structure across series
+
+. . .
+
+**Both** when you want a complete picture.
+
+# Summary
+
+## Key Takeaways
+
+1. **Time series are different**: Observations are dependent, not independent
+
+2. **Stationarity matters**: Transform non-stationary series before modeling
+
+3. **ACF and PACF are diagnostic tools**: They reveal dependence structure
+
+4. **Ignoring autocorrelation is dangerous**: ESS shows your effective sample size may be much smaller than $T$
+
+5. **Two complementary perspectives**: Time domain (Chapter 13) and frequency domain (Chapter 14)
+
+## Next Steps
+
+**Chapter 13: Time Domain Methods**
+
+- ARIMA models
+- Forecasting and prediction intervals
+
+**Chapter 14: Frequency Domain Methods**
+
+- Periodogram and smoothed periodogram
+- Spectral density estimation
+- Coherence between series
