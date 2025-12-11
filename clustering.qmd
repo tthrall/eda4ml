@@ -981,6 +981,8 @@ Does this match your domain knowledge about the US higher education landscape?
 
 This interpretive step is essential. Without it, clustering remains a mathematical exercise. With it, clustering becomes a tool for generating insights and hypotheses.
 
+The interpretive step exemplifies the dual aims of data analysis introduced in the book's preface. The algorithm provides decision support: it assigns observations to groups. But the assignment is useful only when accompanied by understanding: what characterizes each group, and why might these distinctions matter? Clustering without interpretation is computation; clustering with interpretation is analysis.
+
 ## Other Clustering Algorithms
 
 Clustering methods are an active area of research. The K-means algorithm, first introduced in the 1930's, has the longest history. More recent methods can be categorized along the following lines.
