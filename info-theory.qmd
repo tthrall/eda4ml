@@ -47,6 +47,8 @@ The preceding chapters of Part 1 have introduced exploratory data analysis from 
 
 Information theory, developed by Claude Shannon in 1948, provides a mathematical framework for quantifying uncertainty and the information gained when uncertainty is resolved. These concepts have become foundational in machine learning, appearing in contexts ranging from decision tree construction to neural network training to model comparison. Although subsequent chapters of this book do not explicitly build on information-theoretic foundations, students who pursue specialized studies in machine learning will encounter these ideas repeatedly.
 
+In this sense, information theory exemplifies the philosophy of this book: invest in conceptual foundations not as an alternative to practical skill, but as its most durable form.
+
 This chapter thus serves as a *coda* to Part 1: a self-contained introduction to conceptual vocabulary that will prove valuable in later studies.
 
 ## Entropy
