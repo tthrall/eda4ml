@@ -216,14 +216,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -239,20 +245,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -349,6 +349,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-dual-aims-of-data-analysis" id="toc-the-dual-aims-of-data-analysis" class="nav-link" data-scroll-target="#the-dual-aims-of-data-analysis">The Dual Aims of Data Analysis</a></li>
   <li><a href="#computational-environment" id="toc-computational-environment" class="nav-link" data-scroll-target="#computational-environment">Computational Environment</a>
   <ul>
   <li><a href="#software-requirements" id="toc-software-requirements" class="nav-link" data-scroll-target="#software-requirements">Software Requirements</a>
@@ -392,7 +393,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">16:40 Sat 29-Nov-2025</p>
+      <p class="date">11:35 Thu 11-Dec-2025</p>
     </div>
   </div>
   
@@ -406,8 +407,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>This online book is based on the preparatory part of a course on Machine Learning (ML) developed by former colleagues. The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs. While using mathematical equations, the book aims to follow the content and spirit of exploratory data analysis (EDA).</p>
-<p>Instructors, especially those preparing students for a Masters degree in data science, are invited to copy and modify portions of the book for their own purposes.</p>
+<p>This online book is based on the preparatory part of a course on Machine Learning (ML) developed with former colleagues. The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs. While using mathematical equations, the book aims to follow the content and spirit of exploratory data analysis (EDA).</p>
+<p>Instructors are invited to copy and modify portions of the book for their own purposes.</p>
+</section>
+<section id="the-dual-aims-of-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="the-dual-aims-of-data-analysis">The Dual Aims of Data Analysis</h2>
+<p>Students often approach a methods course with practical goals: learn techniques that will be effective in the workplace. This is entirely appropriate. But there is a bargain at the heart of this book: <em>we develop practical skills through their conceptual foundations, because understanding why methods work is what allows you to apply them intelligently</em>.</p>
+<p>Two aims are always present in data analysis, even when one appears dominant. <strong>Decision support</strong> asks: what action should we take? <strong>Scientific understanding</strong> asks: why does the world work this way? These aims are not alternatives but partners. A model that predicts well without understanding is fragile—it will fail when conditions change. A model that explains without predicting is untestable. The most effective analysts move fluidly between these perspectives.</p>
+<p>Consider election polling. The immediate goal is decision support: who will win? But the <em>Literary Digest</em>’s catastrophic failure in 1936 (<a href="study-design.html" class="quarto-xref"><span>5&nbsp; Sampling and Study Design</span></a>) was a failure of understanding—they did not recognize that their sample was unrepresentative. The Gallup organization, using a smaller but more carefully designed sample, made better predictions because they understood sampling. Understanding underwrote decision support.</p>
+<p>Or consider time series analysis (Part 4). The autocorrelation in successive observations is not merely a technical nuisance to be handled—it is information about how the system’s past connects to its future. Methods that ignore this structure give wrong standard errors (a practical failure) because they misunderstand the data-generating process (a conceptual failure).</p>
+<p>Throughout this book, we develop technical tools while attending to the understanding that makes them meaningful. The goal is not merely execution of procedures; it is thoughtful analysis.</p>
 </section>
 <section id="computational-environment" class="level2">
 <h2 class="anchored" data-anchor-id="computational-environment">Computational Environment</h2>

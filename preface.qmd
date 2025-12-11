@@ -2,9 +2,21 @@
 
 ## Introduction
 
-This online book is based on the preparatory part of a course on Machine Learning (ML) developed by former colleagues.  The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs.  While using mathematical equations, the book aims to follow the content and spirit of exploratory data analysis (EDA).
+This online book is based on the preparatory part of a course on Machine Learning (ML) developed with former colleagues.  The book aims to provide current and aspiring data scientists with a review of (or introduction to) key ideas and methods from statistics and linear algebra, along with certain types of data, namely text, time series, and network graphs.  While using mathematical equations, the book aims to follow the content and spirit of exploratory data analysis (EDA).
 
-Instructors, especially those preparing students for a Masters degree in data science, are invited to copy and modify portions of the book for their own purposes.
+Instructors are invited to copy and modify portions of the book for their own purposes.
+
+## The Dual Aims of Data Analysis
+
+Students often approach a methods course with practical goals: learn techniques that will be effective in the workplace. This is entirely appropriate. But there is a bargain at the heart of this book: *we develop practical skills through their conceptual foundations, because understanding why methods work is what allows you to apply them intelligently*.
+
+Two aims are always present in data analysis, even when one appears dominant. **Decision support** asks: what action should we take? **Scientific understanding** asks: why does the world work this way? These aims are not alternatives but partners. A model that predicts well without understanding is fragile—it will fail when conditions change. A model that explains without predicting is untestable. The most effective analysts move fluidly between these perspectives.
+
+Consider election polling. The immediate goal is decision support: who will win? But the *Literary Digest*'s catastrophic failure in 1936 (@sec-study-design) was a failure of understanding—they did not recognize that their sample was unrepresentative. The Gallup organization, using a smaller but more carefully designed sample, made better predictions because they understood sampling. Understanding underwrote decision support.
+
+Or consider time series analysis (Part 4). The autocorrelation in successive observations is not merely a technical nuisance to be handled—it is information about how the system's past connects to its future. Methods that ignore this structure give wrong standard errors (a practical failure) because they misunderstand the data-generating process (a conceptual failure).
+
+Throughout this book, we develop technical tools while attending to the understanding that makes them meaningful. The goal is not merely execution of procedures; it is thoughtful analysis.
 
 ## Computational Environment
 
