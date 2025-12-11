@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>12&nbsp; Time Series Data – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ts-intro.html" rel="next">
+<link href="./topic-models.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-data.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-data.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">12.1</span> Introduction</a>
+  <ul>
+  <li><a href="#two-perspectives-one-reality" id="toc-two-perspectives-one-reality" class="nav-link" data-scroll-target="#two-perspectives-one-reality"><span class="header-section-number">12.1.1</span> Two Perspectives, One Reality</a></li>
+  <li><a href="#decision-support-and-scientific-understanding" id="toc-decision-support-and-scientific-understanding" class="nav-link" data-scroll-target="#decision-support-and-scientific-understanding"><span class="header-section-number">12.1.2</span> Decision Support and Scientific Understanding</a></li>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">12.1.3</span> Chapter Roadmap</a></li>
+  </ul></li>
+  <li><a href="#examples-two-perspectives" id="toc-examples-two-perspectives" class="nav-link" data-scroll-target="#examples-two-perspectives"><span class="header-section-number">12.2</span> Examples: Two Perspectives</a>
+  <ul>
+  <li><a href="#sunspots" id="toc-sunspots" class="nav-link" data-scroll-target="#sunspots"><span class="header-section-number">12.2.1</span> Sunspots</a>
+  <ul class="collapse">
+  <li><a href="#time-domain-view" id="toc-time-domain-view" class="nav-link" data-scroll-target="#time-domain-view"><span class="header-section-number">12.2.1.1</span> Time Domain View</a></li>
+  <li><a href="#frequency-domain-view" id="toc-frequency-domain-view" class="nav-link" data-scroll-target="#frequency-domain-view"><span class="header-section-number">12.2.1.2</span> Frequency Domain View</a></li>
+  </ul></li>
+  <li><a href="#global-surface-temperatures" id="toc-global-surface-temperatures" class="nav-link" data-scroll-target="#global-surface-temperatures"><span class="header-section-number">12.2.2</span> Global Surface Temperatures</a>
+  <ul class="collapse">
+  <li><a href="#time-domain-view-1" id="toc-time-domain-view-1" class="nav-link" data-scroll-target="#time-domain-view-1"><span class="header-section-number">12.2.2.1</span> Time Domain View</a></li>
+  <li><a href="#frequency-domain-view-1" id="toc-frequency-domain-view-1" class="nav-link" data-scroll-target="#frequency-domain-view-1"><span class="header-section-number">12.2.2.2</span> Frequency Domain View</a></li>
+  </ul></li>
+  <li><a href="#el-niño-and-fish-recruitment" id="toc-el-niño-and-fish-recruitment" class="nav-link" data-scroll-target="#el-niño-and-fish-recruitment"><span class="header-section-number">12.2.3</span> El Niño and Fish Recruitment</a>
+  <ul class="collapse">
+  <li><a href="#soi-dual-perspective" id="toc-soi-dual-perspective" class="nav-link" data-scroll-target="#soi-dual-perspective"><span class="header-section-number">12.2.3.1</span> SOI: Dual Perspective</a></li>
+  <li><a href="#recruitment-dual-perspective" id="toc-recruitment-dual-perspective" class="nav-link" data-scroll-target="#recruitment-dual-perspective"><span class="header-section-number">12.2.3.2</span> Recruitment: Dual Perspective</a></li>
+  </ul></li>
+  <li><a href="#what-the-examples-reveal" id="toc-what-the-examples-reveal" class="nav-link" data-scroll-target="#what-the-examples-reveal"><span class="header-section-number">12.2.4</span> What the Examples Reveal</a></li>
+  </ul></li>
+  <li><a href="#the-white-noise-baseline" id="toc-the-white-noise-baseline" class="nav-link" data-scroll-target="#the-white-noise-baseline"><span class="header-section-number">12.3</span> The White Noise Baseline</a>
+  <ul>
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">12.3.1</span> Definition</a></li>
+  <li><a href="#time-domain-signature" id="toc-time-domain-signature" class="nav-link" data-scroll-target="#time-domain-signature"><span class="header-section-number">12.3.2</span> Time Domain Signature</a></li>
+  <li><a href="#frequency-domain-signature" id="toc-frequency-domain-signature" class="nav-link" data-scroll-target="#frequency-domain-signature"><span class="header-section-number">12.3.3</span> Frequency Domain Signature</a></li>
+  <li><a href="#visual-signature" id="toc-visual-signature" class="nav-link" data-scroll-target="#visual-signature"><span class="header-section-number">12.3.4</span> Visual Signature</a></li>
+  <li><a href="#the-creation-myth" id="toc-the-creation-myth" class="nav-link" data-scroll-target="#the-creation-myth"><span class="header-section-number">12.3.5</span> The Creation Myth</a></li>
+  <li><a href="#departures-from-white-noise" id="toc-departures-from-white-noise" class="nav-link" data-scroll-target="#departures-from-white-noise"><span class="header-section-number">12.3.6</span> Departures from White Noise</a></li>
+  </ul></li>
+  <li><a href="#stationarity-and-time-invariance" id="toc-stationarity-and-time-invariance" class="nav-link" data-scroll-target="#stationarity-and-time-invariance"><span class="header-section-number">12.4</span> Stationarity and Time-Invariance</a>
+  <ul>
+  <li><a href="#stationarity-defined" id="toc-stationarity-defined" class="nav-link" data-scroll-target="#stationarity-defined"><span class="header-section-number">12.4.1</span> Stationarity Defined</a></li>
+  <li><a href="#why-stationarity-matters" id="toc-why-stationarity-matters" class="nav-link" data-scroll-target="#why-stationarity-matters"><span class="header-section-number">12.4.2</span> Why Stationarity Matters</a></li>
+  <li><a href="#stationarity-and-time-invariance-the-conceptual-connection" id="toc-stationarity-and-time-invariance-the-conceptual-connection" class="nav-link" data-scroll-target="#stationarity-and-time-invariance-the-conceptual-connection"><span class="header-section-number">12.4.3</span> Stationarity and Time-Invariance: The Conceptual Connection</a></li>
+  <li><a href="#visual-assessment-of-stationarity" id="toc-visual-assessment-of-stationarity" class="nav-link" data-scroll-target="#visual-assessment-of-stationarity"><span class="header-section-number">12.4.4</span> Visual Assessment of Stationarity</a></li>
+  <li><a href="#achieving-stationarity-through-transformation" id="toc-achieving-stationarity-through-transformation" class="nav-link" data-scroll-target="#achieving-stationarity-through-transformation"><span class="header-section-number">12.4.5</span> Achieving Stationarity Through Transformation</a></li>
+  <li><a href="#a-caution-on-transformations" id="toc-a-caution-on-transformations" class="nav-link" data-scroll-target="#a-caution-on-transformations"><span class="header-section-number">12.4.6</span> A Caution on Transformations</a></li>
+  </ul></li>
+  <li><a href="#autocorrelation-and-partial-autocorrelation" id="toc-autocorrelation-and-partial-autocorrelation" class="nav-link" data-scroll-target="#autocorrelation-and-partial-autocorrelation"><span class="header-section-number">12.5</span> Autocorrelation and Partial Autocorrelation</a>
+  <ul>
+  <li><a href="#the-autocorrelation-function" id="toc-the-autocorrelation-function" class="nav-link" data-scroll-target="#the-autocorrelation-function"><span class="header-section-number">12.5.1</span> The Autocorrelation Function</a></li>
+  <li><a href="#sample-acf" id="toc-sample-acf" class="nav-link" data-scroll-target="#sample-acf"><span class="header-section-number">12.5.2</span> Sample ACF</a></li>
+  <li><a href="#the-partial-autocorrelation-function" id="toc-the-partial-autocorrelation-function" class="nav-link" data-scroll-target="#the-partial-autocorrelation-function"><span class="header-section-number">12.5.3</span> The Partial Autocorrelation Function</a></li>
+  <li><a href="#acf-and-pacf-together" id="toc-acf-and-pacf-together" class="nav-link" data-scroll-target="#acf-and-pacf-together"><span class="header-section-number">12.5.4</span> ACF and PACF Together</a></li>
+  <li><a href="#diagnostic-patterns" id="toc-diagnostic-patterns" class="nav-link" data-scroll-target="#diagnostic-patterns"><span class="header-section-number">12.5.5</span> Diagnostic Patterns</a></li>
+  <li><a href="#frequency-domain-counterpart" id="toc-frequency-domain-counterpart" class="nav-link" data-scroll-target="#frequency-domain-counterpart"><span class="header-section-number">12.5.6</span> Frequency Domain Counterpart</a></li>
+  <li><a href="#testing-for-white-noise" id="toc-testing-for-white-noise" class="nav-link" data-scroll-target="#testing-for-white-noise"><span class="header-section-number">12.5.7</span> Testing for White Noise</a></li>
+  </ul></li>
+  <li><a href="#why-it-matters-for-inference" id="toc-why-it-matters-for-inference" class="nav-link" data-scroll-target="#why-it-matters-for-inference"><span class="header-section-number">12.6</span> Why It Matters for Inference</a>
+  <ul>
+  <li><a href="#the-variance-problem" id="toc-the-variance-problem" class="nav-link" data-scroll-target="#the-variance-problem"><span class="header-section-number">12.6.1</span> The Variance Problem</a></li>
+  <li><a href="#a-concrete-example-the-ma1-process" id="toc-a-concrete-example-the-ma1-process" class="nav-link" data-scroll-target="#a-concrete-example-the-ma1-process"><span class="header-section-number">12.6.2</span> A Concrete Example: The MA(1) Process</a></li>
+  <li><a href="#effective-sample-size" id="toc-effective-sample-size" class="nav-link" data-scroll-target="#effective-sample-size"><span class="header-section-number">12.6.3</span> Effective Sample Size</a></li>
+  <li><a href="#example-ar1-process" id="toc-example-ar1-process" class="nav-link" data-scroll-target="#example-ar1-process"><span class="header-section-number">12.6.4</span> Example: AR(1) Process</a></li>
+  <li><a href="#practical-consequences" id="toc-practical-consequences" class="nav-link" data-scroll-target="#practical-consequences"><span class="header-section-number">12.6.5</span> Practical Consequences</a></li>
+  <li><a href="#what-to-do-about-it" id="toc-what-to-do-about-it" class="nav-link" data-scroll-target="#what-to-do-about-it"><span class="header-section-number">12.6.6</span> What To Do About It</a></li>
+  <li><a href="#the-deeper-point" id="toc-the-deeper-point" class="nav-link" data-scroll-target="#the-deeper-point"><span class="header-section-number">12.6.7</span> The Deeper Point</a></li>
+  </ul></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">12.7</span> Looking Ahead</a>
+  <ul>
+  <li><a href="#chapter-13-time-domain-methods" id="toc-chapter-13-time-domain-methods" class="nav-link" data-scroll-target="#chapter-13-time-domain-methods"><span class="header-section-number">12.7.1</span> Chapter 13: Time Domain Methods</a></li>
+  <li><a href="#chapter-14-frequency-domain-methods" id="toc-chapter-14-frequency-domain-methods" class="nav-link" data-scroll-target="#chapter-14-frequency-domain-methods"><span class="header-section-number">12.7.2</span> Chapter 14: Frequency Domain Methods</a></li>
+  <li><a href="#the-dual-perspectives-unified" id="toc-the-dual-perspectives-unified" class="nav-link" data-scroll-target="#the-dual-perspectives-unified"><span class="header-section-number">12.7.3</span> The Dual Perspectives Unified</a></li>
+  </ul></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">12.8</span> Chapter Summary</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">12.9</span> Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">12.10</span> Resources</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/ts-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-data.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-data.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-ts-data" class="quarto-section-identifier"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">20:41 Thu 11-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="introduction" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">12.1</span> Introduction</h2>
+<p>Throughout this book we have seen that understanding and decision support are intertwined—that knowing <em>why</em> a method works is what allows you to recognize when it applies and when it doesn’t. Time series analysis makes this interplay especially vivid.</p>
+<p>The standard assumption underlying most statistical methods is that observations are independent: knowing the value of one observation tells you nothing about another. Time series data violate this assumption. Successive observations are dependent—today’s temperature is informative about tomorrow’s; this quarter’s earnings relate to last quarter’s; the sunspot count this month connects to counts in surrounding months.</p>
+<p>This dependence is not merely a technical nuisance requiring adjusted formulas. It is <em>information</em>: information about how systems evolve, about underlying periodic structure, about the mechanisms that generate the data we observe. The autocorrelation structure of a time series is a fingerprint of the process that produced it. To ignore this structure is not just to get wrong standard errors—it is to miss what the data are telling us.</p>
+<section id="two-perspectives-one-reality" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="two-perspectives-one-reality"><span class="header-section-number">12.1.1</span> Two Perspectives, One Reality</h3>
+<p>The dependence structure of a time series can be characterized in two complementary ways:</p>
+<ul>
+<li><p><strong>Time domain</strong>: How does the present relate to the past? The autocorrelation function <span class="math inline">\(\rho(u)\)</span> measures the correlation between observations separated by <span class="math inline">\(u\)</span> time units. This perspective emphasizes prediction—using past values to forecast future ones.</p></li>
+<li><p><strong>Frequency domain</strong>: What periodic components are present? The spectral density <span class="math inline">\(f(\lambda)\)</span> measures how much variance is attributable to oscillations at frequency <span class="math inline">\(\lambda\)</span>. This perspective emphasizes understanding—identifying the rhythms and cycles that structure the process.</p></li>
+</ul>
+<p>These two descriptions contain the same information. They are Fourier transform pairs: the spectrum is the transform of the autocovariance function, and vice versa. Yet they illuminate different aspects of the data. The time-domain view asks how the past predicts the future; the frequency-domain view asks what structure generated this process. Together, they provide a complete picture.</p>
+<p>This duality is not accidental. There is a deep mathematical reason why Fourier analysis is fundamental to time series: the complex exponential functions <span class="math inline">\(e^{i\lambda t}\)</span> are eigenfunctions of the time-shift operator. Any linear, time-invariant system—a moving average, a filter, a physical process that doesn’t change its character over time—has these sinusoidal functions as its natural modes. When we decompose a signal into frequency components, we are working in the natural coordinate system for such systems. We will develop this insight further in the sections that follow.</p>
+</section>
+<section id="decision-support-and-scientific-understanding" class="level3" data-number="12.1.2">
+<h3 data-number="12.1.2" class="anchored" data-anchor-id="decision-support-and-scientific-understanding"><span class="header-section-number">12.1.2</span> Decision Support and Scientific Understanding</h3>
+<p>The two perspectives on time series—time domain and frequency domain—map onto the dual aims of data analysis.</p>
+<p>Forecasting is the archetypal decision-support application of time series analysis. Given observations up to the present, what should we expect tomorrow, next quarter, next year? Time-domain methods, particularly ARIMA models, are the workhorses of this enterprise. They exploit the autocorrelation structure to extrapolate patterns into the future.</p>
+<p>But effective forecasting rests on understanding. A forecast that merely extrapolates a trend will fail when conditions change. The question “what should we expect?” is inseparable from the question “why does the series behave as it does?” Climate data illustrate this forcefully: projecting future temperatures requires understanding the physical mechanisms—greenhouse gas forcing, feedback loops, natural variability—not merely curve-fitting to historical data. The frequency-domain perspective, which reveals the periodic structure and the filtering that shaped the series, serves this understanding.</p>
+<p>The examples in this chapter span this range: sunspots, where periodic structure is primary; global temperatures, where trend and its causes are central; and ocean-atmosphere dynamics, where multiple periodicities interact. In each case, we examine the data from both perspectives, showing how they complement each other.</p>
+</section>
+<section id="chapter-roadmap" class="level3" data-number="12.1.3">
+<h3 data-number="12.1.3" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">12.1.3</span> Chapter Roadmap</h3>
+<p>This chapter introduces the conceptual and diagnostic foundations for time series analysis. We proceed as follows:</p>
+<p><strong>Examples</strong>: We begin with data—sunspots, global temperatures, the Southern Oscillation—examining each from both time-domain and frequency-domain perspectives. These examples build intuition for what the two views reveal.</p>
+<p><strong>The White Noise Baseline</strong>: White noise, a sequence of independent observations, serves as the reference point. Its autocorrelation function is zero at all nonzero lags; its spectrum is flat. Departures from this baseline indicate structure—the fingerprint of dependence.</p>
+<p><strong>Stationarity and Time-Invariance</strong>: We define stationarity, the condition under which the autocovariance and spectrum are well-defined and estimable from a single realization. Stationarity is the statistical counterpart of time-invariance in systems theory—the condition that a system’s behavior does not depend on when we observe it.</p>
+<p><strong>Autocorrelation and Partial Autocorrelation</strong>: We develop the ACF and PACF as diagnostic tools, showing how their patterns reveal the dependence structure and guide model selection.</p>
+<p><strong>Why It Matters for Inference</strong>: We demonstrate that ignoring autocorrelation leads to incorrect variance estimates and misleading confidence intervals. The concept of effective sample size quantifies how much less information autocorrelated data contain than independent observations would.</p>
+<p><strong>Looking Ahead</strong>: We preview the subsequent chapters—time-domain methods (Chapter 13) and frequency-domain methods (Chapter 14)—which develop the modeling and estimation tools sketched here.</p>
+<p>Throughout, we maintain the dual perspective: every diagnostic can be viewed in both time and frequency domains, and both views inform our understanding of what the data reveal.</p>
+</section>
+</section>
+<section id="examples-two-perspectives" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="examples-two-perspectives"><span class="header-section-number">12.2</span> Examples: Two Perspectives</h2>
+<p>We begin with three examples that illustrate the complementary insights provided by time-domain and frequency-domain analysis. For each, we display the time series itself, then examine what the autocorrelation function (ACF) and the spectrum reveal. The goal is to build intuition: different types of structure appear more clearly in one domain or the other, but both views describe the same underlying reality.</p>
+<section id="sunspots" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="sunspots"><span class="header-section-number">12.2.1</span> Sunspots</h3>
+<p>The sunspot record is one of the longest continuous scientific observations, extending from 1749 to the present. <a href="ts-fourier.html#fig-sunspots" class="quarto-xref">Figure&nbsp;<span>13.8</span></a> shows the monthly count of sunspots as recorded by the Royal Observatory of Belgium’s Solar Influences Data Analysis Center.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sunspots" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sunspots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-sunspots-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sunspots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.1: Monthly sunspot counts, 1749–present
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The series displays an obvious cyclical pattern—the approximately 11-year solar magnetic cycle during which sunspot activity rises and falls. But notice also the irregular amplitude: some cycles peak much higher than others. This is not simple periodic behavior; there is structure within the cycles.</p>
+<p>Sunspots matter beyond pure science. Solar activity affects space weather, which in turn influences satellite operations, radio communications, and power grid stability. The sunspot record is also a primary input for reconstructing total solar irradiance before the era of direct satellite measurement (pre-1978), relevant to understanding long-term climate variability.</p>
+<section id="time-domain-view" class="level4" data-number="12.2.1.1">
+<h4 data-number="12.2.1.1" class="anchored" data-anchor-id="time-domain-view"><span class="header-section-number">12.2.1.1</span> Time Domain View</h4>
+<p>The autocorrelation function reveals how the present relates to the past.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sunspots-acf" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sunspots-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-sunspots-acf-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sunspots-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.2: ACF of monthly sunspot counts
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The ACF shows several notable features. First, there is slow decay—values remain substantially correlated even at long lags. This indicates strong persistence: knowing this month’s sunspot count tells you something about counts many months into the future. Second, the ACF oscillates, with peaks appearing roughly every 130 months (about 11 years). This oscillation reflects the solar cycle, but the ACF does not give a precise period—the peaks are broad, and reading the exact cycle length is difficult.</p>
+<p>The slow decay also hints at a challenge: this process may not be stationary in the strict sense. The varying amplitude of the cycles suggests that the statistical properties may shift over time. We will return to this issue when we discuss stationarity.</p>
+</section>
+<section id="frequency-domain-view" class="level4" data-number="12.2.1.2">
+<h4 data-number="12.2.1.2" class="anchored" data-anchor-id="frequency-domain-view"><span class="header-section-number">12.2.1.2</span> Frequency Domain View</h4>
+<p>The spectrum reveals what periodic components are present and how much variance each contributes.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sunspots-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sunspots-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-sunspots-spectrum-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sunspots-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.3: Spectrum of monthly sunspot counts
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The spectrum tells a clearer story about periodicity. A dominant peak appears at a frequency of approximately 0.007 cycles per month, corresponding to a period of about 140 months or 11.7 years—the solar cycle, precisely located. The spectrum also shows smaller peaks at harmonics of this fundamental frequency, reflecting the non-sinusoidal shape of the solar cycle (sunspot counts rise faster than they fall).</p>
+<p>What the ACF revealed only through broad oscillations, the spectrum makes immediately visible: there is a dominant periodic component, and we can read its frequency directly. The frequency-domain view excels at identifying and separating periodicities.</p>
+</section>
+</section>
+<section id="global-surface-temperatures" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="global-surface-temperatures"><span class="header-section-number">12.2.2</span> Global Surface Temperatures</h3>
+<p><a href="#fig-gtemp" class="quarto-xref">Figure&nbsp;<span>12.4</span></a> shows annual temperature deviations (in °C) from the 1991–2020 average for the Earth’s land surface, recorded from 1850 to 2023. The data are from NOAA’s Global Climate Report.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-gtemp" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gtemp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-gtemp-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gtemp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.4: Annual land surface temperature deviations from 1991–2020 average
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Unlike sunspots, this series shows no obvious periodicity. The dominant feature is a trend—temperatures have risen, particularly since the 1970s. The trend is not linear; there are periods of relative stability followed by accelerations.</p>
+<p>This example illustrates the connection between scientific understanding and decision support at its starkest. The trend is the signal that has driven climate policy debates. But extrapolating the trend requires understanding its causes: greenhouse gas forcing, feedback mechanisms, natural variability. A purely statistical forecast that ignores the physics would be scientifically indefensible and practically useless for long-term planning.</p>
+<section id="time-domain-view-1" class="level4" data-number="12.2.2.1">
+<h4 data-number="12.2.2.1" class="anchored" data-anchor-id="time-domain-view-1"><span class="header-section-number">12.2.2.1</span> Time Domain View</h4>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-gtemp-acf" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gtemp-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-gtemp-acf-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gtemp-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.5: ACF of global land temperatures
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The ACF decays very slowly—each year is strongly correlated with the next, and correlations remain substantial even at lags of 20 or more years. This pattern is the time-domain signature of a trend: when there is a systematic increase over time, observations close together are similar (both relatively low early, both relatively high late), producing high autocorrelations.</p>
+<p>The slow ACF decay signals non-stationarity. The statistical properties of this series are not constant over time—the mean is changing. Before applying standard time series methods, we would need to remove or model the trend.</p>
+</section>
+<section id="frequency-domain-view-1" class="level4" data-number="12.2.2.2">
+<h4 data-number="12.2.2.2" class="anchored" data-anchor-id="frequency-domain-view-1"><span class="header-section-number">12.2.2.2</span> Frequency Domain View</h4>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-gtemp-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gtemp-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-gtemp-spectrum-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gtemp-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.6: Spectrum of global land temperatures
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The spectrum is dominated by low frequencies—most of the variance is concentrated near zero frequency. This is the frequency-domain signature of trend: a systematic change over time manifests as power at the lowest frequencies. There are no prominent peaks at higher frequencies; the series lacks the periodic structure we saw in sunspots.</p>
+<p>The spectral view reinforces what the ACF suggested: this is a trend-dominated series without significant cyclical components. The story is secular change, not periodic oscillation.</p>
+</section>
+</section>
+<section id="el-niño-and-fish-recruitment" class="level3" data-number="12.2.3">
+<h3 data-number="12.2.3" class="anchored" data-anchor-id="el-niño-and-fish-recruitment"><span class="header-section-number">12.2.3</span> El Niño and Fish Recruitment</h3>
+<p>Our third example involves two related series: the Southern Oscillation Index (SOI) and a fish recruitment index. <a href="#fig-soi-rec" class="quarto-xref">Figure&nbsp;<span>12.7</span></a> shows both series, which span 1950–1987 with monthly observations.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-soi-rec" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-soi-rec-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-soi-rec-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-soi-rec-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.7: Southern Oscillation Index and fish recruitment, 1950–1987
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The Southern Oscillation is a periodic fluctuation in sea surface temperature and air pressure across the tropical Pacific. Its warm phase is the well-known El Niño; its cool phase is La Niña. These oscillations affect weather patterns globally and have profound effects on marine ecosystems.</p>
+<p>The recruitment index measures the abundance of new fish entering a population—a quantity of direct economic importance to fisheries. Visual inspection suggests the two series are related: both show cyclical behavior with similar timing.</p>
+<p>This example sets up a key question that frequency-domain methods can answer: what periodicities are present in each series, and do they match? If SOI and recruitment share common frequencies, this supports a causal story linking ocean temperature to fish populations.</p>
+<section id="soi-dual-perspective" class="level4" data-number="12.2.3.1">
+<h4 data-number="12.2.3.1" class="anchored" data-anchor-id="soi-dual-perspective"><span class="header-section-number">12.2.3.1</span> SOI: Dual Perspective</h4>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-soi-dual" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-soi-dual-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-soi-dual-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-soi-dual-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.8: SOI: Autocorrelation and spectrum
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The ACF oscillates, indicating cyclical structure, but which cycles? The oscillations are not perfectly regular, making it hard to read periods from the ACF alone.</p>
+<p>The spectrum is more revealing. There are two clear peaks: one near frequency 1 (cycles per year), corresponding to the annual cycle of seasonal temperature variation, and another near frequency 0.25 (about 4 cycles per year), corresponding to the El Niño cycle with a period of approximately 4 years. The frequency domain <em>separates</em> these two periodicities, which the ACF conflates into a single oscillating pattern.</p>
+</section>
+<section id="recruitment-dual-perspective" class="level4" data-number="12.2.3.2">
+<h4 data-number="12.2.3.2" class="anchored" data-anchor-id="recruitment-dual-perspective"><span class="header-section-number">12.2.3.2</span> Recruitment: Dual Perspective</h4>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rec-dual" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rec-dual-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-rec-dual-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rec-dual-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.9: Recruitment: Autocorrelation and spectrum
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The recruitment series shows a similar spectral pattern: peaks at both the annual frequency and near the El Niño frequency. The correspondence is striking—the fish population responds to the same periodic drivers as the ocean temperature index.</p>
+<p>This correspondence is the beginning of a deeper analysis. Chapter 14 develops <em>coherence analysis</em>, which quantifies how closely two series are related at each frequency. Here, the visual similarity of the spectra suggests strong coherence at the El Niño frequency: the ocean oscillation and the fish population fluctuate together.</p>
+</section>
+</section>
+<section id="what-the-examples-reveal" class="level3" data-number="12.2.4">
+<h3 data-number="12.2.4" class="anchored" data-anchor-id="what-the-examples-reveal"><span class="header-section-number">12.2.4</span> What the Examples Reveal</h3>
+<p>These three examples illustrate complementary strengths of the two perspectives:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Series</th>
+<th>ACF reveals</th>
+<th>Spectrum reveals</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sunspots</td>
+<td>Slow decay, oscillation</td>
+<td>Precise 11-year period</td>
+</tr>
+<tr class="even">
+<td>Global temps</td>
+<td>Very slow decay (trend)</td>
+<td>Low-frequency dominance</td>
+</tr>
+<tr class="odd">
+<td>SOI/Recruitment</td>
+<td>Oscillation</td>
+<td>Separate annual and El Niño cycles</td>
+</tr>
+</tbody>
+</table>
+<p>The time domain tells us about persistence and prediction: how much does the past constrain the future? The frequency domain tells us about structure and mechanism: what periodicities are present, and at what strength?</p>
+<p>Neither view is complete without the other. Together, they provide the diagnostic foundation for the modeling developed in subsequent chapters.</p>
+</section>
+</section>
+<section id="the-white-noise-baseline" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="the-white-noise-baseline"><span class="header-section-number">12.3</span> The White Noise Baseline</h2>
+<p>To recognize structure, we need a reference point—a process with <em>no</em> structure. White noise provides this baseline: a sequence of independent, identically distributed observations. Understanding white noise clarifies what departures from it signify.</p>
+<section id="definition" class="level3" data-number="12.3.1">
+<h3 data-number="12.3.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">12.3.1</span> Definition</h3>
+<p>A <strong>white noise</strong> process <span class="math inline">\(\{W(t)\}\)</span> has the following properties:</p>
+<ol type="1">
+<li><strong>Zero mean</strong>: <span class="math inline">\(E\{W(t)\} = 0\)</span> for all <span class="math inline">\(t\)</span></li>
+<li><strong>Constant variance</strong>: <span class="math inline">\(\text{Var}\{W(t)\} = \sigma^2\)</span> for all <span class="math inline">\(t\)</span></li>
+<li><strong>Independence</strong>: <span class="math inline">\(W(t)\)</span> and <span class="math inline">\(W(s)\)</span> are independent for all <span class="math inline">\(t \neq s\)</span></li>
+</ol>
+<p>The name “white noise” comes from an analogy with light: just as white light contains all visible frequencies in equal proportion, white noise contains all temporal frequencies equally. The term originated in physics and engineering, where noise processes arise naturally in electronic circuits and communication systems.</p>
+</section>
+<section id="time-domain-signature" class="level3" data-number="12.3.2">
+<h3 data-number="12.3.2" class="anchored" data-anchor-id="time-domain-signature"><span class="header-section-number">12.3.2</span> Time Domain Signature</h3>
+<p>Independence implies zero correlation between distinct observations:</p>
+<p><span class="math display">\[
+\rho_W(u) = \text{Corr}(W(t+u), W(t)) =
+\begin{cases}
+1 &amp; \text{if } u = 0 \\
+0 &amp; \text{if } u \neq 0
+\end{cases}
+\]</span></p>
+<p>The autocorrelation function of white noise is zero everywhere except at lag zero, where it equals one (every observation is perfectly correlated with itself). This is the time-domain signature of independence: the past tells you nothing about the future.</p>
+</section>
+<section id="frequency-domain-signature" class="level3" data-number="12.3.3">
+<h3 data-number="12.3.3" class="anchored" data-anchor-id="frequency-domain-signature"><span class="header-section-number">12.3.3</span> Frequency Domain Signature</h3>
+<p>The spectrum of white noise is flat—constant across all frequencies:</p>
+<p><span class="math display">\[
+f_W(\lambda) = \frac{\sigma^2}{2\pi} \quad \text{for all } \lambda \in (-\pi, \pi]
+\]</span></p>
+<p>A flat spectrum means that no frequency contributes more variance than any other. There are no dominant periodicities, no preferred time scales. This is the frequency-domain signature of independence: no periodic structure whatsoever.</p>
+<p>The total variance is obtained by integrating the spectrum:</p>
+<p><span class="math display">\[
+\text{Var}\{W(t)\} = \int_{-\pi}^{\pi} f_W(\lambda) \, d\lambda = \sigma^2
+\]</span></p>
+</section>
+<section id="visual-signature" class="level3" data-number="12.3.4">
+<h3 data-number="12.3.4" class="anchored" data-anchor-id="visual-signature"><span class="header-section-number">12.3.4</span> Visual Signature</h3>
+<p><a href="#fig-white-noise" class="quarto-xref">Figure&nbsp;<span>12.10</span></a> shows a realization of white noise along with its sample ACF and estimated spectrum.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Bandwidth: 0.042 | Degrees of Freedom: 42.21 | split taper: 0% </code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-white-noise" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-white-noise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-white-noise-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-white-noise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.10: White noise: time series, ACF, and spectrum
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The time series shows no visible pattern—values fluctuate randomly around zero with no apparent persistence or periodicity. The sample ACF hovers near zero at all nonzero lags, with values falling within the blue dashed confidence bands that indicate the range expected under the null hypothesis of white noise. The smoothed spectrum is approximately flat, with no peaks indicating dominant frequencies.</p>
+<p>These are the signatures we look for when assessing whether a series (or the residuals from a fitted model) behaves like white noise.</p>
+</section>
+<section id="the-creation-myth" class="level3" data-number="12.3.5">
+<h3 data-number="12.3.5" class="anchored" data-anchor-id="the-creation-myth"><span class="header-section-number">12.3.5</span> The Creation Myth</h3>
+<p>White noise is more than a reference point—it is, in a sense, the raw material from which correlated processes are built. Here is a useful way to think about stationary time series:</p>
+<blockquote class="blockquote">
+<p><strong>In the beginning</strong> there was white noise: independent observations, no memory, a flat spectrum.</p>
+<p><strong>Then</strong> a linear, time-invariant filter acted on the white noise—a weighted average of current and past values, a physical system that smooths or oscillates.</p>
+<p><strong>The result</strong> is a correlated process: the filter’s fingerprint impressed on the original independence.</p>
+</blockquote>
+<p>This “creation myth” is not merely a metaphor. The Wold decomposition theorem establishes that any stationary process can be represented as a linear combination of current and past white noise values (plus a deterministic component). The coefficients of this representation encode the autocorrelation structure.</p>
+<p>From this perspective:</p>
+<ul>
+<li><p>The <strong>spectrum</strong> of the output tells you how the filter reshaped the flat spectrum of the input. Peaks indicate frequencies that the filter amplified; troughs indicate frequencies that were attenuated.</p></li>
+<li><p>The <strong>ACF</strong> of the output tells you how the filter introduced dependence between observations. Slow decay indicates a filter with long memory; oscillations indicate a filter with periodic character.</p></li>
+</ul>
+<p>The two views describe the same filtering—one in terms of frequency response, the other in terms of temporal correlation. They are mathematically equivalent descriptions of what the filter did to the white noise input.</p>
+</section>
+<section id="departures-from-white-noise" class="level3" data-number="12.3.6">
+<h3 data-number="12.3.6" class="anchored" data-anchor-id="departures-from-white-noise"><span class="header-section-number">12.3.6</span> Departures from White Noise</h3>
+<p>Any structure in the ACF or spectrum indicates departure from independence. The pattern of departure suggests the type of structure present:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 31%">
+<col style="width: 46%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Observation</th>
+<th>Time Domain (ACF)</th>
+<th>Frequency Domain (Spectrum)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Persistence or trend</td>
+<td>Slow decay</td>
+<td>Low-frequency dominance</td>
+</tr>
+<tr class="even">
+<td>Periodic structure</td>
+<td>Oscillation</td>
+<td>Peaks at characteristic frequencies</td>
+</tr>
+<tr class="odd">
+<td>Short memory (MA-type)</td>
+<td>Sharp cutoff after a few lags</td>
+<td>Smooth, broad features</td>
+</tr>
+<tr class="even">
+<td>Long memory (AR-type)</td>
+<td>Gradual exponential decay</td>
+<td>Sharp peaks</td>
+</tr>
+</tbody>
+</table>
+<p>These correspondences guide model selection. When we examine the ACF and spectrum of a new series, we are asking: how does this process differ from white noise, and what does that difference tell us about the underlying mechanism?</p>
+<p>The examples in the previous section illustrated these patterns. Sunspots showed oscillating ACF and spectral peaks (periodicity). Global temperatures showed slow ACF decay and low-frequency spectral dominance (trend). SOI showed both oscillation and multiple spectral peaks (multiple periodicities). In each case, the departure from the white noise baseline revealed structure that the data contain.</p>
+</section>
+</section>
+<section id="stationarity-and-time-invariance" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="stationarity-and-time-invariance"><span class="header-section-number">12.4</span> Stationarity and Time-Invariance</h2>
+<p>The autocorrelation function and spectrum are well-defined only under certain conditions. Those conditions—collectively called <em>stationarity</em>—turn out to have a deep connection to the concept of time-invariance in systems theory. Understanding this connection illuminates why Fourier methods are fundamental to time series analysis.</p>
+<section id="stationarity-defined" class="level3" data-number="12.4.1">
+<h3 data-number="12.4.1" class="anchored" data-anchor-id="stationarity-defined"><span class="header-section-number">12.4.1</span> Stationarity Defined</h3>
+<p>A random process <span class="math inline">\(\{X(t)\}\)</span> is <strong>second-order stationary</strong> (also called <em>weakly stationary</em> or <em>covariance stationary</em>) if:</p>
+<ol type="1">
+<li><strong>Constant mean</strong>: <span class="math inline">\(E\{X(t)\} = \mu\)</span> for all <span class="math inline">\(t\)</span></li>
+<li><strong>Covariance depends only on lag</strong>: <span class="math inline">\(\text{Cov}(X(t+u), X(t)) = \gamma(u)\)</span> for all <span class="math inline">\(t\)</span></li>
+</ol>
+<p>The first condition says the expected value does not drift over time. The second says the covariance between two observations depends only on their separation <span class="math inline">\(u\)</span>, not on when they occur. Together, these conditions ensure that the statistical properties of the process do not change with time.</p>
+<p>A stronger condition, <strong>strict stationarity</strong>, requires that the entire joint distribution of any collection of observations depends only on their relative positions, not their absolute times. Second-order stationarity is weaker—it constrains only means and covariances—but is sufficient for most time series methods and is what we mean by “stationarity” unless otherwise specified.</p>
+</section>
+<section id="why-stationarity-matters" class="level3" data-number="12.4.2">
+<h3 data-number="12.4.2" class="anchored" data-anchor-id="why-stationarity-matters"><span class="header-section-number">12.4.2</span> Why Stationarity Matters</h3>
+<p>Stationarity is essential for a practical reason: it allows us to estimate the autocovariance function from a single realization.</p>
+<p>Consider estimating <span class="math inline">\(\gamma(u)\)</span>, the covariance between observations separated by <span class="math inline">\(u\)</span> time units. If stationarity holds, then <span class="math inline">\(\gamma(u)\)</span> is the same whether we look at <span class="math inline">\((X(1), X(1+u))\)</span> or <span class="math inline">\((X(100), X(100+u))\)</span> or any other pair separated by <span class="math inline">\(u\)</span>. We can average over all such pairs in our observed series to estimate <span class="math inline">\(\gamma(u)\)</span>.</p>
+<p>If stationarity fails—if the covariance structure changes over time—then there is no single <span class="math inline">\(\gamma(u)\)</span> to estimate. Different parts of the series would give different answers, and averaging them would be meaningless.</p>
+<p>The same logic applies to the spectrum. The spectral density <span class="math inline">\(f(\lambda)\)</span> describes how variance is distributed across frequencies. If the frequency content changes over time—more high-frequency variation in one era, more low-frequency in another—then there is no single spectrum to estimate.</p>
+<p>Stationarity thus enables the entire enterprise of characterizing dependence structure. Without it, the ACF and spectrum are not well-defined population quantities.</p>
+</section>
+<section id="stationarity-and-time-invariance-the-conceptual-connection" class="level3" data-number="12.4.3">
+<h3 data-number="12.4.3" class="anchored" data-anchor-id="stationarity-and-time-invariance-the-conceptual-connection"><span class="header-section-number">12.4.3</span> Stationarity and Time-Invariance: The Conceptual Connection</h3>
+<p>Stationarity has a deeper significance beyond enabling estimation. It is the <strong>statistical counterpart of time-invariance</strong> in systems theory.</p>
+<p>A linear system is <strong>time-invariant</strong> if its behavior does not depend on when the input is applied. Mathematically, if input <span class="math inline">\(X(\cdot)\)</span> produces output <span class="math inline">\(Y(\cdot)\)</span>, and we shift the input in time to get <span class="math inline">\(X(\cdot - s)\)</span>, then the output shifts by the same amount: <span class="math inline">\(Y(\cdot - s)\)</span>. The system treats all time points equivalently.</p>
+<p>Stationarity is the probabilistic version of this property. A stationary process is one whose statistical behavior does not depend on the time origin. Shifting the entire process in time does not change its distributional properties.</p>
+<p>This connection explains why Fourier analysis is fundamental to both domains:</p>
+<ul>
+<li><p>In systems theory, complex exponentials <span class="math inline">\(e^{i\lambda t}\)</span> are eigenfunctions of time-invariant linear systems. Any such system, when presented with a sinusoidal input, produces a sinusoidal output at the same frequency (possibly with changed amplitude and phase).</p></li>
+<li><p>In time series analysis, the spectrum decomposes a stationary process into contributions from different frequencies. This decomposition is natural precisely because stationarity ensures that the frequency content does not change over time.</p></li>
+</ul>
+<p>The mathematical parallel is exact. The back-shift operator <span class="math inline">\(\mathcal{B}\)</span>, which shifts a process one time unit into the past, plays the role of the time-shift operator in systems theory. Stationarity means the process is statistically invariant under <span class="math inline">\(\mathcal{B}\)</span>. And the eigenfunctions of <span class="math inline">\(\mathcal{B}\)</span>—the complex exponentials—are the building blocks of spectral analysis.</p>
+<p>This is why the “two perspectives” of time series analysis—time domain and frequency domain—are not merely alternative techniques. They are dual aspects of a unified mathematical structure, linked by the Fourier transform and grounded in the concept of time-invariance.</p>
+</section>
+<section id="visual-assessment-of-stationarity" class="level3" data-number="12.4.4">
+<h3 data-number="12.4.4" class="anchored" data-anchor-id="visual-assessment-of-stationarity"><span class="header-section-number">12.4.4</span> Visual Assessment of Stationarity</h3>
+<p>Before applying methods that assume stationarity, we should assess whether the assumption is plausible. Visual inspection of the time series plot is the first diagnostic.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-stationary-vs-not" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-stationary-vs-not-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-stationary-vs-not-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stationary-vs-not-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.11: Stationary (left) vs.&nbsp;non-stationary (right) processes
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The left panel shows a stationary AR(1) process. It fluctuates around a constant level, repeatedly returning toward the center. High values are followed by regression toward the mean; low values likewise. The process has a stable “home base.”</p>
+<p>The right panel shows a random walk—the cumulative sum of independent increments. It wanders without returning, drifting far from its starting point. There is no stable mean to which it regresses. This is the signature of non-stationarity: the process has no fixed level.</p>
+<p><strong>Signs suggesting non-stationarity:</strong></p>
+<ul>
+<li><strong>Trend</strong>: A systematic increase or decrease over time indicates a changing mean.</li>
+<li><strong>Wandering</strong>: The series drifts without returning to a central level.</li>
+<li><strong>Changing variance</strong>: The amplitude of fluctuations varies over different periods.</li>
+<li><strong>Level shifts</strong>: Abrupt changes in the mean level.</li>
+</ul>
+<p>The ACF provides additional evidence. A stationary process typically has an ACF that decays to zero reasonably quickly. A non-stationary process often shows an ACF that decays very slowly or not at all—as we saw with the global temperature data.</p>
+</section>
+<section id="achieving-stationarity-through-transformation" class="level3" data-number="12.4.5">
+<h3 data-number="12.4.5" class="anchored" data-anchor-id="achieving-stationarity-through-transformation"><span class="header-section-number">12.4.5</span> Achieving Stationarity Through Transformation</h3>
+<p>When a series is non-stationary, we often transform it before analysis. Common transformations include:</p>
+<p><strong>Differencing</strong> removes trend by computing changes rather than levels: <span class="math display">\[
+Y(t) = X(t) - X(t-1) = (1 - \mathcal{B})X(t)
+\]</span></p>
+<p>The differenced series <span class="math inline">\(Y(t)\)</span> represents the change from one period to the next. If <span class="math inline">\(X(t)\)</span> has a linear trend, <span class="math inline">\(Y(t)\)</span> will fluctuate around a constant (the slope), achieving stationarity. Higher-order differencing—differencing the differenced series—can remove polynomial trends.</p>
+<p><strong>Seasonal differencing</strong> removes periodic patterns by comparing each observation to the same season in the previous cycle: <span class="math display">\[
+Y(t) = X(t) - X(t-s)
+\]</span> where <span class="math inline">\(s\)</span> is the seasonal period (e.g., <span class="math inline">\(s = 12\)</span> for monthly data with annual seasonality).</p>
+<p><strong>Logarithmic transformation</strong> stabilizes variance when fluctuations grow proportionally with level. If the standard deviation of <span class="math inline">\(X(t)\)</span> is proportional to its mean, then <span class="math inline">\(\log X(t)\)</span> will have approximately constant variance.</p>
+<p><strong>Detrending</strong> fits and removes a trend model (linear, polynomial, or otherwise), analyzing the residuals.</p>
+<p>The appropriate transformation depends on the nature of the non-stationarity. Often, transformations are combined: for example, taking logs to stabilize variance, then differencing to remove trend.</p>
+<p>After transformation, we verify that the result appears stationary: stable mean, no obvious trend or changing variance, ACF that decays reasonably. Only then do we proceed with methods that assume stationarity.</p>
+</section>
+<section id="a-caution-on-transformations" class="level3" data-number="12.4.6">
+<h3 data-number="12.4.6" class="anchored" data-anchor-id="a-caution-on-transformations"><span class="header-section-number">12.4.6</span> A Caution on Transformations</h3>
+<p>Transformations can obscure as well as reveal. Differencing removes trend, but it also removes information—the level of the series is lost. If the scientific question concerns levels rather than changes, differencing may not be appropriate.</p>
+<p>More fundamentally, an observed trend may be <em>substantively important</em>, not a nuisance to be removed. The upward trend in global temperatures is the signal, not the noise. Differencing would eliminate it, leaving only year-to-year fluctuations—interesting, but not the main story.</p>
+<p>The choice of transformation should be guided by the scientific question. Stationarity is a technical requirement for certain methods, but achieving it mechanically, without regard to meaning, can lead us away from the questions we actually want to answer.</p>
+<p>This is another instance of the theme running through this book: technical procedures serve understanding and decision support. They are means, not ends.</p>
+</section>
+</section>
+<section id="autocorrelation-and-partial-autocorrelation" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="autocorrelation-and-partial-autocorrelation"><span class="header-section-number">12.5</span> Autocorrelation and Partial Autocorrelation</h2>
+<p>The autocorrelation function (ACF) and partial autocorrelation function (PACF) are the primary diagnostic tools for characterizing the dependence structure of a time series. We have already seen them in action in the examples; now we develop them more formally.</p>
+<section id="the-autocorrelation-function" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="the-autocorrelation-function"><span class="header-section-number">12.5.1</span> The Autocorrelation Function</h3>
+<p>For a stationary process <span class="math inline">\(\{X(t)\}\)</span> with mean <span class="math inline">\(\mu\)</span> and autocovariance function <span class="math inline">\(\gamma(u) = \text{Cov}(X(t+u), X(t))\)</span>, the <strong>autocorrelation function</strong> is the normalized autocovariance:</p>
+<p><span class="math display">\[
+\rho(u) = \frac{\gamma(u)}{\gamma(0)} = \text{Corr}(X(t+u), X(t))
+\]</span></p>
+<p>The ACF measures the correlation between observations separated by <span class="math inline">\(u\)</span> time units. Its properties follow from those of correlation coefficients:</p>
+<ul>
+<li><span class="math inline">\(\rho(0) = 1\)</span> (every observation is perfectly correlated with itself)</li>
+<li><span class="math inline">\(|\rho(u)| \leq 1\)</span> (correlations are bounded)</li>
+<li><span class="math inline">\(\rho(-u) = \rho(u)\)</span> (symmetric in lag, since <span class="math inline">\(\text{Corr}(X(t), X(t+u)) = \text{Corr}(X(t+u), X(t))\)</span>)</li>
+</ul>
+<p>The ACF answers a fundamental question: <strong>how predictable is the future from the past?</strong> If <span class="math inline">\(\rho(u)\)</span> is large, observations <span class="math inline">\(u\)</span> time units apart are strongly related; knowing one tells you much about the other. If <span class="math inline">\(\rho(u)\)</span> is near zero, the observations are nearly uncorrelated; the past provides little information about the future at that lag.</p>
+</section>
+<section id="sample-acf" class="level3" data-number="12.5.2">
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="sample-acf"><span class="header-section-number">12.5.2</span> Sample ACF</h3>
+<p>Given observations <span class="math inline">\(X(1), X(2), \ldots, X(T)\)</span>, we estimate the ACF by:</p>
+<p><span class="math display">\[
+\hat{\rho}(u) = \frac{\hat{\gamma}(u)}{\hat{\gamma}(0)}
+\]</span></p>
+<p>where the sample autocovariance is:</p>
+<p><span class="math display">\[
+\hat{\gamma}(u) = \frac{1}{T} \sum_{t=1}^{T-u} (X(t+u) - \bar{X})(X(t) - \bar{X})
+\]</span></p>
+<p>The divisor <span class="math inline">\(T\)</span> (rather than <span class="math inline">\(T-u\)</span>) is conventional; it ensures that the sample autocovariance matrix is positive semi-definite.</p>
+<p>When plotting the sample ACF, we include <strong>confidence bands</strong> indicating the range of values expected under the null hypothesis that the true process is white noise. Under this null, for large <span class="math inline">\(T\)</span>:</p>
+<p><span class="math display">\[
+\hat{\rho}(u) \stackrel{\cdot}{\sim} N\left(0, \frac{1}{T}\right) \quad \text{for } u \neq 0
+\]</span></p>
+<p>The conventional 95% confidence bands are thus <span class="math inline">\(\pm 1.96 / \sqrt{T}\)</span>, often displayed as blue dashed lines. Sample ACF values outside these bands suggest statistically significant autocorrelation at that lag.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-acf-soi-annotated" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-acf-soi-annotated-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-acf-soi-annotated-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-acf-soi-annotated-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.12: Sample ACF with confidence bands
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In this plot, the numerous values outside the confidence bands indicate that SOI has substantial autocorrelation—it is far from white noise. The oscillating pattern suggests periodic structure, and the slow decay indicates persistence.</p>
+</section>
+<section id="the-partial-autocorrelation-function" class="level3" data-number="12.5.3">
+<h3 data-number="12.5.3" class="anchored" data-anchor-id="the-partial-autocorrelation-function"><span class="header-section-number">12.5.3</span> The Partial Autocorrelation Function</h3>
+<p>The ACF measures the <em>total</em> correlation between <span class="math inline">\(X(t+u)\)</span> and <span class="math inline">\(X(t)\)</span>. But some of this correlation may be indirect—mediated through intervening observations <span class="math inline">\(X(t+1), X(t+2), \ldots, X(t+u-1)\)</span>.</p>
+<p>The <strong>partial autocorrelation function</strong> (PACF) measures the <em>direct</em> correlation between <span class="math inline">\(X(t+u)\)</span> and <span class="math inline">\(X(t)\)</span>, after removing the linear effects of the intervening observations. Formally:</p>
+<p><span class="math display">\[
+\phi_{uu} = \text{Corr}(X(t+u) - \hat{X}(t+u), \; X(t) - \hat{X}(t))
+\]</span></p>
+<p>where <span class="math inline">\(\hat{X}(t+u)\)</span> and <span class="math inline">\(\hat{X}(t)\)</span> are the best linear predictions of <span class="math inline">\(X(t+u)\)</span> and <span class="math inline">\(X(t)\)</span> from the intervening values <span class="math inline">\(\{X(t+1), \ldots, X(t+u-1)\}\)</span>.</p>
+<p>The PACF answers a different question: <strong>what is the direct effect of lag <span class="math inline">\(u\)</span>, controlling for shorter lags?</strong> This distinction matters for model identification:</p>
+<ul>
+<li><p>In an AR(p) process, <span class="math inline">\(X(t)\)</span> depends directly on <span class="math inline">\(X(t-1), \ldots, X(t-p)\)</span> but not on earlier values. The PACF will be nonzero for lags <span class="math inline">\(1, \ldots, p\)</span> and zero thereafter—it “cuts off” after lag <span class="math inline">\(p\)</span>.</p></li>
+<li><p>In an MA(q) process, the dependence structure is different: the ACF cuts off after lag <span class="math inline">\(q\)</span>, while the PACF decays gradually.</p></li>
+</ul>
+</section>
+<section id="acf-and-pacf-together" class="level3" data-number="12.5.4">
+<h3 data-number="12.5.4" class="anchored" data-anchor-id="acf-and-pacf-together"><span class="header-section-number">12.5.4</span> ACF and PACF Together</h3>
+<p>Plotting the ACF and PACF together provides a diagnostic fingerprint of the dependence structure.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-acf-pacf-soi" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-acf-pacf-soi-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-acf-pacf-soi-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-acf-pacf-soi-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.13: ACF and PACF for SOI
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>acf2()</code> function from the <code>astsa</code> package displays both functions together. For SOI:</p>
+<ul>
+<li>The <strong>ACF</strong> shows oscillation and slow decay—typical of processes with periodic components and persistence.</li>
+<li>The <strong>PACF</strong> shows significant values at early lags, then cuts off—suggesting an autoregressive component.</li>
+</ul>
+</section>
+<section id="diagnostic-patterns" class="level3" data-number="12.5.5">
+<h3 data-number="12.5.5" class="anchored" data-anchor-id="diagnostic-patterns"><span class="header-section-number">12.5.5</span> Diagnostic Patterns</h3>
+<p>The shapes of the ACF and PACF suggest what type of model might be appropriate. The following table summarizes the classic patterns:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 38%">
+<col style="width: 41%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>ACF Pattern</th>
+<th>PACF Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AR(p)</td>
+<td>Decays gradually (exponential or oscillating)</td>
+<td>Cuts off after lag <span class="math inline">\(p\)</span></td>
+</tr>
+<tr class="even">
+<td>MA(q)</td>
+<td>Cuts off after lag <span class="math inline">\(q\)</span></td>
+<td>Decays gradually</td>
+</tr>
+<tr class="odd">
+<td>ARMA(p,q)</td>
+<td>Decays gradually</td>
+<td>Decays gradually</td>
+</tr>
+<tr class="even">
+<td>White noise</td>
+<td>All values near zero</td>
+<td>All values near zero</td>
+</tr>
+</tbody>
+</table>
+<p>These patterns guide the identification stage of model building, which we develop in Chapter 13. The key insight is that the ACF and PACF encode information about the process’s memory structure—how far back in time the present depends on.</p>
+</section>
+<section id="frequency-domain-counterpart" class="level3" data-number="12.5.6">
+<h3 data-number="12.5.6" class="anchored" data-anchor-id="frequency-domain-counterpart"><span class="header-section-number">12.5.6</span> Frequency Domain Counterpart</h3>
+<p>The ACF has a frequency-domain counterpart: the <strong>spectral density</strong> <span class="math inline">\(f(\lambda)\)</span>. The two are related by the Fourier transform:</p>
+<p><span class="math display">\[
+f(\lambda) = \frac{1}{2\pi} \sum_{u=-\infty}^{\infty} \gamma(u) e^{-i\lambda u}
+\]</span></p>
+<p>and inversely:</p>
+<p><span class="math display">\[
+\gamma(u) = \int_{-\pi}^{\pi} f(\lambda) e^{i\lambda u} \, d\lambda
+\]</span></p>
+<p>The autocovariance function and spectral density contain exactly the same information, expressed in different domains. The ACF describes dependence in terms of time lags; the spectrum describes it in terms of frequency contributions to variance.</p>
+<p>This duality means that the diagnostic patterns have spectral interpretations:</p>
+<ul>
+<li><strong>Slow ACF decay</strong> corresponds to <strong>low-frequency dominance</strong> in the spectrum (trend or long-memory behavior).</li>
+<li><strong>ACF oscillation</strong> corresponds to <strong>spectral peaks</strong> at characteristic frequencies (periodic components).</li>
+<li><strong>Sharp ACF cutoff</strong> corresponds to a <strong>smooth spectrum</strong> (MA-type short memory).</li>
+<li><strong>Gradual ACF decay</strong> corresponds to <strong>peaked spectrum</strong> (AR-type behavior).</li>
+</ul>
+<p>When examining a new time series, looking at both the ACF and the spectrum provides complementary views of the same underlying structure.</p>
+</section>
+<section id="testing-for-white-noise" class="level3" data-number="12.5.7">
+<h3 data-number="12.5.7" class="anchored" data-anchor-id="testing-for-white-noise"><span class="header-section-number">12.5.7</span> Testing for White Noise</h3>
+<p>A common diagnostic question is whether a series (or the residuals from a fitted model) is consistent with white noise. Several approaches are available:</p>
+<p><strong>Visual inspection</strong>: Do the sample ACF values fall within the confidence bands? One or two exceedances at non-systematic lags may be expected by chance; systematic patterns indicate structure.</p>
+<p><strong>Ljung-Box test</strong>: This test aggregates information across multiple lags to test the null hypothesis that all autocorrelations up to lag <span class="math inline">\(h\)</span> are zero:</p>
+<p><span class="math display">\[
+Q(h) = T(T+2) \sum_{u=1}^{h} \frac{\hat{\rho}(u)^2}{T-u}
+\]</span></p>
+<p>Under the null of white noise, <span class="math inline">\(Q(h) \stackrel{\cdot}{\sim} \chi^2_h\)</span>. A large value (small p-value) suggests the series is not white noise.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for SOI at lag 20</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(soi, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Box-Ljung test
+
+data:  soi
+X-squared = 693.28, df = 20, p-value &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>The highly significant result confirms what the ACF already showed: SOI has substantial autocorrelation.</p>
+<p><strong>Spectral tests</strong>: In the frequency domain, white noise corresponds to a flat spectrum. Tests such as Bartlett’s test assess whether the periodogram is consistent with this null hypothesis.</p>
+</section>
+</section>
+<section id="why-it-matters-for-inference" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="why-it-matters-for-inference"><span class="header-section-number">12.6</span> Why It Matters for Inference</h2>
+<p>The diagnostic tools we have developed are not merely descriptive. Autocorrelation has direct consequences for statistical inference. Ignoring it leads to incorrect variance estimates, misleading confidence intervals, and invalid hypothesis tests. Understanding these consequences—and how to address them—is essential for drawing reliable conclusions from time series data.</p>
+<section id="the-variance-problem" class="level3" data-number="12.6.1">
+<h3 data-number="12.6.1" class="anchored" data-anchor-id="the-variance-problem"><span class="header-section-number">12.6.1</span> The Variance Problem</h3>
+<p>Consider a basic inferential task: estimating the mean <span class="math inline">\(\mu\)</span> of a stationary process <span class="math inline">\(\{X(t)\}\)</span> from <span class="math inline">\(T\)</span> observations <span class="math inline">\(X(1), \ldots, X(T)\)</span>. The natural estimator is the sample mean:</p>
+<p><span class="math display">\[
+\bar{X} = \frac{1}{T} \sum_{t=1}^{T} X(t)
+\]</span></p>
+<p>If the observations were independent, the variance of the sample mean would be the familiar:</p>
+<p><span class="math display">\[
+\text{Var}(\bar{X}) = \frac{\sigma^2}{T}
+\]</span></p>
+<p>where <span class="math inline">\(\sigma^2 = \text{Var}\{X(t)\}\)</span>. This formula underlies standard confidence intervals and hypothesis tests.</p>
+<p>But if the observations are autocorrelated, this formula is wrong. The correct variance is:</p>
+<p><span class="math display">\[
+\text{Var}(\bar{X}) = \frac{\sigma^2}{T} \left( 1 + 2 \sum_{u=1}^{T-1} \left(1 - \frac{u}{T}\right) \rho(u) \right)
+\]</span></p>
+<p>The term in parentheses is the <strong>variance inflation factor</strong>. When autocorrelations are positive (as is typical—high values tend to follow high values), this factor exceeds 1, and the true variance of <span class="math inline">\(\bar{X}\)</span> is larger than the naive formula suggests.</p>
+</section>
+<section id="a-concrete-example-the-ma1-process" class="level3" data-number="12.6.2">
+<h3 data-number="12.6.2" class="anchored" data-anchor-id="a-concrete-example-the-ma1-process"><span class="header-section-number">12.6.2</span> A Concrete Example: The MA(1) Process</h3>
+<p>To see this concretely, consider the moving average process of order 1:</p>
+<p><span class="math display">\[
+X(t) = W(t) + \theta \, W(t-1)
+\]</span></p>
+<p>where <span class="math inline">\(\{W(t)\}\)</span> is white noise with variance <span class="math inline">\(\sigma_W^2\)</span>, and <span class="math inline">\(\theta\)</span> is a parameter with <span class="math inline">\(|\theta| &lt; 1\)</span>.</p>
+<p>This process has a simple autocorrelation structure:</p>
+<p><span class="math display">\[
+\rho(u) =
+\begin{cases}
+1 &amp; \text{if } u = 0 \\[4pt]
+\dfrac{\theta}{1 + \theta^2} &amp; \text{if } u = \pm 1 \\[4pt]
+0 &amp; \text{if } |u| &gt; 1
+\end{cases}
+\]</span></p>
+<p>The process has memory only at lag 1; observations more than one time unit apart are uncorrelated.</p>
+<p>Even this limited dependence affects the variance of the sample mean. For large <span class="math inline">\(T\)</span>, the variance of <span class="math inline">\(\bar{X}\)</span> is approximately:</p>
+<p><span class="math display">\[
+\text{Var}(\bar{X}) \approx \frac{\sigma_X^2}{T} \cdot \frac{(1 + \theta)^2}{1 + \theta^2}
+\]</span></p>
+<p>When <span class="math inline">\(\theta &gt; 0\)</span>, the factor <span class="math inline">\((1 + \theta)^2 / (1 + \theta^2)\)</span> exceeds 1. For example, if <span class="math inline">\(\theta = 0.5\)</span>:</p>
+<p><span class="math display">\[
+\frac{(1 + 0.5)^2}{1 + 0.25} = \frac{2.25}{1.25} = 1.8
+\]</span></p>
+<p>The variance is 80% larger than the naive formula predicts. Confidence intervals based on the naive variance would be too narrow; hypothesis tests would reject too often.</p>
+</section>
+<section id="effective-sample-size" class="level3" data-number="12.6.3">
+<h3 data-number="12.6.3" class="anchored" data-anchor-id="effective-sample-size"><span class="header-section-number">12.6.3</span> Effective Sample Size</h3>
+<p>The <strong>effective sample size</strong> (ESS) provides an intuitive way to quantify the impact of autocorrelation. It answers the question: how many <em>independent</em> observations would give the same variance for <span class="math inline">\(\bar{X}\)</span>?</p>
+<p>Define <span class="math inline">\(N_{\text{eff}}\)</span> such that:</p>
+<p><span class="math display">\[
+\frac{\sigma^2}{N_{\text{eff}}} = \text{Var}(\bar{X})
+\]</span></p>
+<p>Solving:</p>
+<p><span class="math display">\[
+N_{\text{eff}} = \frac{T}{1 + 2 \sum_{u=1}^{T-1} \left(1 - \frac{u}{T}\right) \rho(u)}
+\]</span></p>
+<p>For large <span class="math inline">\(T\)</span>, if the autocorrelations are summable, this simplifies to:</p>
+<p><span class="math display">\[
+N_{\text{eff}} \approx \frac{T}{1 + 2 \sum_{u=1}^{\infty} \rho(u)}
+\]</span></p>
+<p>The effective sample size tells you how much information your data actually contain about the mean—accounting for the redundancy introduced by dependence.</p>
+</section>
+<section id="example-ar1-process" class="level3" data-number="12.6.4">
+<h3 data-number="12.6.4" class="anchored" data-anchor-id="example-ar1-process"><span class="header-section-number">12.6.4</span> Example: AR(1) Process</h3>
+<p>For an AR(1) process <span class="math inline">\(X(t) = \phi X(t-1) + W(t)\)</span> with <span class="math inline">\(|\phi| &lt; 1\)</span>, the autocorrelation function is <span class="math inline">\(\rho(u) = \phi^{|u|}\)</span>. The sum of autocorrelations is:</p>
+<p><span class="math display">\[
+\sum_{u=1}^{\infty} \rho(u) = \sum_{u=1}^{\infty} \phi^u = \frac{\phi}{1 - \phi}
+\]</span></p>
+<p>Thus:</p>
+<p><span class="math display">\[
+N_{\text{eff}} \approx T \cdot \frac{1 - \phi}{1 + \phi}
+\]</span></p>
+<p>Consider <span class="math inline">\(\phi = 0.8\)</span> (moderately strong positive autocorrelation):</p>
+<p><span class="math display">\[
+N_{\text{eff}} \approx T \cdot \frac{0.2}{1.8} = T \cdot 0.111 \approx \frac{T}{9}
+\]</span></p>
+<p>A sample of <span class="math inline">\(T = 100\)</span> observations has an effective sample size of only about 11. The data contain far less information than the nominal sample size suggests.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ess-ar1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ess-ar1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-data_files/figure-html/fig-ess-ar1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ess-ar1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.14: Effective sample size as a function of AR(1) parameter
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The figure shows how <span class="math inline">\(N_{\text{eff}}/T\)</span> varies with the AR(1) parameter <span class="math inline">\(\phi\)</span>. For positive autocorrelation (<span class="math inline">\(\phi &gt; 0\)</span>), the effective sample size is less than <span class="math inline">\(T\)</span>—sometimes dramatically so. For negative autocorrelation (<span class="math inline">\(\phi &lt; 0\)</span>), the effective sample size can exceed <span class="math inline">\(T\)</span>, as successive observations provide more information than independent ones would.</p>
+</section>
+<section id="practical-consequences" class="level3" data-number="12.6.5">
+<h3 data-number="12.6.5" class="anchored" data-anchor-id="practical-consequences"><span class="header-section-number">12.6.5</span> Practical Consequences</h3>
+<p>The implications for applied work are substantial:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 72%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>If you ignore autocorrelation…</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Confidence intervals</strong></td>
+<td>Too narrow—you understate uncertainty</td>
+</tr>
+<tr class="even">
+<td><strong>Hypothesis tests</strong></td>
+<td>Too many false positives—you find “significance” that isn’t real</td>
+</tr>
+<tr class="odd">
+<td><strong>Standard errors</strong></td>
+<td>Underestimated—your precision is illusory</td>
+</tr>
+<tr class="even">
+<td><strong>Cross-validation</strong></td>
+<td>Training and test sets are not independent—performance estimates are biased</td>
+</tr>
+<tr class="odd">
+<td><strong>Regression inference</strong></td>
+<td>Coefficient standard errors are wrong if residuals are autocorrelated</td>
+</tr>
+</tbody>
+</table>
+<p>These are not minor technicalities. In fields where time series data are common—economics, climate science, epidemiology, finance—failure to account for autocorrelation has led to overconfident conclusions and spurious findings.</p>
+</section>
+<section id="what-to-do-about-it" class="level3" data-number="12.6.6">
+<h3 data-number="12.6.6" class="anchored" data-anchor-id="what-to-do-about-it"><span class="header-section-number">12.6.6</span> What To Do About It</h3>
+<p>Several approaches address the variance problem:</p>
+<p><strong>Use autocorrelation-robust standard errors</strong>: Methods such as Newey-West or HAC (heteroskedasticity and autocorrelation consistent) standard errors adjust for dependence without requiring a full time series model.</p>
+<p><strong>Model the autocorrelation explicitly</strong>: Fit an ARIMA or other time series model that captures the dependence structure. Inference based on a correctly specified model will have appropriate standard errors.</p>
+<p><strong>Use the <code>ESS()</code> function</strong>: The <code>astsa</code> package provides a function to estimate effective sample size directly:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate ESS for global temperature data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ESS</span>(gtemp_land)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 45.91</code></pre>
+</div>
+</div>
+<p>This returns an estimate of how many independent observations the series is “worth” for estimating the mean.</p>
+<p><strong>Block bootstrap</strong>: Resampling methods that preserve the dependence structure can provide valid inference without parametric assumptions.</p>
+</section>
+<section id="the-deeper-point" class="level3" data-number="12.6.7">
+<h3 data-number="12.6.7" class="anchored" data-anchor-id="the-deeper-point"><span class="header-section-number">12.6.7</span> The Deeper Point</h3>
+<p>The effective sample size concept illustrates a broader principle: <strong>understanding the data-generating process is essential for valid inference</strong>. Autocorrelation is not just a diagnostic curiosity—it reflects how the system works. Successive observations are similar because the underlying process has memory, because today’s value influences tomorrow’s, because the system evolves continuously rather than jumping randomly.</p>
+<p>This understanding—of <em>why</em> the data behave as they do—is what allows us to draw correct conclusions. A confidence interval that ignores autocorrelation is not just technically wrong; it reflects a misunderstanding of the data. Getting the inference right requires getting the structure right.</p>
+<p>This is another manifestation of the dual aims we have emphasized throughout: decision support (getting valid confidence intervals) rests on scientific understanding (recognizing and modeling the dependence structure).</p>
+</section>
+</section>
+<section id="looking-ahead" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">12.7</span> Looking Ahead</h2>
+<p>This chapter has introduced the conceptual and diagnostic foundations for time series analysis. We have seen that time series data have memory—successive observations are dependent—and that this dependence can be characterized equivalently in the time domain (through the autocorrelation function) or the frequency domain (through the spectral density). These two perspectives illuminate different aspects of the same underlying structure: the ACF tells us how the past predicts the future; the spectrum tells us what periodic components are present.</p>
+<p>We have also seen that ignoring dependence leads to incorrect inference. The effective sample size quantifies how much less information autocorrelated data contain than independent observations would. Valid conclusions require understanding and modeling the dependence structure.</p>
+<p>The subsequent chapters develop the tools for this modeling.</p>
+<section id="chapter-13-time-domain-methods" class="level3" data-number="12.7.1">
+<h3 data-number="12.7.1" class="anchored" data-anchor-id="chapter-13-time-domain-methods"><span class="header-section-number">12.7.1</span> Chapter 13: Time Domain Methods</h3>
+<p>Chapter 13 develops <strong>autoregressive integrated moving average (ARIMA) models</strong>, the workhorses of time series forecasting. These models express the current value as a linear combination of past values and past errors:</p>
+<ul>
+<li><strong>AR (autoregressive)</strong> models capture how today’s value depends on yesterday’s, the day before’s, and so on.</li>
+<li><strong>MA (moving average)</strong> models capture how today’s value depends on recent random shocks.</li>
+<li><strong>ARIMA</strong> models combine both, with differencing to handle non-stationarity.</li>
+</ul>
+<p>The ACF and PACF patterns we examined in this chapter guide model identification: which lags matter? how much memory does the process have? Chapter 13 shows how to translate these diagnostic insights into fitted models and forecasts.</p>
+<p>The emphasis in time domain methods is <strong>prediction</strong>: given the past, what should we expect in the future? This is the decision-support perspective on time series—using the dependence structure to extrapolate patterns forward.</p>
+</section>
+<section id="chapter-14-frequency-domain-methods" class="level3" data-number="12.7.2">
+<h3 data-number="12.7.2" class="anchored" data-anchor-id="chapter-14-frequency-domain-methods"><span class="header-section-number">12.7.2</span> Chapter 14: Frequency Domain Methods</h3>
+<p>Chapter 14 develops <strong>spectral analysis</strong>, the systematic decomposition of a time series into frequency components. The key tools are:</p>
+<ul>
+<li><strong>The periodogram</strong>: a sample estimate of how variance is distributed across frequencies.</li>
+<li><strong>Spectral density estimation</strong>: smoothed versions of the periodogram that provide more stable estimates.</li>
+<li><strong>Coherence</strong>: a measure of how strongly two series are related at each frequency—the frequency-domain analog of correlation.</li>
+</ul>
+<p>We saw hints of these tools in this chapter’s examples: the spectrum revealed the 11-year solar cycle in sunspots, the low-frequency dominance in global temperatures, and the multiple periodicities in the Southern Oscillation. Chapter 14 develops the estimation theory and interpretation in depth.</p>
+<p>The emphasis in frequency domain methods is <strong>understanding</strong>: what periodic structures drive the process? what filtering has shaped the observed series? This is the scientific-understanding perspective on time series—using the spectral decomposition to identify the mechanisms at work.</p>
+</section>
+<section id="the-dual-perspectives-unified" class="level3" data-number="12.7.3">
+<h3 data-number="12.7.3" class="anchored" data-anchor-id="the-dual-perspectives-unified"><span class="header-section-number">12.7.3</span> The Dual Perspectives Unified</h3>
+<p>The two chapters correspond to the two perspectives we have maintained throughout, but they are not alternatives. Complete understanding of a time series often requires both:</p>
+<ul>
+<li>Time domain methods excel at <strong>forecasting</strong>—projecting patterns into the future.</li>
+<li>Frequency domain methods excel at <strong>identifying structure</strong>—revealing the periodic components and their relative importance.</li>
+</ul>
+<p>A forecast that ignores underlying periodicity may miss predictable cycles. A spectral analysis that ignores the forecasting context may identify periodicities without asking whether they help predict future values. The most effective analyses move fluidly between perspectives, using each where it provides insight.</p>
+<p>This duality reflects the deeper theme of this book: <strong>understanding and decision support are intertwined</strong>. We forecast better when we understand the mechanisms; we understand more deeply when our models predict successfully. Time series analysis, with its mathematical duality between time and frequency domains, makes this interplay especially vivid.</p>
+</section>
+</section>
+<section id="chapter-summary" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">12.8</span> Chapter Summary</h2>
+<ol type="1">
+<li><p><strong>Time series have memory</strong>: Successive observations are dependent, not independent. This dependence is information about how the system evolves.</p></li>
+<li><p><strong>Two equivalent descriptions</strong>: The autocorrelation function (time domain) and spectral density (frequency domain) contain the same information, expressed differently. They are Fourier transform pairs.</p></li>
+<li><p><strong>Fourier analysis is fundamental</strong>: Complex exponentials are eigenfunctions of the time-shift operator. This deep fact explains why frequency decomposition is natural for stationary processes.</p></li>
+<li><p><strong>White noise is the baseline</strong>: Zero autocorrelation at all nonzero lags; flat spectrum. Departures from this baseline reveal structure.</p></li>
+<li><p><strong>Stationarity enables estimation</strong>: When statistical properties don’t change over time, we can estimate the ACF and spectrum from a single realization. Stationarity is the statistical counterpart of time-invariance.</p></li>
+<li><p><strong>ACF and PACF are diagnostic tools</strong>: Their patterns reveal the dependence structure and guide model selection.</p></li>
+<li><p><strong>Ignoring autocorrelation invalidates inference</strong>: The effective sample size is often much smaller than the nominal sample size. Valid confidence intervals require accounting for dependence.</p></li>
+<li><p><strong>Understanding and prediction are intertwined</strong>: Time domain methods emphasize forecasting (decision support); frequency domain methods emphasize identifying structure (scientific understanding). Both are needed for complete analysis.</p></li>
+</ol>
+</section>
+<section id="exercises" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="exercises"><span class="header-section-number">12.9</span> Exercises</h2>
+<ol type="1">
+<li><p><strong>Exploring the <code>astsa</code> datasets</strong>: Choose a time series from the <code>astsa</code> package not discussed in this chapter (e.g., <code>nyse</code>, <code>cpg</code>, <code>gas</code>, <code>oil</code>, <code>prodn</code>). Plot the series, its ACF, and its spectrum. What features do you observe? Does the series appear stationary? What does each diagnostic reveal?</p></li>
+<li><p><strong>Stationarity assessment</strong>: For the global temperature series <code>gtemp_land</code>, apply first differencing to obtain the year-over-year changes. Plot the differenced series, its ACF, and its spectrum. How do these compare to the original series? Has differencing achieved stationarity?</p></li>
+<li><p><strong>Effective sample size</strong>: Using the formula for an AR(1) process, calculate the effective sample size for <span class="math inline">\(T = 200\)</span> observations when <span class="math inline">\(\phi = 0.5\)</span>, <span class="math inline">\(\phi = 0.8\)</span>, and <span class="math inline">\(\phi = 0.95\)</span>. What happens as <span class="math inline">\(\phi\)</span> approaches 1?</p></li>
+<li><p><strong>Comparing domains</strong>: For the SOI data, we observed spectral peaks at the annual frequency and the El Niño frequency (~4 years). Examine the ACF carefully. Can you identify features corresponding to these two periodicities? Why is the spectrum clearer for this purpose?</p></li>
+<li><p><strong>Simulating white noise</strong>: Generate 500 observations of Gaussian white noise using <code>rnorm()</code>. Plot the series, ACF, and spectrum. How do these compare to the theoretical signatures described in the chapter? Repeat several times—how much variation do you see in the sample ACF and spectrum?</p></li>
+<li><p><strong>The MA(1) variance inflation</strong>: For an MA(1) process with <span class="math inline">\(\theta = 0.8\)</span>, calculate the variance inflation factor <span class="math inline">\((1 + \theta)^2 / (1 + \theta^2)\)</span>. If you have <span class="math inline">\(T = 50\)</span> observations, what is the approximate effective sample size? How would your confidence interval for the mean differ from the naive interval that ignores autocorrelation?</p></li>
+</ol>
+</section>
+<section id="resources" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="resources"><span class="header-section-number">12.10</span> Resources</h2>
+<p><strong>Textbooks</strong>:</p>
+<ul>
+<li><p>Shumway, R.H. and Stoffer, D.S. (2025). <em>Time Series Analysis and Its Applications: With R Examples</em> (5th ed.). Springer. The primary reference for this and subsequent chapters, with extensive R code.</p></li>
+<li><p>Brockwell, P.J. and Davis, R.A. (2016). <em>Introduction to Time Series and Forecasting</em> (3rd ed.). Springer. A more mathematically rigorous treatment.</p></li>
+<li><p>Brillinger, D.R. (2001). <em>Time Series: Data Analysis and Theory</em>. SIAM. A classic with strong coverage of frequency domain methods.</p></li>
+</ul>
+<p><strong>Software</strong>:</p>
+<ul>
+<li><p>The <code>astsa</code> package for R provides the datasets and functions used throughout these chapters. See the package vignette “Fun with astsa” for an introduction.</p></li>
+<li><p>The CRAN Task View on Time Series (https://cran.r-project.org/web/views/TimeSeries.html) provides a comprehensive listing of R packages for time series analysis.</p></li>
+</ul>
+<p><strong>Online resources</strong>:</p>
+<ul>
+<li>Stoffer, D. “Regression and Time Series Primer” (https://dsstoffer.github.io/Rtoot.html) provides additional introductory material.</li>
+</ul>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Source: <a href="https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/">NOAA National Centers for Environmental Information</a>. NOAA uses the term “anomaly” rather than “deviation.”<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./topic-models.html" class="pagination-link" aria-label="Topic Models">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ts-intro.html" class="pagination-link" aria-label="Time Series Data Analysis">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/ts-data.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

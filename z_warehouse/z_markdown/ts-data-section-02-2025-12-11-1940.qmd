@@ -1,0 +1,366 @@
+# Time Series Data {#sec-ts-data}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE,
+  error   = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: cran_libraries
+
+library(assertthat)
+library(astsa)
+library(here)
+library(knitr)
+library(latex2exp)
+library(tidyverse)
+library(tinytex)
+library(tsibble)
+library(tsibbledata)
+library(xts)
+```
+
+```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
+#| label: local_source
+
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
+
+# gen_ds_tbl
+# compile a tibble that identifies data sets
+source(here("code", "gen_ds_tbl.R"))
+
+# get_ref_materials
+# encapsulate reference materials as separate modules
+source(here("code", "get_ref_materials.R"))
+```
+
+------------------------------------------------------------------------
+
+## Introduction
+
+Throughout this book we have seen that understanding and decision support are intertwined—that knowing *why* a method works is what allows you to recognize when it applies and when it doesn't. Time series analysis makes this interplay especially vivid.
+
+The standard assumption underlying most statistical methods is that observations are independent: knowing the value of one observation tells you nothing about another. Time series data violate this assumption. Successive observations are dependent—today's temperature is informative about tomorrow's; this quarter's earnings relate to last quarter's; the sunspot count this month connects to counts in surrounding months.
+
+This dependence is not merely a technical nuisance requiring adjusted formulas. It is *information*: information about how systems evolve, about underlying periodic structure, about the mechanisms that generate the data we observe. The autocorrelation structure of a time series is a fingerprint of the process that produced it. To ignore this structure is not just to get wrong standard errors—it is to miss what the data are telling us.
+
+### Two Perspectives, One Reality
+
+The dependence structure of a time series can be characterized in two complementary ways:
+
+- **Time domain**: How does the present relate to the past? The autocorrelation function $\rho(u)$ measures the correlation between observations separated by $u$ time units. This perspective emphasizes prediction—using past values to forecast future ones.
+
+- **Frequency domain**: What periodic components are present? The spectral density $f(\lambda)$ measures how much variance is attributable to oscillations at frequency $\lambda$. This perspective emphasizes understanding—identifying the rhythms and cycles that structure the process.
+
+These two descriptions contain the same information. They are Fourier transform pairs: the spectrum is the transform of the autocovariance function, and vice versa. Yet they illuminate different aspects of the data. The time-domain view asks how the past predicts the future; the frequency-domain view asks what structure generated this process. Together, they provide a complete picture.
+
+This duality is not accidental. There is a deep mathematical reason why Fourier analysis is fundamental to time series: the complex exponential functions $e^{i\lambda t}$ are eigenfunctions of the time-shift operator. Any linear, time-invariant system—a moving average, a filter, a physical process that doesn't change its character over time—has these sinusoidal functions as its natural modes. When we decompose a signal into frequency components, we are working in the natural coordinate system for such systems. We will develop this insight further in the sections that follow.
+
+### Decision Support and Scientific Understanding
+
+The two perspectives on time series—time domain and frequency domain—map onto the dual aims of data analysis.
+
+Forecasting is the archetypal decision-support application of time series analysis. Given observations up to the present, what should we expect tomorrow, next quarter, next year? Time-domain methods, particularly ARIMA models, are the workhorses of this enterprise. They exploit the autocorrelation structure to extrapolate patterns into the future.
+
+But effective forecasting rests on understanding. A forecast that merely extrapolates a trend will fail when conditions change. The question "what should we expect?" is inseparable from the question "why does the series behave as it does?" Climate data illustrate this forcefully: projecting future temperatures requires understanding the physical mechanisms—greenhouse gas forcing, feedback loops, natural variability—not merely curve-fitting to historical data. The frequency-domain perspective, which reveals the periodic structure and the filtering that shaped the series, serves this understanding.
+
+The examples in this chapter span this range: sunspots, where periodic structure is primary; global temperatures, where trend and its causes are central; and ocean-atmosphere dynamics, where multiple periodicities interact. In each case, we examine the data from both perspectives, showing how they complement each other.
+
+### Chapter Roadmap
+
+This chapter introduces the conceptual and diagnostic foundations for time series analysis. We proceed as follows:
+
+**Examples**: We begin with data—sunspots, global temperatures, the Southern Oscillation—examining each from both time-domain and frequency-domain perspectives. These examples build intuition for what the two views reveal.
+
+**The White Noise Baseline**: White noise, a sequence of independent observations, serves as the reference point. Its autocorrelation function is zero at all nonzero lags; its spectrum is flat. Departures from this baseline indicate structure—the fingerprint of dependence.
+
+**Stationarity and Time-Invariance**: We define stationarity, the condition under which the autocovariance and spectrum are well-defined and estimable from a single realization. Stationarity is the statistical counterpart of time-invariance in systems theory—the condition that a system's behavior does not depend on when we observe it.
+
+**Autocorrelation and Partial Autocorrelation**: We develop the ACF and PACF as diagnostic tools, showing how their patterns reveal the dependence structure and guide model selection.
+
+**Why It Matters for Inference**: We demonstrate that ignoring autocorrelation leads to incorrect variance estimates and misleading confidence intervals. The concept of effective sample size quantifies how much less information autocorrelated data contain than independent observations would.
+
+**Looking Ahead**: We preview the subsequent chapters—time-domain methods (Chapter 13) and frequency-domain methods (Chapter 14)—which develop the modeling and estimation tools sketched here.
+
+Throughout, we maintain the dual perspective: every diagnostic can be viewed in both time and frequency domains, and both views inform our understanding of what the data reveal.
+
+## Examples: Two Perspectives
+
+We begin with three examples that illustrate the complementary insights provided by time-domain and frequency-domain analysis. For each, we display the time series itself, then examine what the autocorrelation function (ACF) and the spectrum reveal. The goal is to build intuition: different types of structure appear more clearly in one domain or the other, but both views describe the same underlying reality.
+
+### Sunspots
+
+The sunspot record is one of the longest continuous scientific observations, extending from 1749 to the present. @fig-sunspots shows the monthly count of sunspots as recorded by the Royal Observatory of Belgium's Solar Influences Data Analysis Center.
+
+```{r}
+#| label: fig-sunspots
+#| fig-cap: "Monthly sunspot counts, 1749–present"
+
+tsplot(sunspot.month, ylab = "Sunspot count", col = 4, main = "")
+```
+
+The series displays an obvious cyclical pattern—the approximately 11-year solar magnetic cycle during which sunspot activity rises and falls. But notice also the irregular amplitude: some cycles peak much higher than others. This is not simple periodic behavior; there is structure within the cycles.
+
+Sunspots matter beyond pure science. Solar activity affects space weather, which in turn influences satellite operations, radio communications, and power grid stability. The sunspot record is also a primary input for reconstructing total solar irradiance before the era of direct satellite measurement (pre-1978), relevant to understanding long-term climate variability.
+
+#### Time Domain View
+
+The autocorrelation function reveals how the present relates to the past.
+
+```{r}
+#| label: fig-sunspots-acf
+#| fig-cap: "ACF of monthly sunspot counts"
+
+ss_acf <- acf1(sunspot.month, max.lag = 200, main = "")
+```
+
+The ACF shows several notable features. First, there is slow decay—values remain substantially correlated even at long lags. This indicates strong persistence: knowing this month's sunspot count tells you something about counts many months into the future. Second, the ACF oscillates, with peaks appearing roughly every 130 months (about 11 years). This oscillation reflects the solar cycle, but the ACF does not give a precise period—the peaks are broad, and reading the exact cycle length is difficult.
+
+The slow decay also hints at a challenge: this process may not be stationary in the strict sense. The varying amplitude of the cycles suggests that the statistical properties may shift over time. We will return to this issue when we discuss stationarity.
+
+#### Frequency Domain View
+
+The spectrum reveals what periodic components are present and how much variance each contributes.
+
+```{r}
+#| label: fig-sunspots-spectrum
+#| fig-cap: "Spectrum of monthly sunspot counts"
+
+mvspec(sunspot.month, log = "no", main = "", col = 4)
+```
+
+The spectrum tells a clearer story about periodicity. A dominant peak appears at a frequency of approximately 0.007 cycles per month, corresponding to a period of about 140 months or 11.7 years—the solar cycle, precisely located. The spectrum also shows smaller peaks at harmonics of this fundamental frequency, reflecting the non-sinusoidal shape of the solar cycle (sunspot counts rise faster than they fall).
+
+What the ACF revealed only through broad oscillations, the spectrum makes immediately visible: there is a dominant periodic component, and we can read its frequency directly. The frequency-domain view excels at identifying and separating periodicities.
+
+### Global Surface Temperatures
+
+@fig-gtemp shows annual temperature deviations (in °C) from the 1991–2020 average for the Earth's land surface, recorded from 1850 to 2023. The data are from NOAA's Global Climate Report.[^gtemp-source]
+
+[^gtemp-source]: Source: [NOAA National Centers for Environmental Information](https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/). NOAA uses the term "anomaly" rather than "deviation."
+
+```{r}
+#| label: fig-gtemp
+#| fig-cap: "Annual land surface temperature deviations from 1991–2020 average"
+
+tsplot(gtemp_land, ylab = "°C deviation", col = 4, main = "")
+```
+
+Unlike sunspots, this series shows no obvious periodicity. The dominant feature is a trend—temperatures have risen, particularly since the 1970s. The trend is not linear; there are periods of relative stability followed by accelerations.
+
+This example illustrates the connection between scientific understanding and decision support at its starkest. The trend is the signal that has driven climate policy debates. But extrapolating the trend requires understanding its causes: greenhouse gas forcing, feedback mechanisms, natural variability. A purely statistical forecast that ignores the physics would be scientifically indefensible and practically useless for long-term planning.
+
+#### Time Domain View
+
+```{r}
+#| label: fig-gtemp-acf
+#| fig-cap: "ACF of global land temperatures"
+
+gtl_acf <- acf1(gtemp_land, main = "")
+```
+
+The ACF decays very slowly—each year is strongly correlated with the next, and correlations remain substantial even at lags of 20 or more years. This pattern is the time-domain signature of a trend: when there is a systematic increase over time, observations close together are similar (both relatively low early, both relatively high late), producing high autocorrelations.
+
+The slow ACF decay signals non-stationarity. The statistical properties of this series are not constant over time—the mean is changing. Before applying standard time series methods, we would need to remove or model the trend.
+
+#### Frequency Domain View
+
+```{r}
+#| label: fig-gtemp-spectrum
+#| fig-cap: "Spectrum of global land temperatures"
+
+mvspec(gtemp_land, log = "no", main = "", col = 4)
+```
+
+The spectrum is dominated by low frequencies—most of the variance is concentrated near zero frequency. This is the frequency-domain signature of trend: a systematic change over time manifests as power at the lowest frequencies. There are no prominent peaks at higher frequencies; the series lacks the periodic structure we saw in sunspots.
+
+The spectral view reinforces what the ACF suggested: this is a trend-dominated series without significant cyclical components. The story is secular change, not periodic oscillation.
+
+### El Niño and Fish Recruitment
+
+Our third example involves two related series: the Southern Oscillation Index (SOI) and a fish recruitment index. @fig-soi-rec shows both series, which span 1950–1987 with monthly observations.
+
+```{r}
+#| label: fig-soi-rec
+#| fig-cap: "Southern Oscillation Index and fish recruitment, 1950–1987"
+
+par(mfrow = c(2, 1), mar = c(2, 4, 2, 1))
+tsplot(soi, ylab = "SOI", col = 4, main = "Southern Oscillation Index")
+tsplot(rec, ylab = "Recruitment", col = 4, main = "Fish Recruitment")
+```
+
+The Southern Oscillation is a periodic fluctuation in sea surface temperature and air pressure across the tropical Pacific. Its warm phase is the well-known El Niño; its cool phase is La Niña. These oscillations affect weather patterns globally and have profound effects on marine ecosystems.
+
+The recruitment index measures the abundance of new fish entering a population—a quantity of direct economic importance to fisheries. Visual inspection suggests the two series are related: both show cyclical behavior with similar timing.
+
+This example sets up a key question that frequency-domain methods can answer: what periodicities are present in each series, and do they match? If SOI and recruitment share common frequencies, this supports a causal story linking ocean temperature to fish populations.
+
+#### SOI: Dual Perspective
+
+```{r}
+#| label: fig-soi-dual
+#| fig-cap: "SOI: Autocorrelation and spectrum"
+
+par(mfrow = c(1, 2))
+soi_acf <- acf1(soi, main = "ACF")
+mvspec(soi, log = "no", main = "Spectrum", col = 4)
+```
+
+The ACF oscillates, indicating cyclical structure, but which cycles? The oscillations are not perfectly regular, making it hard to read periods from the ACF alone.
+
+The spectrum is more revealing. There are two clear peaks: one near frequency 1 (cycles per year), corresponding to the annual cycle of seasonal temperature variation, and another near frequency 0.25 (about 4 cycles per year), corresponding to the El Niño cycle with a period of approximately 4 years. The frequency domain *separates* these two periodicities, which the ACF conflates into a single oscillating pattern.
+
+#### Recruitment: Dual Perspective
+
+```{r}
+#| label: fig-rec-dual
+#| fig-cap: "Recruitment: Autocorrelation and spectrum"
+
+par(mfrow = c(1, 2))
+rec_acf <- acf1(rec, main = "ACF")
+mvspec(rec, log = "no", main = "Spectrum", col = 4)
+```
+
+The recruitment series shows a similar spectral pattern: peaks at both the annual frequency and near the El Niño frequency. The correspondence is striking—the fish population responds to the same periodic drivers as the ocean temperature index.
+
+This correspondence is the beginning of a deeper analysis. Chapter 14 develops *coherence analysis*, which quantifies how closely two series are related at each frequency. Here, the visual similarity of the spectra suggests strong coherence at the El Niño frequency: the ocean oscillation and the fish population fluctuate together.
+
+### What the Examples Reveal
+
+These three examples illustrate complementary strengths of the two perspectives:
+
+| Series | ACF reveals | Spectrum reveals |
+|--------|-------------|------------------|
+| Sunspots | Slow decay, oscillation | Precise 11-year period |
+| Global temps | Very slow decay (trend) | Low-frequency dominance |
+| SOI/Recruitment | Oscillation | Separate annual and El Niño cycles |
+
+The time domain tells us about persistence and prediction: how much does the past constrain the future? The frequency domain tells us about structure and mechanism: what periodicities are present, and at what strength?
+
+Neither view is complete without the other. Together, they provide the diagnostic foundation for the modeling developed in subsequent chapters.
+
+## The White Noise Baseline
+
+To recognize structure, we need a reference point—a process with *no* structure. White noise provides this baseline: a sequence of independent, identically distributed observations. Understanding white noise clarifies what departures from it signify.
+
+### Definition
+
+A **white noise** process $\{W(t)\}$ has the following properties:
+
+1. **Zero mean**: $E\{W(t)\} = 0$ for all $t$
+2. **Constant variance**: $\text{Var}\{W(t)\} = \sigma^2$ for all $t$
+3. **Independence**: $W(t)$ and $W(s)$ are independent for all $t \neq s$
+
+The name "white noise" comes from an analogy with light: just as white light contains all visible frequencies in equal proportion, white noise contains all temporal frequencies equally. The term originated in physics and engineering, where noise processes arise naturally in electronic circuits and communication systems.
+
+### Time Domain Signature
+
+Independence implies zero correlation between distinct observations:
+
+$$
+\rho_W(u) = \text{Corr}(W(t+u), W(t)) = 
+\begin{cases}
+1 & \text{if } u = 0 \\
+0 & \text{if } u \neq 0
+\end{cases}
+$$
+
+The autocorrelation function of white noise is zero everywhere except at lag zero, where it equals one (every observation is perfectly correlated with itself). This is the time-domain signature of independence: the past tells you nothing about the future.
+
+### Frequency Domain Signature
+
+The spectrum of white noise is flat—constant across all frequencies:
+
+$$
+f_W(\lambda) = \frac{\sigma^2}{2\pi} \quad \text{for all } \lambda \in (-\pi, \pi]
+$$
+
+A flat spectrum means that no frequency contributes more variance than any other. There are no dominant periodicities, no preferred time scales. This is the frequency-domain signature of independence: no periodic structure whatsoever.
+
+The total variance is obtained by integrating the spectrum:
+
+$$
+\text{Var}\{W(t)\} = \int_{-\pi}^{\pi} f_W(\lambda) \, d\lambda = \sigma^2
+$$
+
+### Visual Signature
+
+@fig-white-noise shows a realization of white noise along with its sample ACF and estimated spectrum.
+
+```{r}
+#| label: fig-white-noise
+#| fig-cap: "White noise: time series, ACF, and spectrum"
+
+set.seed(42)
+wn <- rnorm(500)
+
+par(mfrow = c(1, 3))
+tsplot(wn, main = "White noise", col = 4, ylab = "")
+wn_acf <- acf1(wn, main = "ACF")
+mvspec(wn, spans = c(15, 15), log = "no", main = "Spectrum", col = 4)
+```
+
+The time series shows no visible pattern—values fluctuate randomly around zero with no apparent persistence or periodicity. The sample ACF hovers near zero at all nonzero lags, with values falling within the blue dashed confidence bands that indicate the range expected under the null hypothesis of white noise. The smoothed spectrum is approximately flat, with no peaks indicating dominant frequencies.
+
+These are the signatures we look for when assessing whether a series (or the residuals from a fitted model) behaves like white noise.
+
+### The Creation Myth
+
+White noise is more than a reference point—it is, in a sense, the raw material from which correlated processes are built. Here is a useful way to think about stationary time series:
+
+> **In the beginning** there was white noise: independent observations, no memory, a flat spectrum.
+>
+> **Then** a linear, time-invariant filter acted on the white noise—a weighted average of current and past values, a physical system that smooths or oscillates.
+>
+> **The result** is a correlated process: the filter's fingerprint impressed on the original independence.
+
+This "creation myth" is not merely a metaphor. The Wold decomposition theorem establishes that any stationary process can be represented as a linear combination of current and past white noise values (plus a deterministic component). The coefficients of this representation encode the autocorrelation structure.
+
+From this perspective:
+
+- The **spectrum** of the output tells you how the filter reshaped the flat spectrum of the input. Peaks indicate frequencies that the filter amplified; troughs indicate frequencies that were attenuated.
+
+- The **ACF** of the output tells you how the filter introduced dependence between observations. Slow decay indicates a filter with long memory; oscillations indicate a filter with periodic character.
+
+The two views describe the same filtering—one in terms of frequency response, the other in terms of temporal correlation. They are mathematically equivalent descriptions of what the filter did to the white noise input.
+
+### Departures from White Noise
+
+Any structure in the ACF or spectrum indicates departure from independence. The pattern of departure suggests the type of structure present:
+
+| Observation | Time Domain (ACF) | Frequency Domain (Spectrum) |
+|-------------|-------------------|----------------------------|
+| Persistence or trend | Slow decay | Low-frequency dominance |
+| Periodic structure | Oscillation | Peaks at characteristic frequencies |
+| Short memory (MA-type) | Sharp cutoff after a few lags | Smooth, broad features |
+| Long memory (AR-type) | Gradual exponential decay | Sharp peaks |
+
+These correspondences guide model selection. When we examine the ACF and spectrum of a new series, we are asking: how does this process differ from white noise, and what does that difference tell us about the underlying mechanism?
+
+The examples in the previous section illustrated these patterns. Sunspots showed oscillating ACF and spectral peaks (periodicity). Global temperatures showed slow ACF decay and low-frequency spectral dominance (trend). SOI showed both oscillation and multiple spectral peaks (multiple periodicities). In each case, the departure from the white noise baseline revealed structure that the data contain.

@@ -57,6 +57,7 @@ book:
         - topic-models.qmd
     - part: Time Series Data
       chapters:
+        - ts-data.qmd
         - ts-intro.qmd
         - ts-forecast.qmd
         - ts-fourier.qmd
