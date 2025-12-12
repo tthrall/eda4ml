@@ -215,6 +215,7 @@ EDA for Machine Learning
 <li><a href="#/spectra-of-arma-processes" id="/toc-spectra-of-arma-processes">Spectra of ARMA Processes</a></li>
 <li><a href="#/example-sunspots" id="/toc-example-sunspots">Example: Sunspots</a></li>
 <li><a href="#/example-honolulu-temperature" id="/toc-example-honolulu-temperature">Example: Honolulu Temperature</a></li>
+<li><a href="#/coherence-shared-periodicity" id="/toc-coherence-shared-periodicity">Coherence: Shared Periodicity</a></li>
 <li><a href="#/the-dual-perspectives" id="/toc-the-dual-perspectives">The Dual Perspectives</a></li>
 <li><a href="#/summary" id="/toc-summary">Summary</a></li>
 </ul>
@@ -661,6 +662,55 @@ Figure&nbsp;9: Honolulu temperature spectrum: sharp peak at annual frequency
 </div>
 <div class="fragment">
 <p>This quantifies what the time plot shows qualitatively—the annual rhythm dominates.</p>
+</div>
+</section></section>
+<section>
+<section id="coherence-shared-periodicity" class="title-slide slide level1 center">
+<h1>Coherence: Shared Periodicity</h1>
+
+</section>
+<section id="cross-spectrum-and-coherence" class="slide level2">
+<h2>Cross-Spectrum and Coherence</h2>
+<p>When we have <strong>two time series</strong>, we can ask: at which frequencies do they move together?</p>
+<div class="fragment">
+<p><strong>Coherence</strong> measures the correlation between two series at each frequency.</p>
+<ul>
+<li>Ranges from 0 (no linear relationship) to 1 (perfect linear relationship)</li>
+<li>The frequency-domain analog of correlation</li>
+</ul>
+</div>
+</section>
+<section id="hnl-vs-nyc-temperature" class="slide level2">
+<h2>HNL vs NYC Temperature</h2>
+
+<img data-src="ts-freq-domain-slides_files/figure-revealjs/fig-hnl-nyc-series-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-hnl-nyc-series"><p class="caption">
+Figure&nbsp;10: Daily temperatures at Honolulu and New York City (1995-2020)
+</p><p>Both cities show annual cycles, but NYC has much larger amplitude (mid-latitude seasons) and more day-to-day variability.</p>
+</section>
+<section id="hnl-nyc-coherence" class="slide level2">
+<h2>HNL-NYC Coherence</h2>
+
+<img data-src="ts-freq-domain-slides_files/figure-revealjs/fig-hnl-nyc-coherence-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-hnl-nyc-coherence"><p class="caption">
+Figure&nbsp;11: Coherence between Honolulu and NYC temperatures
+</p></section>
+<section id="interpreting-the-coherence" class="slide level2">
+<h2>Interpreting the Coherence</h2>
+<div class="fragment">
+<p><strong>At the annual frequency</strong>: Coherence ≈ 1</p>
+<ul>
+<li>Both cities warm in summer, cool in winter</li>
+<li>Shared driver: Earth’s orbital cycle</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>At higher frequencies</strong>: Coherence ≈ 0</p>
+<ul>
+<li>Day-to-day weather in Honolulu tells us nothing about NYC</li>
+<li>Local weather systems are independent</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Coherence identifies <strong>which periodicities are shared</strong> between series.</p>
 </div>
 </section></section>
 <section>

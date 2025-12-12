@@ -624,12 +624,10 @@ hnl_nyc_mvts <- stats::ts(
   start = c(1995, 1)
 )
 
-astsa::tsplot(
-  hnl_nyc_mvts, col = c(2, 4), spaghetti = TRUE, 
-  ylab = "Temperature (°F)", main = "" )
-graphics::legend(
-  "bottomright", legend = c("Honolulu", "NYC"), 
-  col = c(2, 4), lty = 1, bty = "n")
+astsa::tsplot(hnl_nyc_mvts, col = c(4, 2), spaghetti = TRUE,
+              ylab = "Temperature (°F)", main = "")
+graphics::legend("bottomright", legend = c("Honolulu", "NYC"), 
+                 col = c(4, 2), lty = 1, bty = "n")
 ```
 
 Both cities show annual cycles, but NYC has much larger amplitude (mid-latitude seasons) and more day-to-day variability.
