@@ -1,0 +1,790 @@
+---
+title: "Time Domain Methods"
+subtitle: "ARIMA Models and Forecasting"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 13"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(astsa)
+library(tidyverse)
+```
+
+# The Forecasting Problem
+
+## From Understanding to Prediction
+
+Chapter 12 established that time series have **memory**—the present depends on the past.
+
+. . .
+
+Now we exploit that dependence for **forecasting**:
+
+> Given observations up to the present, what should we expect tomorrow, next quarter, next year?
+
+. . .
+
+This is the archetypal **decision-support** application of time series analysis.
+
+## The Central Question
+
+$$\hat{X}(t_f + h) = \; ?$$
+
+. . .
+
+Given observations $X(t_0), X(t_0+1), \ldots, X(t_f)$, predict the value $h$ steps ahead.
+
+. . .
+
+**Key insight**: The autocorrelation structure tells us how to weight past observations.
+
+- Strong recent dependence → recent values matter most
+- Periodic structure → values from the same season matter
+- Long memory → distant past still informative
+
+## Building Blocks
+
+All time domain models build from these components:
+
+| Component | Role |
+|-----------|------|
+| **White noise** $W(t)$ | Independent shocks; the baseline |
+| **Back-shift** $\mathcal{B}$ | $\mathcal{B}X(t) = X(t-1)$ |
+| **Differencing** $\nabla$ | $\nabla = 1 - \mathcal{B}$ removes trend |
+| **AR polynomial** $\phi(\mathcal{B})$ | Autoregressive structure |
+| **MA polynomial** $\theta(\mathcal{B})$ | Moving average structure |
+
+. . .
+
+The art is combining these to capture the dependence structure revealed by ACF and PACF.
+
+# Autoregressive Models
+
+## AR(1): The Simplest Memory
+
+An **AR(1)** process:
+
+$$X(t) = \phi_1 X(t-1) + W(t)$$
+
+. . .
+
+The current value is a fraction of the previous value, plus a random shock.
+
+. . .
+
+**Constraints**: 
+
+- $|\phi_1| < 1$ ensures stationarity
+- $\phi_1 > 0$: positive dependence (most common)
+- $\phi_1 < 0$: alternating pattern
+
+## AR(1): ACF and PACF
+
+```{r}
+#| label: fig-ar1-sim
+#| fig-cap: "Simulated AR(1) with φ = 0.8"
+#| fig-height: 3.5
+set.seed(101)
+ar1_sim <- stats::arima.sim(list(ar = 0.8), n = 200)
+par(mfrow = c(1, 3))
+astsa::tsplot(ar1_sim, main = "AR(1), φ = 0.8", col = 4, ylab = "")
+ar1_acf  <- astsa::acf1(ar1_sim, main = "ACF")
+ar1_pacf <- stats::pacf(ar1_sim, main = "")
+title(main = "PACF")
+```
+
+- **ACF**: Geometric decay $\rho(h) = \phi_1^{|h|}$
+- **PACF**: Cuts off after lag 1
+
+## AR(1): The Signature
+
+$$\rho_X(h) = \phi_1^{|h|}$$
+
+. . .
+
+The autocorrelation at lag $h$ is the AR coefficient raised to the $|h|$ power.
+
+. . .
+
+**PACF**: 
+$$\phi_{hh} = \begin{cases} \phi_1 & h = 1 \\ 0 & h > 1 \end{cases}$$
+
+. . .
+
+The PACF **cuts off** after lag 1—this is the diagnostic signature of AR(1).
+
+## AR(p): Longer Memory
+
+An **AR(p)** process depends on $p$ past values:
+
+$$X(t) = \phi_1 X(t-1) + \phi_2 X(t-2) + \cdots + \phi_p X(t-p) + W(t)$$
+
+. . .
+
+**Polynomial form**:
+$$\phi(\mathcal{B})(X(t) - \mu) = W(t)$$
+
+where $\phi(z) = 1 - \phi_1 z - \phi_2 z^2 - \cdots - \phi_p z^p$
+
+## AR(p): Diagnostic Signature
+
+| Feature | AR(p) Pattern |
+|---------|---------------|
+| **ACF** | Decays gradually (exponential or damped oscillation) |
+| **PACF** | **Cuts off after lag $p$** |
+
+. . .
+
+The PACF cutoff identifies the order. If you see that PACF is significant at lags 1 through $p$ and near zero thereafter, consider an AR(p) model.
+
+## AR(2) Example: Recruitment
+
+```{r}
+#| label: fig-rec-acf-pacf
+#| fig-cap: "Recruitment data: ACF and PACF suggest AR(2)"
+#| fig-height: 4
+
+rec_acf2 <- astsa::acf2(rec, main = "Fish Recruitment")
+```
+
+- ACF shows damped oscillation (decays gradually)
+- PACF has significant values at lags 1 and 2, then cuts off
+- This pattern suggests **AR(2)**
+
+# Moving Average Models
+
+## MA(1): Dependence Through Shocks
+
+An **MA(1)** process:
+
+$$X(t) = W(t) + \theta_1 W(t-1)$$
+
+. . .
+
+The current value depends on the current shock and the previous shock.
+
+. . .
+
+**Key difference from AR**: 
+
+- AR: infinite memory (geometric decay)
+- MA: finite memory (sharp cutoff)
+
+## MA(1): ACF and PACF
+
+The autocorrelation structure:
+
+$$\rho_X(h) = \begin{cases} 1 & h = 0 \\ \frac{\theta_1}{1 + \theta_1^2} & h = \pm 1 \\ 0 & |h| > 1 \end{cases}$$
+
+. . .
+
+| Feature | MA(1) Pattern |
+|---------|---------------|
+| **ACF** | **Cuts off after lag 1** |
+| **PACF** | Decays gradually |
+
+. . .
+
+The **opposite** of AR(1)!
+
+## MA(q): The General Case
+
+An **MA(q)** process:
+
+$$X(t) = W(t) + \theta_1 W(t-1) + \cdots + \theta_q W(t-q)$$
+
+. . .
+
+**Polynomial form**:
+$$X(t) - \mu = \theta(\mathcal{B}) W(t)$$
+
+where $\theta(z) = 1 + \theta_1 z + \cdots + \theta_q z^q$
+
+. . .
+
+**Diagnostic signature**: ACF cuts off after lag $q$; PACF decays.
+
+## Invertibility
+
+**Problem**: Different MA models can produce identical distributions.
+
+. . .
+
+**Example**: These two MA(1) processes are indistinguishable:
+
+$$
+\begin{align}
+  X(t) &= W(t) + 0.2 W(t-1) & \sigma_W^2 = 25 \\ \\ 
+  Y(t) &= V(t) + 5 V(t-1) & \sigma_V^2 = 1
+\end{align}
+$$
+
+. . .
+
+**Solution**: Require **invertibility**—all roots of $\theta(z)$ outside the unit circle.
+
+This ensures a unique representation and allows expressing $W(t)$ in terms of past $X$ values.
+
+# The Diagnostic Fingerprint
+
+## ACF vs PACF: The Key Patterns
+
+| Model | ACF | PACF |
+|-------|-----|------|
+| **AR(p)** | Decays gradually | Cuts off after lag $p$ |
+| **MA(q)** | Cuts off after lag $q$ | Decays gradually |
+| **ARMA(p,q)** | Decays gradually | Decays gradually |
+| **White noise** | All ≈ 0 | All ≈ 0 |
+
+. . .
+
+**The identification strategy**:
+
+1. If PACF cuts off → AR
+2. If ACF cuts off → MA  
+3. If both decay → ARMA (or consider differencing)
+
+## Visual Guide: AR Signatures
+
+```{r}
+#| label: fig-ar-signatures
+#| fig-cap: "AR(1) and AR(2) signatures"
+#| fig-height: 4
+
+par(mfrow = c(2, 2))
+set.seed(202)
+
+# AR(1)
+ar1 <- stats::arima.sim(list(ar = 0.7), n = 300)
+ar1_acf <- astsa::acf1(ar1, main = "AR(1): ACF decays")
+ar1_pacf <- pacf(ar1, main = "AR(1): PACF cuts off")
+
+# AR(2)
+ar2 <- stats::arima.sim(list(ar = c(1.3, -0.7)), n = 300)
+ar2_acf <- astsa::acf1(ar2, main = "AR(2): ACF decays")
+ar2_pacf <- pacf(ar2, main = "AR(2): PACF cuts off")
+```
+
+## Visual Guide: MA Signatures
+
+```{r}
+#| label: fig-ma-signatures
+#| fig-cap: "MA(1) and MA(2) signatures"
+#| fig-height: 4
+
+par(mfrow = c(2, 2))
+set.seed(303)
+
+# MA(1)
+ma1 <- stats::arima.sim(list(ma = 0.7), n = 300)
+ma1_acf <- astsa::acf1(ma1, main = "MA(1): ACF cuts off")
+ma1_pacf <- pacf(ma1, main = "MA(1): PACF decays")
+
+# MA(2)
+ma2 <- stats::arima.sim(list(ma = c(0.7, 0.5)), n = 300)
+ma2_acf <- astsa::acf1(ma2, main = "MA(2): ACF cuts off")
+ma2_pacf <- pacf(ma2, main = "MA(2): PACF decays")
+```
+
+# ARMA Models
+
+## Combining AR and MA
+
+An **ARMA(p,q)** process:
+
+$$\phi(\mathcal{B})(X(t) - \mu) = \theta(\mathcal{B}) W(t)$$
+
+. . .
+
+Expanded:
+$$X(t) = \mu + \sum_{j=1}^{p} \phi_j (X(t-j) - \mu) + W(t) + \sum_{k=1}^{q} \theta_k W(t-k)$$
+
+. . .
+
+**Why combine?** Parsimony—a low-order ARMA may capture structure that would require high-order pure AR or MA.
+
+## ARMA: Two Representations
+
+**Causal form** (as filtered white noise):
+$$X(t) - \mu = \sum_{\nu=0}^{\infty} \psi_\nu W(t-\nu)$$
+
+. . .
+
+**Inverted form** (white noise as filtered $X$):
+$$W(t) = \sum_{\nu=0}^{\infty} \pi_\nu (X(t-\nu) - \mu)$$
+
+. . .
+
+Both representations exist when AR and MA polynomials have roots outside the unit circle.
+
+## ARMA Diagnostics
+
+For ARMA(p,q):
+
+- **ACF**: Decays gradually (mixture of exponential and/or damped sinusoid)
+- **PACF**: Decays gradually
+
+. . .
+
+**Identification challenge**: Both decay, so order selection is less clear.
+
+. . .
+
+**Practical approach**:
+
+1. Try to identify if pure AR or MA fits (check for cutoffs)
+2. If both decay, consider low-order ARMA(1,1) or ARMA(2,1)
+3. Use information criteria (AIC, BIC) to compare models
+
+# Non-Stationary Models
+
+## The Problem with Trends
+
+Many real series are **non-stationary**:
+
+- Global temperatures: upward trend
+- Stock prices: random walk behavior
+- Economic series: growth over time
+
+. . .
+
+The ACF and PACF diagnostics assume stationarity.
+
+. . .
+
+**Solution**: Transform to stationarity, then model.
+
+## Differencing Removes Trend
+
+The **differencing operator**:
+$$\nabla X(t) = X(t) - X(t-1) = (1 - \mathcal{B})X(t)$$
+
+. . .
+
+If $X(t)$ has a linear trend $\mu + \beta t$:
+$$E\{\nabla X(t)\} = \beta \quad \text{(constant)}$$
+
+. . .
+
+**Higher-order differencing** $\nabla^d$ removes polynomial trends of degree $d$.
+
+## ARIMA(p, d, q)
+
+An **ARIMA(p, d, q)** model:
+
+$$\phi(\mathcal{B}) \nabla^d X(t) = \theta(\mathcal{B}) W(t)$$
+
+. . .
+
+- $d = 0$: stationary ARMA
+- $d = 1$: first differences are ARMA (handles linear trend, random walk)
+- $d = 2$: second differences are ARMA (handles quadratic trend)
+
+. . .
+
+The "I" stands for **Integrated**—we integrate (cumsum) the ARMA process to get $X(t)$.
+
+## Random Walk with Drift
+
+A fundamental non-stationary model:
+
+$$X(t) = \alpha + X(t-1) + W(t)$$
+
+. . .
+
+This is **ARIMA(0, 1, 0)** with drift $\alpha$.
+
+. . .
+
+**Properties**:
+
+- $\nabla X(t) = \alpha + W(t)$ (differenced series is white noise + constant)
+- Variance grows linearly with time
+- Forecast: straight line from last observation with slope $\alpha$
+
+## Random Walk Forecast
+
+```{r}
+#| label: fig-rw-drift
+#| fig-cap: "Random walk with drift: forecast is a ray"
+#| fig-height: 4
+
+set.seed(9999)
+x <- ts(cumsum(rnorm(150, 0.2)))
+y <- stats::window(x, end = 100)
+
+d <- mean(diff(y))
+s <- sd(diff(y))
+rmspe <- s * sqrt(1:50)
+yfore <- ts(y[100] + (1:50) * d, start = 101)
+
+astsa::tsplot(x, ylab = "X(t)", col = 4, ylim = c(0, 45))
+lines(yfore, col = 6, lwd = 2)
+
+xx <- c(101:150, 150:101)
+yy <- c(yfore - 1.96*rmspe, rev(yfore + 1.96*rmspe))
+polygon(xx, yy, border = NA, col = gray(0.6, alpha = 0.2))
+
+text(85, 42, "Past", cex = 0.9)
+text(125, 42, "Future", cex = 0.9)
+abline(v = 100, lty = 2)
+```
+
+Prediction intervals **widen** with forecast horizon—uncertainty grows.
+
+# Seasonal Models
+
+## Seasonality in Time Series
+
+Many series have **periodic patterns**:
+
+- Monthly data: annual cycle
+- Quarterly data: seasonal business patterns
+- Daily data: weekly patterns
+
+. . .
+
+**Seasonal differencing** removes the periodic component:
+
+$$\nabla_s X(t) = X(t) - X(t-s)$$
+
+where $s$ is the seasonal period (e.g., $s = 12$ for monthly data).
+
+## SARIMA Models
+
+A **SARIMA** model combines:
+
+- Non-seasonal ARIMA(p, d, q)
+- Seasonal ARIMA(P, D, Q)$_s$
+
+. . .
+
+$$\phi(\mathcal{B})\Phi(\mathcal{B}^s) \nabla^d \nabla_s^D X(t) = \theta(\mathcal{B})\Theta(\mathcal{B}^s) W(t)$$
+
+. . .
+
+**Notation**: ARIMA$(p,d,q) \times (P,D,Q)_s$
+
+## CO₂ Example: Trend + Season
+
+```{r}
+#| label: fig-cardox
+#| fig-cap: "Mauna Loa CO₂: strong trend and annual cycle"
+#| fig-height: 4
+
+astsa::tsplot(cardox, ylab = "CO₂ (ppm)", col = 4, main = "")
+```
+
+This series needs both:
+
+- Regular differencing ($d = 1$) for the trend
+- Seasonal differencing ($D = 1$, $s = 12$) for the annual cycle
+
+## CO₂: After Differencing
+
+```{r}
+#| label: fig-cardox-diff
+#| fig-cap: "CO₂ after ∇∇₁₂: approximately stationary"
+#| fig-height: 4
+
+diff(diff(cardox, lag = 12)) |> 
+  astsa::tsplot(col = 4, ylab = "∇∇₁₂ CO₂", main = "")
+```
+
+After both differencing operations, the series appears stationary—ready for ARMA modeling.
+
+## CO₂: SARIMA Forecast
+
+```{r}
+#| label: fig-cardox-forecast
+#| fig-cap: "Five-year forecast from ARIMA(1,1,1)×(0,1,1)₁₂"
+#| fig-height: 4
+
+cardox_forecast <- astsa::sarima.for(
+  cardox, n.ahead = 60, 
+  1, 1, 1, 0, 1, 1, 12, 
+  col = 4, ylab = "CO₂ (ppm)", 
+  main = ""
+)
+abline(v = 2023.25, lty = 2)
+```
+
+The forecast captures both the upward trend and the seasonal oscillation.
+
+# Forecasting
+
+## The Linear Predictor
+
+The **best linear predictor** of $X(t_f + h)$ given the past:
+
+$$\hat{X}(t_f + h) = \alpha + \sum_{\nu=0}^{T-1} \beta_\nu X(t_0 + \nu)$$
+
+. . .
+
+The coefficients $\beta_\nu$ are chosen to minimize **mean squared prediction error**:
+
+$$MSE = E\{(X(t_f + h) - \hat{X}(t_f + h))^2\}$$
+
+## ARMA Forecasting
+
+For an ARMA process, the predictor has a simple recursive form.
+
+. . .
+
+**One step ahead** ($h = 1$):
+$$\hat{X}(t_f + 1) = \sum_{j=1}^{p} \phi_j X(t_f + 1 - j) + \sum_{k=1}^{q} \theta_k \hat{W}(t_f + 1 - k)$$
+
+. . .
+
+**Key insight**: Future white noise terms have expected value 0.
+
+## Prediction Error
+
+The **mean squared prediction error** for horizon $h$:
+
+$$MSE(h) = \sigma_W^2 \sum_{\nu=0}^{h-1} \psi_\nu^2$$
+
+. . .
+
+where $\psi_\nu$ are the coefficients in the causal (MA$(\infty)$) representation.
+
+. . .
+
+**Implications**:
+
+- $MSE(1) = \sigma_W^2$ (one step ahead error is just the innovation variance)
+- $MSE(h) \to \sigma_X^2$ as $h \to \infty$ (long-range forecast converges to unconditional variance)
+
+## Prediction Intervals
+
+For Gaussian processes, the $(1-\alpha)$ prediction interval:
+
+$$\hat{X}(t_f + h) \pm z_{\alpha/2} \sqrt{MSE(h)}$$
+
+. . .
+
+**Key feature**: Intervals **widen** with forecast horizon.
+
+. . .
+
+This reflects a fundamental truth: **uncertainty grows** as we forecast further into the future.
+
+## AR(2) Forecast Example
+
+```{r}
+#| label: fig-rec-forecast
+#| fig-cap: "Recruitment: 24-month AR(2) forecast"
+#| fig-height: 4
+
+regr <- rec |> stats::ar.ols(order = 2, demean = FALSE, intercept = TRUE)
+fore <- regr |> stats::predict(n.ahead = 24)
+
+x <- ts(c(rec, fore$pred), start = 1950, frequency = 12)
+stats::window(x, start = 1980) |> 
+  astsa::tsplot(ylab = "Recruitment", ylim = c(10, 100))
+
+lines(fore$pred, type = "o", col = 2)
+
+U <- fore$pred + 1.96 * fore$se
+L <- fore$pred - 1.96 * fore$se
+xx <- c(time(U), rev(time(U)))
+yy <- c(L, rev(U))
+polygon(xx, yy, border = 8, col = gray(0.6, alpha = 0.2))
+```
+
+The oscillatory forecast reflects the AR(2) structure; intervals widen with horizon.
+
+# Exponential Smoothing
+
+## Simple Exponential Smoothing
+
+A widely used forecasting method:
+
+$$\hat{X}(t+1) = \alpha X(t) + (1-\alpha) \hat{X}(t)$$
+
+. . .
+
+Equivalently:
+$$\hat{X}(t+1) = \hat{X}(t) + \alpha (X(t) - \hat{X}(t))$$
+
+. . .
+
+**Interpretation**: Update the forecast by a fraction $\alpha$ of the most recent error.
+
+## EWMA and ARIMA Connection
+
+Simple exponential smoothing is the **optimal forecast** for an ARIMA(0,1,1) model:
+
+$$\nabla X(t) = W(t) - \lambda W(t-1)$$
+
+. . .
+
+where $\alpha = 1 - \lambda$ is the smoothing parameter.
+
+. . .
+
+**Key insight**: Exponential smoothing is not just a heuristic—it has a solid statistical foundation.
+
+## Beyond Simple Smoothing
+
+**Holt-Winters** methods extend exponential smoothing:
+
+| Component | What it captures |
+|-----------|------------------|
+| Level $\ell(t)$ | Local mean |
+| Trend $b(t)$ | Local slope |
+| Season $s(t)$ | Periodic pattern |
+
+. . .
+
+These **ETS** (Error-Trend-Seasonal) models form an alternative to SARIMA, widely used in business forecasting.
+
+# The Modeling Workflow
+
+## Identification → Estimation → Diagnostics
+
+```{r}
+#| label: workflow-table
+#| echo: false
+
+workflow_tbl <- tibble::tibble(
+  Step = c("1. Plot", "2. Transform", "3. Identify", "4. Estimate", "5. Diagnose"),
+  Action = c(
+    "Examine series for trend, seasonality, variance changes",
+    "Difference or transform to achieve stationarity",
+    "Use ACF/PACF to suggest model order",
+    "Fit candidate models; compare via AIC/BIC",
+    "Check residuals: should look like white noise"
+  )
+)
+workflow_tbl |> knitr::kable()
+```
+
+. . .
+
+**Iterate**: If residuals show structure, refine the model and repeat.
+
+## Residual Diagnostics
+
+After fitting, residuals should behave like **white noise**:
+
+. . .
+
+- ACF near zero at all lags
+- No patterns in residual plot
+- Ljung-Box test non-significant
+
+. . .
+
+```{r}
+#| label: ljung-box-note
+#| echo: true
+#| eval: false
+
+# Ljung-Box test for residual autocorrelation
+stats::Box.test(residuals, lag = 20, type = "Ljung-Box")
+```
+
+If residuals show structure, the model hasn't captured all the dependence.
+
+## Model Comparison
+
+When multiple models seem plausible, use **information criteria**:
+
+. . .
+
+**AIC** (Akaike): $-2\log L + 2k$
+
+**BIC** (Bayesian): $-2\log L + k \log T$
+
+. . .
+
+where $k$ = number of parameters, $T$ = sample size.
+
+. . .
+
+**BIC** penalizes complexity more heavily → favors simpler models.
+
+Lower is better for both criteria.
+
+# Summary
+
+## Key Insights
+
+1. **AR models**: Current value depends on past values
+   - ACF decays; PACF cuts off at order $p$
+
+2. **MA models**: Current value depends on past shocks
+   - ACF cuts off at order $q$; PACF decays
+
+3. **ARIMA**: Differencing handles non-stationarity
+   - The "I" integrates an ARMA process
+
+4. **SARIMA**: Captures seasonal patterns
+   - Combines regular and seasonal differencing
+
+## The Forecasting Reality
+
+5. **Prediction intervals widen** with forecast horizon
+   - Uncertainty grows; we cannot predict arbitrarily far ahead
+
+6. **Exponential smoothing** has ARIMA foundations
+   - EWMA is optimal for IMA(1,1)
+
+7. **Model diagnostics** are essential
+   - Residuals should be white noise
+   - Information criteria guide model selection
+
+## The Dual Aims, Revisited
+
+**Time domain methods** emphasize **prediction**:
+
+- Given the past, what comes next?
+- How much uncertainty surrounds that forecast?
+
+. . .
+
+**But prediction rests on understanding**:
+
+- The ACF/PACF patterns reveal the memory structure
+- The model encodes *why* the past predicts the future
+
+. . .
+
+**Next**: Chapter 14 takes the complementary view—frequency domain methods reveal the *periodic structure* that drives the process.
+
+## Diagnostic Checklist
+
+When building a time series forecast:
+
+1. **Plot the series**: Identify trend, seasonality, variance changes
+
+2. **Transform if needed**: Differencing, log transform
+
+3. **Examine ACF/PACF**: Does PACF cut off? Does ACF cut off?
+
+4. **Fit candidate models**: Start simple (AR or MA), add complexity if needed
+
+5. **Check residuals**: ACF should be flat; Ljung-Box non-significant
+
+6. **Compare models**: Use AIC/BIC for selection
+
+7. **Forecast with intervals**: Report uncertainty honestly
