@@ -453,9 +453,7 @@ Daily temperature data from Honolulu exhibit a clear annual cycle—the earth's 
 #| fig-cap: "Honolulu daily temperatures (1995-2020) show clear annual cycle"
 #| fig-height: 4
 
-astsa::tsplot(
-  hnl_temp, col = 4, 
-  ylab = "Temperature (°F)", main = "" )
+astsa::tsplot(hnl_temp, col = 4, ylab = "Temperature (°F)", main = "")
 ```
 
 The annual cycle is visible but embedded in day-to-day variation. Mean temperature is `r avg_HNL`°F with standard deviation `r sd_HNL`°F.
@@ -467,10 +465,8 @@ The annual cycle is visible but embedded in day-to-day variation. Mean temperatu
 #| fig-cap: "Honolulu temperature spectrum: sharp peak at annual frequency"
 #| fig-height: 4
 
-temp_spec <- stats::spec.pgram(
-  hnl_temp, spans = c(7, 7), taper = 0.1, 
-  xlab = "Frequency (cycles/year)", 
-  log = "yes", col = 4, main = "" )
+temp_spec <- stats::spec.pgram(hnl_temp, spans = c(7, 7), taper = 0.1, 
+                                log = "yes", col = 4, main = "")
 # Mark annual frequency
 graphics::abline(v = 1/365, col = 2, lty = 2)
 graphics::text(1/365 + 0.002, max(log10(temp_spec$spec)) - 1, "1 year", col = 2, adj = 0)
@@ -560,7 +556,7 @@ hnl_nyc_spec <- stats::spec.pgram(hnl_nyc_mvts, spans = c(7, 7),
 
 # Plot coherence
 graphics::plot(hnl_nyc_spec$freq, hnl_nyc_spec$coh, type = "l", col = 4,
-     xlab = "Frequency (cycles/year)", ylab = "Coherence",
+     xlab = "Frequency (cycles/day)", ylab = "Coherence",
      main = "", ylim = c(0, 1))
 graphics::abline(v = 1/365, col = 2, lty = 2)
 graphics::text(1/365 + 0.003, 0.95, "1 year", col = 2, adj = 0)
