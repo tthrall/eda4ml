@@ -59,9 +59,7 @@ book:
       chapters:
         - ts-data.qmd
         - ts-time-domain.qmd
-        - ts-intro.qmd
-        - ts-forecast.qmd
-        - ts-fourier.qmd
+        - ts-freq-domain.qmd
     - part: Network Data
       chapters:
         - graph-theory.qmd
