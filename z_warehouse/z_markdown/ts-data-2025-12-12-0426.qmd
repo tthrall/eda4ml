@@ -122,7 +122,7 @@ The sunspot record is one of the longest continuous scientific observations, ext
 #| label: fig-sunspots
 #| fig-cap: "Monthly sunspot counts, 1749–present"
 
-astsa::tsplot(sunspot.month, ylab = "Sunspot count", col = 4, main = "")
+tsplot(sunspot.month, ylab = "Sunspot count", col = 4, main = "")
 ```
 
 The series displays an obvious cyclical pattern—the approximately 11-year solar magnetic cycle during which sunspot activity rises and falls. But notice also the irregular amplitude: some cycles peak much higher than others. This is not simple periodic behavior; there is structure within the cycles.
@@ -137,7 +137,7 @@ The autocorrelation function reveals how the present relates to the past.
 #| label: fig-sunspots-acf
 #| fig-cap: "ACF of monthly sunspot counts"
 
-ss_acf <- astsa::acf1(sunspot.month, max.lag = 200, main = "")
+ss_acf <- acf1(sunspot.month, max.lag = 200, main = "")
 ```
 
 The ACF shows several notable features. First, there is slow decay—values remain substantially correlated even at long lags. This indicates strong persistence: knowing this month's sunspot count tells you something about counts many months into the future. Second, the ACF oscillates, with peaks appearing roughly every 130 months (about 11 years). This oscillation reflects the solar cycle, but the ACF does not give a precise period—the peaks are broad, and reading the exact cycle length is difficult.
@@ -152,7 +152,7 @@ The spectrum reveals what periodic components are present and how much variance 
 #| label: fig-sunspots-spectrum
 #| fig-cap: "Spectrum of monthly sunspot counts"
 
-astsa::mvspec(sunspot.month, log = "no", main = "", col = 4)
+mvspec(sunspot.month, log = "no", main = "", col = 4)
 ```
 
 The spectrum tells a clearer story about periodicity. A dominant peak appears at a frequency of approximately 0.007 cycles per month, corresponding to a period of about 140 months or 11.7 years—the solar cycle, precisely located. The spectrum also shows smaller peaks at harmonics of this fundamental frequency, reflecting the non-sinusoidal shape of the solar cycle (sunspot counts rise faster than they fall).
@@ -169,7 +169,7 @@ What the ACF revealed only through broad oscillations, the spectrum makes immedi
 #| label: fig-gtemp
 #| fig-cap: "Annual land surface temperature deviations from 1991–2020 average"
 
-astsa::tsplot(gtemp_land, ylab = "°C deviation", col = 4, main = "")
+tsplot(gtemp_land, ylab = "°C deviation", col = 4, main = "")
 ```
 
 Unlike sunspots, this series shows no obvious periodicity. The dominant feature is a trend—temperatures have risen, particularly since the 1970s. The trend is not linear; there are periods of relative stability followed by accelerations.
@@ -182,7 +182,7 @@ This example illustrates the connection between scientific understanding and dec
 #| label: fig-gtemp-acf
 #| fig-cap: "ACF of global land temperatures"
 
-gtl_acf <- astsa::acf1(gtemp_land, main = "")
+gtl_acf <- acf1(gtemp_land, main = "")
 ```
 
 The ACF decays very slowly—each year is strongly correlated with the next, and correlations remain substantial even at lags of 20 or more years. This pattern is the time-domain signature of a trend: when there is a systematic increase over time, observations close together are similar (both relatively low early, both relatively high late), producing high autocorrelations.
@@ -195,7 +195,7 @@ The slow ACF decay signals non-stationarity. The statistical properties of this 
 #| label: fig-gtemp-spectrum
 #| fig-cap: "Spectrum of global land temperatures"
 
-astsa::mvspec(gtemp_land, log = "no", main = "", col = 4)
+mvspec(gtemp_land, log = "no", main = "", col = 4)
 ```
 
 The spectrum is dominated by low frequencies—most of the variance is concentrated near zero frequency. This is the frequency-domain signature of trend: a systematic change over time manifests as power at the lowest frequencies. There are no prominent peaks at higher frequencies; the series lacks the periodic structure we saw in sunspots.
@@ -211,8 +211,8 @@ Our third example involves two related series: the Southern Oscillation Index (S
 #| fig-cap: "Southern Oscillation Index and fish recruitment, 1950–1987"
 
 par(mfrow = c(2, 1), mar = c(2, 4, 2, 1))
-astsa::tsplot(soi, ylab = "SOI", col = 4, main = "Southern Oscillation Index")
-astsa::tsplot(rec, ylab = "Recruitment", col = 4, main = "Fish Recruitment")
+tsplot(soi, ylab = "SOI", col = 4, main = "Southern Oscillation Index")
+tsplot(rec, ylab = "Recruitment", col = 4, main = "Fish Recruitment")
 ```
 
 The Southern Oscillation is a periodic fluctuation in sea surface temperature and air pressure across the tropical Pacific. Its warm phase is the well-known El Niño; its cool phase is La Niña. These oscillations affect weather patterns globally and have profound effects on marine ecosystems.
@@ -228,8 +228,8 @@ This example sets up a key question that frequency-domain methods can answer: wh
 #| fig-cap: "SOI: Autocorrelation and spectrum"
 
 par(mfrow = c(1, 2))
-soi_acf <- astsa::acf1(soi, main = "ACF")
-astsa::mvspec(soi, log = "no", main = "Spectrum", col = 4)
+soi_acf <- acf1(soi, main = "ACF")
+mvspec(soi, log = "no", main = "Spectrum", col = 4)
 ```
 
 The ACF oscillates, indicating cyclical structure, but which cycles? The oscillations are not perfectly regular, making it hard to read periods from the ACF alone.
@@ -243,8 +243,8 @@ The spectrum is more revealing. There are two clear peaks: one near frequency 1 
 #| fig-cap: "Recruitment: Autocorrelation and spectrum"
 
 par(mfrow = c(1, 2))
-rec_acf <- astsa::acf1(rec, main = "ACF")
-astsa::mvspec(rec, log = "no", main = "Spectrum", col = 4)
+rec_acf <- acf1(rec, main = "ACF")
+mvspec(rec, log = "no", main = "Spectrum", col = 4)
 ```
 
 The recruitment series shows a similar spectral pattern: peaks at both the annual frequency and near the El Niño frequency. The correspondence is striking—the fish population responds to the same periodic drivers as the ocean temperature index.
@@ -321,8 +321,8 @@ set.seed(42)
 wn <- rnorm(500)
 
 par(mfrow = c(1, 3))
-astsa::tsplot(wn, main = "White noise", col = 4, ylab = "")
-wn_acf <- astsa::acf1(wn, main = "ACF")
+tsplot(wn, main = "White noise", col = 4, ylab = "")
+wn_acf <- acf1(wn, main = "ACF")
 wn |> stats::spectrum(
   spans = c(15, 15), ci = 0.95, ci.col = "blue", main = "Spectrum" )
 # mvspec(wn, spans = c(15, 15), log = "no", main = "Spectrum", col = 4)
@@ -422,9 +422,9 @@ Before applying methods that assume stationarity, we should assess whether the a
 
 par(mfrow = c(1, 2))
 set.seed(123)
-astsa::tsplot(stats::arima.sim(list(ar = 0.8), n = 200), 
+tsplot(arima.sim(list(ar = 0.8), n = 200), 
        main = "Stationary: AR(1)", col = 4, ylab = "")
-astsa::tsplot(cumsum(rnorm(200)), 
+tsplot(cumsum(rnorm(200)), 
        main = "Non-stationary: Random Walk", col = 2, ylab = "")
 ```
 
@@ -524,7 +524,7 @@ The conventional 95% confidence bands are thus $\pm 1.96 / \sqrt{T}$, often disp
 #| label: fig-acf-soi-annotated
 #| fig-cap: "Sample ACF with confidence bands"
 
-soi_acf <- astsa::acf1(soi, main = "SOI: Sample ACF")
+soi_acf <- acf1(soi, main = "SOI: Sample ACF")
 ```
 
 In this plot, the numerous values outside the confidence bands indicate that SOI has substantial autocorrelation—it is far from white noise. The oscillating pattern suggests periodic structure, and the slow decay indicates persistence.
@@ -555,7 +555,7 @@ Plotting the ACF and PACF together provides a diagnostic fingerprint of the depe
 #| label: fig-acf-pacf-soi
 #| fig-cap: "ACF and PACF for SOI"
 
-soi_acf2 <- astsa::acf2(soi, main = "Southern Oscillation Index")
+soi_acf2 <- acf2(soi, main = "Southern Oscillation Index")
 ```
 
 The `acf2()` function from the `astsa` package displays both functions together. For SOI:
@@ -619,7 +619,7 @@ Under the null of white noise, $Q(h) \stackrel{\cdot}{\sim} \chi^2_h$. A large v
 #| echo: true
 
 # Ljung-Box test for SOI at lag 20
-stats::Box.test(soi, lag = 20, type = "Ljung-Box")
+Box.test(soi, lag = 20, type = "Ljung-Box")
 ```
 
 The highly significant result confirms what the ACF already showed: SOI has substantial autocorrelation.
@@ -782,7 +782,7 @@ Several approaches address the variance problem:
 #| echo: true
 
 # Estimate ESS for global temperature data
-astsa::ESS(gtemp_land)
+ESS(gtemp_land)
 ```
 
 This returns an estimate of how many independent observations the series is "worth" for estimating the mean.
