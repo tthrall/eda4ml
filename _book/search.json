@@ -3119,5 +3119,203 @@
       "Time Series Data",
       "<span class='chapter-number'>12</span>  <span class='chapter-title'>Time Series Data</span>"
     ]
+  },
+  {
+    "objectID": "ts-time-domain.html",
+    "href": "ts-time-domain.html",
+    "title": "13  Time Domain Methods",
+    "section": "",
+    "text": "13.1 Introduction\nChapter 12 established that time series data have memory—successive observations are dependent, not independent—and that this dependence can be characterized through the autocorrelation function (ACF) and partial autocorrelation function (PACF). We saw that the patterns in these diagnostic plots reveal the structure of the underlying process.\nThis chapter shows how to exploit that structure for forecasting. Given observations up to the present, what should we expect tomorrow, next quarter, next year? This is the archetypal decision-support application of time series analysis.\nThe key insight is simple: if the past predicts the future, we should use the past to make that prediction. The autocorrelation structure tells us how to weight past observations. Strong recent dependence means recent values matter most; periodic structure means values from the same season matter; long memory means the distant past remains informative.\nWe develop this insight through a family of models—autoregressive (AR), moving average (MA), and their combinations (ARMA, ARIMA, SARIMA)—that translate ACF and PACF patterns into explicit forecasting equations. The models are linear: they express the current value as a weighted combination of past values and past random shocks. Despite this simplicity, they capture a wide range of real-world behavior and remain the workhorses of time series forecasting.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#introduction",
+    "href": "ts-time-domain.html#introduction",
+    "title": "13  Time Domain Methods",
+    "section": "",
+    "text": "13.1.1 Chapter Roadmap\nWe proceed as follows:\nBuilding Blocks: We introduce the operators and notation—back-shift, differencing, AR and MA polynomials—that provide a compact language for time series models.\nAutoregressive Models: AR models express the current value as a function of past values. Their diagnostic signature: the PACF cuts off.\nMoving Average Models: MA models express the current value as a function of past random shocks. Their diagnostic signature: the ACF cuts off.\nModel Identification: We consolidate the ACF/PACF patterns that guide model selection—the diagnostic fingerprint that connects Chapter 12’s tools to this chapter’s models.\nARMA Models: Combining AR and MA components often achieves parsimony—a simple model that captures complex structure.\nNon-Stationary Models: ARIMA models handle trends and other non-stationarities through differencing.\nSeasonal Models: SARIMA models capture periodic patterns—annual cycles, quarterly seasonality—that pervade economic and environmental data.\nForecasting: We develop the prediction equations, prediction intervals, and the key insight that uncertainty grows with forecast horizon.\nExponential Smoothing: This widely-used forecasting method has a rigorous statistical foundation as the optimal forecast for a particular ARIMA model.\nThe Modeling Workflow: We outline the practical cycle of identification, estimation, and diagnostic checking that guides applied work.\nThroughout, we maintain the dual perspective: these models serve prediction (decision support), but effective prediction rests on understanding why the models work and when they apply.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#building-blocks",
+    "href": "ts-time-domain.html#building-blocks",
+    "title": "13  Time Domain Methods",
+    "section": "13.2 Building Blocks",
+    "text": "13.2 Building Blocks\nAll time domain models build from a small set of components. We introduce them here for reference.\n\n13.2.1 White Noise\nThe baseline is white noise: a sequence \\(\\{W(t)\\}\\) of uncorrelated random variables with constant mean (typically zero) and constant variance \\(\\sigma_W^2\\). We write \\(W(t) \\sim wn(0, \\sigma_W^2)\\).\nWhite noise has no memory—knowing \\(W(t)\\) tells you nothing about \\(W(s)\\) for \\(s \\neq t\\). It is the “raw material” from which correlated processes are built by filtering.\n\n\n13.2.2 The Back-Shift Operator\nThe back-shift operator \\(\\mathcal{B}\\) shifts a process one time unit into the past:\n\\[\\mathcal{B}X(t) = X(t-1)\\]\nRepeated application gives \\(\\mathcal{B}^k X(t) = X(t-k)\\). This notation enables compact representation of models involving multiple lags.\n\n\n13.2.3 The Differencing Operator\nThe differencing operator \\(\\nabla\\) computes changes:\n\\[\\nabla X(t) = X(t) - X(t-1) = (1 - \\mathcal{B})X(t)\\]\nDifferencing removes linear trends. Higher-order differencing \\(\\nabla^d\\) (applying \\(\\nabla\\) repeatedly \\(d\\) times) removes polynomial trends of degree \\(d\\).\nSeasonal differencing \\(\\nabla_s\\) compares each observation to the same season in the previous cycle:\n\\[\\nabla_s X(t) = X(t) - X(t-s)\\]\nwhere \\(s\\) is the seasonal period (e.g., \\(s = 12\\) for monthly data with annual seasonality).\n\n\n13.2.4 AR and MA Polynomials\nModels are expressed using polynomials in the back-shift operator.\nThe AR polynomial of order \\(p\\): \\[\\phi(z) = 1 - \\phi_1 z - \\phi_2 z^2 - \\cdots - \\phi_p z^p\\]\nThe MA polynomial of order \\(q\\): \\[\\theta(z) = 1 + \\theta_1 z + \\theta_2 z^2 + \\cdots + \\theta_q z^q\\]\nApplying these polynomials to \\(\\mathcal{B}\\) produces operators that act on time series. For example, \\(\\phi(\\mathcal{B})X(t) = X(t) - \\phi_1 X(t-1) - \\cdots - \\phi_p X(t-p)\\).",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#autoregressive-models",
+    "href": "ts-time-domain.html#autoregressive-models",
+    "title": "13  Time Domain Methods",
+    "section": "13.3 Autoregressive Models",
+    "text": "13.3 Autoregressive Models\nAutoregressive models express the current value as a linear function of past values plus a white noise innovation.\n\n13.3.1 AR(1): The Simplest Memory\nAn AR(1) process takes the form:\n\\[X(t) = \\phi_1 X(t-1) + W(t)\\]\nwhere we assume \\(E\\{X(t)\\} = 0\\) for simplicity (the mean can be added back). The current value is a fraction \\(\\phi_1\\) of the previous value, plus a random shock.\nStationarity requires \\(|\\phi_1| &lt; 1\\). If this condition holds, the process does not explode or wander off to infinity. When \\(\\phi_1 &gt; 0\\) (the typical case), high values tend to follow high values; when \\(\\phi_1 &lt; 0\\), the process alternates above and below the mean.\nThe autocorrelation function has a simple form:\n\\[\\rho(h) = \\phi_1^{|h|}\\]\nThe correlation at lag \\(h\\) is the AR coefficient raised to the \\(|h|\\) power—geometric decay.\nThe partial autocorrelation function is even simpler:\n\\[\\phi_{hh} = \\begin{cases} \\phi_1 & h = 1 \\\\ 0 & h &gt; 1 \\end{cases}\\]\nThe PACF cuts off after lag 1. This is the diagnostic signature of AR(1).\n\n\n\n\n\n\n\n\nFigure 13.1: Simulated AR(1) with φ = 0.8: geometric ACF decay, PACF cutoff at lag 1\n\n\n\n\n\nFigure 13.1 shows a simulated AR(1) process with \\(\\phi_1 = 0.8\\). The series shows persistence—runs of high and low values—but repeatedly returns toward the mean. The ACF decays geometrically. The PACF has a single significant spike at lag 1, then drops to near zero.\n\n\n13.3.2 AR(p): Longer Memory\nAn AR(p) process depends on \\(p\\) past values:\n\\[X(t) = \\phi_1 X(t-1) + \\phi_2 X(t-2) + \\cdots + \\phi_p X(t-p) + W(t)\\]\nIn operator notation: \\[\\phi(\\mathcal{B})X(t) = W(t)\\]\nStationarity requires that all roots of the polynomial \\(\\phi(z)\\) lie outside the unit circle (have magnitude greater than 1). This ensures the process doesn’t explode.\nCausality is guaranteed by the same condition: the process can be expressed as a convergent sum of current and past white noise values.\nThe diagnostic signature generalizes from AR(1):\n\nACF: Decays gradually—exponentially, or as a damped sinusoid if complex roots are present\nPACF: Cuts off after lag \\(p\\)\n\nThe PACF cutoff identifies the order. If the PACF is significant at lags 1 through \\(p\\) and near zero thereafter, an AR(p) model is indicated.\n\n\n13.3.3 Example: Fish Recruitment\nThe recruitment series (astsa::rec) measures the abundance of new fish entering a commercial fishery. Figure 13.2 shows its ACF and PACF.\n\n\n\n\n\n\n\n\nFigure 13.2: Recruitment data: ACF shows damped oscillation; PACF cuts off after lag 2\n\n\n\n\n\nThe ACF shows damped oscillation—the signature of complex roots in an AR process. The PACF has significant values at lags 1 and 2, then cuts off. This pattern suggests an AR(2) model. We will fit this model and use it for forecasting later in the chapter.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#moving-average-models",
+    "href": "ts-time-domain.html#moving-average-models",
+    "title": "13  Time Domain Methods",
+    "section": "13.4 Moving Average Models",
+    "text": "13.4 Moving Average Models\nMoving average models express the current value as a linear function of current and past random shocks.\n\n13.4.1 MA(1): Dependence Through Shocks\nAn MA(1) process takes the form:\n\\[X(t) = W(t) + \\theta_1 W(t-1)\\]\nThe current value depends on the current shock and the previous shock. Unlike AR models, where dependence propagates indefinitely through time, MA models have finite memory—observations more than \\(q\\) time units apart are uncorrelated.\nThe autocorrelation function:\n\\[\\rho(h) = \\begin{cases} 1 & h = 0 \\\\ \\frac{\\theta_1}{1 + \\theta_1^2} & h = \\pm 1 \\\\ 0 & |h| &gt; 1 \\end{cases}\\]\nThe ACF cuts off after lag 1—the diagnostic signature of MA(1), and the opposite pattern from AR(1).\nThe PACF, in contrast, decays gradually.\n\n\n13.4.2 MA(q): The General Case\nAn MA(q) process:\n\\[X(t) = W(t) + \\theta_1 W(t-1) + \\cdots + \\theta_q W(t-q)\\]\nIn operator notation: \\[X(t) = \\theta(\\mathcal{B}) W(t)\\]\nThe diagnostic signature:\n\nACF: Cuts off after lag \\(q\\)\nPACF: Decays gradually\n\n\n\n13.4.3 Invertibility\nThere is a subtlety with MA models that doesn’t arise with AR models. Different MA parameter values can produce identical distributions. For example, \\(X(t) = W(t) + 0.2W(t-1)\\) with \\(\\sigma_W^2 = 25\\) has the same distribution as \\(Y(t) = V(t) + 5V(t-1)\\) with \\(\\sigma_V^2 = 1\\).\nTo ensure a unique representation, we require invertibility: all roots of the MA polynomial \\(\\theta(z)\\) must lie outside the unit circle. This condition also ensures that the white noise process can be recovered from the observed series—that we can “invert” the relationship to express \\(W(t)\\) in terms of current and past values of \\(X(t)\\).",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#model-identification-the-diagnostic-fingerprint",
+    "href": "ts-time-domain.html#model-identification-the-diagnostic-fingerprint",
+    "title": "13  Time Domain Methods",
+    "section": "13.5 Model Identification: The Diagnostic Fingerprint",
+    "text": "13.5 Model Identification: The Diagnostic Fingerprint\nThe ACF and PACF patterns provide a fingerprint for model identification. Table 13.1 summarizes the key signatures.\n\n\n\nTable 13.1: ACF and PACF patterns for model identification\n\n\n\n\n\nModel\nACF\nPACF\n\n\n\n\nAR(p)\nDecays gradually\nCuts off after lag \\(p\\)\n\n\nMA(q)\nCuts off after lag \\(q\\)\nDecays gradually\n\n\nARMA(p,q)\nDecays gradually\nDecays gradually\n\n\nWhite noise\nAll near zero\nAll near zero\n\n\n\n\n\n\nThe identification strategy:\n\nIf the PACF cuts off at lag \\(p\\) while the ACF decays → consider AR(p)\nIf the ACF cuts off at lag \\(q\\) while the PACF decays → consider MA(q)\nIf both decay gradually → consider ARMA, or check whether differencing is needed\n\n\n\n\n\n\n\n\n\nFigure 13.3: Contrasting AR and MA signatures: AR shows PACF cutoff; MA shows ACF cutoff\n\n\n\n\n\nFigure 13.3 illustrates the contrast. The AR(1) process shows gradual ACF decay but a sharp PACF cutoff. The MA(1) process shows the opposite: a sharp ACF cutoff but gradual PACF decay.\nIn practice, sample ACF and PACF are noisy, and the patterns are not always crisp. The confidence bands (typically \\(\\pm 1.96/\\sqrt{T}\\)) help distinguish significant values from sampling variation. When patterns are ambiguous, fitting several candidate models and comparing them via information criteria (discussed below) provides a principled approach.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#arma-models",
+    "href": "ts-time-domain.html#arma-models",
+    "title": "13  Time Domain Methods",
+    "section": "13.6 ARMA Models",
+    "text": "13.6 ARMA Models\nCombining AR and MA components often achieves parsimony—a simple model that captures structure requiring high-order pure AR or MA models.\n\n13.6.1 ARMA(p,q) Definition\nAn ARMA(p,q) process satisfies:\n\\[\\phi(\\mathcal{B})(X(t) - \\mu) = \\theta(\\mathcal{B}) W(t)\\]\nExpanded:\n\\[X(t) = \\mu + \\sum_{j=1}^{p} \\phi_j (X(t-j) - \\mu) + W(t) + \\sum_{k=1}^{q} \\theta_k W(t-k)\\]\nThe process depends on both past values (AR part) and past shocks (MA part).\n\n\n13.6.2 Causal and Invertible Representations\nFor an ARMA process to be well-defined, we require:\n\nCausality: All roots of \\(\\phi(z)\\) outside the unit circle → the process can be written as a convergent MA(\\(\\infty\\)): \\[X(t) - \\mu = \\sum_{\\nu=0}^{\\infty} \\psi_\\nu W(t-\\nu)\\]\nInvertibility: All roots of \\(\\theta(z)\\) outside the unit circle → the white noise can be written as a convergent AR(\\(\\infty\\)): \\[W(t) = \\sum_{\\nu=0}^{\\infty} \\pi_\\nu (X(t-\\nu) - \\mu)\\]\n\nThese representations are important for forecasting: the \\(\\psi\\) weights appear in the prediction error formula.\nWe also require that \\(\\phi(z)\\) and \\(\\theta(z)\\) share no common roots. If they did, the common factor could be canceled, reducing the model to a simpler form.\n\n\n13.6.3 ARMA Diagnostics\nFor ARMA(p,q) processes, both the ACF and PACF decay gradually (mixture of exponentials and/or damped sinusoids). This makes order selection less straightforward than for pure AR or MA models. The practical approach is to consider low-order candidates—ARMA(1,1), ARMA(2,1), ARMA(1,2)—and use information criteria to compare.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#non-stationary-models",
+    "href": "ts-time-domain.html#non-stationary-models",
+    "title": "13  Time Domain Methods",
+    "section": "13.7 Non-Stationary Models",
+    "text": "13.7 Non-Stationary Models\nMany real series are non-stationary: they exhibit trends, random-walk behavior, or changing variance. The models developed so far assume stationarity. To handle non-stationarity, we transform the data—typically by differencing—before modeling.\n\n13.7.1 ARIMA(p, d, q)\nAn ARIMA(p, d, q) model applies ARMA(p, q) to the differenced series:\n\\[\\phi(\\mathcal{B}) \\nabla^d X(t) = \\theta(\\mathcal{B}) W(t)\\]\nThe parameter \\(d\\) indicates the order of differencing:\n\n\\(d = 0\\): The series is stationary; this is just ARMA(p, q)\n\\(d = 1\\): First differences \\(\\nabla X(t) = X(t) - X(t-1)\\) are modeled as ARMA\n\\(d = 2\\): Second differences are modeled as ARMA\n\nFirst differencing removes linear trends and handles random-walk-like behavior. Second differencing (rarely needed) removes quadratic trends.\nThe “I” in ARIMA stands for “integrated”: if \\(Y(t) = \\nabla X(t)\\) follows an ARMA process, then \\(X(t)\\) is the cumulative sum (integral) of an ARMA process.\n\n\n13.7.2 Random Walk with Drift\nA fundamental non-stationary model is the random walk with drift:\n\\[X(t) = \\alpha + X(t-1) + W(t)\\]\nThis is ARIMA(0, 1, 0) with drift \\(\\alpha\\). Each value equals the previous value plus a constant drift plus a random shock.\nProperties:\n\nThe differenced series \\(\\nabla X(t) = \\alpha + W(t)\\) is white noise plus a constant\nThe variance grows linearly with time: \\(\\text{Var}(X(t)) = t \\sigma_W^2\\)\nThe optimal forecast is a straight line: \\(\\hat{X}(t_f + h) = X(t_f) + h\\alpha\\)\n\n\n\n\n\n\n\n\n\nFigure 13.4: Random walk with drift: forecast is linear; prediction intervals widen with horizon\n\n\n\n\n\nFigure 12.4 shows a simulated random walk with drift and its forecast. The forecast (red line) projects linearly from the last observed value with slope equal to the estimated drift. The prediction intervals (gray band) widen with horizon—reflecting the accumulation of uncertainty as we forecast further ahead.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#seasonal-models",
+    "href": "ts-time-domain.html#seasonal-models",
+    "title": "13  Time Domain Methods",
+    "section": "13.8 Seasonal Models",
+    "text": "13.8 Seasonal Models\nMany time series exhibit periodic patterns: annual cycles in climate data, quarterly patterns in economic data, weekly patterns in daily data. SARIMA models capture this seasonality.\n\n13.8.1 SARIMA Notation\nA SARIMA model combines non-seasonal and seasonal components:\n\\[\\phi(\\mathcal{B})\\Phi(\\mathcal{B}^s) \\nabla^d \\nabla_s^D X(t) = \\theta(\\mathcal{B})\\Theta(\\mathcal{B}^s) W(t)\\]\nwhere:\n\n\\(\\phi(\\mathcal{B})\\) and \\(\\theta(\\mathcal{B})\\) are the non-seasonal AR and MA polynomials\n\\(\\Phi(\\mathcal{B}^s)\\) and \\(\\Theta(\\mathcal{B}^s)\\) are the seasonal AR and MA polynomials, operating at the seasonal lag \\(s\\)\n\\(\\nabla^d\\) is regular differencing\n\\(\\nabla_s^D\\) is seasonal differencing\n\nNotation: ARIMA\\((p,d,q) \\times (P,D,Q)_s\\)\nFor example, ARIMA\\((1,1,1) \\times (0,1,1)_{12}\\) for monthly data means:\n\nNon-seasonal: AR(1), one difference, MA(1)\nSeasonal (period 12): no seasonal AR, one seasonal difference, seasonal MA(1)\n\n\n\n13.8.2 Example: Atmospheric CO₂\nThe Mauna Loa CO₂ series (astsa::cardox) shows both a strong upward trend and an annual seasonal cycle.\n\n\n\n\n\n\n\n\nFigure 13.5: Mauna Loa CO₂: strong upward trend with annual seasonal cycle\n\n\n\n\n\nTo model this series, we need both regular differencing (for the trend) and seasonal differencing (for the annual cycle). Figure 13.6 shows the result of applying \\(\\nabla \\nabla_{12}\\)—first seasonal differencing, then regular differencing.\n\n\n\n\n\n\n\n\nFigure 13.6: CO₂ after applying ∇∇₁₂: approximately stationary\n\n\n\n\n\nThe differenced series appears approximately stationary—no obvious trend or seasonal pattern remains. Examination of the ACF and PACF of this differenced series (not shown) suggests an ARIMA\\((1,1,1) \\times (0,1,1)_{12}\\) model.\n\n\n\n\n\n\n\n\nFigure 13.7: CO₂ five-year forecast from ARIMA(1,1,1)×(0,1,1)₁₂\n\n\n\n\n\nFigure 12.8 shows the five-year forecast from this model. The forecast captures both the upward trend and the seasonal oscillation, with prediction intervals that widen as we project further into the future.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#forecasting",
+    "href": "ts-time-domain.html#forecasting",
+    "title": "13  Time Domain Methods",
+    "section": "13.9 Forecasting",
+    "text": "13.9 Forecasting\nWe now develop the prediction theory underlying time series forecasting.\n\n13.9.1 The Best Linear Predictor\nGiven observations \\(X(t_0), X(t_0+1), \\ldots, X(t_f)\\), we seek to predict \\(X(t_f + h)\\) for horizon \\(h \\geq 1\\). The best linear predictor minimizes mean squared prediction error:\n\\[\\hat{X}(t_f + h) = \\arg\\min_{a_0 + \\sum a_j X(t_f - j)} E\\left\\{ \\left( X(t_f + h) - a_0 - \\sum a_j X(t_f - j) \\right)^2 \\right\\}\\]\nFor Gaussian processes, this coincides with the conditional expectation \\(E\\{X(t_f + h) | X(t_0), \\ldots, X(t_f)\\}\\).\n\n\n13.9.2 ARMA Forecasting\nFor ARMA processes, the predictor has a convenient recursive form. The key insight is that future white noise terms have expected value zero: \\(E\\{W(t_f + k) | X(t_0), \\ldots, X(t_f)\\} = 0\\) for \\(k &gt; 0\\).\nFor a one-step-ahead forecast:\n\\[\\hat{X}(t_f + 1) = \\sum_{j=1}^{p} \\phi_j X(t_f + 1 - j) + \\sum_{k=1}^{q} \\theta_k \\hat{W}(t_f + 1 - k)\\]\nwhere \\(\\hat{W}(t) = X(t) - \\hat{X}(t)\\) is the estimated innovation (prediction error) from fitting the model.\nFor longer horizons, we apply the recursion, replacing future unknown values with their forecasts.\n\n\n13.9.3 Prediction Error\nThe mean squared prediction error (MSPE) for horizon \\(h\\) is:\n\\[\\text{MSPE}(h) = \\sigma_W^2 \\sum_{\\nu=0}^{h-1} \\psi_\\nu^2\\]\nwhere the \\(\\psi_\\nu\\) are coefficients in the causal (MA\\((\\infty)\\)) representation \\(X(t) = \\sum_{\\nu=0}^{\\infty} \\psi_\\nu W(t-\\nu)\\).\nKey implications:\n\nOne-step error: \\(\\text{MSPE}(1) = \\sigma_W^2\\) (just the innovation variance)\nLong-horizon limit: \\(\\text{MSPE}(h) \\to \\sigma_X^2\\) as \\(h \\to \\infty\\) (the unconditional variance)\n\nThe MSPE grows with horizon—we cannot predict arbitrarily far ahead with precision.\n\n\n13.9.4 Prediction Intervals\nFor Gaussian processes, the \\((1-\\alpha)\\) prediction interval is:\n\\[\\hat{X}(t_f + h) \\pm z_{\\alpha/2} \\sqrt{\\text{MSPE}(h)}\\]\nThese intervals widen with horizon, reflecting the fundamental truth that uncertainty accumulates as we forecast further into the future.\n\n\n13.9.5 Example: Recruitment Forecast\nReturning to the recruitment data (astsa::rec), we fit an AR(2) model (suggested by the PACF cutoff at lag 2) and forecast 24 months ahead.\n\n\n\n\n\n\n\n\nFigure 13.8: Recruitment: 24-month AR(2) forecast with 95% prediction intervals\n\n\n\n\n\nFigure 13.8 shows the forecast. The predicted values (red) oscillate—reflecting the AR(2) structure with complex roots—while converging toward the mean. The prediction intervals widen with horizon, eventually encompassing most of the historical range.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#exponential-smoothing",
+    "href": "ts-time-domain.html#exponential-smoothing",
+    "title": "13  Time Domain Methods",
+    "section": "13.10 Exponential Smoothing",
+    "text": "13.10 Exponential Smoothing\nExponential smoothing is a widely-used forecasting method with a long history in business and operations research. It turns out to have a rigorous statistical foundation.\n\n13.10.1 Simple Exponential Smoothing\nThe simple exponential smoothing recursion:\n\\[\\hat{X}(t+1) = \\alpha X(t) + (1-\\alpha) \\hat{X}(t)\\]\nEquivalently:\n\\[\\hat{X}(t+1) = \\hat{X}(t) + \\alpha (X(t) - \\hat{X}(t))\\]\nThe forecast is updated by adding a fraction \\(\\alpha\\) (the smoothing parameter) of the most recent prediction error. This gives more weight to recent observations, with weights decaying exponentially into the past.\n\n\n13.10.2 The ARIMA Connection\nSimple exponential smoothing is the optimal forecast for an ARIMA(0,1,1) model:\n\\[\\nabla X(t) = W(t) - \\lambda W(t-1)\\]\nwhere \\(\\alpha = 1 - \\lambda\\). This IMA(1,1) model—integrated moving average—implies that the level of the series drifts as a random walk, with MA(1) structure in the differences.\nThe connection is important: exponential smoothing is not merely a heuristic but the minimum mean squared error forecast for a particular stochastic process.\n\n\n13.10.3 Extensions\nHolt-Winters methods extend exponential smoothing to handle trend and seasonality by adding state equations for a local slope and seasonal factors. These ETS (Error-Trend-Seasonal) models form an alternative to SARIMA that is particularly popular in business forecasting. For details, see Hyndman and Athanasopoulos (2021).",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#the-modeling-workflow",
+    "href": "ts-time-domain.html#the-modeling-workflow",
+    "title": "13  Time Domain Methods",
+    "section": "13.11 The Modeling Workflow",
+    "text": "13.11 The Modeling Workflow\nBuilding a time series model is an iterative process. The classic Box-Jenkins approach cycles through identification, estimation, and diagnostic checking.\n\n13.11.1 Identification\n\nPlot the series: Look for trend, seasonality, level shifts, changing variance\nTransform if needed: Log transform for proportional variance; differencing for trend\nCheck stationarity: The differenced series should fluctuate around a constant level\nExamine ACF and PACF: Identify the pattern (AR, MA, or ARMA)\n\n\n\n13.11.2 Estimation\n\nFit candidate models: Start simple; use the ACF/PACF patterns as a guide\nCompare via information criteria:\n\nAIC: \\(-2\\log L + 2k\\)\nBIC: \\(-2\\log L + k \\log T\\)\n\nwhere \\(L\\) is the maximized likelihood and \\(k\\) is the number of estimated parameters.\nLower is better. BIC penalizes complexity more heavily, favoring simpler models.\n\n\n\n13.11.3 Diagnostic Checking\n\nExamine residuals: They should behave like white noise\n\nACF near zero at all lags\nNo patterns in residual plot\nLjung-Box test non-significant\n\n\n\n\nShow the code\n# Ljung-Box test for residual autocorrelation\nstats::Box.test(residuals, lag = 20, type = \"Ljung-Box\")\n\n\nIf residuals show structure, the model hasn’t captured all the dependence. Return to the identification step and consider additional AR or MA terms, or check whether differencing is appropriate.\n\n\n13.11.4 Iterate\nThe workflow is cyclical. A first model is rarely perfect. Examine diagnostics, refine, and repeat until residuals are approximately white noise.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#looking-ahead",
+    "href": "ts-time-domain.html#looking-ahead",
+    "title": "13  Time Domain Methods",
+    "section": "13.12 Looking Ahead",
+    "text": "13.12 Looking Ahead\nThis chapter has developed the core time domain methods for time series modeling and forecasting. We have seen that:\n\nAR models capture dependence on past values; their signature is PACF cutoff\nMA models capture dependence on past shocks; their signature is ACF cutoff\n\nARIMA models handle non-stationarity through differencing\nSARIMA models capture seasonal patterns\nForecasts come with prediction intervals that widen with horizon\nExponential smoothing is the optimal forecast for a particular ARIMA model\n\nThe emphasis throughout has been on prediction—using the past to forecast the future. But as we have seen, effective prediction rests on understanding the structure of the process. The ACF and PACF patterns are not merely diagnostic conveniences; they reflect the memory structure that the models exploit.\nChapter 14 takes the complementary perspective. Frequency domain methods ask not “how does the past predict the future?” but “what periodic components are present?” The spectrum decomposes a time series into frequency contributions, revealing structure—cycles, periodicities, filtering effects—that may be obscured in the time domain.\nTogether, the two perspectives provide a complete toolkit. Time domain methods excel at forecasting; frequency domain methods excel at understanding periodic structure. The most effective analyses draw on both.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#chapter-summary",
+    "href": "ts-time-domain.html#chapter-summary",
+    "title": "13  Time Domain Methods",
+    "section": "13.13 Chapter Summary",
+    "text": "13.13 Chapter Summary\n\nBuilding blocks: The back-shift operator \\(\\mathcal{B}\\), differencing operator \\(\\nabla\\), and AR/MA polynomials provide a compact language for time series models.\nAR models: Express current value as a function of past values. The PACF cuts off at the model order; the ACF decays gradually.\nMA models: Express current value as a function of past shocks. The ACF cuts off at the model order; the PACF decays gradually.\nARMA models: Combine AR and MA for parsimony. Both ACF and PACF decay gradually.\nARIMA models: Handle non-stationarity through differencing. The “I” stands for integrated.\nSARIMA models: Capture seasonal patterns through seasonal AR, MA, and differencing components.\nPrediction intervals widen with horizon: Uncertainty accumulates; we cannot predict arbitrarily far ahead with precision.\nExponential smoothing: A widely-used heuristic that is actually the optimal forecast for IMA(1,1).\nThe modeling workflow: Identification (plot, transform, examine ACF/PACF) → Estimation (fit, compare AIC/BIC) → Diagnostics (check residuals) → Iterate.\nUnderstanding enables prediction: The ACF/PACF patterns reflect the memory structure that makes forecasting possible.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#exercises",
+    "href": "ts-time-domain.html#exercises",
+    "title": "13  Time Domain Methods",
+    "section": "13.14 Exercises",
+    "text": "13.14 Exercises\n\nAR(1) simulation: Generate 200 observations from an AR(1) process with \\(\\phi_1 = 0.6\\) using stats::arima.sim(). Plot the series, ACF, and PACF. Do the diagnostic patterns match the theory?\nMA(1) simulation: Generate 200 observations from an MA(1) process with \\(\\theta_1 = 0.6\\). Plot the series, ACF, and PACF. How do they differ from the AR(1) patterns?\nRecruitment modeling: For the recruitment data (astsa::rec), fit AR(1), AR(2), and AR(3) models using stats::ar.ols(). Compare their AIC values. Does the comparison support the AR(2) choice suggested by the PACF?\nGlobal temperature forecast: For the global land temperature series (astsa::gtemp_land), fit an appropriate ARIMA model to the first differences. Generate a 20-year forecast with prediction intervals. What does the widening of the intervals imply for long-range climate projection?\nSeasonal identification: For the monthly airline passenger data (astsa::AirPassengers), plot the series and its ACF. What patterns suggest seasonality? Apply log transformation and seasonal differencing. Examine the ACF/PACF of the transformed series.\nPrediction interval coverage: Using the recruitment AR(2) model, generate 100 simulated series of the same length. For each, fit AR(2) and compute the one-step-ahead 95% prediction interval. What fraction of actual next values fall within the interval? Is this close to 95%?",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#resources",
+    "href": "ts-time-domain.html#resources",
+    "title": "13  Time Domain Methods",
+    "section": "13.15 Resources",
+    "text": "13.15 Resources\nTextbooks:\n\nShumway, R.H. and Stoffer, D.S. (2025). Time Series Analysis and Its Applications: With R Examples (5th ed.). Springer. The primary reference for this chapter, with extensive R code and examples.\nBrockwell, P.J. and Davis, R.A. (2016). Introduction to Time Series and Forecasting (3rd ed.). Springer. A more mathematically rigorous treatment of the theory.\nHyndman, R.J. and Athanasopoulos, G. (2021). Forecasting: Principles and Practice (3rd ed.). OTexts. Excellent coverage of exponential smoothing and practical forecasting, freely available online at https://otexts.com/fpp3/.\n\nSoftware:\n\nThe astsa package for R provides the datasets and functions used in this chapter. See the vignette “Fun with astsa” for additional examples.\nThe forecast and fable packages provide comprehensive tools for ARIMA and ETS modeling in R.\nThe CRAN Task View on Time Series (https://cran.r-project.org/web/views/TimeSeries.html) surveys the R ecosystem for time series analysis.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#sec-ts-time-domain-glossary",
+    "href": "ts-time-domain.html#sec-ts-time-domain-glossary",
+    "title": "13  Time Domain Methods",
+    "section": "13.16 Appendix: Glossary of Notation",
+    "text": "13.16 Appendix: Glossary of Notation\n\\[\n\\begin{align}\n  \\mathcal{B}\n     \\quad & \\quad \\text{back-shift operator: } \\mathcal{B}X(t) = X(t-1) \\\\\n  \\\\\n  \\nabla\n     \\quad & \\quad \\text{difference operator: } \\nabla = 1 - \\mathcal{B} \\\\\n  \\\\\n  \\nabla_s\n     \\quad & \\quad \\text{seasonal difference operator: } \\nabla_s = 1 - \\mathcal{B}^s \\\\\n  \\\\\n  \\phi(\\cdot)\n     \\quad & \\quad \\text{AR polynomial: } \\phi(z) = 1 - \\sum_{\\nu = 1}^p \\phi_\\nu z^\\nu \\\\\n  \\\\\n  \\theta(\\cdot)\n     \\quad & \\quad \\text{MA polynomial: } \\theta(z) = 1 + \\sum_{\\nu = 1}^q \\theta_\\nu z^\\nu \\\\\n  \\\\\n  W(\\cdot)\n     \\quad & \\quad \\text{white noise: } W(t) \\sim wn(0, \\sigma_W^2)  \\\\\n  \\\\\n  \\psi_\\nu\n     \\quad & \\quad \\text{causal (MA}(\\infty)\\text{) coefficients: } X(t) = \\sum_{\\nu=0}^{\\infty} \\psi_\\nu W(t-\\nu) \\\\\n  \\\\\n  \\pi_\\nu\n     \\quad & \\quad \\text{inverted (AR}(\\infty)\\text{) coefficients: } W(t) = \\sum_{\\nu=0}^{\\infty} \\pi_\\nu X(t-\\nu) \\\\\n  \\\\\n  \\hat{X}(t_f + h)\n     \\quad & \\quad \\text{forecast of } X(t_f + h) \\text{ given data through } t_f \\\\\n  \\\\\n  \\text{MSPE}(h)\n     \\quad & \\quad \\text{mean squared prediction error at horizon } h \\\\\n  \\\\\n  L\n     \\quad & \\quad \\text{maximized likelihood of the fitted model} \\\\\n  \\\\\n  k\n     \\quad & \\quad \\text{number of estimated parameters} \\\\\n  \\\\\n  \\text{AIC}\n     \\quad & \\quad \\text{Akaike Information Criterion: } -2\\log L + 2k \\\\\n  \\\\\n  \\text{BIC}\n     \\quad & \\quad \\text{Bayesian Information Criterion: } -2\\log L + k \\log T \\\\\n  \\\\\n  t_f\n     \\quad & \\quad \\text{final time index of observations} \\\\\n  \\\\\n  T\n     \\quad & \\quad \\text{number of observations}\n\\end{align}\n\\]\n\n\n\n\nHyndman, R. J., and G. Athanasopoulos. 2021. Forecasting: Principles and Practice. OTexts. https://otexts.com/fpp3/.",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
+  },
+  {
+    "objectID": "ts-time-domain.html#references",
+    "href": "ts-time-domain.html#references",
+    "title": "13  Time Domain Methods",
+    "section": "13.17 References",
+    "text": "13.17 References",
+    "crumbs": [
+      "Time Series Data",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Time Domain Methods</span>"
+    ]
   }
 ]

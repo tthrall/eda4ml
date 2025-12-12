@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>13&nbsp; Time Domain Methods – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ts-intro.html" rel="next">
+<link href="./ts-data.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-data.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-time-domain.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-time-domain.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">13.1</span> Introduction</a>
+  <ul>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">13.1.1</span> Chapter Roadmap</a></li>
+  </ul></li>
+  <li><a href="#building-blocks" id="toc-building-blocks" class="nav-link" data-scroll-target="#building-blocks"><span class="header-section-number">13.2</span> Building Blocks</a>
+  <ul>
+  <li><a href="#white-noise" id="toc-white-noise" class="nav-link" data-scroll-target="#white-noise"><span class="header-section-number">13.2.1</span> White Noise</a></li>
+  <li><a href="#the-back-shift-operator" id="toc-the-back-shift-operator" class="nav-link" data-scroll-target="#the-back-shift-operator"><span class="header-section-number">13.2.2</span> The Back-Shift Operator</a></li>
+  <li><a href="#the-differencing-operator" id="toc-the-differencing-operator" class="nav-link" data-scroll-target="#the-differencing-operator"><span class="header-section-number">13.2.3</span> The Differencing Operator</a></li>
+  <li><a href="#ar-and-ma-polynomials" id="toc-ar-and-ma-polynomials" class="nav-link" data-scroll-target="#ar-and-ma-polynomials"><span class="header-section-number">13.2.4</span> AR and MA Polynomials</a></li>
+  </ul></li>
+  <li><a href="#autoregressive-models" id="toc-autoregressive-models" class="nav-link" data-scroll-target="#autoregressive-models"><span class="header-section-number">13.3</span> Autoregressive Models</a>
+  <ul>
+  <li><a href="#ar1-the-simplest-memory" id="toc-ar1-the-simplest-memory" class="nav-link" data-scroll-target="#ar1-the-simplest-memory"><span class="header-section-number">13.3.1</span> AR(1): The Simplest Memory</a></li>
+  <li><a href="#arp-longer-memory" id="toc-arp-longer-memory" class="nav-link" data-scroll-target="#arp-longer-memory"><span class="header-section-number">13.3.2</span> AR(p): Longer Memory</a></li>
+  <li><a href="#example-fish-recruitment" id="toc-example-fish-recruitment" class="nav-link" data-scroll-target="#example-fish-recruitment"><span class="header-section-number">13.3.3</span> Example: Fish Recruitment</a></li>
+  </ul></li>
+  <li><a href="#moving-average-models" id="toc-moving-average-models" class="nav-link" data-scroll-target="#moving-average-models"><span class="header-section-number">13.4</span> Moving Average Models</a>
+  <ul>
+  <li><a href="#ma1-dependence-through-shocks" id="toc-ma1-dependence-through-shocks" class="nav-link" data-scroll-target="#ma1-dependence-through-shocks"><span class="header-section-number">13.4.1</span> MA(1): Dependence Through Shocks</a></li>
+  <li><a href="#maq-the-general-case" id="toc-maq-the-general-case" class="nav-link" data-scroll-target="#maq-the-general-case"><span class="header-section-number">13.4.2</span> MA(q): The General Case</a></li>
+  <li><a href="#invertibility" id="toc-invertibility" class="nav-link" data-scroll-target="#invertibility"><span class="header-section-number">13.4.3</span> Invertibility</a></li>
+  </ul></li>
+  <li><a href="#model-identification-the-diagnostic-fingerprint" id="toc-model-identification-the-diagnostic-fingerprint" class="nav-link" data-scroll-target="#model-identification-the-diagnostic-fingerprint"><span class="header-section-number">13.5</span> Model Identification: The Diagnostic Fingerprint</a></li>
+  <li><a href="#arma-models" id="toc-arma-models" class="nav-link" data-scroll-target="#arma-models"><span class="header-section-number">13.6</span> ARMA Models</a>
+  <ul>
+  <li><a href="#armapq-definition" id="toc-armapq-definition" class="nav-link" data-scroll-target="#armapq-definition"><span class="header-section-number">13.6.1</span> ARMA(p,q) Definition</a></li>
+  <li><a href="#causal-and-invertible-representations" id="toc-causal-and-invertible-representations" class="nav-link" data-scroll-target="#causal-and-invertible-representations"><span class="header-section-number">13.6.2</span> Causal and Invertible Representations</a></li>
+  <li><a href="#arma-diagnostics" id="toc-arma-diagnostics" class="nav-link" data-scroll-target="#arma-diagnostics"><span class="header-section-number">13.6.3</span> ARMA Diagnostics</a></li>
+  </ul></li>
+  <li><a href="#non-stationary-models" id="toc-non-stationary-models" class="nav-link" data-scroll-target="#non-stationary-models"><span class="header-section-number">13.7</span> Non-Stationary Models</a>
+  <ul>
+  <li><a href="#arimap-d-q" id="toc-arimap-d-q" class="nav-link" data-scroll-target="#arimap-d-q"><span class="header-section-number">13.7.1</span> ARIMA(p, d, q)</a></li>
+  <li><a href="#random-walk-with-drift" id="toc-random-walk-with-drift" class="nav-link" data-scroll-target="#random-walk-with-drift"><span class="header-section-number">13.7.2</span> Random Walk with Drift</a></li>
+  </ul></li>
+  <li><a href="#seasonal-models" id="toc-seasonal-models" class="nav-link" data-scroll-target="#seasonal-models"><span class="header-section-number">13.8</span> Seasonal Models</a>
+  <ul>
+  <li><a href="#sarima-notation" id="toc-sarima-notation" class="nav-link" data-scroll-target="#sarima-notation"><span class="header-section-number">13.8.1</span> SARIMA Notation</a></li>
+  <li><a href="#example-atmospheric-co₂" id="toc-example-atmospheric-co₂" class="nav-link" data-scroll-target="#example-atmospheric-co₂"><span class="header-section-number">13.8.2</span> Example: Atmospheric CO₂</a></li>
+  </ul></li>
+  <li><a href="#forecasting" id="toc-forecasting" class="nav-link" data-scroll-target="#forecasting"><span class="header-section-number">13.9</span> Forecasting</a>
+  <ul>
+  <li><a href="#the-best-linear-predictor" id="toc-the-best-linear-predictor" class="nav-link" data-scroll-target="#the-best-linear-predictor"><span class="header-section-number">13.9.1</span> The Best Linear Predictor</a></li>
+  <li><a href="#arma-forecasting" id="toc-arma-forecasting" class="nav-link" data-scroll-target="#arma-forecasting"><span class="header-section-number">13.9.2</span> ARMA Forecasting</a></li>
+  <li><a href="#prediction-error" id="toc-prediction-error" class="nav-link" data-scroll-target="#prediction-error"><span class="header-section-number">13.9.3</span> Prediction Error</a></li>
+  <li><a href="#prediction-intervals" id="toc-prediction-intervals" class="nav-link" data-scroll-target="#prediction-intervals"><span class="header-section-number">13.9.4</span> Prediction Intervals</a></li>
+  <li><a href="#example-recruitment-forecast" id="toc-example-recruitment-forecast" class="nav-link" data-scroll-target="#example-recruitment-forecast"><span class="header-section-number">13.9.5</span> Example: Recruitment Forecast</a></li>
+  </ul></li>
+  <li><a href="#exponential-smoothing" id="toc-exponential-smoothing" class="nav-link" data-scroll-target="#exponential-smoothing"><span class="header-section-number">13.10</span> Exponential Smoothing</a>
+  <ul>
+  <li><a href="#simple-exponential-smoothing" id="toc-simple-exponential-smoothing" class="nav-link" data-scroll-target="#simple-exponential-smoothing"><span class="header-section-number">13.10.1</span> Simple Exponential Smoothing</a></li>
+  <li><a href="#the-arima-connection" id="toc-the-arima-connection" class="nav-link" data-scroll-target="#the-arima-connection"><span class="header-section-number">13.10.2</span> The ARIMA Connection</a></li>
+  <li><a href="#extensions" id="toc-extensions" class="nav-link" data-scroll-target="#extensions"><span class="header-section-number">13.10.3</span> Extensions</a></li>
+  </ul></li>
+  <li><a href="#the-modeling-workflow" id="toc-the-modeling-workflow" class="nav-link" data-scroll-target="#the-modeling-workflow"><span class="header-section-number">13.11</span> The Modeling Workflow</a>
+  <ul>
+  <li><a href="#identification" id="toc-identification" class="nav-link" data-scroll-target="#identification"><span class="header-section-number">13.11.1</span> Identification</a></li>
+  <li><a href="#estimation" id="toc-estimation" class="nav-link" data-scroll-target="#estimation"><span class="header-section-number">13.11.2</span> Estimation</a></li>
+  <li><a href="#diagnostic-checking" id="toc-diagnostic-checking" class="nav-link" data-scroll-target="#diagnostic-checking"><span class="header-section-number">13.11.3</span> Diagnostic Checking</a></li>
+  <li><a href="#iterate" id="toc-iterate" class="nav-link" data-scroll-target="#iterate"><span class="header-section-number">13.11.4</span> Iterate</a></li>
+  </ul></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">13.12</span> Looking Ahead</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">13.13</span> Chapter Summary</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">13.14</span> Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">13.15</span> Resources</a></li>
+  <li><a href="#sec-ts-time-domain-glossary" id="toc-sec-ts-time-domain-glossary" class="nav-link" data-scroll-target="#sec-ts-time-domain-glossary"><span class="header-section-number">13.16</span> Appendix: Glossary of Notation</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/ts-time-domain.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-data.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-time-domain.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-ts-time-domain" class="quarto-section-identifier"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">12:37 Fri 12-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="introduction" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">13.1</span> Introduction</h2>
+<p>Chapter 12 established that time series data have memory—successive observations are dependent, not independent—and that this dependence can be characterized through the autocorrelation function (ACF) and partial autocorrelation function (PACF). We saw that the patterns in these diagnostic plots reveal the structure of the underlying process.</p>
+<p>This chapter shows how to exploit that structure for forecasting. Given observations up to the present, what should we expect tomorrow, next quarter, next year? This is the archetypal decision-support application of time series analysis.</p>
+<p>The key insight is simple: if the past predicts the future, we should use the past to make that prediction. The autocorrelation structure tells us <em>how</em> to weight past observations. Strong recent dependence means recent values matter most; periodic structure means values from the same season matter; long memory means the distant past remains informative.</p>
+<p>We develop this insight through a family of models—autoregressive (AR), moving average (MA), and their combinations (ARMA, ARIMA, SARIMA)—that translate ACF and PACF patterns into explicit forecasting equations. The models are linear: they express the current value as a weighted combination of past values and past random shocks. Despite this simplicity, they capture a wide range of real-world behavior and remain the workhorses of time series forecasting.</p>
+<section id="chapter-roadmap" class="level3" data-number="13.1.1">
+<h3 data-number="13.1.1" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">13.1.1</span> Chapter Roadmap</h3>
+<p>We proceed as follows:</p>
+<p><strong>Building Blocks</strong>: We introduce the operators and notation—back-shift, differencing, AR and MA polynomials—that provide a compact language for time series models.</p>
+<p><strong>Autoregressive Models</strong>: AR models express the current value as a function of past values. Their diagnostic signature: the PACF cuts off.</p>
+<p><strong>Moving Average Models</strong>: MA models express the current value as a function of past random shocks. Their diagnostic signature: the ACF cuts off.</p>
+<p><strong>Model Identification</strong>: We consolidate the ACF/PACF patterns that guide model selection—the diagnostic fingerprint that connects Chapter 12’s tools to this chapter’s models.</p>
+<p><strong>ARMA Models</strong>: Combining AR and MA components often achieves parsimony—a simple model that captures complex structure.</p>
+<p><strong>Non-Stationary Models</strong>: ARIMA models handle trends and other non-stationarities through differencing.</p>
+<p><strong>Seasonal Models</strong>: SARIMA models capture periodic patterns—annual cycles, quarterly seasonality—that pervade economic and environmental data.</p>
+<p><strong>Forecasting</strong>: We develop the prediction equations, prediction intervals, and the key insight that uncertainty grows with forecast horizon.</p>
+<p><strong>Exponential Smoothing</strong>: This widely-used forecasting method has a rigorous statistical foundation as the optimal forecast for a particular ARIMA model.</p>
+<p><strong>The Modeling Workflow</strong>: We outline the practical cycle of identification, estimation, and diagnostic checking that guides applied work.</p>
+<p>Throughout, we maintain the dual perspective: these models serve prediction (decision support), but effective prediction rests on understanding why the models work and when they apply.</p>
+</section>
+</section>
+<section id="building-blocks" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="building-blocks"><span class="header-section-number">13.2</span> Building Blocks</h2>
+<p>All time domain models build from a small set of components. We introduce them here for reference.</p>
+<section id="white-noise" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="white-noise"><span class="header-section-number">13.2.1</span> White Noise</h3>
+<p>The baseline is <strong>white noise</strong>: a sequence <span class="math inline">\(\{W(t)\}\)</span> of uncorrelated random variables with constant mean (typically zero) and constant variance <span class="math inline">\(\sigma_W^2\)</span>. We write <span class="math inline">\(W(t) \sim wn(0, \sigma_W^2)\)</span>.</p>
+<p>White noise has no memory—knowing <span class="math inline">\(W(t)\)</span> tells you nothing about <span class="math inline">\(W(s)\)</span> for <span class="math inline">\(s \neq t\)</span>. It is the “raw material” from which correlated processes are built by filtering.</p>
+</section>
+<section id="the-back-shift-operator" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="the-back-shift-operator"><span class="header-section-number">13.2.2</span> The Back-Shift Operator</h3>
+<p>The <strong>back-shift operator</strong> <span class="math inline">\(\mathcal{B}\)</span> shifts a process one time unit into the past:</p>
+<p><span class="math display">\[\mathcal{B}X(t) = X(t-1)\]</span></p>
+<p>Repeated application gives <span class="math inline">\(\mathcal{B}^k X(t) = X(t-k)\)</span>. This notation enables compact representation of models involving multiple lags.</p>
+</section>
+<section id="the-differencing-operator" class="level3" data-number="13.2.3">
+<h3 data-number="13.2.3" class="anchored" data-anchor-id="the-differencing-operator"><span class="header-section-number">13.2.3</span> The Differencing Operator</h3>
+<p>The <strong>differencing operator</strong> <span class="math inline">\(\nabla\)</span> computes changes:</p>
+<p><span class="math display">\[\nabla X(t) = X(t) - X(t-1) = (1 - \mathcal{B})X(t)\]</span></p>
+<p>Differencing removes linear trends. Higher-order differencing <span class="math inline">\(\nabla^d\)</span> (applying <span class="math inline">\(\nabla\)</span> repeatedly <span class="math inline">\(d\)</span> times) removes polynomial trends of degree <span class="math inline">\(d\)</span>.</p>
+<p><strong>Seasonal differencing</strong> <span class="math inline">\(\nabla_s\)</span> compares each observation to the same season in the previous cycle:</p>
+<p><span class="math display">\[\nabla_s X(t) = X(t) - X(t-s)\]</span></p>
+<p>where <span class="math inline">\(s\)</span> is the seasonal period (e.g., <span class="math inline">\(s = 12\)</span> for monthly data with annual seasonality).</p>
+</section>
+<section id="ar-and-ma-polynomials" class="level3" data-number="13.2.4">
+<h3 data-number="13.2.4" class="anchored" data-anchor-id="ar-and-ma-polynomials"><span class="header-section-number">13.2.4</span> AR and MA Polynomials</h3>
+<p>Models are expressed using polynomials in the back-shift operator.</p>
+<p>The <strong>AR polynomial</strong> of order <span class="math inline">\(p\)</span>: <span class="math display">\[\phi(z) = 1 - \phi_1 z - \phi_2 z^2 - \cdots - \phi_p z^p\]</span></p>
+<p>The <strong>MA polynomial</strong> of order <span class="math inline">\(q\)</span>: <span class="math display">\[\theta(z) = 1 + \theta_1 z + \theta_2 z^2 + \cdots + \theta_q z^q\]</span></p>
+<p>Applying these polynomials to <span class="math inline">\(\mathcal{B}\)</span> produces operators that act on time series. For example, <span class="math inline">\(\phi(\mathcal{B})X(t) = X(t) - \phi_1 X(t-1) - \cdots - \phi_p X(t-p)\)</span>.</p>
+</section>
+</section>
+<section id="autoregressive-models" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="autoregressive-models"><span class="header-section-number">13.3</span> Autoregressive Models</h2>
+<p>Autoregressive models express the current value as a linear function of past values plus a white noise innovation.</p>
+<section id="ar1-the-simplest-memory" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="ar1-the-simplest-memory"><span class="header-section-number">13.3.1</span> AR(1): The Simplest Memory</h3>
+<p>An <strong>AR(1)</strong> process takes the form:</p>
+<p><span class="math display">\[X(t) = \phi_1 X(t-1) + W(t)\]</span></p>
+<p>where we assume <span class="math inline">\(E\{X(t)\} = 0\)</span> for simplicity (the mean can be added back). The current value is a fraction <span class="math inline">\(\phi_1\)</span> of the previous value, plus a random shock.</p>
+<p><strong>Stationarity</strong> requires <span class="math inline">\(|\phi_1| &lt; 1\)</span>. If this condition holds, the process does not explode or wander off to infinity. When <span class="math inline">\(\phi_1 &gt; 0\)</span> (the typical case), high values tend to follow high values; when <span class="math inline">\(\phi_1 &lt; 0\)</span>, the process alternates above and below the mean.</p>
+<p>The autocorrelation function has a simple form:</p>
+<p><span class="math display">\[\rho(h) = \phi_1^{|h|}\]</span></p>
+<p>The correlation at lag <span class="math inline">\(h\)</span> is the AR coefficient raised to the <span class="math inline">\(|h|\)</span> power—geometric decay.</p>
+<p>The partial autocorrelation function is even simpler:</p>
+<p><span class="math display">\[\phi_{hh} = \begin{cases} \phi_1 &amp; h = 1 \\ 0 &amp; h &gt; 1 \end{cases}\]</span></p>
+<p>The PACF <strong>cuts off</strong> after lag 1. This is the diagnostic signature of AR(1).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ar1-sim" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ar1-sim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-ar1-sim-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ar1-sim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.1: Simulated AR(1) with φ = 0.8: geometric ACF decay, PACF cutoff at lag 1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-ar1-sim" class="quarto-xref">Figure&nbsp;<span>13.1</span></a> shows a simulated AR(1) process with <span class="math inline">\(\phi_1 = 0.8\)</span>. The series shows persistence—runs of high and low values—but repeatedly returns toward the mean. The ACF decays geometrically. The PACF has a single significant spike at lag 1, then drops to near zero.</p>
+</section>
+<section id="arp-longer-memory" class="level3" data-number="13.3.2">
+<h3 data-number="13.3.2" class="anchored" data-anchor-id="arp-longer-memory"><span class="header-section-number">13.3.2</span> AR(p): Longer Memory</h3>
+<p>An <strong>AR(p)</strong> process depends on <span class="math inline">\(p\)</span> past values:</p>
+<p><span class="math display">\[X(t) = \phi_1 X(t-1) + \phi_2 X(t-2) + \cdots + \phi_p X(t-p) + W(t)\]</span></p>
+<p>In operator notation: <span class="math display">\[\phi(\mathcal{B})X(t) = W(t)\]</span></p>
+<p><strong>Stationarity</strong> requires that all roots of the polynomial <span class="math inline">\(\phi(z)\)</span> lie outside the unit circle (have magnitude greater than 1). This ensures the process doesn’t explode.</p>
+<p><strong>Causality</strong> is guaranteed by the same condition: the process can be expressed as a convergent sum of current and past white noise values.</p>
+<p>The diagnostic signature generalizes from AR(1):</p>
+<ul>
+<li><strong>ACF</strong>: Decays gradually—exponentially, or as a damped sinusoid if complex roots are present</li>
+<li><strong>PACF</strong>: <strong>Cuts off after lag <span class="math inline">\(p\)</span></strong></li>
+</ul>
+<p>The PACF cutoff identifies the order. If the PACF is significant at lags 1 through <span class="math inline">\(p\)</span> and near zero thereafter, an AR(p) model is indicated.</p>
+</section>
+<section id="example-fish-recruitment" class="level3" data-number="13.3.3">
+<h3 data-number="13.3.3" class="anchored" data-anchor-id="example-fish-recruitment"><span class="header-section-number">13.3.3</span> Example: Fish Recruitment</h3>
+<p>The recruitment series (<code>astsa::rec</code>) measures the abundance of new fish entering a commercial fishery. <a href="#fig-rec-acf-pacf" class="quarto-xref">Figure&nbsp;<span>13.2</span></a> shows its ACF and PACF.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rec-acf-pacf" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rec-acf-pacf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-rec-acf-pacf-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rec-acf-pacf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.2: Recruitment data: ACF shows damped oscillation; PACF cuts off after lag 2
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The ACF shows damped oscillation—the signature of complex roots in an AR process. The PACF has significant values at lags 1 and 2, then cuts off. This pattern suggests an <strong>AR(2)</strong> model. We will fit this model and use it for forecasting later in the chapter.</p>
+</section>
+</section>
+<section id="moving-average-models" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="moving-average-models"><span class="header-section-number">13.4</span> Moving Average Models</h2>
+<p>Moving average models express the current value as a linear function of current and past random shocks.</p>
+<section id="ma1-dependence-through-shocks" class="level3" data-number="13.4.1">
+<h3 data-number="13.4.1" class="anchored" data-anchor-id="ma1-dependence-through-shocks"><span class="header-section-number">13.4.1</span> MA(1): Dependence Through Shocks</h3>
+<p>An <strong>MA(1)</strong> process takes the form:</p>
+<p><span class="math display">\[X(t) = W(t) + \theta_1 W(t-1)\]</span></p>
+<p>The current value depends on the current shock and the previous shock. Unlike AR models, where dependence propagates indefinitely through time, MA models have <em>finite memory</em>—observations more than <span class="math inline">\(q\)</span> time units apart are uncorrelated.</p>
+<p>The autocorrelation function:</p>
+<p><span class="math display">\[\rho(h) = \begin{cases} 1 &amp; h = 0 \\ \frac{\theta_1}{1 + \theta_1^2} &amp; h = \pm 1 \\ 0 &amp; |h| &gt; 1 \end{cases}\]</span></p>
+<p>The ACF <strong>cuts off</strong> after lag 1—the diagnostic signature of MA(1), and the opposite pattern from AR(1).</p>
+<p>The PACF, in contrast, decays gradually.</p>
+</section>
+<section id="maq-the-general-case" class="level3" data-number="13.4.2">
+<h3 data-number="13.4.2" class="anchored" data-anchor-id="maq-the-general-case"><span class="header-section-number">13.4.2</span> MA(q): The General Case</h3>
+<p>An <strong>MA(q)</strong> process:</p>
+<p><span class="math display">\[X(t) = W(t) + \theta_1 W(t-1) + \cdots + \theta_q W(t-q)\]</span></p>
+<p>In operator notation: <span class="math display">\[X(t) = \theta(\mathcal{B}) W(t)\]</span></p>
+<p>The diagnostic signature:</p>
+<ul>
+<li><strong>ACF</strong>: <strong>Cuts off after lag <span class="math inline">\(q\)</span></strong></li>
+<li><strong>PACF</strong>: Decays gradually</li>
+</ul>
+</section>
+<section id="invertibility" class="level3" data-number="13.4.3">
+<h3 data-number="13.4.3" class="anchored" data-anchor-id="invertibility"><span class="header-section-number">13.4.3</span> Invertibility</h3>
+<p>There is a subtlety with MA models that doesn’t arise with AR models. Different MA parameter values can produce identical distributions. For example, <span class="math inline">\(X(t) = W(t) + 0.2W(t-1)\)</span> with <span class="math inline">\(\sigma_W^2 = 25\)</span> has the same distribution as <span class="math inline">\(Y(t) = V(t) + 5V(t-1)\)</span> with <span class="math inline">\(\sigma_V^2 = 1\)</span>.</p>
+<p>To ensure a unique representation, we require <strong>invertibility</strong>: all roots of the MA polynomial <span class="math inline">\(\theta(z)\)</span> must lie outside the unit circle. This condition also ensures that the white noise process can be recovered from the observed series—that we can “invert” the relationship to express <span class="math inline">\(W(t)\)</span> in terms of current and past values of <span class="math inline">\(X(t)\)</span>.</p>
+</section>
+</section>
+<section id="model-identification-the-diagnostic-fingerprint" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="model-identification-the-diagnostic-fingerprint"><span class="header-section-number">13.5</span> Model Identification: The Diagnostic Fingerprint</h2>
+<p>The ACF and PACF patterns provide a fingerprint for model identification. <a href="#tbl-acf-pacf-patterns" class="quarto-xref">Table&nbsp;<span>13.1</span></a> summarizes the key signatures.</p>
+<div id="tbl-acf-pacf-patterns" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-acf-pacf-patterns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;13.1: ACF and PACF patterns for model identification
+</figcaption>
+<div aria-describedby="tbl-acf-pacf-patterns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>ACF</th>
+<th>PACF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AR(p)</td>
+<td>Decays gradually</td>
+<td>Cuts off after lag <span class="math inline">\(p\)</span></td>
+</tr>
+<tr class="even">
+<td>MA(q)</td>
+<td>Cuts off after lag <span class="math inline">\(q\)</span></td>
+<td>Decays gradually</td>
+</tr>
+<tr class="odd">
+<td>ARMA(p,q)</td>
+<td>Decays gradually</td>
+<td>Decays gradually</td>
+</tr>
+<tr class="even">
+<td>White noise</td>
+<td>All near zero</td>
+<td>All near zero</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The identification strategy:</p>
+<ol type="1">
+<li>If the <strong>PACF cuts off</strong> at lag <span class="math inline">\(p\)</span> while the ACF decays → consider AR(p)</li>
+<li>If the <strong>ACF cuts off</strong> at lag <span class="math inline">\(q\)</span> while the PACF decays → consider MA(q)</li>
+<li>If <strong>both decay</strong> gradually → consider ARMA, or check whether differencing is needed</li>
+</ol>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ar-ma-signatures" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ar-ma-signatures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-ar-ma-signatures-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ar-ma-signatures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.3: Contrasting AR and MA signatures: AR shows PACF cutoff; MA shows ACF cutoff
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-ar-ma-signatures" class="quarto-xref">Figure&nbsp;<span>13.3</span></a> illustrates the contrast. The AR(1) process shows gradual ACF decay but a sharp PACF cutoff. The MA(1) process shows the opposite: a sharp ACF cutoff but gradual PACF decay.</p>
+<p>In practice, sample ACF and PACF are noisy, and the patterns are not always crisp. The confidence bands (typically <span class="math inline">\(\pm 1.96/\sqrt{T}\)</span>) help distinguish significant values from sampling variation. When patterns are ambiguous, fitting several candidate models and comparing them via information criteria (discussed below) provides a principled approach.</p>
+</section>
+<section id="arma-models" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="arma-models"><span class="header-section-number">13.6</span> ARMA Models</h2>
+<p>Combining AR and MA components often achieves parsimony—a simple model that captures structure requiring high-order pure AR or MA models.</p>
+<section id="armapq-definition" class="level3" data-number="13.6.1">
+<h3 data-number="13.6.1" class="anchored" data-anchor-id="armapq-definition"><span class="header-section-number">13.6.1</span> ARMA(p,q) Definition</h3>
+<p>An <strong>ARMA(p,q)</strong> process satisfies:</p>
+<p><span class="math display">\[\phi(\mathcal{B})(X(t) - \mu) = \theta(\mathcal{B}) W(t)\]</span></p>
+<p>Expanded:</p>
+<p><span class="math display">\[X(t) = \mu + \sum_{j=1}^{p} \phi_j (X(t-j) - \mu) + W(t) + \sum_{k=1}^{q} \theta_k W(t-k)\]</span></p>
+<p>The process depends on both past values (AR part) and past shocks (MA part).</p>
+</section>
+<section id="causal-and-invertible-representations" class="level3" data-number="13.6.2">
+<h3 data-number="13.6.2" class="anchored" data-anchor-id="causal-and-invertible-representations"><span class="header-section-number">13.6.2</span> Causal and Invertible Representations</h3>
+<p>For an ARMA process to be well-defined, we require:</p>
+<ul>
+<li><p><strong>Causality</strong>: All roots of <span class="math inline">\(\phi(z)\)</span> outside the unit circle → the process can be written as a convergent MA(<span class="math inline">\(\infty\)</span>): <span class="math display">\[X(t) - \mu = \sum_{\nu=0}^{\infty} \psi_\nu W(t-\nu)\]</span></p></li>
+<li><p><strong>Invertibility</strong>: All roots of <span class="math inline">\(\theta(z)\)</span> outside the unit circle → the white noise can be written as a convergent AR(<span class="math inline">\(\infty\)</span>): <span class="math display">\[W(t) = \sum_{\nu=0}^{\infty} \pi_\nu (X(t-\nu) - \mu)\]</span></p></li>
+</ul>
+<p>These representations are important for forecasting: the <span class="math inline">\(\psi\)</span> weights appear in the prediction error formula.</p>
+<p>We also require that <span class="math inline">\(\phi(z)\)</span> and <span class="math inline">\(\theta(z)\)</span> share no common roots. If they did, the common factor could be canceled, reducing the model to a simpler form.</p>
+</section>
+<section id="arma-diagnostics" class="level3" data-number="13.6.3">
+<h3 data-number="13.6.3" class="anchored" data-anchor-id="arma-diagnostics"><span class="header-section-number">13.6.3</span> ARMA Diagnostics</h3>
+<p>For ARMA(p,q) processes, both the ACF and PACF decay gradually (mixture of exponentials and/or damped sinusoids). This makes order selection less straightforward than for pure AR or MA models. The practical approach is to consider low-order candidates—ARMA(1,1), ARMA(2,1), ARMA(1,2)—and use information criteria to compare.</p>
+</section>
+</section>
+<section id="non-stationary-models" class="level2" data-number="13.7">
+<h2 data-number="13.7" class="anchored" data-anchor-id="non-stationary-models"><span class="header-section-number">13.7</span> Non-Stationary Models</h2>
+<p>Many real series are non-stationary: they exhibit trends, random-walk behavior, or changing variance. The models developed so far assume stationarity. To handle non-stationarity, we transform the data—typically by differencing—before modeling.</p>
+<section id="arimap-d-q" class="level3" data-number="13.7.1">
+<h3 data-number="13.7.1" class="anchored" data-anchor-id="arimap-d-q"><span class="header-section-number">13.7.1</span> ARIMA(p, d, q)</h3>
+<p>An <strong>ARIMA(p, d, q)</strong> model applies ARMA(p, q) to the differenced series:</p>
+<p><span class="math display">\[\phi(\mathcal{B}) \nabla^d X(t) = \theta(\mathcal{B}) W(t)\]</span></p>
+<p>The parameter <span class="math inline">\(d\)</span> indicates the order of differencing:</p>
+<ul>
+<li><span class="math inline">\(d = 0\)</span>: The series is stationary; this is just ARMA(p, q)</li>
+<li><span class="math inline">\(d = 1\)</span>: First differences <span class="math inline">\(\nabla X(t) = X(t) - X(t-1)\)</span> are modeled as ARMA</li>
+<li><span class="math inline">\(d = 2\)</span>: Second differences are modeled as ARMA</li>
+</ul>
+<p>First differencing removes linear trends and handles random-walk-like behavior. Second differencing (rarely needed) removes quadratic trends.</p>
+<p>The “I” in ARIMA stands for “integrated”: if <span class="math inline">\(Y(t) = \nabla X(t)\)</span> follows an ARMA process, then <span class="math inline">\(X(t)\)</span> is the cumulative sum (integral) of an ARMA process.</p>
+</section>
+<section id="random-walk-with-drift" class="level3" data-number="13.7.2">
+<h3 data-number="13.7.2" class="anchored" data-anchor-id="random-walk-with-drift"><span class="header-section-number">13.7.2</span> Random Walk with Drift</h3>
+<p>A fundamental non-stationary model is the <strong>random walk with drift</strong>:</p>
+<p><span class="math display">\[X(t) = \alpha + X(t-1) + W(t)\]</span></p>
+<p>This is ARIMA(0, 1, 0) with drift <span class="math inline">\(\alpha\)</span>. Each value equals the previous value plus a constant drift plus a random shock.</p>
+<p>Properties:</p>
+<ul>
+<li>The differenced series <span class="math inline">\(\nabla X(t) = \alpha + W(t)\)</span> is white noise plus a constant</li>
+<li>The variance grows linearly with time: <span class="math inline">\(\text{Var}(X(t)) = t \sigma_W^2\)</span></li>
+<li>The optimal forecast is a straight line: <span class="math inline">\(\hat{X}(t_f + h) = X(t_f) + h\alpha\)</span></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rw-drift" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rw-drift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-rw-drift-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rw-drift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.4: Random walk with drift: forecast is linear; prediction intervals widen with horizon
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="ts-forecast.html#fig-rw-drift" class="quarto-xref">Figure&nbsp;<span>12.4</span></a> shows a simulated random walk with drift and its forecast. The forecast (red line) projects linearly from the last observed value with slope equal to the estimated drift. The prediction intervals (gray band) widen with horizon—reflecting the accumulation of uncertainty as we forecast further ahead.</p>
+</section>
+</section>
+<section id="seasonal-models" class="level2" data-number="13.8">
+<h2 data-number="13.8" class="anchored" data-anchor-id="seasonal-models"><span class="header-section-number">13.8</span> Seasonal Models</h2>
+<p>Many time series exhibit periodic patterns: annual cycles in climate data, quarterly patterns in economic data, weekly patterns in daily data. <strong>SARIMA</strong> models capture this seasonality.</p>
+<section id="sarima-notation" class="level3" data-number="13.8.1">
+<h3 data-number="13.8.1" class="anchored" data-anchor-id="sarima-notation"><span class="header-section-number">13.8.1</span> SARIMA Notation</h3>
+<p>A SARIMA model combines non-seasonal and seasonal components:</p>
+<p><span class="math display">\[\phi(\mathcal{B})\Phi(\mathcal{B}^s) \nabla^d \nabla_s^D X(t) = \theta(\mathcal{B})\Theta(\mathcal{B}^s) W(t)\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\phi(\mathcal{B})\)</span> and <span class="math inline">\(\theta(\mathcal{B})\)</span> are the non-seasonal AR and MA polynomials</li>
+<li><span class="math inline">\(\Phi(\mathcal{B}^s)\)</span> and <span class="math inline">\(\Theta(\mathcal{B}^s)\)</span> are the seasonal AR and MA polynomials, operating at the seasonal lag <span class="math inline">\(s\)</span></li>
+<li><span class="math inline">\(\nabla^d\)</span> is regular differencing</li>
+<li><span class="math inline">\(\nabla_s^D\)</span> is seasonal differencing</li>
+</ul>
+<p><strong>Notation</strong>: ARIMA<span class="math inline">\((p,d,q) \times (P,D,Q)_s\)</span></p>
+<p>For example, ARIMA<span class="math inline">\((1,1,1) \times (0,1,1)_{12}\)</span> for monthly data means:</p>
+<ul>
+<li>Non-seasonal: AR(1), one difference, MA(1)</li>
+<li>Seasonal (period 12): no seasonal AR, one seasonal difference, seasonal MA(1)</li>
+</ul>
+</section>
+<section id="example-atmospheric-co₂" class="level3" data-number="13.8.2">
+<h3 data-number="13.8.2" class="anchored" data-anchor-id="example-atmospheric-co₂"><span class="header-section-number">13.8.2</span> Example: Atmospheric CO₂</h3>
+<p>The Mauna Loa CO₂ series (<code>astsa::cardox</code>) shows both a strong upward trend and an annual seasonal cycle.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-cardox" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cardox-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-cardox-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cardox-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.5: Mauna Loa CO₂: strong upward trend with annual seasonal cycle
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>To model this series, we need both regular differencing (for the trend) and seasonal differencing (for the annual cycle). <a href="#fig-cardox-diff" class="quarto-xref">Figure&nbsp;<span>13.6</span></a> shows the result of applying <span class="math inline">\(\nabla \nabla_{12}\)</span>—first seasonal differencing, then regular differencing.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-cardox-diff" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cardox-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-cardox-diff-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cardox-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.6: CO₂ after applying ∇∇₁₂: approximately stationary
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The differenced series appears approximately stationary—no obvious trend or seasonal pattern remains. Examination of the ACF and PACF of this differenced series (not shown) suggests an ARIMA<span class="math inline">\((1,1,1) \times (0,1,1)_{12}\)</span> model.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-cardox-forecast" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cardox-forecast-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-cardox-forecast-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cardox-forecast-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.7: CO₂ five-year forecast from ARIMA(1,1,1)×(0,1,1)₁₂
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="ts-forecast.html#fig-cardox-forecast" class="quarto-xref">Figure&nbsp;<span>12.8</span></a> shows the five-year forecast from this model. The forecast captures both the upward trend and the seasonal oscillation, with prediction intervals that widen as we project further into the future.</p>
+</section>
+</section>
+<section id="forecasting" class="level2" data-number="13.9">
+<h2 data-number="13.9" class="anchored" data-anchor-id="forecasting"><span class="header-section-number">13.9</span> Forecasting</h2>
+<p>We now develop the prediction theory underlying time series forecasting.</p>
+<section id="the-best-linear-predictor" class="level3" data-number="13.9.1">
+<h3 data-number="13.9.1" class="anchored" data-anchor-id="the-best-linear-predictor"><span class="header-section-number">13.9.1</span> The Best Linear Predictor</h3>
+<p>Given observations <span class="math inline">\(X(t_0), X(t_0+1), \ldots, X(t_f)\)</span>, we seek to predict <span class="math inline">\(X(t_f + h)\)</span> for horizon <span class="math inline">\(h \geq 1\)</span>. The <strong>best linear predictor</strong> minimizes mean squared prediction error:</p>
+<p><span class="math display">\[\hat{X}(t_f + h) = \arg\min_{a_0 + \sum a_j X(t_f - j)} E\left\{ \left( X(t_f + h) - a_0 - \sum a_j X(t_f - j) \right)^2 \right\}\]</span></p>
+<p>For Gaussian processes, this coincides with the conditional expectation <span class="math inline">\(E\{X(t_f + h) | X(t_0), \ldots, X(t_f)\}\)</span>.</p>
+</section>
+<section id="arma-forecasting" class="level3" data-number="13.9.2">
+<h3 data-number="13.9.2" class="anchored" data-anchor-id="arma-forecasting"><span class="header-section-number">13.9.2</span> ARMA Forecasting</h3>
+<p>For ARMA processes, the predictor has a convenient recursive form. The key insight is that future white noise terms have expected value zero: <span class="math inline">\(E\{W(t_f + k) | X(t_0), \ldots, X(t_f)\} = 0\)</span> for <span class="math inline">\(k &gt; 0\)</span>.</p>
+<p>For a one-step-ahead forecast:</p>
+<p><span class="math display">\[\hat{X}(t_f + 1) = \sum_{j=1}^{p} \phi_j X(t_f + 1 - j) + \sum_{k=1}^{q} \theta_k \hat{W}(t_f + 1 - k)\]</span></p>
+<p>where <span class="math inline">\(\hat{W}(t) = X(t) - \hat{X}(t)\)</span> is the estimated innovation (prediction error) from fitting the model.</p>
+<p>For longer horizons, we apply the recursion, replacing future unknown values with their forecasts.</p>
+</section>
+<section id="prediction-error" class="level3" data-number="13.9.3">
+<h3 data-number="13.9.3" class="anchored" data-anchor-id="prediction-error"><span class="header-section-number">13.9.3</span> Prediction Error</h3>
+<p>The <strong>mean squared prediction error</strong> (MSPE) for horizon <span class="math inline">\(h\)</span> is:</p>
+<p><span class="math display">\[\text{MSPE}(h) = \sigma_W^2 \sum_{\nu=0}^{h-1} \psi_\nu^2\]</span></p>
+<p>where the <span class="math inline">\(\psi_\nu\)</span> are coefficients in the causal (MA<span class="math inline">\((\infty)\)</span>) representation <span class="math inline">\(X(t) = \sum_{\nu=0}^{\infty} \psi_\nu W(t-\nu)\)</span>.</p>
+<p>Key implications:</p>
+<ul>
+<li><strong>One-step error</strong>: <span class="math inline">\(\text{MSPE}(1) = \sigma_W^2\)</span> (just the innovation variance)</li>
+<li><strong>Long-horizon limit</strong>: <span class="math inline">\(\text{MSPE}(h) \to \sigma_X^2\)</span> as <span class="math inline">\(h \to \infty\)</span> (the unconditional variance)</li>
+</ul>
+<p>The MSPE grows with horizon—we cannot predict arbitrarily far ahead with precision.</p>
+</section>
+<section id="prediction-intervals" class="level3" data-number="13.9.4">
+<h3 data-number="13.9.4" class="anchored" data-anchor-id="prediction-intervals"><span class="header-section-number">13.9.4</span> Prediction Intervals</h3>
+<p>For Gaussian processes, the <span class="math inline">\((1-\alpha)\)</span> prediction interval is:</p>
+<p><span class="math display">\[\hat{X}(t_f + h) \pm z_{\alpha/2} \sqrt{\text{MSPE}(h)}\]</span></p>
+<p>These intervals <strong>widen with horizon</strong>, reflecting the fundamental truth that uncertainty accumulates as we forecast further into the future.</p>
+</section>
+<section id="example-recruitment-forecast" class="level3" data-number="13.9.5">
+<h3 data-number="13.9.5" class="anchored" data-anchor-id="example-recruitment-forecast"><span class="header-section-number">13.9.5</span> Example: Recruitment Forecast</h3>
+<p>Returning to the recruitment data (<code>astsa::rec</code>), we fit an AR(2) model (suggested by the PACF cutoff at lag 2) and forecast 24 months ahead.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rec-forecast" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rec-forecast-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-time-domain_files/figure-html/fig-rec-forecast-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rec-forecast-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.8: Recruitment: 24-month AR(2) forecast with 95% prediction intervals
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-rec-forecast" class="quarto-xref">Figure&nbsp;<span>13.8</span></a> shows the forecast. The predicted values (red) oscillate—reflecting the AR(2) structure with complex roots—while converging toward the mean. The prediction intervals widen with horizon, eventually encompassing most of the historical range.</p>
+</section>
+</section>
+<section id="exponential-smoothing" class="level2" data-number="13.10">
+<h2 data-number="13.10" class="anchored" data-anchor-id="exponential-smoothing"><span class="header-section-number">13.10</span> Exponential Smoothing</h2>
+<p>Exponential smoothing is a widely-used forecasting method with a long history in business and operations research. It turns out to have a rigorous statistical foundation.</p>
+<section id="simple-exponential-smoothing" class="level3" data-number="13.10.1">
+<h3 data-number="13.10.1" class="anchored" data-anchor-id="simple-exponential-smoothing"><span class="header-section-number">13.10.1</span> Simple Exponential Smoothing</h3>
+<p>The <strong>simple exponential smoothing</strong> recursion:</p>
+<p><span class="math display">\[\hat{X}(t+1) = \alpha X(t) + (1-\alpha) \hat{X}(t)\]</span></p>
+<p>Equivalently:</p>
+<p><span class="math display">\[\hat{X}(t+1) = \hat{X}(t) + \alpha (X(t) - \hat{X}(t))\]</span></p>
+<p>The forecast is updated by adding a fraction <span class="math inline">\(\alpha\)</span> (the smoothing parameter) of the most recent prediction error. This gives more weight to recent observations, with weights decaying exponentially into the past.</p>
+</section>
+<section id="the-arima-connection" class="level3" data-number="13.10.2">
+<h3 data-number="13.10.2" class="anchored" data-anchor-id="the-arima-connection"><span class="header-section-number">13.10.2</span> The ARIMA Connection</h3>
+<p>Simple exponential smoothing is the <strong>optimal forecast</strong> for an ARIMA(0,1,1) model:</p>
+<p><span class="math display">\[\nabla X(t) = W(t) - \lambda W(t-1)\]</span></p>
+<p>where <span class="math inline">\(\alpha = 1 - \lambda\)</span>. This IMA(1,1) model—integrated moving average—implies that the level of the series drifts as a random walk, with MA(1) structure in the differences.</p>
+<p>The connection is important: exponential smoothing is not merely a heuristic but the minimum mean squared error forecast for a particular stochastic process.</p>
+</section>
+<section id="extensions" class="level3" data-number="13.10.3">
+<h3 data-number="13.10.3" class="anchored" data-anchor-id="extensions"><span class="header-section-number">13.10.3</span> Extensions</h3>
+<p><strong>Holt-Winters methods</strong> extend exponential smoothing to handle trend and seasonality by adding state equations for a local slope and seasonal factors. These <strong>ETS</strong> (Error-Trend-Seasonal) models form an alternative to SARIMA that is particularly popular in business forecasting. For details, see <span class="citation" data-cites="Hyndman_2021_forecasting">Hyndman and Athanasopoulos (<a href="references.html#ref-Hyndman_2021_forecasting" role="doc-biblioref">2021</a>)</span>.</p>
+</section>
+</section>
+<section id="the-modeling-workflow" class="level2" data-number="13.11">
+<h2 data-number="13.11" class="anchored" data-anchor-id="the-modeling-workflow"><span class="header-section-number">13.11</span> The Modeling Workflow</h2>
+<p>Building a time series model is an iterative process. The classic Box-Jenkins approach cycles through identification, estimation, and diagnostic checking.</p>
+<section id="identification" class="level3" data-number="13.11.1">
+<h3 data-number="13.11.1" class="anchored" data-anchor-id="identification"><span class="header-section-number">13.11.1</span> Identification</h3>
+<ol type="1">
+<li><strong>Plot the series</strong>: Look for trend, seasonality, level shifts, changing variance</li>
+<li><strong>Transform if needed</strong>: Log transform for proportional variance; differencing for trend</li>
+<li><strong>Check stationarity</strong>: The differenced series should fluctuate around a constant level</li>
+<li><strong>Examine ACF and PACF</strong>: Identify the pattern (AR, MA, or ARMA)</li>
+</ol>
+</section>
+<section id="estimation" class="level3" data-number="13.11.2">
+<h3 data-number="13.11.2" class="anchored" data-anchor-id="estimation"><span class="header-section-number">13.11.2</span> Estimation</h3>
+<ol start="5" type="1">
+<li><p><strong>Fit candidate models</strong>: Start simple; use the ACF/PACF patterns as a guide</p></li>
+<li><p><strong>Compare via information criteria</strong>:</p>
+<ul>
+<li>AIC: <span class="math inline">\(-2\log L + 2k\)</span></li>
+<li>BIC: <span class="math inline">\(-2\log L + k \log T\)</span></li>
+</ul>
+<p>where <span class="math inline">\(L\)</span> is the maximized likelihood and <span class="math inline">\(k\)</span> is the number of estimated parameters.</p>
+<p>Lower is better. BIC penalizes complexity more heavily, favoring simpler models.</p></li>
+</ol>
+</section>
+<section id="diagnostic-checking" class="level3" data-number="13.11.3">
+<h3 data-number="13.11.3" class="anchored" data-anchor-id="diagnostic-checking"><span class="header-section-number">13.11.3</span> Diagnostic Checking</h3>
+<ol start="7" type="1">
+<li><strong>Examine residuals</strong>: They should behave like white noise
+<ul>
+<li>ACF near zero at all lags</li>
+<li>No patterns in residual plot</li>
+<li>Ljung-Box test non-significant</li>
+</ul></li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for residual autocorrelation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">Box.test</span>(residuals, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>If residuals show structure, the model hasn’t captured all the dependence. Return to the identification step and consider additional AR or MA terms, or check whether differencing is appropriate.</p>
+</section>
+<section id="iterate" class="level3" data-number="13.11.4">
+<h3 data-number="13.11.4" class="anchored" data-anchor-id="iterate"><span class="header-section-number">13.11.4</span> Iterate</h3>
+<p>The workflow is cyclical. A first model is rarely perfect. Examine diagnostics, refine, and repeat until residuals are approximately white noise.</p>
+</section>
+</section>
+<section id="looking-ahead" class="level2" data-number="13.12">
+<h2 data-number="13.12" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">13.12</span> Looking Ahead</h2>
+<p>This chapter has developed the core time domain methods for time series modeling and forecasting. We have seen that:</p>
+<ul>
+<li><strong>AR models</strong> capture dependence on past values; their signature is PACF cutoff</li>
+<li><strong>MA models</strong> capture dependence on past shocks; their signature is ACF cutoff<br>
+</li>
+<li><strong>ARIMA models</strong> handle non-stationarity through differencing</li>
+<li><strong>SARIMA models</strong> capture seasonal patterns</li>
+<li><strong>Forecasts</strong> come with prediction intervals that widen with horizon</li>
+<li><strong>Exponential smoothing</strong> is the optimal forecast for a particular ARIMA model</li>
+</ul>
+<p>The emphasis throughout has been on prediction—using the past to forecast the future. But as we have seen, effective prediction rests on understanding the structure of the process. The ACF and PACF patterns are not merely diagnostic conveniences; they reflect the memory structure that the models exploit.</p>
+<p>Chapter 14 takes the complementary perspective. <strong>Frequency domain methods</strong> ask not “how does the past predict the future?” but “what periodic components are present?” The spectrum decomposes a time series into frequency contributions, revealing structure—cycles, periodicities, filtering effects—that may be obscured in the time domain.</p>
+<p>Together, the two perspectives provide a complete toolkit. Time domain methods excel at forecasting; frequency domain methods excel at understanding periodic structure. The most effective analyses draw on both.</p>
+</section>
+<section id="chapter-summary" class="level2" data-number="13.13">
+<h2 data-number="13.13" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">13.13</span> Chapter Summary</h2>
+<ol type="1">
+<li><p><strong>Building blocks</strong>: The back-shift operator <span class="math inline">\(\mathcal{B}\)</span>, differencing operator <span class="math inline">\(\nabla\)</span>, and AR/MA polynomials provide a compact language for time series models.</p></li>
+<li><p><strong>AR models</strong>: Express current value as a function of past values. The PACF cuts off at the model order; the ACF decays gradually.</p></li>
+<li><p><strong>MA models</strong>: Express current value as a function of past shocks. The ACF cuts off at the model order; the PACF decays gradually.</p></li>
+<li><p><strong>ARMA models</strong>: Combine AR and MA for parsimony. Both ACF and PACF decay gradually.</p></li>
+<li><p><strong>ARIMA models</strong>: Handle non-stationarity through differencing. The “I” stands for integrated.</p></li>
+<li><p><strong>SARIMA models</strong>: Capture seasonal patterns through seasonal AR, MA, and differencing components.</p></li>
+<li><p><strong>Prediction intervals widen with horizon</strong>: Uncertainty accumulates; we cannot predict arbitrarily far ahead with precision.</p></li>
+<li><p><strong>Exponential smoothing</strong>: A widely-used heuristic that is actually the optimal forecast for IMA(1,1).</p></li>
+<li><p><strong>The modeling workflow</strong>: Identification (plot, transform, examine ACF/PACF) → Estimation (fit, compare AIC/BIC) → Diagnostics (check residuals) → Iterate.</p></li>
+<li><p><strong>Understanding enables prediction</strong>: The ACF/PACF patterns reflect the memory structure that makes forecasting possible.</p></li>
+</ol>
+</section>
+<section id="exercises" class="level2" data-number="13.14">
+<h2 data-number="13.14" class="anchored" data-anchor-id="exercises"><span class="header-section-number">13.14</span> Exercises</h2>
+<ol type="1">
+<li><p><strong>AR(1) simulation</strong>: Generate 200 observations from an AR(1) process with <span class="math inline">\(\phi_1 = 0.6\)</span> using <code>stats::arima.sim()</code>. Plot the series, ACF, and PACF. Do the diagnostic patterns match the theory?</p></li>
+<li><p><strong>MA(1) simulation</strong>: Generate 200 observations from an MA(1) process with <span class="math inline">\(\theta_1 = 0.6\)</span>. Plot the series, ACF, and PACF. How do they differ from the AR(1) patterns?</p></li>
+<li><p><strong>Recruitment modeling</strong>: For the recruitment data (<code>astsa::rec</code>), fit AR(1), AR(2), and AR(3) models using <code>stats::ar.ols()</code>. Compare their AIC values. Does the comparison support the AR(2) choice suggested by the PACF?</p></li>
+<li><p><strong>Global temperature forecast</strong>: For the global land temperature series (<code>astsa::gtemp_land</code>), fit an appropriate ARIMA model to the first differences. Generate a 20-year forecast with prediction intervals. What does the widening of the intervals imply for long-range climate projection?</p></li>
+<li><p><strong>Seasonal identification</strong>: For the monthly airline passenger data (<code>astsa::AirPassengers</code>), plot the series and its ACF. What patterns suggest seasonality? Apply log transformation and seasonal differencing. Examine the ACF/PACF of the transformed series.</p></li>
+<li><p><strong>Prediction interval coverage</strong>: Using the recruitment AR(2) model, generate 100 simulated series of the same length. For each, fit AR(2) and compute the one-step-ahead 95% prediction interval. What fraction of actual next values fall within the interval? Is this close to 95%?</p></li>
+</ol>
+</section>
+<section id="resources" class="level2" data-number="13.15">
+<h2 data-number="13.15" class="anchored" data-anchor-id="resources"><span class="header-section-number">13.15</span> Resources</h2>
+<p><strong>Textbooks</strong>:</p>
+<ul>
+<li><p>Shumway, R.H. and Stoffer, D.S. (2025). <em>Time Series Analysis and Its Applications: With R Examples</em> (5th ed.). Springer. The primary reference for this chapter, with extensive R code and examples.</p></li>
+<li><p>Brockwell, P.J. and Davis, R.A. (2016). <em>Introduction to Time Series and Forecasting</em> (3rd ed.). Springer. A more mathematically rigorous treatment of the theory.</p></li>
+<li><p>Hyndman, R.J. and Athanasopoulos, G. (2021). <em>Forecasting: Principles and Practice</em> (3rd ed.). OTexts. Excellent coverage of exponential smoothing and practical forecasting, freely available online at https://otexts.com/fpp3/.</p></li>
+</ul>
+<p><strong>Software</strong>:</p>
+<ul>
+<li><p>The <code>astsa</code> package for R provides the datasets and functions used in this chapter. See the vignette “Fun with astsa” for additional examples.</p></li>
+<li><p>The <code>forecast</code> and <code>fable</code> packages provide comprehensive tools for ARIMA and ETS modeling in R.</p></li>
+<li><p>The CRAN Task View on Time Series (https://cran.r-project.org/web/views/TimeSeries.html) surveys the R ecosystem for time series analysis.</p></li>
+</ul>
+</section>
+<section id="sec-ts-time-domain-glossary" class="level2" data-number="13.16">
+<h2 data-number="13.16" class="anchored" data-anchor-id="sec-ts-time-domain-glossary"><span class="header-section-number">13.16</span> Appendix: Glossary of Notation</h2>
+<p><span class="math display">\[
+\begin{align}
+  \mathcal{B}
+     \quad &amp; \quad \text{back-shift operator: } \mathcal{B}X(t) = X(t-1) \\
+  \\
+  \nabla
+     \quad &amp; \quad \text{difference operator: } \nabla = 1 - \mathcal{B} \\
+  \\
+  \nabla_s
+     \quad &amp; \quad \text{seasonal difference operator: } \nabla_s = 1 - \mathcal{B}^s \\
+  \\
+  \phi(\cdot)
+     \quad &amp; \quad \text{AR polynomial: } \phi(z) = 1 - \sum_{\nu = 1}^p \phi_\nu z^\nu \\
+  \\
+  \theta(\cdot)
+     \quad &amp; \quad \text{MA polynomial: } \theta(z) = 1 + \sum_{\nu = 1}^q \theta_\nu z^\nu \\
+  \\
+  W(\cdot)
+     \quad &amp; \quad \text{white noise: } W(t) \sim wn(0, \sigma_W^2)  \\
+  \\
+  \psi_\nu
+     \quad &amp; \quad \text{causal (MA}(\infty)\text{) coefficients: } X(t) = \sum_{\nu=0}^{\infty} \psi_\nu W(t-\nu) \\
+  \\
+  \pi_\nu
+     \quad &amp; \quad \text{inverted (AR}(\infty)\text{) coefficients: } W(t) = \sum_{\nu=0}^{\infty} \pi_\nu X(t-\nu) \\
+  \\
+  \hat{X}(t_f + h)
+     \quad &amp; \quad \text{forecast of } X(t_f + h) \text{ given data through } t_f \\
+  \\
+  \text{MSPE}(h)
+     \quad &amp; \quad \text{mean squared prediction error at horizon } h \\
+  \\
+  L
+     \quad &amp; \quad \text{maximized likelihood of the fitted model} \\
+  \\
+  k
+     \quad &amp; \quad \text{number of estimated parameters} \\
+  \\
+  \text{AIC}
+     \quad &amp; \quad \text{Akaike Information Criterion: } -2\log L + 2k \\
+  \\
+  \text{BIC}
+     \quad &amp; \quad \text{Bayesian Information Criterion: } -2\log L + k \log T \\
+  \\
+  t_f
+     \quad &amp; \quad \text{final time index of observations} \\
+  \\
+  T
+     \quad &amp; \quad \text{number of observations}
+\end{align}
+\]</span></p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Hyndman_2021_forecasting" class="csl-entry" role="listitem">
+Hyndman, R. J., and G. Athanasopoulos. 2021. <em>Forecasting: Principles and Practice</em>. OTexts. <a href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ts-data.html" class="pagination-link" aria-label="Time Series Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ts-intro.html" class="pagination-link" aria-label="Time Series Data Analysis">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/ts-time-domain.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
