@@ -1,0 +1,609 @@
+---
+title: "Frequency Domain Methods"
+subtitle: "Spectrum Analysis and Periodic Structure"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 14"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(astsa)
+library(tidyverse)
+```
+
+# The Frequency Perspective
+
+## From Forecasting to Understanding
+
+Chapter 13 developed **time domain methods**—ARIMA models that exploit autocorrelation for forecasting.
+
+. . .
+
+This chapter takes the complementary view: **frequency domain methods** ask what periodic components are present.
+
+. . .
+
+| Perspective | Central Question | Emphasis |
+|-------------|------------------|----------|
+| Time domain | How does the past predict the future? | Decision support |
+| Frequency domain | What cycles and rhythms structure the process? | Scientific understanding |
+
+## Why Frequency?
+
+Many natural and human systems exhibit **periodic behavior**:
+
+- Solar activity: ~11-year sunspot cycle
+- Climate: annual temperature cycles, El Niño (~4 years)
+- Economics: business cycles, seasonal patterns
+- Biology: circadian rhythms, heartbeat
+
+. . .
+
+The frequency perspective reveals these periodicities directly—as peaks in the spectrum.
+
+## The Spectrum: Variance by Frequency
+
+The **spectrum** $f(\lambda)$ decomposes variance across frequencies:
+
+$$\sigma_X^2 = \int_{-\pi}^{\pi} f(\lambda) \, d\lambda$$
+
+. . .
+
+- High $f(\lambda)$ at frequency $\lambda$ → strong oscillation at that frequency
+- Peak in spectrum → dominant cycle in the data
+- Flat spectrum → white noise (no preferred frequency)
+
+## Complex Exponentials as Eigenfunctions
+
+Why does Fourier analysis work so naturally for time series?
+
+. . .
+
+Complex exponentials $e^{i\lambda t}$ are **eigenfunctions** of the back-shift operator:
+
+$$\mathcal{B}^s e^{i\lambda t} = e^{i\lambda(t-s)} = e^{-i\lambda s} \cdot e^{i\lambda t}$$
+
+. . .
+
+Any linear, time-invariant operation (filtering, smoothing, differencing) acts simply on sinusoidal components—multiplying each by a constant.
+
+. . .
+
+This is why decomposing into frequency components is the natural coordinate system for stationary processes.
+
+## ACF and Spectrum: Fourier Pairs
+
+The spectrum and autocovariance contain the **same information**:
+
+$$f(\lambda) = \sum_{h=-\infty}^{\infty} \gamma(h) e^{-i\lambda h}$$
+
+$$\gamma(h) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(\lambda) e^{i\lambda h} \, d\lambda$$
+
+. . .
+
+They are Fourier transform pairs. The ACF tells us about temporal dependence; the spectrum tells us about periodic structure. Same reality, different views.
+
+# The Periodogram
+
+## Estimating the Spectrum
+
+Given data $X(0), X(1), \ldots, X(T-1)$, how do we estimate $f(\lambda)$?
+
+. . .
+
+The **periodogram** is the natural sample estimate:
+
+$$I(\lambda) = \frac{1}{T} \left| \sum_{t=0}^{T-1} X(t) e^{-i\lambda t} \right|^2$$
+
+. . .
+
+This is proportional to the squared magnitude of the **finite Fourier transform** of the data.
+
+## Periodogram: Intuition
+
+The periodogram measures how well a sinusoid at frequency $\lambda$ fits the data.
+
+. . .
+
+- Large $I(\lambda)$ → the data oscillate strongly at frequency $\lambda$
+- Small $I(\lambda)$ → little power at that frequency
+
+. . .
+
+At the **Fourier frequencies** $\lambda_j = 2\pi j / T$, the periodogram can be computed efficiently via the **Fast Fourier Transform (FFT)**.
+
+## The Periodogram Problem
+
+The periodogram is **asymptotically unbiased**:
+
+$$E\{I(\lambda)\} \to f(\lambda) \text{ as } T \to \infty$$
+
+. . .
+
+But it is **not consistent**—its variance does not shrink:
+
+$$I(\lambda) \sim f(\lambda) \cdot \frac{\chi_2^2}{2} \quad \text{for } \lambda \not\equiv 0 \pmod{\pi}$$
+
+. . .
+
+The periodogram fluctuates wildly around the true spectrum, even with large samples.
+
+## Visualizing Periodogram Variability
+
+```{r}
+#| label: fig-periodogram-variability
+#| fig-cap: "Raw periodogram of white noise: high variability around flat true spectrum"
+#| fig-height: 4
+
+set.seed(42)
+wn <- ts(rnorm(256))
+spec_wn <- stats::spec.pgram(wn, taper = 0, log = "no", plot = FALSE)
+plot(spec_wn$freq, spec_wn$spec, type = "l", col = 4,
+     xlab = "Frequency", ylab = "Periodogram",
+     main = "White Noise: True Spectrum is Flat")
+abline(h = 1, col = 2, lty = 2, lwd = 2)
+legend("topright", legend = c("Periodogram", "True spectrum"), 
+       col = c(4, 2), lty = c(1, 2), bw = "n")
+```
+
+The true spectrum (red dashed) is constant, but the periodogram (blue) varies wildly.
+
+# Smoothed Spectrum Estimation
+
+## The Solution: Averaging
+
+To reduce variance, we **smooth** the periodogram by averaging over nearby frequencies.
+
+. . .
+
+$$\hat{f}(\lambda) = \sum_j W_j \cdot I(\lambda_j)$$
+
+where the weights $W_j$ form a **smoothing kernel** centered at $\lambda$.
+
+. . .
+
+More averaging → lower variance, but also lower resolution (bias).
+
+## The Bandwidth Trade-off
+
+| More smoothing | Less smoothing |
+|----------------|----------------|
+| Lower variance | Higher variance |
+| Blurs nearby peaks | Resolves nearby peaks |
+| Risk: miss narrow features | Risk: spurious peaks from noise |
+
+. . .
+
+The **bandwidth** $\beta$ controls this trade-off.
+
+. . .
+
+For a consistent estimator, we need $\beta \to 0$ but $\beta \cdot T \to \infty$ as $T \to \infty$.
+
+## Modified Daniell Kernel
+
+A common choice is the **modified Daniell kernel**—a moving average over adjacent frequencies.
+
+. . .
+
+In R, `stats::spec.pgram()` uses this approach:
+
+```{r}
+#| echo: true
+#| eval: false
+
+# Smoothed spectrum estimate
+spec.pgram(x, spans = c(5, 5), taper = 0.1)
+```
+
+. . .
+
+- `spans`: widths of Daniell smoothers (can be repeated for more smoothing)
+- `taper`: proportion of data tapered at ends (reduces leakage)
+
+## Smoothed vs Raw Periodogram
+
+```{r}
+#| label: fig-smoothed-periodogram
+#| fig-cap: "Smoothing reduces variance while preserving the overall shape"
+#| fig-height: 4
+
+set.seed(42)
+wn <- ts(rnorm(256))
+spec_raw <- stats::spec.pgram(wn, taper = 0, log = "no", plot = FALSE)
+spec_smooth <- stats::spec.pgram(wn, spans = c(7, 7), taper = 0.1, log = "no", plot = FALSE)
+
+plot(spec_raw$freq, spec_raw$spec, type = "l", col = gray(0.7),
+     xlab = "Frequency", ylab = "Spectrum estimate",
+     main = "Effect of Smoothing")
+lines(spec_smooth$freq, spec_smooth$spec, col = 4, lwd = 2)
+abline(h = 1, col = 2, lty = 2, lwd = 2)
+legend("topright", legend = c("Raw periodogram", "Smoothed", "True"), 
+       col = c(gray(0.7), 4, 2), lty = c(1, 1, 2), lwd = c(1, 2, 2), bw = "n")
+```
+
+# Reading a Spectrum
+
+## Identifying Periodic Components
+
+When examining a spectrum estimate:
+
+. . .
+
+1. **Peaks** indicate dominant frequencies (cycles)
+   - Convert frequency $\lambda$ to period: $P = 2\pi/\lambda$ (in units of sampling interval)
+
+. . .
+
+2. **Low-frequency dominance** suggests trend or long-memory behavior
+
+. . .
+
+3. **Flat spectrum** indicates white noise (no temporal structure)
+
+. . .
+
+4. **Log scale** often helps visualize structure across orders of magnitude
+
+## Confidence Intervals
+
+For the smoothed spectrum estimate with $\nu$ degrees of freedom:
+
+$$\frac{\nu \hat{f}(\lambda)}{f(\lambda)} \sim \chi_\nu^2$$
+
+. . .
+
+This gives a confidence interval for the true spectrum:
+
+$$\left[ \frac{\nu \hat{f}(\lambda)}{\chi_{\nu, 1-\alpha/2}^2}, \; \frac{\nu \hat{f}(\lambda)}{\chi_{\nu, \alpha/2}^2} \right]$$
+
+. . .
+
+Note: the interval is **multiplicative**, not additive—it's the same width on a log scale at all frequencies.
+
+## The Log Spectrum
+
+Plotting $\log \hat{f}(\lambda)$ has advantages:
+
+. . .
+
+- Confidence band has constant width across frequencies
+- Easier to see structure spanning orders of magnitude
+- Multiplicative effects (filtering) become additive
+
+. . .
+
+R's `spec.pgram()` uses log scale by default.
+
+# Spectra of ARMA Processes
+
+## Connecting Time and Frequency Domains
+
+For ARMA processes, we can derive the theoretical spectrum from the model parameters.
+
+. . .
+
+This connects Chapter 13's models to Chapter 14's frequency view.
+
+. . .
+
+Key insight: **AR processes** have peaks where roots of $\phi(z)$ are near the unit circle.
+
+## AR(1) Spectrum
+
+For AR(1): $X(t) = \phi X(t-1) + W(t)$
+
+$$f(\lambda) = \frac{\sigma_W^2}{|1 - \phi e^{-i\lambda}|^2} = \frac{\sigma_W^2}{1 - 2\phi\cos\lambda + \phi^2}$$
+
+. . .
+
+```{r}
+#| label: fig-ar1-spectrum
+#| fig-cap: "AR(1) spectra: positive φ emphasizes low frequencies; negative φ emphasizes high"
+#| fig-height: 3.5
+
+par(mfrow = c(1, 2))
+astsa::arma.spec(ar = 0.8, main = "AR(1), φ = 0.8", col = 4)
+astsa::arma.spec(ar = -0.8, main = "AR(1), φ = -0.8", col = 4)
+```
+
+- $\phi > 0$: low-frequency dominance (persistence)
+- $\phi < 0$: high-frequency dominance (alternation)
+
+## MA(1) Spectrum
+
+For MA(1): $X(t) = W(t) + \theta W(t-1)$
+
+$$f(\lambda) = \sigma_W^2 |1 + \theta e^{-i\lambda}|^2 = \sigma_W^2 (1 + 2\theta\cos\lambda + \theta^2)$$
+
+. . .
+
+```{r}
+#| label: fig-ma1-spectrum
+#| fig-cap: "MA(1) spectra: opposite pattern from AR(1)"
+#| fig-height: 3.5
+
+par(mfrow = c(1, 2))
+astsa::arma.spec(ma = 0.8, main = "MA(1), θ = 0.8", col = 4)
+astsa::arma.spec(ma = -0.8, main = "MA(1), θ = -0.8", col = 4)
+```
+
+The MA(1) spectrum is the **inverse** pattern of AR(1) with the same parameter.
+
+## AR(2): Spectral Peaks
+
+AR(2) with complex roots produces a **spectral peak** at a frequency determined by the roots.
+
+```{r}
+#| label: fig-ar2-spectrum
+#| fig-cap: "AR(2) with complex roots: peak indicates quasi-periodic behavior"
+#| fig-height: 4
+
+astsa::arma.spec(ar = c(1.3, -0.7), main = "AR(2): φ₁ = 1.3, φ₂ = -0.7", col = 4)
+```
+
+This is the recruitment series model from Chapter 13—the spectral peak corresponds to the damped oscillation in the ACF.
+
+# Example: Sunspots
+
+## The Solar Cycle
+
+```{r}
+#| label: fig-sunspots-series
+#| fig-cap: "Monthly sunspot numbers show quasi-periodic behavior"
+#| fig-height: 3.5
+
+astsa::tsplot(sunspots, col = 4, ylab = "Sunspot Number", main = "")
+```
+
+As we saw in Chapter 12, sunspots exhibit an approximately 11-year cycle—but with substantial variation in both amplitude and period.
+
+## Sunspot Spectrum
+
+```{r}
+#| label: fig-sunspots-spectrum
+#| fig-cap: "Sunspot spectrum: dominant peak near 11-year period"
+#| fig-height: 4
+
+sunspots_spec <- stats::spec.pgram(sunspots, spans = c(7, 7), taper = 0.1, 
+                                    log = "yes", col = 4, main = "")
+# Mark the ~11-year cycle (132 months)
+abline(v = 1/132, col = 2, lty = 2)
+text(1/132 + 0.01, max(log10(sunspots_spec$spec)) - 1, "~11 years", col = 2, adj = 0)
+```
+
+The dominant peak corresponds to a period of approximately 11 years (132 months).
+
+## Reading the Sunspot Spectrum
+
+The spectrum reveals:
+
+. . .
+
+1. **Dominant peak** near frequency $1/132$ cycles/month (~11-year period)
+
+. . .
+
+2. **Broad peak** rather than sharp line → period varies from cycle to cycle
+
+. . .
+
+3. **Harmonics** at higher frequencies → the cycle is not purely sinusoidal
+
+. . .
+
+4. **Low-frequency power** → long-term modulation of cycle amplitude
+
+# Example: Honolulu Temperature
+
+## Annual Temperature Cycle
+
+```{r}
+#| label: data-hnl-temp
+#| include: false
+
+# Daily temperatures for Honolulu
+# Using a subset of data for cleaner presentation
+data(cardox)  # placeholder - would use actual HNL data
+```
+
+Daily temperature data from Honolulu exhibit a clear annual cycle—the earth's orbit imposes a 365-day periodicity.
+
+. . .
+
+**Question**: How much of the total temperature variance is explained by the annual cycle?
+
+## Temperature Series
+
+```{r}
+#| label: fig-hnl-temp-series
+#| fig-cap: "Simulated daily temperature with annual cycle (placeholder for actual HNL data)"
+#| fig-height: 4
+
+# Simulate temperature data with annual cycle for demonstration
+set.seed(123)
+n_days <- 365 * 10  # 10 years
+t_days <- 1:n_days
+annual_cycle <- 5 * cos(2 * pi * t_days / 365)  # 5°F amplitude
+noise <- arima.sim(list(ar = 0.7), n = n_days, sd = 2)
+temp_sim <- ts(75 + annual_cycle + noise, frequency = 365)
+
+astsa::tsplot(temp_sim, col = 4, ylab = "Temperature (°F)", main = "")
+```
+
+The annual cycle is visible but embedded in day-to-day variation.
+
+## Temperature Spectrum
+
+```{r}
+#| label: fig-hnl-temp-spectrum
+#| fig-cap: "Temperature spectrum: sharp peak at annual frequency"
+#| fig-height: 4
+
+temp_spec <- stats::spec.pgram(temp_sim, spans = c(7, 7), taper = 0.1, 
+                                log = "yes", col = 4, main = "")
+# Mark annual frequency
+abline(v = 1/365, col = 2, lty = 2)
+text(1/365 + 0.002, max(log10(temp_spec$spec)) - 1, "1 year", col = 2, adj = 0)
+```
+
+## Interpreting the Temperature Spectrum
+
+. . .
+
+1. **Sharp peak at $\lambda = 1/365$** → strong annual cycle
+
+. . .
+
+2. **Peak height relative to baseline** → proportion of variance at that frequency
+
+. . .
+
+3. **Low-frequency power** → AR-like day-to-day persistence (today predicts tomorrow)
+
+. . .
+
+4. **Harmonics** (at 2/365, 3/365, ...) → cycle not purely sinusoidal
+
+## Variance Decomposition
+
+The spectrum answers: "What fraction of variance is at frequency $\lambda$?"
+
+. . .
+
+For temperature data:
+
+- Annual cycle (and harmonics): typically 60–80% of variance
+- Day-to-day persistence: most of the remainder
+- High-frequency noise: small contribution
+
+. . .
+
+This quantifies what the time plot shows qualitatively—the annual rhythm dominates.
+
+# The Dual Perspectives
+
+## Time Domain vs Frequency Domain
+
+| Time Domain | Frequency Domain |
+|-------------|------------------|
+| ACF, PACF | Spectrum |
+| AR, MA, ARIMA models | Spectral peaks, bandwidth |
+| Forecasting | Identifying cycles |
+| "How does past predict future?" | "What periodic structure is present?" |
+
+. . .
+
+These are **equivalent descriptions**—Fourier transform pairs—but illuminate different aspects.
+
+## When to Use Which
+
+**Time domain** excels when:
+
+- Goal is forecasting
+- Interest is in short-term dependence
+- Model building for prediction
+
+. . .
+
+**Frequency domain** excels when:
+
+- Goal is identifying periodicities
+- Interest is in cyclic structure
+- Understanding underlying mechanisms
+
+. . .
+
+**Best practice**: Use both. They reveal different aspects of the same reality.
+
+## The Duality in Practice
+
+Consider sunspots:
+
+. . .
+
+- **Time domain**: AR(2) model captures the quasi-periodic behavior; enables forecasting
+- **Frequency domain**: Spectrum peak at ~11 years reveals the solar cycle; shows it varies
+
+. . .
+
+Consider global temperature:
+
+. . .
+
+- **Time domain**: Strong positive autocorrelation; trending behavior
+- **Frequency domain**: Low-frequency dominance; variance concentrated at long periods
+
+# Summary
+
+## Key Insights
+
+1. **The spectrum decomposes variance by frequency**
+   - Peaks indicate dominant cycles
+   - Flat spectrum indicates white noise
+
+. . .
+
+2. **The periodogram is the sample estimate**
+   - Unbiased but inconsistent (high variance)
+   - Asymptotically $\chi_2^2$ distributed
+
+. . .
+
+3. **Smoothing reduces variance**
+   - Trade-off: variance vs frequency resolution
+   - Bandwidth controls the trade-off
+
+## Key Insights (continued)
+
+4. **ARMA spectra connect the two domains**
+   - AR peaks where polynomial roots near unit circle
+   - MA has inverse pattern
+
+. . .
+
+5. **Time and frequency are Fourier pairs**
+   - Same information, different emphasis
+   - Time domain → forecasting
+   - Frequency domain → understanding periodic structure
+
+. . .
+
+6. **Use both perspectives**
+   - Complete analysis draws on both
+   - Understanding enables better prediction
+
+## Practical Checklist
+
+When performing spectrum analysis:
+
+. . .
+
+1. **Plot the time series first**: Look for obvious periodicity, trend, level shifts
+
+2. **Choose appropriate smoothing**: More data → can use narrower bandwidth
+
+3. **Use log scale**: Constant confidence band width; see structure across magnitudes
+
+4. **Identify peaks**: Convert frequency to period; interpret physically
+
+5. **Consider ARMA spectra**: Do peaks match expected model structure?
+
+6. **Connect to time domain**: Do ACF patterns match spectral features?
