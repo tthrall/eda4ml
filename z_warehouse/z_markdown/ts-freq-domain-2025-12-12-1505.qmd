@@ -1,0 +1,639 @@
+# Frequency Domain Methods {#sec-ts-freq-domain}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE,
+  error   = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: cran_libraries
+
+library(assertthat)
+library(astsa)
+library(here)
+library(knitr)
+library(latex2exp)
+library(tidyverse)
+library(tinytex)
+library(tsibble)
+library(tsibbledata)
+library(xts)
+```
+
+```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+# conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+# tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
+#| label: local_source
+
+# stabilize simulated data
+source(here("code", "eda4ml_set_seed.R"))
+
+# gen_ds_tbl
+# compile a tibble that identifies data sets
+source(here("code", "gen_ds_tbl.R"))
+
+# get_ref_materials
+# encapsulate reference materials as separate modules
+source(here("code", "get_ref_materials.R"))
+```
+
+------------------------------------------------------------------------
+
+## Introduction
+
+Chapter 12 introduced two complementary views of time series dependence: the time domain, where the autocorrelation function (ACF) measures how observations relate across lags, and the frequency domain, where the spectrum measures how variance is distributed across periodic components. Chapter 13 developed the time-domain view into a family of forecasting models—AR, MA, ARIMA, SARIMA—that exploit autocorrelation structure for prediction.
+
+This chapter develops the frequency-domain perspective. Where Chapter 13 asked "how does the past predict the future?", we now ask "what periodic components structure this process?" This shift in emphasis—from prediction to understanding—reflects the dual aims of data analysis that run throughout this book.
+
+The frequency perspective is natural for many phenomena. Sunspots exhibit an approximately 11-year cycle tied to solar magnetic dynamics. Temperature data show annual cycles driven by Earth's orbit. Economic data display seasonal patterns from human activity. These periodicities are not merely patterns to exploit for forecasting; they reflect underlying mechanisms. The spectrum makes such structure visible.
+
+### Why Fourier Analysis?
+
+There is a deep reason why decomposition into sinusoidal components is fundamental to time series analysis. Complex exponentials $e^{i\lambda t}$ are eigenfunctions of the back-shift operator:
+
+$$\mathcal{B}^s e^{i\lambda t} = e^{i\lambda(t-s)} = e^{-i\lambda s} \cdot e^{i\lambda t}$$
+
+Any linear, time-invariant operation—filtering, smoothing, differencing—acts simply on sinusoidal components, multiplying each by a constant. This is why frequency decomposition provides the natural coordinate system for stationary processes. When we transform to the frequency domain, complex operations become simple multiplications.
+
+### Chapter Roadmap
+
+We proceed as follows:
+
+**The Spectrum Revisited**: We recall the spectrum's definition from Chapter 12 and develop its interpretation as a variance decomposition.
+
+**Spectra of ARMA Processes**: We derive the theoretical spectra of AR and MA models from Chapter 13, showing how time-domain parameters translate to frequency-domain features.
+
+**The Periodogram**: We introduce the sample estimate of the spectrum and confront its fundamental problem: inconsistency.
+
+**Smoothed Spectrum Estimation**: We show how averaging produces consistent estimates, at the cost of frequency resolution.
+
+**Examples**: We analyze sunspots (revisiting Chapter 12) and city temperatures, demonstrating spectrum estimation and interpretation in practice.
+
+**Coherence**: We extend to multiple series, asking at which frequencies two processes move together.
+
+**The Dual Perspectives**: We consolidate the time-domain and frequency-domain views, clarifying when each is most useful.
+
+
+## The Spectrum Revisited
+
+### Variance Decomposition
+
+Chapter 12 introduced the spectrum $f(\lambda)$ as the Fourier transform of the autocovariance function. Here we develop its interpretation as a decomposition of variance by frequency.
+
+For a stationary process with autocovariance function $\gamma(u)$, the spectrum is defined as:
+
+$$f(\lambda) = \sum_{u=-\infty}^{\infty} \gamma(u) e^{-i\lambda u}$$
+
+The inverse relationship recovers the autocovariance:
+
+$$\gamma(u) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(\lambda) e^{i\lambda u} \, d\lambda$$
+
+Setting $u = 0$ in the inverse formula yields a key insight:
+
+$$\gamma(0) = \sigma_X^2 = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(\lambda) \, d\lambda$$
+
+The total variance equals the integral of the spectrum over all frequencies. The spectrum thus tells us how variance is distributed across frequencies: $f(\lambda)$ measures the contribution of oscillations near frequency $\lambda$ to the overall variability of the process.
+
+### Interpreting Spectrum Features
+
+The shape of the spectrum reveals process characteristics:
+
+- **Peak at frequency $\lambda_0$**: Strong periodic component with period $P = 2\pi/\lambda_0$
+- **Low-frequency dominance**: Persistence, trend-like behavior, long memory
+- **High-frequency dominance**: Rapid alternation, anti-persistence
+- **Flat spectrum**: White noise—no preferred frequency, no memory
+
+These features complement the ACF/PACF diagnostics from Chapter 12. A slowly decaying ACF corresponds to low-frequency dominance in the spectrum; a rapidly alternating ACF corresponds to a spectral peak near $\lambda = \pi$.
+
+### The Fourier Pair Duality
+
+The spectrum and autocovariance contain identical information—they are Fourier transform pairs. Yet they emphasize different aspects:
+
+| ACF | Spectrum |
+|-----|----------|
+| Correlation at lag $u$ | Variance at frequency $\lambda$ |
+| How past predicts future | What periodic structure is present |
+| Time-domain diagnostics | Frequency-domain diagnostics |
+
+Choosing between them is a matter of which view illuminates the question at hand. For forecasting, the ACF guides model selection. For understanding periodic structure, the spectrum is more direct.
+
+
+## Spectra of ARMA Processes
+
+Chapter 13 introduced ARMA models in the time domain. Here we derive their spectra, connecting time-domain parameters to frequency-domain features.
+
+### White Noise Spectrum
+
+For white noise $W(t) \sim wn(0, \sigma_W^2)$, the autocovariance is $\gamma_W(0) = \sigma_W^2$ and $\gamma_W(u) = 0$ for $u \neq 0$. The spectrum is therefore constant:
+
+$$f_W(\lambda) = \sigma_W^2$$
+
+A flat spectrum—equal power at all frequencies—is the signature of white noise. This provides a baseline: departures from flatness indicate temporal structure.
+
+### AR(1) Spectrum
+
+For the AR(1) process $X(t) = \phi X(t-1) + W(t)$, the spectrum is:
+
+$$f(\lambda) = \frac{\sigma_W^2}{|1 - \phi e^{-i\lambda}|^2} = \frac{\sigma_W^2}{1 - 2\phi\cos\lambda + \phi^2}$$
+
+The spectrum shape depends on $\phi$:
+
+- **$\phi > 0$**: Maximum at $\lambda = 0$, declining toward $\lambda = \pi$. Positive autocorrelation produces low-frequency dominance—the process is persistent.
+- **$\phi < 0$**: Maximum at $\lambda = \pi$, declining toward $\lambda = 0$. Negative autocorrelation produces high-frequency dominance—the process alternates.
+
+```{r}
+#| label: fig-ar1-spectra
+#| fig-cap: "AR(1) spectra: positive φ emphasizes low frequencies (persistence); negative φ emphasizes high frequencies (alternation)"
+
+graphics::par(mfrow = c(1, 2))
+astsa::arma.spec(ar = 0.8, main = expression(paste("AR(1), ", phi, " = 0.8")), col = 4)
+astsa::arma.spec(ar = -0.8, main = expression(paste("AR(1), ", phi, " = -0.8")), col = 4)
+```
+
+### MA(1) Spectrum
+
+For the MA(1) process $X(t) = W(t) + \theta W(t-1)$, the spectrum is:
+
+$$f(\lambda) = \sigma_W^2 |1 + \theta e^{-i\lambda}|^2 = \sigma_W^2 (1 + 2\theta\cos\lambda + \theta^2)$$
+
+The MA(1) spectrum has the inverse pattern of AR(1): where AR(1) with $\phi > 0$ peaks at low frequencies, MA(1) with $\theta > 0$ peaks at high frequencies.
+
+```{r}
+#| label: fig-ma1-spectra
+#| fig-cap: "MA(1) spectra: opposite pattern from AR(1) with the same parameter value"
+
+graphics::par(mfrow = c(1, 2))
+astsa::arma.spec(ma = 0.8, main = expression(paste("MA(1), ", theta, " = 0.8")), col = 4)
+astsa::arma.spec(ma = -0.8, main = expression(paste("MA(1), ", theta, " = -0.8")), col = 4)
+```
+
+### AR(2) and Spectral Peaks
+
+AR(2) processes can exhibit spectral peaks at frequencies other than 0 or $\pi$. When the AR polynomial $\phi(z) = 1 - \phi_1 z - \phi_2 z^2$ has complex roots, the spectrum peaks at a frequency determined by those roots.
+
+```{r}
+#| label: fig-ar2-spectrum
+#| fig-cap: "AR(2) with complex roots produces a spectral peak, indicating quasi-periodic behavior"
+
+astsa::arma.spec(ar = c(1.3, -0.7), 
+  main = expression(paste("AR(2): ", phi[1], " = 1.3, ", phi[2], " = -0.7")), 
+  col = 4)
+```
+
+This is the spectrum of the recruitment series model from Chapter 13. The spectral peak corresponds to the damped oscillation visible in the ACF—the same quasi-periodic structure, viewed in two different coordinate systems.
+
+### General ARMA Spectrum
+
+For a general ARMA(p,q) process with AR polynomial $\phi(z)$ and MA polynomial $\theta(z)$:
+
+$$f(\lambda) = \sigma_W^2 \frac{|\theta(e^{-i\lambda})|^2}{|\phi(e^{-i\lambda})|^2}$$
+
+The spectrum has peaks where the AR polynomial is small (roots near the unit circle) and troughs where the MA polynomial is small. This formula connects Chapter 13's model parameters directly to frequency-domain features.
+
+
+## The Periodogram
+
+### Estimating the Spectrum
+
+Given data $X(0), X(1), \ldots, X(T-1)$, how do we estimate $f(\lambda)$? The natural approach is to replace the theoretical autocovariance $\gamma(u)$ with its sample estimate $\hat{\gamma}(u)$ in the spectrum definition.
+
+This leads to the **periodogram**:
+
+$$I(\lambda) = \frac{1}{T} \left| \sum_{t=0}^{T-1} X(t) e^{-i\lambda t} \right|^2$$
+
+The periodogram measures how well a sinusoid at frequency $\lambda$ fits the data. Large $I(\lambda)$ indicates strong oscillation at that frequency; small $I(\lambda)$ indicates little power there.
+
+At the **Fourier frequencies** $\lambda_j = 2\pi j / T$ for $j = 0, 1, \ldots, T-1$, the periodogram can be computed efficiently via the Fast Fourier Transform (FFT).
+
+### The Inconsistency Problem
+
+The periodogram is asymptotically unbiased:
+
+$$E\{I(\lambda)\} \to f(\lambda) \text{ as } T \to \infty$$
+
+However, it is **not consistent**—its variance does not shrink to zero as sample size increases. For frequencies $\lambda \not\equiv 0 \pmod{\pi}$:
+
+$$I(\lambda) \sim f(\lambda) \cdot \frac{\chi_2^2}{2}$$
+
+The periodogram is approximately distributed as the true spectrum times a chi-squared random variable with 2 degrees of freedom, divided by 2. Since $Var(\chi_2^2/2) = 1$, the coefficient of variation remains constant regardless of sample size.
+
+This is a striking result: more data does not reduce periodogram variability. The periodogram fluctuates wildly around the true spectrum, even with millions of observations.
+
+```{r}
+#| label: fig-periodogram-variability
+#| fig-cap: "Raw periodogram of white noise fluctuates wildly around the flat true spectrum"
+
+set.seed(42)
+wn <- stats::ts(stats::rnorm(256))
+spec_wn <- stats::spec.pgram(wn, taper = 0, log = "no", plot = FALSE)
+graphics::plot(spec_wn$freq, spec_wn$spec, type = "l", col = 4,
+     xlab = "Frequency", ylab = "Periodogram",
+     main = "White Noise: True Spectrum is Flat")
+graphics::abline(h = 1, col = 2, lty = 2, lwd = 2)
+graphics::legend("topright", legend = c("Periodogram", "True spectrum"), 
+       col = c(4, 2), lty = c(1, 2), bty = "n")
+```
+
+The true spectrum of white noise is constant (red dashed line), but the periodogram (blue) varies by orders of magnitude. This variability is not due to small sample size—it persists asymptotically.
+
+
+## Smoothed Spectrum Estimation
+
+### The Solution: Averaging
+
+The periodogram's inconsistency arises because each periodogram ordinate is based on essentially one degree of freedom. The solution is to average over nearby frequencies:
+
+$$\hat{f}(\lambda) = \sum_j W_j \cdot I(\lambda - \lambda_j)$$
+
+where the weights $W_j$ form a smoothing kernel centered at $\lambda$. By averaging $m$ periodogram ordinates, we obtain an estimate with approximately $2m$ degrees of freedom, reducing variance by a factor of $m$.
+
+### The Bandwidth Trade-off
+
+Smoothing introduces a bias-variance trade-off:
+
+| More smoothing | Less smoothing |
+|----------------|----------------|
+| Lower variance | Higher variance |
+| Blurs nearby peaks | Resolves nearby peaks |
+| Risk: miss narrow features | Risk: spurious peaks from noise |
+
+The **bandwidth** $\beta$ controls this trade-off. A wider bandwidth averages more ordinates, reducing variance but potentially smoothing over distinct spectral features. A narrow bandwidth preserves detail but leaves more noise.
+
+For consistency, we need the bandwidth to shrink ($\beta \to 0$) but the number of averaged ordinates to grow ($\beta T \to \infty$) as $T \to \infty$.
+
+### Modified Daniell Kernel
+
+A common choice is the **modified Daniell kernel**—essentially a moving average over adjacent frequencies. In R:
+
+```r
+stats::spec.pgram(x, spans = c(5, 5), taper = 0.1)
+```
+
+The `spans` argument specifies the widths of successive Daniell smoothers. Applying two smoothers (e.g., `spans = c(5, 5)`) produces a smoother result than one wider smoother. The `taper` argument applies a data taper to reduce spectral leakage from the finite sample boundaries.
+
+```{r}
+#| label: fig-smoothed-periodogram
+#| fig-cap: "Smoothing reduces variance while preserving the overall shape"
+
+set.seed(42)
+wn <- stats::ts(stats::rnorm(256))
+spec_raw <- stats::spec.pgram(wn, taper = 0, log = "no", plot = FALSE)
+spec_smooth <- stats::spec.pgram(wn, spans = c(7, 7), taper = 0.1, log = "no", plot = FALSE)
+
+graphics::plot(spec_raw$freq, spec_raw$spec, type = "l", col = grDevices::gray(0.7),
+     xlab = "Frequency", ylab = "Spectrum estimate",
+     main = "Effect of Smoothing")
+graphics::lines(spec_smooth$freq, spec_smooth$spec, col = 4, lwd = 2)
+graphics::abline(h = 1, col = 2, lty = 2, lwd = 2)
+graphics::legend("topright", legend = c("Raw periodogram", "Smoothed", "True"), 
+       col = c(grDevices::gray(0.7), 4, 2), lty = c(1, 1, 2), lwd = c(1, 2, 2), bty = "n")
+```
+
+### Confidence Intervals
+
+For the smoothed spectrum estimate with $\nu$ degrees of freedom:
+
+$$\frac{\nu \hat{f}(\lambda)}{f(\lambda)} \sim \chi_\nu^2$$
+
+This yields a confidence interval for the true spectrum:
+
+$$\left[ \frac{\nu \hat{f}(\lambda)}{\chi_{\nu, 1-\alpha/2}^2}, \; \frac{\nu \hat{f}(\lambda)}{\chi_{\nu, \alpha/2}^2} \right]$$
+
+The interval is multiplicative, not additive—it has constant width on a log scale. This is why spectrum plots typically use a logarithmic vertical axis: confidence bands then have uniform width across all frequencies.
+
+
+## Example: Sunspots
+
+We return to the sunspot data introduced in Chapter 12, now analyzing its spectrum.
+
+```{r}
+#| label: fig-sunspots-series
+#| fig-cap: "Monthly sunspot numbers exhibit quasi-periodic behavior with variable amplitude and period"
+
+astsa::tsplot(datasets::sunspot.month, col = 4, ylab = "Sunspot Number", main = "")
+```
+
+The time series shows clear cyclical behavior, but with considerable irregularity. The cycle length varies; the amplitude varies even more. A simple sinusoidal model would not fit well. What does the spectrum reveal?
+
+```{r}
+#| label: fig-sunspots-spectrum
+#| fig-cap: "Sunspot spectrum shows dominant peak near 11-year period"
+
+sunspots_spec <- stats::spec.pgram(datasets::sunspot.month, spans = c(7, 7), 
+                                    taper = 0.1, log = "yes", col = 4, main = "")
+# Mark the ~11-year cycle (132 months)
+graphics::abline(v = 1/132, col = 2, lty = 2)
+graphics::text(1/132 + 0.01, max(log10(sunspots_spec$spec)) - 1, "~11 years", col = 2, adj = 0)
+```
+
+### Interpreting the Sunspot Spectrum
+
+The spectrum reveals several features:
+
+1. **Dominant peak near $\lambda = 1/132$ cycles/month**: This corresponds to a period of approximately 132 months, or 11 years—the well-known solar cycle.
+
+2. **Broad peak rather than sharp line**: If the cycle had exactly constant period, the spectral peak would be narrow. The breadth indicates that the period varies from cycle to cycle, typically ranging from about 9 to 14 years.
+
+3. **Harmonics at higher frequencies**: Smaller peaks at multiples of the fundamental frequency indicate that the solar cycle is not purely sinusoidal—it has a more complex waveform.
+
+4. **Low-frequency power**: Variance at very low frequencies reflects long-term modulation of cycle amplitude, such as the Maunder Minimum period of reduced solar activity.
+
+The spectrum thus quantifies what the time plot shows qualitatively, while adding information about the cycle's variability that would be difficult to extract by eye.
+
+
+## Example: City Temperatures
+
+```{r}
+#| label: hnl-data-setup
+#| include: false
+
+# Load HNL-NYC temperature data
+# (This would use eda4mldata::hnl_nyc_temps_wide once added to package)
+HNL_NYC_t_imp <- readr::read_tsv(here::here(
+  "data", "retain", "HNL_NYC_t_imp.txt"
+), show_col_types = FALSE) |> 
+  dplyr::mutate(dplyr::across(
+    .cols = c(Month, Day, Year), 
+    .fns  = as.integer
+  ))
+
+hnl_nyc_wide <- HNL_NYC_t_imp |> 
+  dplyr::select(City, dt, t_imp) |> 
+  tidyr::pivot_wider(
+    id_cols = dt,
+    names_from  = City, 
+    values_from = t_imp
+  ) |> 
+  dplyr::rename(
+    date = dt, 
+    HNL  = Honolulu, 
+    NYC  = `New York City`
+  )
+
+# Summary statistics
+avg_HNL <- mean(hnl_nyc_wide$HNL) |> round()
+avg_NYC <- mean(hnl_nyc_wide$NYC) |> round()
+sd_HNL <- stats::sd(hnl_nyc_wide$HNL) |> round(digits = 1)
+sd_NYC <- stats::sd(hnl_nyc_wide$NYC) |> round(digits = 1)
+```
+
+Daily temperature data provide another window into spectrum analysis. We examine temperatures from Honolulu, Hawaii—a location where the annual cycle should dominate.
+
+```{r}
+#| label: fig-hnl-temp-series
+#| fig-cap: "Honolulu daily temperatures (1995-2020) show clear annual cycle"
+
+hnl_temp <- stats::ts(hnl_nyc_wide$HNL, frequency = 365, start = c(1995, 1))
+astsa::tsplot(hnl_temp, col = 4, ylab = "Temperature (°F)", main = "")
+```
+
+Honolulu's tropical climate produces mild, stable temperatures: mean `r avg_HNL`°F with standard deviation only `r sd_HNL`°F. The annual cycle is visible but modest—Hawaii's seasonal variation is much smaller than at mid-latitudes.
+
+```{r}
+#| label: fig-hnl-temp-spectrum
+#| fig-cap: "Honolulu temperature spectrum shows sharp peak at annual frequency"
+
+temp_spec <- stats::spec.pgram(hnl_temp, spans = c(7, 7), taper = 0.1, 
+                                log = "yes", col = 4, main = "")
+graphics::abline(v = 1/365, col = 2, lty = 2)
+graphics::text(1/365 + 0.002, max(log10(temp_spec$spec)) - 1, "1 year", col = 2, adj = 0)
+```
+
+### Interpreting the Temperature Spectrum
+
+The spectrum shows:
+
+1. **Sharp peak at $\lambda = 1/365$ cycles/day**: The annual cycle, driven by Earth's orbital mechanics, dominates the variance. Unlike sunspots, this periodicity is exact—the spectral peak is narrow.
+
+2. **Harmonics**: Peaks at 2/365, 3/365, etc., indicate that the annual temperature pattern is not purely sinusoidal.
+
+3. **Low-frequency power**: Some variance at very low frequencies reflects year-to-year variation in mean temperature.
+
+4. **Broadband background**: Day-to-day weather variability contributes across all frequencies, visible as the elevated baseline.
+
+The spectrum answers a quantitative question: what fraction of temperature variance is attributable to the annual cycle? Integrating under the spectral peak and comparing to total variance provides this answer directly.
+
+
+## Coherence: Comparing Two Series
+
+When we have multiple time series, we can ask: at which frequencies do they move together? This leads to the **cross-spectrum** and **coherence**.
+
+### The Cross-Spectrum
+
+For two series $X_a(t)$ and $X_b(t)$, the cross-spectrum $f_{a,b}(\lambda)$ is the Fourier transform of their cross-covariance function:
+
+$$f_{a,b}(\lambda) = \sum_{u=-\infty}^{\infty} \gamma_{a,b}(u) e^{-i\lambda u}$$
+
+The cross-spectrum is generally complex-valued, with magnitude indicating the strength of co-movement and phase indicating the lead-lag relationship at each frequency.
+
+### Coherence
+
+**Coherence** is the squared correlation between two series at each frequency:
+
+$$|R_{a,b}(\lambda)|^2 = \frac{|f_{a,b}(\lambda)|^2}{f_{a,a}(\lambda) f_{b,b}(\lambda)}$$
+
+Like a squared correlation coefficient, coherence ranges from 0 (no linear relationship at frequency $\lambda$) to 1 (perfect linear relationship). It answers: "How strongly do these series co-vary at this frequency?"
+
+### HNL vs NYC Temperatures
+
+We compare daily temperatures at Honolulu and New York City to illustrate coherence analysis.
+
+```{r}
+#| label: fig-hnl-nyc-series
+#| fig-cap: "Daily temperatures at Honolulu and New York City (1995-2020)"
+
+hnl_nyc_mvts <- stats::ts(
+  data.frame(HNL = hnl_nyc_wide$HNL, NYC = hnl_nyc_wide$NYC),
+  frequency = 365, 
+  start = c(1995, 1)
+)
+
+astsa::tsplot(hnl_nyc_mvts, col = c(4, 2), spaghetti = TRUE,
+              ylab = "Temperature (°F)", main = "")
+graphics::legend("bottomright", legend = c("Honolulu", "NYC"), 
+                 col = c(4, 2), lty = 1, bty = "n")
+```
+
+Both cities show annual cycles, but NYC has much larger amplitude (mean `r avg_NYC`°F, SD `r sd_NYC`°F versus Honolulu's `r avg_HNL`°F and `r sd_HNL`°F). NYC also shows more day-to-day variability from mid-latitude weather systems.
+
+```{r}
+#| label: fig-hnl-nyc-coherence
+#| fig-cap: "Coherence between Honolulu and NYC temperatures"
+
+hnl_nyc_spec <- stats::spec.pgram(hnl_nyc_mvts, spans = c(7, 7), 
+                                   taper = 0.1, plot = FALSE)
+
+graphics::plot(hnl_nyc_spec$freq, hnl_nyc_spec$coh, type = "l", col = 4,
+     xlab = "Frequency (cycles/day)", ylab = "Coherence",
+     main = "", ylim = c(0, 1))
+graphics::abline(v = 1/365, col = 2, lty = 2)
+graphics::text(1/365 + 0.003, 0.95, "1 year", col = 2, adj = 0)
+```
+
+### Interpreting the Coherence
+
+The coherence plot reveals a striking pattern:
+
+**At the annual frequency**: Coherence approaches 1. Both cities warm in summer and cool in winter, driven by the same astronomical cause—Earth's axial tilt and orbital position. The annual cycle is a shared signal.
+
+**At higher frequencies**: Coherence is near zero. Day-to-day weather in Honolulu tells us nothing about weather in New York City. Local weather systems—fronts, storms, pressure patterns—are independent across such distances.
+
+Coherence thus identifies which periodicities are shared between series and which are independent. This is valuable for understanding causal mechanisms: high coherence suggests a common driver; low coherence suggests independent local dynamics.
+
+
+## The Dual Perspectives
+
+### Time Domain vs Frequency Domain
+
+We can now consolidate the two perspectives developed across Chapters 12–14:
+
+| Time Domain | Frequency Domain |
+|-------------|------------------|
+| ACF, PACF | Spectrum |
+| AR, MA, ARIMA models | Spectral peaks, bandwidth |
+| Forecasting | Identifying cycles |
+| "How does past predict future?" | "What periodic structure is present?" |
+
+These are equivalent descriptions—Fourier transform pairs—but they illuminate different aspects of the data.
+
+### When to Use Which
+
+**Time domain methods** excel when the goal is forecasting and short-term dependence modeling. The ARIMA family provides a systematic framework for building predictive models, with diagnostic tools (ACF, PACF) that guide model selection.
+
+**Frequency domain methods** excel when the goal is identifying periodicities and understanding cyclic mechanisms. The spectrum directly reveals what cycles are present and how strong they are.
+
+**Best practice**: Use both. They reveal different aspects of the same reality. The sunspot example illustrates this: an AR(2) model captures the quasi-periodic behavior for forecasting purposes, while the spectrum reveals the ~11-year solar cycle and shows that its period varies.
+
+### The Duality in Practice
+
+Consider how the two perspectives complement each other:
+
+**Sunspots**: Time-domain analysis identifies an AR(2) model with a characteristic damped oscillation in the ACF. Frequency-domain analysis shows a broad spectral peak near the 11-year period. The breadth of the peak—invisible in the time-domain diagnostics—reveals that the cycle period itself varies.
+
+**Temperature data**: Time-domain analysis shows strong positive autocorrelation—today predicts tomorrow. Frequency-domain analysis shows a sharp annual peak, quantifying exactly how much variance the seasonal cycle explains. Coherence analysis reveals that two distant cities share the annual cycle but have independent day-to-day weather.
+
+**Economic data**: Time-domain SARIMA models capture both trend and seasonality for forecasting. Frequency-domain analysis can reveal additional cycles—business cycles, for instance—that might be obscured by the dominant seasonal pattern.
+
+
+## Summary
+
+This chapter developed the frequency-domain perspective on time series, complementing the time-domain methods of Chapter 13.
+
+**Key insights**:
+
+1. **The spectrum decomposes variance by frequency**. Peaks indicate dominant cycles; a flat spectrum indicates white noise. The spectrum and autocovariance are Fourier transform pairs—same information, different emphasis.
+
+2. **ARMA spectra connect the two domains**. AR processes have spectral peaks where their polynomial roots approach the unit circle. The time-domain model parameters determine frequency-domain features.
+
+3. **The periodogram is the sample spectrum estimate**. It is unbiased but inconsistent—its variance does not shrink with sample size, following an asymptotic chi-squared distribution.
+
+4. **Smoothing produces consistent estimates**. Averaging over nearby frequencies trades resolution for stability. The bandwidth controls this bias-variance trade-off.
+
+5. **Coherence measures shared periodicity**. For multiple series, coherence identifies which frequencies exhibit co-movement and which are independent.
+
+6. **The dual perspectives are complementary**. Time-domain methods serve forecasting; frequency-domain methods serve understanding. Complete analysis draws on both.
+
+
+## Exercises
+
+1. **Periodogram variability**: Generate 256 observations of white noise and compute the periodogram using `stats::spec.pgram()` with no smoothing (`spans = NULL`). What is the approximate range of periodogram values? Repeat with `spans = c(7,7)`. How does smoothing affect the variability?
+
+2. **AR spectrum identification**: Using `astsa::arma.spec()`, plot the theoretical spectra of AR(1) processes with $\phi = 0.9$, $\phi = 0.5$, and $\phi = -0.5$. How does the AR parameter affect spectrum shape?
+
+3. **Sunspot period**: From the sunspot spectrum, estimate the dominant period. How does this compare to the commonly cited "11-year solar cycle"? What does the width of the spectral peak suggest about period variability?
+
+4. **Temperature seasonality**: For the global land temperature series (`astsa::gtemp_land`), estimate and plot the spectrum. Does it show evidence of annual periodicity? What feature dominates the spectrum, and what does this indicate about the series?
+
+5. **Smoothing comparison**: For the sunspot data, compare spectrum estimates with `spans = c(3,3)`, `spans = c(7,7)`, and `spans = c(15,15)`. How does bandwidth affect the appearance of the dominant peak and the noise level?
+
+6. **Coherence interpretation**: For two economic series (e.g., GDP and unemployment), estimate the coherence spectrum. At what frequencies is coherence highest? What might this indicate about the relationship between the series?
+
+
+## Resources
+
+**Textbooks**:
+
+- Shumway, R.H. and Stoffer, D.S. (2025). *Time Series Analysis and Its Applications: With R Examples* (5th ed.). Springer. Chapters 4–5 provide comprehensive treatment of spectrum estimation and coherence.
+
+- Bloomfield, P. (2000). *Fourier Analysis of Time Series: An Introduction* (2nd ed.). Wiley. An accessible introduction focusing on the frequency domain.
+
+- Brillinger, D.R. (2001). *Time Series: Data Analysis and Theory*. SIAM. A mathematically rigorous treatment of the theory.
+
+- Percival, D.B. and Walden, A.T. (1993). *Spectral Analysis for Physical Applications*. Cambridge University Press. Comprehensive coverage of modern spectrum estimation methods.
+
+**Software**:
+
+- The `stats::spec.pgram()` function provides basic spectrum estimation in R.
+
+- The `astsa` package provides `arma.spec()` for theoretical ARMA spectra and enhanced plotting functions.
+
+- The `spectrum` package and the CRAN Task View on Time Series (https://cran.r-project.org/web/views/TimeSeries.html) provide additional tools.
+
+
+## Appendix: Glossary of Notation {#sec-ts-freq-domain-glossary}
+
+$$
+\begin{align}
+  f(\lambda) 
+     \quad & \quad \text{spectrum (spectral density) at frequency } \lambda \\ 
+  \\ 
+  f_{a,b}(\lambda) 
+     \quad & \quad \text{cross-spectrum of series } a \text{ and } b \\ 
+  \\ 
+  \hat{f}(\lambda) 
+     \quad & \quad \text{smoothed spectrum estimate} \\ 
+  \\ 
+  I(\lambda) 
+     \quad & \quad \text{periodogram at frequency } \lambda \\ 
+  \\ 
+  \gamma(u) 
+     \quad & \quad \text{autocovariance at lag } u \\ 
+  \\ 
+  \gamma_{a,b}(u) 
+     \quad & \quad \text{cross-covariance of series } a \text{ and } b \text{ at lag } u \\ 
+  \\ 
+  R_{a,b}(\lambda) 
+     \quad & \quad \text{coherency: } \frac{f_{a,b}(\lambda)}{\sqrt{f_{a,a}(\lambda) f_{b,b}(\lambda)}} \\ 
+  \\ 
+  |R_{a,b}(\lambda)|^2 
+     \quad & \quad \text{coherence (squared coherency)} \\ 
+  \\ 
+  \beta 
+     \quad & \quad \text{bandwidth of smoothed spectrum estimate} \\ 
+  \\ 
+  \nu 
+     \quad & \quad \text{degrees of freedom of smoothed estimate} \\ 
+  \\ 
+  \lambda_j 
+     \quad & \quad \text{Fourier frequency: } 2\pi j / T \\ 
+  \\ 
+  T 
+     \quad & \quad \text{number of observations} \\ 
+  \\ 
+  \chi_\nu^2 
+     \quad & \quad \text{chi-squared distribution with } \nu \text{ degrees of freedom}
+\end{align}
+$$

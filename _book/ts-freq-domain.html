@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Send comments to: Tony T (tthrall)">
+
+<title>14&nbsp; Frequency Domain Methods – EDA for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./graph-theory.html" rel="next">
+<link href="./ts-time-domain.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-data.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-freq-domain.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">EDA for Machine Learning</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/tthrall/eda4ml/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./conditioning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Conditional Distributions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Clustering: EDA in Higher Dimensions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Statistical Simulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./study-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Linear Algebra</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Time Series Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-time-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ts-freq-domain.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Network Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">14.1</span> Introduction</a>
+  <ul>
+  <li><a href="#why-fourier-analysis" id="toc-why-fourier-analysis" class="nav-link" data-scroll-target="#why-fourier-analysis"><span class="header-section-number">14.1.1</span> Why Fourier Analysis?</a></li>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">14.1.2</span> Chapter Roadmap</a></li>
+  </ul></li>
+  <li><a href="#the-spectrum-revisited" id="toc-the-spectrum-revisited" class="nav-link" data-scroll-target="#the-spectrum-revisited"><span class="header-section-number">14.2</span> The Spectrum Revisited</a>
+  <ul>
+  <li><a href="#variance-decomposition" id="toc-variance-decomposition" class="nav-link" data-scroll-target="#variance-decomposition"><span class="header-section-number">14.2.1</span> Variance Decomposition</a></li>
+  <li><a href="#interpreting-spectrum-features" id="toc-interpreting-spectrum-features" class="nav-link" data-scroll-target="#interpreting-spectrum-features"><span class="header-section-number">14.2.2</span> Interpreting Spectrum Features</a></li>
+  <li><a href="#the-fourier-pair-duality" id="toc-the-fourier-pair-duality" class="nav-link" data-scroll-target="#the-fourier-pair-duality"><span class="header-section-number">14.2.3</span> The Fourier Pair Duality</a></li>
+  </ul></li>
+  <li><a href="#spectra-of-arma-processes" id="toc-spectra-of-arma-processes" class="nav-link" data-scroll-target="#spectra-of-arma-processes"><span class="header-section-number">14.3</span> Spectra of ARMA Processes</a>
+  <ul>
+  <li><a href="#white-noise-spectrum" id="toc-white-noise-spectrum" class="nav-link" data-scroll-target="#white-noise-spectrum"><span class="header-section-number">14.3.1</span> White Noise Spectrum</a></li>
+  <li><a href="#ar1-spectrum" id="toc-ar1-spectrum" class="nav-link" data-scroll-target="#ar1-spectrum"><span class="header-section-number">14.3.2</span> AR(1) Spectrum</a></li>
+  <li><a href="#ma1-spectrum" id="toc-ma1-spectrum" class="nav-link" data-scroll-target="#ma1-spectrum"><span class="header-section-number">14.3.3</span> MA(1) Spectrum</a></li>
+  <li><a href="#ar2-and-spectral-peaks" id="toc-ar2-and-spectral-peaks" class="nav-link" data-scroll-target="#ar2-and-spectral-peaks"><span class="header-section-number">14.3.4</span> AR(2) and Spectral Peaks</a></li>
+  <li><a href="#general-arma-spectrum" id="toc-general-arma-spectrum" class="nav-link" data-scroll-target="#general-arma-spectrum"><span class="header-section-number">14.3.5</span> General ARMA Spectrum</a></li>
+  </ul></li>
+  <li><a href="#the-periodogram" id="toc-the-periodogram" class="nav-link" data-scroll-target="#the-periodogram"><span class="header-section-number">14.4</span> The Periodogram</a>
+  <ul>
+  <li><a href="#estimating-the-spectrum" id="toc-estimating-the-spectrum" class="nav-link" data-scroll-target="#estimating-the-spectrum"><span class="header-section-number">14.4.1</span> Estimating the Spectrum</a></li>
+  <li><a href="#the-inconsistency-problem" id="toc-the-inconsistency-problem" class="nav-link" data-scroll-target="#the-inconsistency-problem"><span class="header-section-number">14.4.2</span> The Inconsistency Problem</a></li>
+  </ul></li>
+  <li><a href="#smoothed-spectrum-estimation" id="toc-smoothed-spectrum-estimation" class="nav-link" data-scroll-target="#smoothed-spectrum-estimation"><span class="header-section-number">14.5</span> Smoothed Spectrum Estimation</a>
+  <ul>
+  <li><a href="#the-solution-averaging" id="toc-the-solution-averaging" class="nav-link" data-scroll-target="#the-solution-averaging"><span class="header-section-number">14.5.1</span> The Solution: Averaging</a></li>
+  <li><a href="#the-bandwidth-trade-off" id="toc-the-bandwidth-trade-off" class="nav-link" data-scroll-target="#the-bandwidth-trade-off"><span class="header-section-number">14.5.2</span> The Bandwidth Trade-off</a></li>
+  <li><a href="#modified-daniell-kernel" id="toc-modified-daniell-kernel" class="nav-link" data-scroll-target="#modified-daniell-kernel"><span class="header-section-number">14.5.3</span> Modified Daniell Kernel</a></li>
+  <li><a href="#confidence-intervals" id="toc-confidence-intervals" class="nav-link" data-scroll-target="#confidence-intervals"><span class="header-section-number">14.5.4</span> Confidence Intervals</a></li>
+  </ul></li>
+  <li><a href="#example-sunspots" id="toc-example-sunspots" class="nav-link" data-scroll-target="#example-sunspots"><span class="header-section-number">14.6</span> Example: Sunspots</a>
+  <ul>
+  <li><a href="#interpreting-the-sunspot-spectrum" id="toc-interpreting-the-sunspot-spectrum" class="nav-link" data-scroll-target="#interpreting-the-sunspot-spectrum"><span class="header-section-number">14.6.1</span> Interpreting the Sunspot Spectrum</a></li>
+  </ul></li>
+  <li><a href="#example-city-temperatures" id="toc-example-city-temperatures" class="nav-link" data-scroll-target="#example-city-temperatures"><span class="header-section-number">14.7</span> Example: City Temperatures</a>
+  <ul>
+  <li><a href="#interpreting-the-temperature-spectrum" id="toc-interpreting-the-temperature-spectrum" class="nav-link" data-scroll-target="#interpreting-the-temperature-spectrum"><span class="header-section-number">14.7.1</span> Interpreting the Temperature Spectrum</a></li>
+  </ul></li>
+  <li><a href="#coherence-comparing-two-series" id="toc-coherence-comparing-two-series" class="nav-link" data-scroll-target="#coherence-comparing-two-series"><span class="header-section-number">14.8</span> Coherence: Comparing Two Series</a>
+  <ul>
+  <li><a href="#the-cross-spectrum" id="toc-the-cross-spectrum" class="nav-link" data-scroll-target="#the-cross-spectrum"><span class="header-section-number">14.8.1</span> The Cross-Spectrum</a></li>
+  <li><a href="#coherence" id="toc-coherence" class="nav-link" data-scroll-target="#coherence"><span class="header-section-number">14.8.2</span> Coherence</a></li>
+  <li><a href="#hnl-vs-nyc-temperatures" id="toc-hnl-vs-nyc-temperatures" class="nav-link" data-scroll-target="#hnl-vs-nyc-temperatures"><span class="header-section-number">14.8.3</span> HNL vs NYC Temperatures</a></li>
+  <li><a href="#interpreting-the-coherence" id="toc-interpreting-the-coherence" class="nav-link" data-scroll-target="#interpreting-the-coherence"><span class="header-section-number">14.8.4</span> Interpreting the Coherence</a></li>
+  </ul></li>
+  <li><a href="#the-dual-perspectives" id="toc-the-dual-perspectives" class="nav-link" data-scroll-target="#the-dual-perspectives"><span class="header-section-number">14.9</span> The Dual Perspectives</a>
+  <ul>
+  <li><a href="#time-domain-vs-frequency-domain" id="toc-time-domain-vs-frequency-domain" class="nav-link" data-scroll-target="#time-domain-vs-frequency-domain"><span class="header-section-number">14.9.1</span> Time Domain vs Frequency Domain</a></li>
+  <li><a href="#when-to-use-which" id="toc-when-to-use-which" class="nav-link" data-scroll-target="#when-to-use-which"><span class="header-section-number">14.9.2</span> When to Use Which</a></li>
+  <li><a href="#the-duality-in-practice" id="toc-the-duality-in-practice" class="nav-link" data-scroll-target="#the-duality-in-practice"><span class="header-section-number">14.9.3</span> The Duality in Practice</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">14.10</span> Summary</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">14.11</span> Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">14.12</span> Resources</a></li>
+  <li><a href="#sec-ts-freq-domain-glossary" id="toc-sec-ts-freq-domain-glossary" class="nav-link" data-scroll-target="#sec-ts-freq-domain-glossary"><span class="header-section-number">14.13</span> Appendix: Glossary of Notation</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/ts-freq-domain.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ts-data.html">Time Series Data</a></li><li class="breadcrumb-item"><a href="./ts-freq-domain.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-ts-freq-domain" class="quarto-section-identifier"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Send comments to: Tony T (tthrall) </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">15:07 Fri 12-Dec-2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="introduction" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">14.1</span> Introduction</h2>
+<p>Chapter 12 introduced two complementary views of time series dependence: the time domain, where the autocorrelation function (ACF) measures how observations relate across lags, and the frequency domain, where the spectrum measures how variance is distributed across periodic components. Chapter 13 developed the time-domain view into a family of forecasting models—AR, MA, ARIMA, SARIMA—that exploit autocorrelation structure for prediction.</p>
+<p>This chapter develops the frequency-domain perspective. Where Chapter 13 asked “how does the past predict the future?”, we now ask “what periodic components structure this process?” This shift in emphasis—from prediction to understanding—reflects the dual aims of data analysis that run throughout this book.</p>
+<p>The frequency perspective is natural for many phenomena. Sunspots exhibit an approximately 11-year cycle tied to solar magnetic dynamics. Temperature data show annual cycles driven by Earth’s orbit. Economic data display seasonal patterns from human activity. These periodicities are not merely patterns to exploit for forecasting; they reflect underlying mechanisms. The spectrum makes such structure visible.</p>
+<section id="why-fourier-analysis" class="level3" data-number="14.1.1">
+<h3 data-number="14.1.1" class="anchored" data-anchor-id="why-fourier-analysis"><span class="header-section-number">14.1.1</span> Why Fourier Analysis?</h3>
+<p>There is a deep reason why decomposition into sinusoidal components is fundamental to time series analysis. Complex exponentials <span class="math inline">\(e^{i\lambda t}\)</span> are eigenfunctions of the back-shift operator:</p>
+<p><span class="math display">\[\mathcal{B}^s e^{i\lambda t} = e^{i\lambda(t-s)} = e^{-i\lambda s} \cdot e^{i\lambda t}\]</span></p>
+<p>Any linear, time-invariant operation—filtering, smoothing, differencing—acts simply on sinusoidal components, multiplying each by a constant. This is why frequency decomposition provides the natural coordinate system for stationary processes. When we transform to the frequency domain, complex operations become simple multiplications.</p>
+</section>
+<section id="chapter-roadmap" class="level3" data-number="14.1.2">
+<h3 data-number="14.1.2" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">14.1.2</span> Chapter Roadmap</h3>
+<p>We proceed as follows:</p>
+<p><strong>The Spectrum Revisited</strong>: We recall the spectrum’s definition from Chapter 12 and develop its interpretation as a variance decomposition.</p>
+<p><strong>Spectra of ARMA Processes</strong>: We derive the theoretical spectra of AR and MA models from Chapter 13, showing how time-domain parameters translate to frequency-domain features.</p>
+<p><strong>The Periodogram</strong>: We introduce the sample estimate of the spectrum and confront its fundamental problem: inconsistency.</p>
+<p><strong>Smoothed Spectrum Estimation</strong>: We show how averaging produces consistent estimates, at the cost of frequency resolution.</p>
+<p><strong>Examples</strong>: We analyze sunspots (revisiting Chapter 12) and city temperatures, demonstrating spectrum estimation and interpretation in practice.</p>
+<p><strong>Coherence</strong>: We extend to multiple series, asking at which frequencies two processes move together.</p>
+<p><strong>The Dual Perspectives</strong>: We consolidate the time-domain and frequency-domain views, clarifying when each is most useful.</p>
+</section>
+</section>
+<section id="the-spectrum-revisited" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="the-spectrum-revisited"><span class="header-section-number">14.2</span> The Spectrum Revisited</h2>
+<section id="variance-decomposition" class="level3" data-number="14.2.1">
+<h3 data-number="14.2.1" class="anchored" data-anchor-id="variance-decomposition"><span class="header-section-number">14.2.1</span> Variance Decomposition</h3>
+<p>Chapter 12 introduced the spectrum <span class="math inline">\(f(\lambda)\)</span> as the Fourier transform of the autocovariance function. Here we develop its interpretation as a decomposition of variance by frequency.</p>
+<p>For a stationary process with autocovariance function <span class="math inline">\(\gamma(u)\)</span>, the spectrum is defined as:</p>
+<p><span class="math display">\[f(\lambda) = \sum_{u=-\infty}^{\infty} \gamma(u) e^{-i\lambda u}\]</span></p>
+<p>The inverse relationship recovers the autocovariance:</p>
+<p><span class="math display">\[\gamma(u) = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(\lambda) e^{i\lambda u} \, d\lambda\]</span></p>
+<p>Setting <span class="math inline">\(u = 0\)</span> in the inverse formula yields a key insight:</p>
+<p><span class="math display">\[\gamma(0) = \sigma_X^2 = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(\lambda) \, d\lambda\]</span></p>
+<p>The total variance equals the integral of the spectrum over all frequencies. The spectrum thus tells us how variance is distributed across frequencies: <span class="math inline">\(f(\lambda)\)</span> measures the contribution of oscillations near frequency <span class="math inline">\(\lambda\)</span> to the overall variability of the process.</p>
+</section>
+<section id="interpreting-spectrum-features" class="level3" data-number="14.2.2">
+<h3 data-number="14.2.2" class="anchored" data-anchor-id="interpreting-spectrum-features"><span class="header-section-number">14.2.2</span> Interpreting Spectrum Features</h3>
+<p>The shape of the spectrum reveals process characteristics:</p>
+<ul>
+<li><strong>Peak at frequency <span class="math inline">\(\lambda_0\)</span></strong>: Strong periodic component with period <span class="math inline">\(P = 2\pi/\lambda_0\)</span></li>
+<li><strong>Low-frequency dominance</strong>: Persistence, trend-like behavior, long memory</li>
+<li><strong>High-frequency dominance</strong>: Rapid alternation, anti-persistence</li>
+<li><strong>Flat spectrum</strong>: White noise—no preferred frequency, no memory</li>
+</ul>
+<p>These features complement the ACF/PACF diagnostics from Chapter 12. A slowly decaying ACF corresponds to low-frequency dominance in the spectrum; a rapidly alternating ACF corresponds to a spectral peak near <span class="math inline">\(\lambda = \pi\)</span>.</p>
+</section>
+<section id="the-fourier-pair-duality" class="level3" data-number="14.2.3">
+<h3 data-number="14.2.3" class="anchored" data-anchor-id="the-fourier-pair-duality"><span class="header-section-number">14.2.3</span> The Fourier Pair Duality</h3>
+<p>The spectrum and autocovariance contain identical information—they are Fourier transform pairs. Yet they emphasize different aspects:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>ACF</th>
+<th>Spectrum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Correlation at lag <span class="math inline">\(u\)</span></td>
+<td>Variance at frequency <span class="math inline">\(\lambda\)</span></td>
+</tr>
+<tr class="even">
+<td>How past predicts future</td>
+<td>What periodic structure is present</td>
+</tr>
+<tr class="odd">
+<td>Time-domain diagnostics</td>
+<td>Frequency-domain diagnostics</td>
+</tr>
+</tbody>
+</table>
+<p>Choosing between them is a matter of which view illuminates the question at hand. For forecasting, the ACF guides model selection. For understanding periodic structure, the spectrum is more direct.</p>
+</section>
+</section>
+<section id="spectra-of-arma-processes" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="spectra-of-arma-processes"><span class="header-section-number">14.3</span> Spectra of ARMA Processes</h2>
+<p>Chapter 13 introduced ARMA models in the time domain. Here we derive their spectra, connecting time-domain parameters to frequency-domain features.</p>
+<section id="white-noise-spectrum" class="level3" data-number="14.3.1">
+<h3 data-number="14.3.1" class="anchored" data-anchor-id="white-noise-spectrum"><span class="header-section-number">14.3.1</span> White Noise Spectrum</h3>
+<p>For white noise <span class="math inline">\(W(t) \sim wn(0, \sigma_W^2)\)</span>, the autocovariance is <span class="math inline">\(\gamma_W(0) = \sigma_W^2\)</span> and <span class="math inline">\(\gamma_W(u) = 0\)</span> for <span class="math inline">\(u \neq 0\)</span>. The spectrum is therefore constant:</p>
+<p><span class="math display">\[f_W(\lambda) = \sigma_W^2\]</span></p>
+<p>A flat spectrum—equal power at all frequencies—is the signature of white noise. This provides a baseline: departures from flatness indicate temporal structure.</p>
+</section>
+<section id="ar1-spectrum" class="level3" data-number="14.3.2">
+<h3 data-number="14.3.2" class="anchored" data-anchor-id="ar1-spectrum"><span class="header-section-number">14.3.2</span> AR(1) Spectrum</h3>
+<p>For the AR(1) process <span class="math inline">\(X(t) = \phi X(t-1) + W(t)\)</span>, the spectrum is:</p>
+<p><span class="math display">\[f(\lambda) = \frac{\sigma_W^2}{|1 - \phi e^{-i\lambda}|^2} = \frac{\sigma_W^2}{1 - 2\phi\cos\lambda + \phi^2}\]</span></p>
+<p>The spectrum shape depends on <span class="math inline">\(\phi\)</span>:</p>
+<ul>
+<li><strong><span class="math inline">\(\phi &gt; 0\)</span></strong>: Maximum at <span class="math inline">\(\lambda = 0\)</span>, declining toward <span class="math inline">\(\lambda = \pi\)</span>. Positive autocorrelation produces low-frequency dominance—the process is persistent.</li>
+<li><strong><span class="math inline">\(\phi &lt; 0\)</span></strong>: Maximum at <span class="math inline">\(\lambda = \pi\)</span>, declining toward <span class="math inline">\(\lambda = 0\)</span>. Negative autocorrelation produces high-frequency dominance—the process alternates.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ar1-spectra" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ar1-spectra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-ar1-spectra-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ar1-spectra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.1: AR(1) spectra: positive φ emphasizes low frequencies (persistence); negative φ emphasizes high frequencies (alternation)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ma1-spectrum" class="level3" data-number="14.3.3">
+<h3 data-number="14.3.3" class="anchored" data-anchor-id="ma1-spectrum"><span class="header-section-number">14.3.3</span> MA(1) Spectrum</h3>
+<p>For the MA(1) process <span class="math inline">\(X(t) = W(t) + \theta W(t-1)\)</span>, the spectrum is:</p>
+<p><span class="math display">\[f(\lambda) = \sigma_W^2 |1 + \theta e^{-i\lambda}|^2 = \sigma_W^2 (1 + 2\theta\cos\lambda + \theta^2)\]</span></p>
+<p>The MA(1) spectrum has the inverse pattern of AR(1): where AR(1) with <span class="math inline">\(\phi &gt; 0\)</span> peaks at low frequencies, MA(1) with <span class="math inline">\(\theta &gt; 0\)</span> peaks at high frequencies.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ma1-spectra" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ma1-spectra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-ma1-spectra-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ma1-spectra-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.2: MA(1) spectra: opposite pattern from AR(1) with the same parameter value
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ar2-and-spectral-peaks" class="level3" data-number="14.3.4">
+<h3 data-number="14.3.4" class="anchored" data-anchor-id="ar2-and-spectral-peaks"><span class="header-section-number">14.3.4</span> AR(2) and Spectral Peaks</h3>
+<p>AR(2) processes can exhibit spectral peaks at frequencies other than 0 or <span class="math inline">\(\pi\)</span>. When the AR polynomial <span class="math inline">\(\phi(z) = 1 - \phi_1 z - \phi_2 z^2\)</span> has complex roots, the spectrum peaks at a frequency determined by those roots.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ar2-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ar2-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-ar2-spectrum-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ar2-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.3: AR(2) with complex roots produces a spectral peak, indicating quasi-periodic behavior
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This is the spectrum of the recruitment series model from Chapter 13. The spectral peak corresponds to the damped oscillation visible in the ACF—the same quasi-periodic structure, viewed in two different coordinate systems.</p>
+</section>
+<section id="general-arma-spectrum" class="level3" data-number="14.3.5">
+<h3 data-number="14.3.5" class="anchored" data-anchor-id="general-arma-spectrum"><span class="header-section-number">14.3.5</span> General ARMA Spectrum</h3>
+<p>For a general ARMA(p,q) process with AR polynomial <span class="math inline">\(\phi(z)\)</span> and MA polynomial <span class="math inline">\(\theta(z)\)</span>:</p>
+<p><span class="math display">\[f(\lambda) = \sigma_W^2 \frac{|\theta(e^{-i\lambda})|^2}{|\phi(e^{-i\lambda})|^2}\]</span></p>
+<p>The spectrum has peaks where the AR polynomial is small (roots near the unit circle) and troughs where the MA polynomial is small. This formula connects Chapter 13’s model parameters directly to frequency-domain features.</p>
+</section>
+</section>
+<section id="the-periodogram" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="the-periodogram"><span class="header-section-number">14.4</span> The Periodogram</h2>
+<section id="estimating-the-spectrum" class="level3" data-number="14.4.1">
+<h3 data-number="14.4.1" class="anchored" data-anchor-id="estimating-the-spectrum"><span class="header-section-number">14.4.1</span> Estimating the Spectrum</h3>
+<p>Given data <span class="math inline">\(X(0), X(1), \ldots, X(T-1)\)</span>, how do we estimate <span class="math inline">\(f(\lambda)\)</span>? The natural approach is to replace the theoretical autocovariance <span class="math inline">\(\gamma(u)\)</span> with its sample estimate <span class="math inline">\(\hat{\gamma}(u)\)</span> in the spectrum definition.</p>
+<p>This leads to the <strong>periodogram</strong>:</p>
+<p><span class="math display">\[I(\lambda) = \frac{1}{T} \left| \sum_{t=0}^{T-1} X(t) e^{-i\lambda t} \right|^2\]</span></p>
+<p>The periodogram measures how well a sinusoid at frequency <span class="math inline">\(\lambda\)</span> fits the data. Large <span class="math inline">\(I(\lambda)\)</span> indicates strong oscillation at that frequency; small <span class="math inline">\(I(\lambda)\)</span> indicates little power there.</p>
+<p>At the <strong>Fourier frequencies</strong> <span class="math inline">\(\lambda_j = 2\pi j / T\)</span> for <span class="math inline">\(j = 0, 1, \ldots, T-1\)</span>, the periodogram can be computed efficiently via the Fast Fourier Transform (FFT).</p>
+</section>
+<section id="the-inconsistency-problem" class="level3" data-number="14.4.2">
+<h3 data-number="14.4.2" class="anchored" data-anchor-id="the-inconsistency-problem"><span class="header-section-number">14.4.2</span> The Inconsistency Problem</h3>
+<p>The periodogram is asymptotically unbiased:</p>
+<p><span class="math display">\[E\{I(\lambda)\} \to f(\lambda) \text{ as } T \to \infty\]</span></p>
+<p>However, it is <strong>not consistent</strong>—its variance does not shrink to zero as sample size increases. For frequencies <span class="math inline">\(\lambda \not\equiv 0 \pmod{\pi}\)</span>:</p>
+<p><span class="math display">\[I(\lambda) \sim f(\lambda) \cdot \frac{\chi_2^2}{2}\]</span></p>
+<p>The periodogram is approximately distributed as the true spectrum times a chi-squared random variable with 2 degrees of freedom, divided by 2. Since <span class="math inline">\(Var(\chi_2^2/2) = 1\)</span>, the coefficient of variation remains constant regardless of sample size.</p>
+<p>This is a striking result: more data does not reduce periodogram variability. The periodogram fluctuates wildly around the true spectrum, even with millions of observations.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-periodogram-variability" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-periodogram-variability-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-periodogram-variability-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-periodogram-variability-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.4: Raw periodogram of white noise fluctuates wildly around the flat true spectrum
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The true spectrum of white noise is constant (red dashed line), but the periodogram (blue) varies by orders of magnitude. This variability is not due to small sample size—it persists asymptotically.</p>
+</section>
+</section>
+<section id="smoothed-spectrum-estimation" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="smoothed-spectrum-estimation"><span class="header-section-number">14.5</span> Smoothed Spectrum Estimation</h2>
+<section id="the-solution-averaging" class="level3" data-number="14.5.1">
+<h3 data-number="14.5.1" class="anchored" data-anchor-id="the-solution-averaging"><span class="header-section-number">14.5.1</span> The Solution: Averaging</h3>
+<p>The periodogram’s inconsistency arises because each periodogram ordinate is based on essentially one degree of freedom. The solution is to average over nearby frequencies:</p>
+<p><span class="math display">\[\hat{f}(\lambda) = \sum_j W_j \cdot I(\lambda - \lambda_j)\]</span></p>
+<p>where the weights <span class="math inline">\(W_j\)</span> form a smoothing kernel centered at <span class="math inline">\(\lambda\)</span>. By averaging <span class="math inline">\(m\)</span> periodogram ordinates, we obtain an estimate with approximately <span class="math inline">\(2m\)</span> degrees of freedom, reducing variance by a factor of <span class="math inline">\(m\)</span>.</p>
+</section>
+<section id="the-bandwidth-trade-off" class="level3" data-number="14.5.2">
+<h3 data-number="14.5.2" class="anchored" data-anchor-id="the-bandwidth-trade-off"><span class="header-section-number">14.5.2</span> The Bandwidth Trade-off</h3>
+<p>Smoothing introduces a bias-variance trade-off:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>More smoothing</th>
+<th>Less smoothing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lower variance</td>
+<td>Higher variance</td>
+</tr>
+<tr class="even">
+<td>Blurs nearby peaks</td>
+<td>Resolves nearby peaks</td>
+</tr>
+<tr class="odd">
+<td>Risk: miss narrow features</td>
+<td>Risk: spurious peaks from noise</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>bandwidth</strong> <span class="math inline">\(\beta\)</span> controls this trade-off. A wider bandwidth averages more ordinates, reducing variance but potentially smoothing over distinct spectral features. A narrow bandwidth preserves detail but leaves more noise.</p>
+<p>For consistency, we need the bandwidth to shrink (<span class="math inline">\(\beta \to 0\)</span>) but the number of averaged ordinates to grow (<span class="math inline">\(\beta T \to \infty\)</span>) as <span class="math inline">\(T \to \infty\)</span>.</p>
+</section>
+<section id="modified-daniell-kernel" class="level3" data-number="14.5.3">
+<h3 data-number="14.5.3" class="anchored" data-anchor-id="modified-daniell-kernel"><span class="header-section-number">14.5.3</span> Modified Daniell Kernel</h3>
+<p>A common choice is the <strong>modified Daniell kernel</strong>—essentially a moving average over adjacent frequencies. In R:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">spec.pgram</span>(x, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">taper =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>spans</code> argument specifies the widths of successive Daniell smoothers. Applying two smoothers (e.g., <code>spans = c(5, 5)</code>) produces a smoother result than one wider smoother. The <code>taper</code> argument applies a data taper to reduce spectral leakage from the finite sample boundaries.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-smoothed-periodogram" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-smoothed-periodogram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-smoothed-periodogram-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-smoothed-periodogram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.5: Smoothing reduces variance while preserving the overall shape
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="confidence-intervals" class="level3" data-number="14.5.4">
+<h3 data-number="14.5.4" class="anchored" data-anchor-id="confidence-intervals"><span class="header-section-number">14.5.4</span> Confidence Intervals</h3>
+<p>For the smoothed spectrum estimate with <span class="math inline">\(\nu\)</span> degrees of freedom:</p>
+<p><span class="math display">\[\frac{\nu \hat{f}(\lambda)}{f(\lambda)} \sim \chi_\nu^2\]</span></p>
+<p>This yields a confidence interval for the true spectrum:</p>
+<p><span class="math display">\[\left[ \frac{\nu \hat{f}(\lambda)}{\chi_{\nu, 1-\alpha/2}^2}, \; \frac{\nu \hat{f}(\lambda)}{\chi_{\nu, \alpha/2}^2} \right]\]</span></p>
+<p>The interval is multiplicative, not additive—it has constant width on a log scale. This is why spectrum plots typically use a logarithmic vertical axis: confidence bands then have uniform width across all frequencies.</p>
+</section>
+</section>
+<section id="example-sunspots" class="level2" data-number="14.6">
+<h2 data-number="14.6" class="anchored" data-anchor-id="example-sunspots"><span class="header-section-number">14.6</span> Example: Sunspots</h2>
+<p>We return to the sunspot data introduced in Chapter 12, now analyzing its spectrum.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sunspots-series" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sunspots-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-sunspots-series-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sunspots-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.6: Monthly sunspot numbers exhibit quasi-periodic behavior with variable amplitude and period
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The time series shows clear cyclical behavior, but with considerable irregularity. The cycle length varies; the amplitude varies even more. A simple sinusoidal model would not fit well. What does the spectrum reveal?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sunspots-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sunspots-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-sunspots-spectrum-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sunspots-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.7: Sunspot spectrum shows dominant peak near 11-year period
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="interpreting-the-sunspot-spectrum" class="level3" data-number="14.6.1">
+<h3 data-number="14.6.1" class="anchored" data-anchor-id="interpreting-the-sunspot-spectrum"><span class="header-section-number">14.6.1</span> Interpreting the Sunspot Spectrum</h3>
+<p>The spectrum reveals several features:</p>
+<ol type="1">
+<li><p><strong>Dominant peak near <span class="math inline">\(\lambda = 1/132\)</span> cycles/month</strong>: This corresponds to a period of approximately 132 months, or 11 years—the well-known solar cycle.</p></li>
+<li><p><strong>Broad peak rather than sharp line</strong>: If the cycle had exactly constant period, the spectral peak would be narrow. The breadth indicates that the period varies from cycle to cycle, typically ranging from about 9 to 14 years.</p></li>
+<li><p><strong>Harmonics at higher frequencies</strong>: Smaller peaks at multiples of the fundamental frequency indicate that the solar cycle is not purely sinusoidal—it has a more complex waveform.</p></li>
+<li><p><strong>Low-frequency power</strong>: Variance at very low frequencies reflects long-term modulation of cycle amplitude, such as the Maunder Minimum period of reduced solar activity.</p></li>
+</ol>
+<p>The spectrum thus quantifies what the time plot shows qualitatively, while adding information about the cycle’s variability that would be difficult to extract by eye.</p>
+</section>
+</section>
+<section id="example-city-temperatures" class="level2" data-number="14.7">
+<h2 data-number="14.7" class="anchored" data-anchor-id="example-city-temperatures"><span class="header-section-number">14.7</span> Example: City Temperatures</h2>
+<p>Daily temperature data provide another window into spectrum analysis. We examine temperatures from Honolulu, Hawaii—a location where the annual cycle should dominate.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-hnl-temp-series" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hnl-temp-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-hnl-temp-series-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hnl-temp-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.8: Honolulu daily temperatures (1995-2020) show clear annual cycle
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Honolulu’s tropical climate produces mild, stable temperatures: mean 77°F with standard deviation only 3.4°F. The annual cycle is visible but modest—Hawaii’s seasonal variation is much smaller than at mid-latitudes.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-hnl-temp-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hnl-temp-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-hnl-temp-spectrum-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hnl-temp-spectrum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.9: Honolulu temperature spectrum shows sharp peak at annual frequency
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="interpreting-the-temperature-spectrum" class="level3" data-number="14.7.1">
+<h3 data-number="14.7.1" class="anchored" data-anchor-id="interpreting-the-temperature-spectrum"><span class="header-section-number">14.7.1</span> Interpreting the Temperature Spectrum</h3>
+<p>The spectrum shows:</p>
+<ol type="1">
+<li><p><strong>Sharp peak at <span class="math inline">\(\lambda = 1/365\)</span> cycles/day</strong>: The annual cycle, driven by Earth’s orbital mechanics, dominates the variance. Unlike sunspots, this periodicity is exact—the spectral peak is narrow.</p></li>
+<li><p><strong>Harmonics</strong>: Peaks at 2/365, 3/365, etc., indicate that the annual temperature pattern is not purely sinusoidal.</p></li>
+<li><p><strong>Low-frequency power</strong>: Some variance at very low frequencies reflects year-to-year variation in mean temperature.</p></li>
+<li><p><strong>Broadband background</strong>: Day-to-day weather variability contributes across all frequencies, visible as the elevated baseline.</p></li>
+</ol>
+<p>The spectrum answers a quantitative question: what fraction of temperature variance is attributable to the annual cycle? Integrating under the spectral peak and comparing to total variance provides this answer directly.</p>
+</section>
+</section>
+<section id="coherence-comparing-two-series" class="level2" data-number="14.8">
+<h2 data-number="14.8" class="anchored" data-anchor-id="coherence-comparing-two-series"><span class="header-section-number">14.8</span> Coherence: Comparing Two Series</h2>
+<p>When we have multiple time series, we can ask: at which frequencies do they move together? This leads to the <strong>cross-spectrum</strong> and <strong>coherence</strong>.</p>
+<section id="the-cross-spectrum" class="level3" data-number="14.8.1">
+<h3 data-number="14.8.1" class="anchored" data-anchor-id="the-cross-spectrum"><span class="header-section-number">14.8.1</span> The Cross-Spectrum</h3>
+<p>For two series <span class="math inline">\(X_a(t)\)</span> and <span class="math inline">\(X_b(t)\)</span>, the cross-spectrum <span class="math inline">\(f_{a,b}(\lambda)\)</span> is the Fourier transform of their cross-covariance function:</p>
+<p><span class="math display">\[f_{a,b}(\lambda) = \sum_{u=-\infty}^{\infty} \gamma_{a,b}(u) e^{-i\lambda u}\]</span></p>
+<p>The cross-spectrum is generally complex-valued, with magnitude indicating the strength of co-movement and phase indicating the lead-lag relationship at each frequency.</p>
+</section>
+<section id="coherence" class="level3" data-number="14.8.2">
+<h3 data-number="14.8.2" class="anchored" data-anchor-id="coherence"><span class="header-section-number">14.8.2</span> Coherence</h3>
+<p><strong>Coherence</strong> is the squared correlation between two series at each frequency:</p>
+<p><span class="math display">\[|R_{a,b}(\lambda)|^2 = \frac{|f_{a,b}(\lambda)|^2}{f_{a,a}(\lambda) f_{b,b}(\lambda)}\]</span></p>
+<p>Like a squared correlation coefficient, coherence ranges from 0 (no linear relationship at frequency <span class="math inline">\(\lambda\)</span>) to 1 (perfect linear relationship). It answers: “How strongly do these series co-vary at this frequency?”</p>
+</section>
+<section id="hnl-vs-nyc-temperatures" class="level3" data-number="14.8.3">
+<h3 data-number="14.8.3" class="anchored" data-anchor-id="hnl-vs-nyc-temperatures"><span class="header-section-number">14.8.3</span> HNL vs NYC Temperatures</h3>
+<p>We compare daily temperatures at Honolulu and New York City to illustrate coherence analysis.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-hnl-nyc-series" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hnl-nyc-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-hnl-nyc-series-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hnl-nyc-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.10: Daily temperatures at Honolulu and New York City (1995-2020)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Both cities show annual cycles, but NYC has much larger amplitude (mean 56°F, SD 17.1°F versus Honolulu’s 77°F and 3.4°F). NYC also shows more day-to-day variability from mid-latitude weather systems.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-hnl-nyc-coherence" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hnl-nyc-coherence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="ts-freq-domain_files/figure-html/fig-hnl-nyc-coherence-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hnl-nyc-coherence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14.11: Coherence between Honolulu and NYC temperatures
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpreting-the-coherence" class="level3" data-number="14.8.4">
+<h3 data-number="14.8.4" class="anchored" data-anchor-id="interpreting-the-coherence"><span class="header-section-number">14.8.4</span> Interpreting the Coherence</h3>
+<p>The coherence plot reveals a striking pattern:</p>
+<p><strong>At the annual frequency</strong>: Coherence approaches 1. Both cities warm in summer and cool in winter, driven by the same astronomical cause—Earth’s axial tilt and orbital position. The annual cycle is a shared signal.</p>
+<p><strong>At higher frequencies</strong>: Coherence is near zero. Day-to-day weather in Honolulu tells us nothing about weather in New York City. Local weather systems—fronts, storms, pressure patterns—are independent across such distances.</p>
+<p>Coherence thus identifies which periodicities are shared between series and which are independent. This is valuable for understanding causal mechanisms: high coherence suggests a common driver; low coherence suggests independent local dynamics.</p>
+</section>
+</section>
+<section id="the-dual-perspectives" class="level2" data-number="14.9">
+<h2 data-number="14.9" class="anchored" data-anchor-id="the-dual-perspectives"><span class="header-section-number">14.9</span> The Dual Perspectives</h2>
+<section id="time-domain-vs-frequency-domain" class="level3" data-number="14.9.1">
+<h3 data-number="14.9.1" class="anchored" data-anchor-id="time-domain-vs-frequency-domain"><span class="header-section-number">14.9.1</span> Time Domain vs Frequency Domain</h3>
+<p>We can now consolidate the two perspectives developed across Chapters 12–14:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 41%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Time Domain</th>
+<th>Frequency Domain</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ACF, PACF</td>
+<td>Spectrum</td>
+</tr>
+<tr class="even">
+<td>AR, MA, ARIMA models</td>
+<td>Spectral peaks, bandwidth</td>
+</tr>
+<tr class="odd">
+<td>Forecasting</td>
+<td>Identifying cycles</td>
+</tr>
+<tr class="even">
+<td>“How does past predict future?”</td>
+<td>“What periodic structure is present?”</td>
+</tr>
+</tbody>
+</table>
+<p>These are equivalent descriptions—Fourier transform pairs—but they illuminate different aspects of the data.</p>
+</section>
+<section id="when-to-use-which" class="level3" data-number="14.9.2">
+<h3 data-number="14.9.2" class="anchored" data-anchor-id="when-to-use-which"><span class="header-section-number">14.9.2</span> When to Use Which</h3>
+<p><strong>Time domain methods</strong> excel when the goal is forecasting and short-term dependence modeling. The ARIMA family provides a systematic framework for building predictive models, with diagnostic tools (ACF, PACF) that guide model selection.</p>
+<p><strong>Frequency domain methods</strong> excel when the goal is identifying periodicities and understanding cyclic mechanisms. The spectrum directly reveals what cycles are present and how strong they are.</p>
+<p><strong>Best practice</strong>: Use both. They reveal different aspects of the same reality. The sunspot example illustrates this: an AR(2) model captures the quasi-periodic behavior for forecasting purposes, while the spectrum reveals the ~11-year solar cycle and shows that its period varies.</p>
+</section>
+<section id="the-duality-in-practice" class="level3" data-number="14.9.3">
+<h3 data-number="14.9.3" class="anchored" data-anchor-id="the-duality-in-practice"><span class="header-section-number">14.9.3</span> The Duality in Practice</h3>
+<p>Consider how the two perspectives complement each other:</p>
+<p><strong>Sunspots</strong>: Time-domain analysis identifies an AR(2) model with a characteristic damped oscillation in the ACF. Frequency-domain analysis shows a broad spectral peak near the 11-year period. The breadth of the peak—invisible in the time-domain diagnostics—reveals that the cycle period itself varies.</p>
+<p><strong>Temperature data</strong>: Time-domain analysis shows strong positive autocorrelation—today predicts tomorrow. Frequency-domain analysis shows a sharp annual peak, quantifying exactly how much variance the seasonal cycle explains. Coherence analysis reveals that two distant cities share the annual cycle but have independent day-to-day weather.</p>
+<p><strong>Economic data</strong>: Time-domain SARIMA models capture both trend and seasonality for forecasting. Frequency-domain analysis can reveal additional cycles—business cycles, for instance—that might be obscured by the dominant seasonal pattern.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="14.10">
+<h2 data-number="14.10" class="anchored" data-anchor-id="summary"><span class="header-section-number">14.10</span> Summary</h2>
+<p>This chapter developed the frequency-domain perspective on time series, complementing the time-domain methods of Chapter 13.</p>
+<p><strong>Key insights</strong>:</p>
+<ol type="1">
+<li><p><strong>The spectrum decomposes variance by frequency</strong>. Peaks indicate dominant cycles; a flat spectrum indicates white noise. The spectrum and autocovariance are Fourier transform pairs—same information, different emphasis.</p></li>
+<li><p><strong>ARMA spectra connect the two domains</strong>. AR processes have spectral peaks where their polynomial roots approach the unit circle. The time-domain model parameters determine frequency-domain features.</p></li>
+<li><p><strong>The periodogram is the sample spectrum estimate</strong>. It is unbiased but inconsistent—its variance does not shrink with sample size, following an asymptotic chi-squared distribution.</p></li>
+<li><p><strong>Smoothing produces consistent estimates</strong>. Averaging over nearby frequencies trades resolution for stability. The bandwidth controls this bias-variance trade-off.</p></li>
+<li><p><strong>Coherence measures shared periodicity</strong>. For multiple series, coherence identifies which frequencies exhibit co-movement and which are independent.</p></li>
+<li><p><strong>The dual perspectives are complementary</strong>. Time-domain methods serve forecasting; frequency-domain methods serve understanding. Complete analysis draws on both.</p></li>
+</ol>
+</section>
+<section id="exercises" class="level2" data-number="14.11">
+<h2 data-number="14.11" class="anchored" data-anchor-id="exercises"><span class="header-section-number">14.11</span> Exercises</h2>
+<ol type="1">
+<li><p><strong>Periodogram variability</strong>: Generate 256 observations of white noise and compute the periodogram using <code>stats::spec.pgram()</code> with no smoothing (<code>spans = NULL</code>). What is the approximate range of periodogram values? Repeat with <code>spans = c(7,7)</code>. How does smoothing affect the variability?</p></li>
+<li><p><strong>AR spectrum identification</strong>: Using <code>astsa::arma.spec()</code>, plot the theoretical spectra of AR(1) processes with <span class="math inline">\(\phi = 0.9\)</span>, <span class="math inline">\(\phi = 0.5\)</span>, and <span class="math inline">\(\phi = -0.5\)</span>. How does the AR parameter affect spectrum shape?</p></li>
+<li><p><strong>Sunspot period</strong>: From the sunspot spectrum, estimate the dominant period. How does this compare to the commonly cited “11-year solar cycle”? What does the width of the spectral peak suggest about period variability?</p></li>
+<li><p><strong>Temperature seasonality</strong>: For the global land temperature series (<code>astsa::gtemp_land</code>), estimate and plot the spectrum. Does it show evidence of annual periodicity? What feature dominates the spectrum, and what does this indicate about the series?</p></li>
+<li><p><strong>Smoothing comparison</strong>: For the sunspot data, compare spectrum estimates with <code>spans = c(3,3)</code>, <code>spans = c(7,7)</code>, and <code>spans = c(15,15)</code>. How does bandwidth affect the appearance of the dominant peak and the noise level?</p></li>
+<li><p><strong>Coherence interpretation</strong>: For two economic series (e.g., GDP and unemployment), estimate the coherence spectrum. At what frequencies is coherence highest? What might this indicate about the relationship between the series?</p></li>
+</ol>
+</section>
+<section id="resources" class="level2" data-number="14.12">
+<h2 data-number="14.12" class="anchored" data-anchor-id="resources"><span class="header-section-number">14.12</span> Resources</h2>
+<p><strong>Textbooks</strong>:</p>
+<ul>
+<li><p>Shumway, R.H. and Stoffer, D.S. (2025). <em>Time Series Analysis and Its Applications: With R Examples</em> (5th ed.). Springer. Chapters 4–5 provide comprehensive treatment of spectrum estimation and coherence.</p></li>
+<li><p>Bloomfield, P. (2000). <em>Fourier Analysis of Time Series: An Introduction</em> (2nd ed.). Wiley. An accessible introduction focusing on the frequency domain.</p></li>
+<li><p>Brillinger, D.R. (2001). <em>Time Series: Data Analysis and Theory</em>. SIAM. A mathematically rigorous treatment of the theory.</p></li>
+<li><p>Percival, D.B. and Walden, A.T. (1993). <em>Spectral Analysis for Physical Applications</em>. Cambridge University Press. Comprehensive coverage of modern spectrum estimation methods.</p></li>
+</ul>
+<p><strong>Software</strong>:</p>
+<ul>
+<li><p>The <code>stats::spec.pgram()</code> function provides basic spectrum estimation in R.</p></li>
+<li><p>The <code>astsa</code> package provides <code>arma.spec()</code> for theoretical ARMA spectra and enhanced plotting functions.</p></li>
+<li><p>The <code>spectrum</code> package and the CRAN Task View on Time Series (https://cran.r-project.org/web/views/TimeSeries.html) provide additional tools.</p></li>
+</ul>
+</section>
+<section id="sec-ts-freq-domain-glossary" class="level2" data-number="14.13">
+<h2 data-number="14.13" class="anchored" data-anchor-id="sec-ts-freq-domain-glossary"><span class="header-section-number">14.13</span> Appendix: Glossary of Notation</h2>
+<p><span class="math display">\[
+\begin{align}
+  f(\lambda)
+     \quad &amp; \quad \text{spectrum (spectral density) at frequency } \lambda \\
+  \\
+  f_{a,b}(\lambda)
+     \quad &amp; \quad \text{cross-spectrum of series } a \text{ and } b \\
+  \\
+  \hat{f}(\lambda)
+     \quad &amp; \quad \text{smoothed spectrum estimate} \\
+  \\
+  I(\lambda)
+     \quad &amp; \quad \text{periodogram at frequency } \lambda \\
+  \\
+  \gamma(u)
+     \quad &amp; \quad \text{autocovariance at lag } u \\
+  \\
+  \gamma_{a,b}(u)
+     \quad &amp; \quad \text{cross-covariance of series } a \text{ and } b \text{ at lag } u \\
+  \\
+  R_{a,b}(\lambda)
+     \quad &amp; \quad \text{coherency: } \frac{f_{a,b}(\lambda)}{\sqrt{f_{a,a}(\lambda) f_{b,b}(\lambda)}} \\
+  \\
+  |R_{a,b}(\lambda)|^2
+     \quad &amp; \quad \text{coherence (squared coherency)} \\
+  \\
+  \beta
+     \quad &amp; \quad \text{bandwidth of smoothed spectrum estimate} \\
+  \\
+  \nu
+     \quad &amp; \quad \text{degrees of freedom of smoothed estimate} \\
+  \\
+  \lambda_j
+     \quad &amp; \quad \text{Fourier frequency: } 2\pi j / T \\
+  \\
+  T
+     \quad &amp; \quad \text{number of observations} \\
+  \\
+  \chi_\nu^2
+     \quad &amp; \quad \text{chi-squared distribution with } \nu \text{ degrees of freedom}
+\end{align}
+\]</span></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/github\.com\/tthrall\/eda4ml\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ts-time-domain.html" class="pagination-link" aria-label="Time Domain Methods">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./graph-theory.html" class="pagination-link" aria-label="Graph Theory for Machine Learning">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/ts-freq-domain.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
