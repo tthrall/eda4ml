@@ -58,6 +58,7 @@ book:
     - part: Time Series Data
       chapters:
         - ts-data.qmd
+        - ts-time-domain.qmd
         - ts-intro.qmd
         - ts-forecast.qmd
         - ts-fourier.qmd
