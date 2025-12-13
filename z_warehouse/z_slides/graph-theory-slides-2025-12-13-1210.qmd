@@ -1,0 +1,802 @@
+---
+title: "Graph Theory for Machine Learning"
+subtitle: "Structure, Connection, and Meaning"
+author: "EDA for Machine Learning"
+format:
+  revealjs:
+    theme: [dark, eda4ml-slides.scss]
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    toc-title: "Chapter 15"
+    preview-links: auto
+    progress: true
+    hash: true
+    incremental: false
+    code-fold: true
+    fig-width: 8
+    fig-height: 5
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(igraph)
+library(tidyverse)
+library(eda4mldata)
+
+# Source helper functions
+# source(here::here("code", "learning_graph.R"))
+```
+
+# The Nature of Graphs
+
+## Networks Are Everywhere
+
+Graphs appear whenever entities are connected:
+
+- **Social networks**: People linked by friendship, collaboration, influence
+- **Biological networks**: Proteins linked by interactions, genes by regulation
+- **Information networks**: Web pages linked by hyperlinks, papers by citations
+- **Knowledge graphs**: Concepts linked by semantic relationships
+
+. . .
+
+The mathematical abstraction—**nodes** and **edges**—unifies these diverse domains.
+
+## Understanding and Prediction
+
+Throughout this book we have seen that **understanding** and **decision support** are intertwined.
+
+. . .
+
+Graph analysis makes this especially vivid.
+
+| Perspective | Question |
+|-------------|----------|
+| **Prediction** | Who will connect next? What should we recommend? |
+| **Understanding** | What communities exist? Who is influential? Why? |
+
+. . .
+
+These perspectives are complementary—structure enables prediction, and prediction reveals structure.
+
+## The Questions Graphs Answer
+
+**Structural questions** (understanding):
+
+- What communities or clusters exist?
+- Which nodes are central or influential?
+- How does information or influence flow?
+
+. . .
+
+**Predictive questions** (decision support):
+
+- Will these two nodes connect? (link prediction)
+- What should this user see next? (recommendation)
+- What's the shortest path from here to there? (routing)
+
+## Three Examples
+
+We explore graphs through three examples of increasing complexity:
+
+| Example | Domain | Key Concepts |
+|---------|--------|--------------|
+| **Zachary's Karate Club** | Social network | Community detection, centrality |
+| **MovieLens** | Recommendations | Bipartite graphs, projection |
+| **LearningGraph** | Knowledge graph | Typed nodes, path queries, gap analysis |
+
+. . .
+
+Each illuminates different aspects of graph structure and different analytical questions.
+
+# Example 1: Zachary's Karate Club
+
+## The Story
+
+In the 1970s, sociologist Wayne Zachary studied a university karate club.
+
+. . .
+
+A conflict arose between the instructor (Mr. Hi) and the club president (John A).
+
+. . .
+
+The club split. Zachary had recorded who interacted with whom *outside* the club.
+
+. . .
+
+**The question**: Could the social network predict which faction each member would join?
+
+## The Network
+
+```{r}
+#| label: fig-karate-network
+#| fig-cap: "Zachary's Karate Club network (34 members, 78 connections)"
+#| fig-height: 5.5
+
+karate <- make_graph("Zachary")
+
+# Set up node attributes
+V(karate)$name <- 1:vcount(karate)
+
+# Known faction membership (ground truth)
+# Mr. Hi's faction (node 1) vs John A's faction (node 34)
+faction <- c(1,1,1,1,1,1,1,1,2,2,1,1,1,1,2,2,1,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,2,2)
+V(karate)$faction <- faction
+V(karate)$color <- ifelse(faction == 1, "#E41A1C", "#377EB8")
+
+# Highlight the two leaders
+V(karate)$size <- 15
+V(karate)$size[1] <- 25   # Mr. Hi
+V(karate)$size[34] <- 25  # John A
+
+set.seed(42)
+plot(karate, 
+     layout = layout_with_fr(karate),
+     vertex.label = V(karate)$name,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.8,
+     edge.color = "gray70",
+     main = "")
+legend("bottomleft", 
+       legend = c("Mr. Hi's faction", "John A's faction"),
+       fill = c("#E41A1C", "#377EB8"),
+       bty = "n")
+```
+
+## What the Network Reveals
+
+**Visual inspection** already suggests structure:
+
+- Two dense regions with sparse connections between them
+- Node 1 (Mr. Hi) and node 34 (John A) are hubs of their respective groups
+
+. . .
+
+**Zachary's result**: The network correctly predicted 33 of 34 members' choices.
+
+. . .
+
+The one "misclassified" member (node 9) had stronger ties to Mr. Hi's group but followed his close friend to John A's faction.
+
+## Centrality: Who Matters?
+
+**Degree centrality**: How many connections does a node have?
+
+**Betweenness centrality**: How often does a node lie on shortest paths between others?
+
+```{r}
+#| label: fig-karate-centrality
+#| fig-cap: "Karate Club with nodes sized by betweenness centrality"
+#| fig-height: 4.5
+
+betw <- betweenness(karate, normalized = TRUE)
+V(karate)$size <- 10 + 40 * betw  # Scale for visibility
+
+set.seed(42)
+plot(karate,
+     layout = layout_with_fr(karate),
+     vertex.label = V(karate)$name,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.7,
+     edge.color = "gray70",
+     main = "")
+```
+
+Node 1 (Mr. Hi) has highest betweenness—he's the bridge to many members.
+
+## Community Detection
+
+Can an algorithm recover the factions without knowing the ground truth?
+
+```{r}
+#| label: fig-karate-communities
+#| fig-cap: "Communities detected by Louvain algorithm"
+#| fig-height: 4.5
+
+# Reset size
+V(karate)$size <- 15
+V(karate)$size[1] <- 25
+V(karate)$size[34] <- 25
+
+# Detect communities
+comm <- cluster_louvain(karate)
+V(karate)$color <- membership(comm)
+
+set.seed(42)
+plot(karate,
+     layout = layout_with_fr(karate),
+     vertex.label = V(karate)$name,
+     vertex.label.color = "white",
+     vertex.label.cex = 0.8,
+     edge.color = "gray70",
+     main = "")
+```
+
+The Louvain algorithm finds a partition very close to the actual split.
+
+## Prediction Meets Understanding
+
+The Karate Club illustrates the dual perspective:
+
+. . .
+
+**Understanding**: The network structure reveals social cohesion patterns. Communities exist because people preferentially associate with similar others.
+
+. . .
+
+**Prediction**: That same structure predicts future behavior. When forced to choose, people follow their network ties.
+
+. . .
+
+This is the power of graph analysis: **structure is predictive because structure reflects mechanism**.
+
+# Example 2: MovieLens
+
+## The Setting
+
+MovieLens is a movie recommendation dataset from the GroupLens research lab.
+
+. . .
+
+**The data**: Users rate movies on a 1–5 scale.
+
+. . .
+
+**The question**: Given a user's rating history, what movies should we recommend?
+
+## Bipartite Structure
+
+```{r}
+#| label: fig-bipartite-schematic
+#| fig-cap: "Bipartite graph: users connect to movies, never to each other"
+#| fig-height: 4
+
+# Create a small illustrative bipartite graph
+set.seed(123)
+n_users <- 5
+n_movies <- 6
+edges <- tibble(
+  user = c(1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5),
+  movie = c(1, 2, 3, 2, 4, 1, 3, 5, 4, 6, 2, 5, 6)
+)
+
+g <- graph_from_data_frame(
+  edges |> mutate(user = paste0("U", user), movie = paste0("M", movie)),
+  directed = FALSE
+)
+
+# Set bipartite type
+V(g)$type <- grepl("^M", V(g)$name)
+V(g)$color <- ifelse(V(g)$type, "#2ECC71", "#9B59B6")
+V(g)$shape <- ifelse(V(g)$type, "square", "circle")
+V(g)$size <- 20
+
+plot(g,
+     layout = layout_as_bipartite(g),
+     vertex.label.color = "white",
+     edge.color = "gray60",
+     main = "")
+legend("bottom",
+       legend = c("Users", "Movies"),
+       fill = c("#9B59B6", "#2ECC71"),
+       horiz = TRUE,
+       bty = "n")
+```
+
+Users and movies are **different types** of nodes. Edges connect users to movies they've rated.
+
+## The Recommendation Question
+
+**Collaborative filtering** idea: Users with similar taste will like similar movies.
+
+. . .
+
+Graph formulation:
+
+- If User A and User B both rated Movie X highly...
+- ...and User B also rated Movie Y highly...
+- ...then recommend Movie Y to User A.
+
+. . .
+
+This is a **path query**: find movies reachable through similar users.
+
+## Projection: User Similarity
+
+We can "project" the bipartite graph onto users:
+
+. . .
+
+Two users are connected if they rated the same movie.
+
+Edge weight = number of movies in common.
+
+```{r}
+#| label: fig-user-projection
+#| fig-cap: "User projection: users connected by shared movie ratings"
+#| fig-height: 3.5
+
+# Project onto users
+user_proj <- bipartite_projection(g, which = "false")  # "false" = first type (users)
+E(user_proj)$width <- E(user_proj)$weight * 2
+
+V(user_proj)$color <- "#9B59B6"
+V(user_proj)$size <- 25
+
+plot(user_proj,
+     vertex.label.color = "white",
+     edge.color = "gray50",
+     main = "")
+```
+
+This projection enables standard graph algorithms on user similarity.
+
+## From Structure to Prediction
+
+**Understanding**: The projected graph reveals user clusters—groups with similar taste.
+
+. . .
+
+**Prediction**: Recommendations come from highly-connected neighbors in this similarity graph.
+
+. . .
+
+**The insight**: Recommendation is fundamentally about **graph structure**. Collaborative filtering asks: "What do my graph neighbors like that I haven't seen?"
+
+# Example 3: LearningGraph
+
+## Knowledge Graphs
+
+A **knowledge graph** represents structured knowledge:
+
+- **Nodes** have types (Person, Skill, Course, Role)
+- **Edges** have labels (has_skill, requires, teaches)
+- **Properties** attach to edges (proficiency level)
+
+. . .
+
+This is richer than a simple network: it encodes **semantics**.
+
+## The LearningGraph
+
+```{r}
+#| label: tbl-lg-structure
+#| tbl-cap: "LearningGraph structure"
+
+tibble::tribble(
+  ~"Node Types", ~"Edge Types",
+  "Learner (6)", "has_skill (learner → skill)",
+  "Skill (18)", "requires_skill (role → skill)",
+  "Work Role (3)", "prerequisite (skill → skill)",
+  "Course (6)", "teaches (course → skill)",
+  "Competency (7)", "skill_in_competency (skill → competency)"
+) |> knitr::kable()
+```
+
+Based on the IC Data Science Competency Resource Guide (2023).
+
+Inspired by Workera.ai's skills intelligence platform.
+
+## The Schema
+
+```{r}
+#| label: tbl-lg-schema
+#| tbl-cap: "LearningGraph edge schema"
+
+tibble::tribble(
+  ~"Edge Type", ~"Source", ~"Target", ~"Property", ~"Semantics",
+  "has_skill", "learner", "skill", "proficiency", "current level",
+  "requires_skill", "work_role", "skill", "proficiency", "minimum threshold",
+  "prerequisite", "skill", "skill", "—", "conceptual dependency",
+  "teaches", "course", "skill", "proficiency", "maximum ceiling"
+) |> knitr::kable()
+```
+
+The schema defines what assertions are well-formed—enabling both validation and inference.
+
+## Skill Prerequisites as a DAG
+
+```{r}
+#| label: fig-lg-prerequisite
+#| fig-cap: "Skill prerequisite structure (directed acyclic graph)"
+#| fig-height: 5
+
+# Build prerequisite graph from eda4mldata
+data(learning_graph)
+
+prereq_edges <- learning_graph$edges$prerequisite |>
+  left_join(learning_graph$nodes$skills |> select(skill_id, skill_name),
+            by = c("skill_from_id" = "skill_id")) |>
+  rename(from = skill_name) |>
+  left_join(learning_graph$nodes$skills |> select(skill_id, skill_name),
+            by = c("skill_to_id" = "skill_id")) |>
+  rename(to = skill_name) |>
+  select(from, to)
+
+g_prereq <- graph_from_data_frame(prereq_edges, directed = TRUE)
+
+# Color by competency
+skill_cmp <- learning_graph$nodes$skills |>
+  select(skill_name, cmp_id)
+cmp_colors <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", 
+                "#FF7F00", "#A65628", "#F781BF")
+V(g_prereq)$color <- cmp_colors[skill_cmp$cmp_id[match(V(g_prereq)$name, skill_cmp$skill_name)]]
+V(g_prereq)$size <- 12
+
+set.seed(42)
+plot(g_prereq,
+     layout = layout_with_sugiyama(g_prereq)$layout,
+     vertex.label.cex = 0.6,
+     vertex.label.color = "black",
+     edge.arrow.size = 0.4,
+     edge.color = "gray50",
+     main = "")
+```
+
+Entry points: Programming, Data Collection, Probability Theory, Linear Algebra
+
+## Gap Analysis
+
+**Question**: What skills does Alice need to become a Data Scientist?
+
+```{r}
+#| label: tbl-alice-gap
+
+# Compute Alice's gap
+learner_skills <- learning_graph$edges$has_skill |>
+  filter(learner_id == 1) |>  # Alice
+  select(skill_id, current = proficiency)
+
+role_req <- learning_graph$edges$requires_skill |>
+  filter(role_id == 2) |>  # Data Scientist
+  select(skill_id, required = required_proficiency)
+
+gap <- role_req |>
+  left_join(learner_skills, by = "skill_id") |>
+  mutate(current = replace_na(current, 0L),
+         gap = required - current) |>
+  left_join(learning_graph$nodes$skills |> select(skill_id, skill_name),
+            by = "skill_id") |>
+  select(Skill = skill_name, Current = current, Required = required, Gap = gap) |>
+  arrange(desc(Gap)) |>
+  head(8)
+
+gap |> knitr::kable()
+```
+
+## Learning Paths
+
+**Question**: What's the shortest path from Programming to Statistical Learning?
+
+. . .
+
+```{r}
+#| label: learning-path-demo
+
+path <- shortest_paths(g_prereq, 
+                       from = "Programming", 
+                       to = "Statistical Learning",
+                       output = "vpath")
+cat(paste(names(path$vpath[[1]]), collapse = " → "))
+```
+
+. . .
+
+This is **Dijkstra's algorithm** applied to skill acquisition.
+
+. . .
+
+The prerequisite DAG encodes *conceptual dependencies*—what you must understand before you can learn the next thing.
+
+## Real-World Application: Workera
+
+This isn't hypothetical. Companies like **Workera** (co-founded by Kian Katanforoosh, Andrew Ng as chairman) have built businesses on exactly this structure.
+
+. . .
+
+| Workera Capability | Graph Interpretation |
+|--------------------|---------------------|
+| 3,000+ micro-skills | Fine-grained skill nodes |
+| Personalized learning paths | Shortest path through prerequisites |
+| Skill gap assessment | Compare current vs. required subgraphs |
+| "Sage" AI mentor | LLM grounded by knowledge graph |
+
+## The Dual Perspective Again
+
+**Understanding**: The knowledge graph encodes domain expertise—what skills exist, how they relate, what roles require.
+
+. . .
+
+**Prediction/Decision Support**: Given where a learner is, what should they learn next? What's the most efficient path to their goal?
+
+. . .
+
+The graph doesn't just store knowledge—it **enables reasoning** about learning pathways.
+
+# Fundamental Concepts
+
+## Nodes and Edges
+
+A **graph** $G = (V, E)$ consists of:
+
+- $V$ = set of **vertices** (nodes)
+- $E$ = set of **edges** (connections between nodes)
+
+. . .
+
+**Undirected**: Edge $\{u, v\}$ is symmetric (friendship)
+
+**Directed**: Edge $(u, v)$ has direction (follows, links to)
+
+. . .
+
+**Weighted**: Edges carry numerical values (distance, strength)
+
+**Labeled**: Edges have types (prerequisite, teaches, knows)
+
+## Matrix Representations
+
+The **adjacency matrix** $A$ encodes connections:
+
+$$A_{ij} = \begin{cases} 1 & \text{if edge } (i,j) \in E \\ 0 & \text{otherwise} \end{cases}$$
+
+. . .
+
+The **degree matrix** $D$ is diagonal:
+
+$$D_{ii} = \sum_j A_{ij} = \text{degree of node } i$$
+
+. . .
+
+The **Laplacian** $L = D - A$ has deep connections to graph structure.
+
+## Paths and Connectivity
+
+A **path** is a sequence of edges connecting two nodes.
+
+. . .
+
+**Shortest path**: The path with minimum total weight (or fewest edges).
+
+. . .
+
+A graph is **connected** if a path exists between every pair of nodes.
+
+**Connected components**: Maximal connected subgraphs.
+
+. . .
+
+A **directed acyclic graph (DAG)** has no cycles—crucial for prerequisite structures.
+
+# Measuring Importance
+
+## Centrality: Who Matters?
+
+Different questions → different centrality measures:
+
+| Measure | Question | Karate Club Leader |
+|---------|----------|-------------------|
+| **Degree** | Who has the most connections? | Mr. Hi |
+| **Betweenness** | Who controls information flow? | Mr. Hi |
+| **Closeness** | Who can reach everyone quickly? | Central members |
+| **PageRank** | Who is endorsed by important others? | Both leaders |
+
+## Betweenness Centrality
+
+$$\gamma(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$$
+
+where $\sigma_{st}$ = number of shortest paths from $s$ to $t$
+
+and $\sigma_{st}(v)$ = number of those paths passing through $v$
+
+. . .
+
+**Interpretation**: Nodes with high betweenness are **bridges**—removing them fragments the network.
+
+## PageRank
+
+Originally for ranking web pages. The idea:
+
+. . .
+
+A page is important if important pages link to it.
+
+. . .
+
+**Random surfer model**: Follow links randomly, occasionally jump to a random page. PageRank = long-run fraction of time at each node.
+
+. . .
+
+$$\text{PR}(v) = \frac{1-d}{N} + d \sum_{u \to v} \frac{\text{PR}(u)}{\text{out-degree}(u)}$$
+
+where $d \approx 0.85$ is the damping factor.
+
+# Finding Structure
+
+## Communities
+
+A **community** is a group of nodes more densely connected internally than externally.
+
+. . .
+
+**Modularity** measures community quality:
+
+$$Q = \frac{1}{2m} \sum_{ij} \left[ A_{ij} - \frac{k_i k_j}{2m} \right] \delta(c_i, c_j)$$
+
+. . .
+
+Compares actual edges within communities to expected edges in a random graph.
+
+$Q > 0.3$ typically indicates significant community structure.
+
+## Community Detection Algorithms
+
+| Algorithm | Approach | Complexity |
+|-----------|----------|------------|
+| **Girvan-Newman** | Iteratively remove high-betweenness edges | Slow, interpretable |
+| **Louvain** | Greedily optimize modularity | Fast, widely used |
+| **Spectral** | Eigenvectors of Laplacian | Principled, relates to graph cuts |
+| **Leiden** | Improved Louvain, allows overlaps | State of the art |
+
+. . .
+
+No single "best" algorithm—choice depends on graph size, structure, and goals.
+
+## Spectral Clustering Intuition
+
+The **graph Laplacian** $L = D - A$ encodes connectivity.
+
+. . .
+
+Its **eigenvectors** reveal structure:
+
+- First eigenvector: constant (trivial)
+- Second eigenvector: signs indicate two-way partition
+- More eigenvectors: finer partitions
+
+. . .
+
+**Fiedler vector** (second eigenvector) minimizes the ratio cut—a principled way to split a graph.
+
+# Graphs and Machine Learning
+
+## Graphs as Feature Sources
+
+Traditional ML on graphs: extract features, then apply standard methods.
+
+. . .
+
+**Node features**:
+
+- Degree, centrality measures
+- Community membership
+- Local clustering coefficient
+
+. . .
+
+**Graph features**:
+
+- Density, diameter
+- Degree distribution
+- Modularity
+
+## Link Prediction
+
+**Question**: Which pairs of unconnected nodes will connect in the future?
+
+. . .
+
+**Common neighbors**: $|N(u) \cap N(v)|$
+
+**Jaccard coefficient**: $\frac{|N(u) \cap N(v)|}{|N(u) \cup N(v)|}$
+
+**Adamic-Adar**: $\sum_{w \in N(u) \cap N(v)} \frac{1}{\log |N(w)|}$
+
+. . .
+
+These are *graph-derived features* for a classification problem.
+
+## Graph Neural Networks (Brief)
+
+Modern approach: learn node representations directly from graph structure.
+
+. . .
+
+**Message passing**: Nodes aggregate information from neighbors, iteratively.
+
+. . .
+
+$$h_v^{(k+1)} = \text{UPDATE}\left(h_v^{(k)}, \text{AGGREGATE}\left(\{h_u^{(k)} : u \in N(v)\}\right)\right)$$
+
+. . .
+
+GNNs can learn features automatically—but require substantial data and compute.
+
+For many problems, classical graph features remain competitive and interpretable.
+
+# The Dual Perspectives Revisited
+
+## Structure Enables Both Goals
+
+| Perspective | Methods | Questions |
+|-------------|---------|-----------|
+| **Understanding** | Centrality, communities, components | Who matters? What groups exist? How does information flow? |
+| **Prediction** | Link prediction, recommendation, node classification | What will happen? What should we recommend? |
+
+. . .
+
+The same graph structure serves both: **understanding why** and **predicting what**.
+
+## From Social to Semantic
+
+Our three examples show increasing semantic richness:
+
+| Example | Nodes | Edges | Semantics |
+|---------|-------|-------|-----------|
+| Karate Club | People | Interacts | Homogeneous |
+| MovieLens | Users, Movies | Rates | Bipartite, weighted |
+| LearningGraph | Learners, Skills, Roles, Courses | Multiple types | Knowledge graph |
+
+. . .
+
+Richer semantics → richer reasoning, but also more complex modeling.
+
+## Key Takeaways
+
+1. **Graphs encode relationships**—and relationships are information.
+
+2. **Structure reveals mechanism**—communities exist because of homophily; centrality reflects influence pathways.
+
+3. **The same structure serves prediction and understanding**—link prediction exploits the patterns that community detection reveals.
+
+4. **Knowledge graphs add semantics**—typed nodes and labeled edges enable richer queries and reasoning.
+
+# Summary and Resources
+
+## What We Covered
+
+- **Three examples**: Karate Club, MovieLens, LearningGraph
+- **Fundamental concepts**: Nodes, edges, matrices, paths
+- **Centrality measures**: Degree, betweenness, PageRank
+- **Community detection**: Modularity, Louvain, spectral methods
+- **ML connections**: Features from graphs, link prediction, GNNs
+
+## Key R Packages
+
+| Package | Purpose |
+|---------|---------|
+| `igraph` | Graph creation, algorithms, analysis |
+| `tidygraph` | Tidy interface to igraph |
+| `ggraph` | ggplot2-style visualization |
+| `igraphdata` | Built-in datasets |
+
+## Resources
+
+**Textbooks**:
+
+- Newman, *Networks* (2nd ed., 2018) — comprehensive reference
+- Barabási, *Network Science* (2016) — free online, beautifully illustrated
+- Easley & Kleinberg, *Networks, Crowds, and Markets* (2010) — interdisciplinary
+
+**Tutorial**:
+
+- Ognyanova, "Network Visualization with R" (kateto.net)
+
+## Exercises
+
+1. Load the Karate Club graph and verify that Louvain recovers the factional split.
+
+2. Compute the betweenness centrality of all nodes. Which node has the highest betweenness? Why does this make sense sociologically?
+
+3. Using the LearningGraph, find the shortest learning path from Linear Algebra to Problem Formulation. What does this path suggest about skill development?
+
+4. Create a bipartite graph from a small subset of MovieLens data. Project it onto users and identify clusters of similar users.
+
+5. For the prerequisite DAG in LearningGraph, verify that it is acyclic. What would a cycle mean pedagogically?

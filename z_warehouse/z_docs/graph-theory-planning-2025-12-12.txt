@@ -1,0 +1,754 @@
+graph-theory-planning-2025-12-12
+
+TT (2025-12-12-1845): 
+OK, I've pushed the revised slide-deck to GitHub. (I changed the x-axis label from "cycles/day" to "cycles/year".)  I think that completes Part 4!  Break out the champagne.
+
+But enough of that frivolity!  I now want to work with you on the final and weakest chapter of the book: `graph-theory.qmd`, which I've uploaded.  This is not an area of expertise for me, so I developed the chapter from an outline given to me by a knowledgeable former co-worker.
+
+To make this chapter on a par with the others, much work will be needed, beginning I think, with a review of available textbooks, on-line tutorials, etc.  Graph theory is very important, so it's a shame I'm not more knowledgeable myself, but let's do the best we can.  The chapter needs compelling examples and a connection with the books theme of decision support plus scientific understanding.  What are your thoughts about how to organize this work?
+
+Claude: 
+Congratulations on completing Part 4! That's a major milestone.
+
+Now for graph theory—let me first review the current chapter to understand what we're working with, then propose a plan.
+
+2 steps
+
+View the middle section of the chapter
+
+Show working file
+
+Diagnosed chapter gaps and formulated comprehensive improvement strategy.
+
+Now I have a complete picture of the chapter. It's essentially a reference document - a catalog of definitions and algorithms with Wikipedia citations. What's missing:
+
+1. **No compelling introduction** connecting to the book's themes
+2. **No worked examples** - no actual graphs shown, no figures
+3. **No data examples** - no real-world datasets analyzed
+4. **No narrative flow** - just a glossary structure
+5. **No connection to ML** - despite the title "Graph Theory for Machine Learning"
+6. **No decision support / understanding framing**
+
+Let me propose a plan for Tony.
+
+Now I have a clear picture. The current chapter is essentially a reference catalog—definitions, matrix representations, and algorithm descriptions with Wikipedia citations. What's missing:
+
+1. **No compelling introduction** connecting to the book's themes
+2. **No worked examples or figures** — not a single graph visualization
+3. **No real-world data examples**
+4. **No narrative flow** — reads like a glossary
+5. **No connection to ML** — despite the title
+6. **No decision support / understanding framing**
+
+Here's my proposed plan:
+
+---
+
+**Phase 1: Research & Examples (today)**
+
+Let me search for high-quality resources and identify compelling examples that could anchor the chapter:
+
+- **Textbooks**: Newman's _Networks_, Easley & Kleinberg's _Networks, Crowds, and Markets_, Kolaczyk's _Statistical Analysis of Network Data_
+- **Classic datasets**: Zachary's karate club, Les Misérables character network, protein interaction networks, social networks
+- **ML connections**: Graph neural networks, node embeddings, link prediction, community detection as clustering
+
+**Phase 2: Structural Redesign**
+
+Propose a new chapter structure that mirrors the style of your other chapters:
+
+- Introduction with the dual-perspective framing
+- Motivating examples (show graphs first, then develop theory)
+- Core concepts with visualizations
+- Worked examples with R code
+- Connection to ML applications
+- Exercises and resources
+
+**Phase 3: Drafting**
+
+Similar to our Part 4 workflow: slides first (to crystallize essential content), then chapter.
+
+---
+
+**Shall I start with Phase 1?** I can do a web search for the best current resources on graph theory / network analysis for ML, and identify 2-3 compelling examples that would work well pedagogically. Then we can discuss structure before diving into writing.
+
+TT: 
+Great!  Yes, let's proceed along the lines you've outlined, starting with suggested resources.  Thanks!
+
+Claude: 
+Now I have a solid picture of the landscape. Let me compile my findings into a summary and proposed approach.
+
+---
+
+## Graph Theory Chapter: Research Summary & Recommendations
+
+### Recommended Textbooks
+
+**Tier 1: Primary References**
+
+|Text|Strengths|Notes|
+|---|---|---|
+|**Newman, M.E.J. (2018). _Networks_ (2nd ed.). Oxford.**|Comprehensive, mathematically rigorous, covers theory + algorithms + applications. ~800 pages.|The standard graduate text. Solutions manual available.|
+|**Barabási, A.-L. (2016). _Network Science_. Cambridge.**|Beautifully illustrated, accessible, free online at networksciencebook.com. Covers scale-free networks, small-world phenomenon, epidemics.|Excellent for intuition; advanced math in separate sections. PowerPoint slides available.|
+|**Easley, D. & Kleinberg, J. (2010). _Networks, Crowds, and Markets_. Cambridge.**|Interdisciplinary (CS + economics + sociology), game theory integration, free PDF from Cornell.|Unique for connecting networks to markets and strategic behavior.|
+
+**Tier 2: Supplementary**
+
+|Text|Use Case|
+|---|---|
+|Kolaczyk, E. (2009). _Statistical Analysis of Network Data with R_. Springer.|R-focused statistical methods|
+|Needham & Hodler (2019). _Graph Algorithms_. O'Reilly.|Practical algorithms with Neo4j/Spark|
+|van Steen, M. (2010). _Graph Theory and Complex Networks_.|Gentler mathematical introduction|
+
+### R Software Resources
+
+|Package|Purpose|
+|---|---|
+|`igraph`|Primary package: graph creation, algorithms, visualization|
+|`igraphdata`|Built-in datasets (karate, etc.)|
+|`tidygraph`|Tidy interface to igraph|
+|`ggraph`|ggplot2-style network visualization|
+|`visNetwork`|Interactive visualization|
+
+**Key tutorial**: Katya Ognyanova's "Network Visualization with R" (kateto.net) — highly recommended, comprehensive.
+
+### Compelling Example Datasets
+
+**1. Zachary's Karate Club** (34 nodes, 78 edges)
+
+- _Story_: University karate club split after conflict between instructor (Mr. Hi) and president (John A). Network of who interacted outside club correctly predicted 33/34 members' choices.
+- _Concepts illustrated_: Community detection, betweenness centrality, graph partitioning
+- _Available_: `igraph::make_graph("Zachary")` or `igraphdata::karate`
+- _Why it works_: Small, visual, real social dynamics, ground-truth communities
+
+**2. Les Misérables Character Network** (77 nodes, 254 edges)
+
+- _Story_: Co-appearance of characters in Victor Hugo's novel (Knuth, 1993)
+- _Concepts illustrated_: Weighted edges, community structure, centrality (Jean Valjean as hub)
+- _Available_: Multiple R packages, Gephi sample data
+- _Why it works_: Culturally familiar, weighted edges, clear community structure
+
+**3. Additional candidates for exercises**:
+
+- Florentine marriage network (Renaissance political alliances)
+- Protein interaction networks (biological relevance)
+- Citation networks (academic context)
+
+### Proposed Chapter Structure
+
+Following the pattern of your other chapters, here's a restructured outline:
+
+```
+1. Introduction
+   - Why graphs matter for ML (recommendation systems, fraud detection, 
+     social networks, knowledge graphs)
+   - The dual perspective: graphs for decision support AND scientific 
+     understanding
+   - Chapter roadmap
+
+2. Graphs in the Wild: Motivating Examples
+   - Zachary's Karate Club (with figure) — community structure
+   - Social networks, citation networks, biological networks
+   - What questions can graph analysis answer?
+
+3. Fundamental Concepts
+   - Nodes, edges, directed vs undirected
+   - Adjacency matrix, degree matrix, Laplacian
+   - Paths, connectivity, components
+   [Figures: small example graphs illustrating each concept]
+
+4. Measuring Importance: Centrality
+   - Degree centrality
+   - Betweenness centrality (Zachary example)
+   - PageRank (web search connection)
+   - Eigenvector centrality
+   [Figure: Karate club with nodes sized by centrality]
+
+5. Finding Structure: Community Detection
+   - What is a community?
+   - Modularity
+   - Algorithms: Girvan-Newman, Louvain, spectral clustering
+   [Figure: Karate club partitioned into communities]
+
+6. Algorithms for Paths and Distances
+   - Shortest paths (Dijkstra)
+   - All-pairs distances (Floyd-Warshall)
+   - When these matter (routing, social distance)
+
+7. The Dual Perspectives (echoing book theme)
+   - Graphs for prediction: link prediction, node classification
+   - Graphs for understanding: community structure, influence patterns
+   - Connection to ML: graph features as predictors, GNNs (brief)
+
+8. Summary, Exercises, Resources
+```
+
+### Key Improvements Needed
+
+1. **Add figures** — the current chapter has zero visualizations
+2. **Lead with examples** — show the karate club network before definitions
+3. **Connect to ML** — the title promises this but the chapter doesn't deliver
+4. **Reduce algorithm catalog** — focus on 3-4 key algorithms with worked examples rather than 8+ brief descriptions
+5. **Apply the book's theme** — decision support (link prediction, recommendations) + scientific understanding (community structure, influence)
+
+### Suggested Next Steps
+
+1. **Today**: Confirm this overall direction; decide which examples to prioritize
+2. **Next session**: Create slide deck (forcing function for essential content)
+3. **Following session**: Draft chapter with figures and worked R examples
+
+What are your thoughts on this structure? Shall I adjust the emphasis or add/remove topics?
+
+TT: 
+Perfect!  Let's decide on examples and then we'll continue in our next session.
+
+Claude: 
+Great! Let's nail down the examples. Here are the candidates with my recommendations:
+
+---
+
+## Primary Running Example
+
+**Zachary's Karate Club** — I strongly recommend this as the chapter's anchor example.
+
+_Why_:
+
+- Small enough to visualize completely (34 nodes)
+- Real data with a compelling story (club split, network predicted outcomes)
+- Ground-truth communities enable validation of detection algorithms
+- Built into R: `igraph::make_graph("Zachary")` or `igraphdata::karate`
+- Classic "hello world" of network science — students will encounter it elsewhere
+
+_Use throughout_: Introduce in opening, return for centrality, community detection, and the "dual perspectives" discussion (understanding why the club split vs. predicting who goes where).
+
+---
+
+## Secondary Example(s)
+
+**Option A: Les Misérables** (77 nodes, 254 edges)
+
+- Weighted edges (co-appearance count)
+- Larger, more complex community structure
+- Culturally familiar
+- Good for: showing weighted graphs, larger-scale community detection
+
+**Option B: A bipartite example** (e.g., customers–products, authors–papers)
+
+- Your chapter already mentions bipartite graphs in the transaction examples
+- Connects directly to recommendation systems (ML application)
+- Could use a simple constructed example or find a small real dataset
+
+**Option C: Citation or web network snippet**
+
+- Directed graph (unlike karate club)
+- Natural fit for PageRank discussion
+- Connects to real-world ML application (search ranking)
+
+---
+
+## My Recommendation
+
+|Role|Dataset|Rationale|
+|---|---|---|
+|**Primary**|Zachary's Karate Club|Anchor example throughout chapter|
+|**Secondary**|Les Misérables|Larger weighted network, community structure|
+|**Brief illustration**|Small constructed bipartite graph|Show the bipartite concept your chapter mentions|
+
+This gives you: undirected unweighted (karate), undirected weighted (Les Mis), and bipartite (constructed) — covering the main graph types without overloading.
+
+---
+
+**Questions for you:**
+
+1. Does the karate club work as the primary anchor, or would you prefer something else?
+2. For the secondary example, do you have a preference among Les Mis, bipartite, or citation/web?
+3. Should we include the bipartite example at all, or keep it simpler with just two datasets?
+
+TT: 
+Thanks!  Here are my responses:
+
+1. Does the karate club work as the primary anchor, or would you prefer something else?
+    -  TT: let's go with Karate Club.
+2. For the secondary example, do you have a preference among Les Mis, bipartite, or citation/web?
+    -  TT: I'm thinking more about potential applications rather than types of graphs or methods.  If we use that as a criterion, then I would think recommender systems would be a major application area.  If you agree then I would make the bipartite our second example.
+3. Should we include the bipartite example at all, or keep it simpler with just two datasets?
+    -  TT: Again, let's think in terms of application areas, particularly with an ML perspective.  What type of graph application is essential to modern AI development that is not covered by Karate Club or bipartite?
+
+Claude: 
+Excellent framing — applications first, then graph types follow naturally. Let me think through this systematically.
+
+---
+
+## Major Graph Applications in Modern ML/AI
+
+|Application Area|Graph Characteristics|Covered By|
+|---|---|---|
+|Social network analysis, community detection|Undirected, unweighted|Karate Club ✓|
+|Recommendation systems|Bipartite (users–items)|Proposed bipartite ✓|
+|Web search / ranking|Directed|PageRank (already in chapter, but no example)|
+|**Knowledge graphs**|Directed, labeled edges/nodes|Not covered|
+|Fraud detection|Directed, temporal, heterogeneous|Not covered|
+|Molecular / drug discovery|Undirected, node/edge features|Not covered|
+
+---
+
+## What's Missing That's Essential?
+
+Given that your chapter already discusses PageRank, the gap that jumps out is **knowledge graphs**. Here's why they're essential to modern AI:
+
+1. **Foundation of modern search**: Google Knowledge Graph, Bing's Satori
+2. **LLM augmentation**: RAG (Retrieval Augmented Generation) often uses knowledge graphs to ground LLM responses in structured facts
+3. **Semantic reasoning**: Entity relationships, ontologies, inference
+4. **Enterprise AI**: Customer 360, drug interaction databases, supply chain visibility
+
+Knowledge graphs introduce concepts the other examples don't: **typed nodes** (person, place, organization), **labeled edges** (works_at, born_in, created_by), and **directed relationships** with semantic meaning.
+
+---
+
+## Recommended Example Portfolio
+
+|Example|Application|Graph Type|Concepts|
+|---|---|---|---|
+|**Zachary's Karate Club**|Social networks, community detection|Undirected, unweighted|Centrality, community detection, prediction vs. understanding|
+|**Small bipartite** (users–movies or similar)|Recommendation systems|Bipartite|Two-mode networks, projection, collaborative filtering connection|
+|**Mini knowledge graph** (constructed)|Knowledge representation, semantic AI|Directed, labeled|Entity-relationship structure, typed edges, path queries|
+
+The knowledge graph could be a small constructed example — perhaps 15-20 entities about a familiar domain (e.g., a small academic department: people, courses, papers, topics) — that illustrates the structure without requiring a massive dataset.
+
+---
+
+**Does this trio work for you?**
+
+- Karate Club (social/community)
+- Bipartite (recommendations)
+- Knowledge graph (semantic AI/LLMs)
+
+TT: 
+Perfect!  As soon as you mentioned knowledge graphs I thought, "Of course!"  Let's go with that.  Let's push a bit further now.  What would be good examples a recommendation application and a knowledge graph?  Are there any small, real-world graphs readily available?  If not, how about not so small?
+
+Claude: 
+Let me search for suitable real-world datasets for both applications.
+
+4 steps
+
+FB15k WN18 knowledge graph embedding benchmark small dataset
+
+10 results
+
+![](https://www.google.com/s2/favicons?sz=64&domain=github.com)
+
+GitHub - villmow/datasets_knowledge_embedding: Datasets for Knowledge Graph Completion with textual information about the entities
+
+github.com
+
+![](https://www.google.com/s2/favicons?sz=64&domain=arxiv.org)
+
+A survey of embedding models of entities and relationships
+
+arxiv.org
+
+![](https://www.google.com/s2/favicons?sz=64&domain=researchgate.net)
+
+Details of FB15k, WN18, WD40k and WD40k_nl | Download Scientific Diagram
+
+researchgate.net
+
+![](https://www.google.com/s2/favicons?sz=64&domain=cthoyt.com)
+
+Current Perspectives on KGEMs in and out of Biomedicine | Biopragmatics
+
+cthoyt.com
+
+![](https://www.google.com/s2/favicons?sz=64&domain=arxiv.org)
+
+On Evaluating Embedding Models for Knowledge Base Completion Yanjie Wang
+
+arxiv.org
+
+![](https://www.google.com/s2/favicons?sz=64&domain=arxiv.org)
+
+Scalable Feature Learning on Huge Knowledge Graphs for Downstream Machine Learning
+
+arxiv.org
+
+![](https://www.google.com/s2/favicons?sz=64&domain=arxiv.org)
+
+Convolutional 2D Knowledge Graph Embeddings Tim Dettmers∗
+
+arxiv.org
+
+![](https://www.google.com/s2/favicons?sz=64&domain=deepwiki.com)
+
+WN18 and WN18RR | thunlp/OpenKE | DeepWiki
+
+deepwiki.com
+
+![](https://www.google.com/s2/favicons?sz=64&domain=139.129.163.161.)
+
+OpenKE - An Open-source Framework for Knowledge Embedding.
+
+139.129.163.161.
+
+![](https://www.google.com/s2/favicons?sz=64&domain=acm.org)
+
+Re-evaluating Embedding-Based Knowledge Graph Completion Methods | Proceedings of the 27th ACM International Conference on Information and Knowledge Management
+
+acm.org
+
+Hunted for accessible knowledge graph examples suitable for instruction.
+
+Let me also search for simple, intuitive knowledge graph examples that could be constructed or found for teaching purposes.
+
+Now I have enough to give you concrete recommendations.
+
+---
+
+## Recommended Example Datasets
+
+### 1. Recommendation System (Bipartite)
+
+**MovieLens 100K** — the clear winner
+
+|Property|Value|
+|---|---|
+|Users|943|
+|Movies|1,682|
+|Ratings|100,000|
+|Bipartite graph|~2,625 nodes, 100K edges|
+|Source|grouplens.org/datasets/movielens/|
+
+_Why this one_:
+
+- The "MNIST of recommender systems" — universally recognized benchmark
+- Small enough for a textbook (100K version), larger versions available
+- Real data with rich metadata (genres, timestamps)
+- Directly maps to bipartite graph: users on one side, movies on the other, ratings as weighted edges
+- Extensive documentation and tutorials
+- Can demonstrate: bipartite structure, projection to single-mode networks (user similarity, movie similarity), link prediction
+
+**Pedagogical angle**: "Given the users-movies graph, can we predict which movies a user will like?" — classic collaborative filtering as a graph problem.
+
+---
+
+### 2. Knowledge Graph
+
+This is trickier. The standard benchmarks (FB15k, WN18) have ~15K-40K entities and are designed for embedding research rather than intuition-building. For teaching purposes, I see three options:
+
+**Option A: Construct a small custom example (~20-50 entities)**
+
+Build a mini knowledge graph about a familiar domain. For example:
+
+_Academic department KG_:
+
+- Entity types: Person, Course, Paper, Topic, Institution
+- Relations: teaches, authored, advises, affiliated_with, cites, covers_topic
+- ~30 entities, ~100 triples
+
+_Advantages_: Completely controlled, can design to illustrate specific concepts _Disadvantages_: Not "real" data
+
+**Option B: Extract a small slice from Wikidata**
+
+Query Wikidata's SPARQL endpoint to extract a coherent subgraph. For example:
+
+- All Nobel Prize winners in Physics + their institutions + nationalities + prize years
+- ~200 entities, ~500 triples
+
+_Advantages_: Real data from the world's largest open knowledge graph _Disadvantages_: Requires SPARQL, may need cleanup
+
+**Option C: Use a pre-existing small benchmark**
+
+**FB15k-237** (14,541 entities, 237 relations, 310,116 triples) — the standard cleaned benchmark from Freebase. Topics: movies, actors, awards, sports.
+
+_Advantages_: Standard benchmark, students will encounter it in ML literature _Disadvantages_: Still fairly large for hand-visualization; Freebase is defunct
+
+---
+
+### My Recommendation
+
+|Example|Dataset|Size|Source|
+|---|---|---|---|
+|**Bipartite/Recommender**|MovieLens 100K|2,625 nodes, 100K edges|grouplens.org|
+|**Knowledge Graph**|Custom-built "mini academic KG"|~30 entities, ~100 triples|Constructed|
+
+**Rationale for custom KG**:
+
+For the _pedagogical_ purpose of introducing knowledge graphs, I think a small constructed example is better than throwing students at FB15k. You can:
+
+- Visualize the entire graph
+- Show typed nodes (Person, Course, etc.) with different colors/shapes
+- Demonstrate labeled edges (teaches, authored, etc.)
+- Ask meaningful questions: "Find all people who co-authored with someone at Stanford"
+- Connect to LLM/RAG: "This is the kind of structure that grounds LLM responses"
+
+Then mention FB15k-237 and Wikidata as "industrial scale" examples students can explore.
+
+---
+
+**Do these choices work?**
+
+- MovieLens 100K for bipartite/recommender
+- Small constructed academic KG for knowledge graph concepts
+
+If yes, I can draft the constructed KG as part of our slide/chapter work next session.
+
+TT: 
+Very good.  Yes, let's use MovieLens as the recommendation example, and let's construct an artificial KG for our purposes.  I like academic department, since they are in the knowledge business.  Even better, what about a simulated Coursera or Khan Academy who are in the business of tracking learning (growth of knowledge) by their students?
+
+Claude: 
+Brilliant! A learning platform is even better than an academic department. Here's why:
+
+**Why Coursera/Khan Academy works perfectly:**
+
+1. **They're literally in the knowledge graph business** — tracking what students know, what they need to learn, prerequisites, mastery progression
+2. **Natural connection to recommendations** — "What course should you take next?" is a core product feature, directly linking to our bipartite example
+3. **Rich graph structure** with multiple entity and relation types
+4. **Temporal/progress dimension** — learning is about _growth_, so we can show states (enrolled, completed, mastered)
+5. **Familiar to students** — your readers may well be using such platforms
+6. **Perfect dual-perspectives fit**:
+    - _Decision support_: Recommend next course, identify struggling students
+    - _Scientific understanding_: Map knowledge dependencies, understand learning pathways
+
+---
+
+## Sketch: "LearnGraph" — A Mini Learning Platform KG
+
+**Entity Types (nodes):**
+
+|Type|Examples|Color (for visualization)|
+|---|---|---|
+|Student|Alice, Bob, Carol|Blue|
+|Course|"Intro to Python", "Linear Algebra", "ML Fundamentals"|Green|
+|Topic|recursion, matrix_multiplication, gradient_descent|Orange|
+|Instructor|Dr. Smith, Prof. Jones|Purple|
+|Skill|can_code_loops, can_multiply_matrices|Red|
+
+**Relation Types (labeled edges):**
+
+|Relation|From → To|Example|
+|---|---|---|
+|enrolled_in|Student → Course|Alice enrolled_in "Intro to Python"|
+|completed|Student → Course|Bob completed "Linear Algebra"|
+|teaches|Instructor → Course|Dr. Smith teaches "ML Fundamentals"|
+|covers|Course → Topic|"Linear Algebra" covers matrix_multiplication|
+|prerequisite_of|Course → Course|"Linear Algebra" prerequisite_of "ML Fundamentals"|
+|requires|Topic → Topic|gradient_descent requires matrix_multiplication|
+|demonstrates|Student → Skill|Carol demonstrates can_code_loops|
+|assesses|Course → Skill|"Intro to Python" assesses can_code_loops|
+
+**Size target**: ~25-30 entities, ~80-100 triples — small enough to visualize completely, rich enough to be interesting.
+
+---
+
+**Questions this KG can answer** (path queries / reasoning):
+
+- "What prerequisites is Alice missing for ML Fundamentals?"
+- "Which students have completed all prerequisites for Course X?"
+- "What's the shortest learning path from Topic A to Topic B?"
+- "Which instructor's students have the highest completion rates?"
+- "What skills does Bob have based on courses completed?"
+
+---
+
+**Connection to modern AI**: This is exactly the kind of structure that:
+
+- Powers adaptive learning platforms
+- Could ground an LLM tutor ("Based on your knowledge graph, you should review matrix multiplication before starting gradient descent")
+- Enables explainable recommendations ("We recommend this course because it covers topics that build on what you've mastered")
+
+---
+
+Does this structure work? I can refine the entity/relation schema and build out a concrete small dataset as we develop the slides. We could call it "LearnGraph" or something similar to give it a memorable identity in the chapter.
+
+TT: 
+Great!  And let me mention another interesting real-world example: [Worker.ai](https://www.workera.ai/) is a ~ 5-year-old startup with backing from Andrew Ng (Coursera founder, among other accomplishments).  Their business proposition is to determine: (1) learning needs based on personal and corporate objectives; and (2) the shortest path to get there; and (3) a schedule for getting there based on available time.
+
+Claude: 
+Excellent example! Let me look into Workera to understand their approach better.
+
+Workera.ai skills assessment knowledge graph learning pathway Andrew Ng
+
+10 results
+
+![](https://www.google.com/s2/favicons?sz=64&domain=workera.ai)
+
+Workera — AI-Powered Skills Intelligence for Enterprise Workforces
+
+workera.ai
+
+![](https://www.google.com/s2/favicons?sz=64&domain=coursera.org)
+
+Deep Learning | Coursera
+
+coursera.org
+
+![](https://www.google.com/s2/favicons?sz=64&domain=linkedin.com)
+
+Andrew Ng on LinkedIn: Workera doubles down on AI for upskilling with $23.5M infusion | 62 comments
+
+linkedin.com
+
+![](https://www.google.com/s2/favicons?sz=64&domain=workera.ai)
+
+Bringing your AI vision to life with Andrew Ng
+
+workera.ai
+
+![](https://www.google.com/s2/favicons?sz=64&domain=getgalileo.ai)
+
+Workera
+
+getgalileo.ai
+
+![](https://www.google.com/s2/favicons?sz=64&domain=deeplearning.ai)
+
+About - DeepLearning.AI
+
+deeplearning.ai
+
+![](https://www.google.com/s2/favicons?sz=64&domain=andrewng.org)
+
+Courses | Andrew Ng
+
+andrewng.org
+
+![](https://www.google.com/s2/favicons?sz=64&domain=techcrunch.com)
+
+Workera.ai, a precision upskilling platform, taps $16M to close enterprise skills gap | TechCrunch
+
+techcrunch.com
+
+![](https://www.google.com/s2/favicons?sz=64&domain=techcrunch.com)
+
+Workera's CEO was mentored by Andrew Ng. Now he wants an AI agent to mentor you. | TechCrunch
+
+techcrunch.com
+
+![](https://www.google.com/s2/favicons?sz=64&domain=coursera.org)
+
+Andrew Ng, Instructor | Coursera
+
+coursera.org
+
+Recognized Workera as exemplary knowledge graph application in skills domain.
+
+This is great - Workera is a perfect real-world example of a knowledge graph application in the learning/skills space. Key points:
+
+1. Co-founded by Kian Katanforoosh (Stanford lecturer) with Andrew Ng as chairman
+2. "3,000+ micro-skills" - this is essentially a knowledge graph of skills
+3. "Precision upskilling" - assessing where someone is, where they want to go, and finding the shortest path
+4. Recently launched "Sage" - an AI agent that can mentor/assess skills
+5. The core business problem maps exactly to graph algorithms:
+    - Node: skills, courses, people
+    - Edges: prerequisites, demonstrates, covers
+    - Shortest path: from current skills to target role
+    - Recommendations: what course next?
+
+This is a perfect example to mention in the chapter as a real-world application of the LearnGraph concept we're constructing.
+
+This is perfect! Workera is exactly the real-world validation of our "LearnGraph" concept. The key insights from the search:
+
+---
+
+## Workera: Knowledge Graphs in Action
+
+**Core business model** — exactly what our constructed example illustrates:
+
+|Workera Capability|Graph Interpretation|
+|---|---|
+|"3,000+ micro-skills" library|**Nodes**: Fine-grained skill taxonomy|
+|Skill assessment → personalized learning path|**Shortest path**: Current state → Goal state|
+|"Precision upskilling"|**Graph traversal**: Find optimal route through prerequisite structure|
+|Team composition recommendations|**Subgraph analysis**: Complementary skill sets|
+|"Sage" AI mentor (launched 2024)|**LLM + Knowledge Graph**: Grounded recommendations|
+
+**The three questions you mentioned map directly to graph algorithms:**
+
+1. _Learning needs based on objectives_ → **Gap analysis**: Compare current skill subgraph to target role's required skill subgraph
+2. _Shortest path to get there_ → **Dijkstra/path finding**: Navigate prerequisite edges to find minimal learning sequence
+3. _Schedule based on available time_ → **Weighted shortest path**: Edge weights = time to acquire skill
+
+---
+
+## Refined "LearnGraph" Design
+
+Given the Workera example, let me sharpen our constructed KG:
+
+**Entity Types:**
+
+|Type|Real-world analog|Count (target)|
+|---|---|---|
+|**Learner**|Student/Employee|5-6|
+|**Skill**|Workera's 3,000 micro-skills|15-20|
+|**Course**|Learning module|8-10|
+|**Role**|Target job/position|3-4|
+|**Topic**|Knowledge domain|5-6|
+
+**Relation Types:**
+
+|Relation|Meaning|Graph Algorithm Connection|
+|---|---|---|
+|has_skill|Learner → Skill|Current state|
+|requires_skill|Role → Skill|Goal state|
+|teaches|Course → Skill|Edge in learning path|
+|prerequisite|Skill → Skill|Directed edges for ordering|
+|covers|Course → Topic|Clustering/modularity|
+|time_to_acquire|Edge weight|Weighted shortest path|
+
+**Key queries our KG can demonstrate:**
+
+1. "What's the shortest path for Alice to become a Data Scientist?" (Dijkstra)
+2. "Which learners are closest to qualifying for Role X?" (Centrality / distance)
+3. "What skills form natural clusters?" (Community detection on skill co-occurrence)
+4. "If we want to upskill the whole team, what courses give best coverage?" (Set cover / optimization)
+
+---
+
+## Chapter Narrative Arc
+
+This gives us a beautiful narrative thread:
+
+1. **Karate Club** — introduce graph concepts with social network (community detection)
+2. **MovieLens** — bipartite graphs for recommendations ("what movie should you watch?")
+3. **LearnGraph** — knowledge graphs for semantic AI ("what should you learn next?")
+4. **Workera callout** — "This isn't hypothetical; companies like Workera have built businesses on exactly this structure"
+
+The progression: _social_ → _commercial_ → _knowledge_ → _real-world AI application_
+
+---
+
+Does this framing work? We now have our three examples locked in:
+
+|Example|Application|Key Concepts|
+|---|---|---|
+|Zachary's Karate Club|Social networks|Community detection, centrality, prediction vs. understanding|
+|MovieLens 100K|Recommendation systems|Bipartite graphs, projection, collaborative filtering|
+|LearnGraph (+ Workera)|Knowledge graphs / AI|Typed nodes, labeled edges, path queries, LLM grounding|
+
+Ready to pick this up in our next session for slides!
+
+TT: 
+Excellent!  Yes, let's take a break and pick this up in our next session.  Thanks very much - this teamwork is very satisfying to me.
+
+Claude: 
+Thank you, Tony — the feeling is mutual! This has been a productive session.
+
+**What we accomplished today:**
+
+|Item|Status|
+|---|---|
+|Chapter 14 slide deck — updated to use `eda4mldata`|✅ Pushed to GitHub|
+|**Part 4 (Time Series) complete**|🎉|
+|Graph theory chapter review|✅ Identified gaps|
+|Resource survey|✅ Textbooks, R packages, tutorials|
+|Example selection|✅ Finalized|
+
+**Locked in for Chapter 15 (Graph Theory):**
+
+|Example|Application|Source|
+|---|---|---|
+|Zachary's Karate Club|Social networks / community detection|`igraph::make_graph("Zachary")`|
+|MovieLens 100K|Recommendation systems (bipartite)|grouplens.org|
+|LearnGraph|Knowledge graphs / semantic AI|Constructed (+ Workera as real-world case)|
+
+**Next session:** Build the slide deck as our forcing function, then draft the chapter.
+
+Enjoy your break — and congratulations again on completing Part 4!
