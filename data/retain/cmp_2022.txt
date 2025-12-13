@@ -1,0 +1,8 @@
+cmp_num	cmp_tag	cmp_name	cmp_dscr
+1	compute_fndns	Computational Foundations of Data Science	Designs and writes software that collects, transforms, manages, analyzes, and/or models data.
+2	collab	Cross-disciplinary Data Science Collaboration	Partners with domain experts to acquire and apply needed domain knowledge, approximate mission problems with data science questions, and translate data science solutions into mission solutions.
+3	data_engr	Data Engineering for Data Science	Moves, loads, and handles data of varying quality and structure to achieve project outcomes. Applies general data engineering practices, processes, and platforms to field solutions in a defensible, repeatable, and compliant fashion.
+4	ds_ai_gov	Data Science and/or Artificial Intelligence Governance and Ethics	Guides the successful application of data science and artificial intelligence to mission, while integrating ethical considerations and mitigating legal, privacy, security, and mission risks throughout the project life cycle.
+5	math_fndns	Mathematical Foundations of Data Science	Applies knowledge and problem-solving ability in mathematical underpinnings of data science, including linear algebra, probability theory, and optimization.
+6	data_analysis	Scientific Data Analysis	Conducts and reports exploratory, confirmatory, and predictive data analyses.
+7	stats_fndns	Statistical Foundations of Data Science	Applies principles of building and assessing statistical models.
