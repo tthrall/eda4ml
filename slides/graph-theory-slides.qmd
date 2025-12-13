@@ -23,14 +23,27 @@ execute:
 ---
 
 ```{r}
-#| label: setup
+#| label: CRAN-libraries
 
 library(igraph)
 library(tidyverse)
+
+```
+
+```{r}
+#| label: local-libraries
+
 library(eda4mldata)
 
+```
+
+```{r}
+#| label: local-source
+
 # Source helper functions
-# source(here::here("code", "learning_graph.R"))
+source(here::here("code", "learning_graph.R"))
+source(here::here("code", "lg_diagnostics.R"))
+
 ```
 
 # The Nature of Graphs
@@ -314,14 +327,14 @@ We can "project" the bipartite graph onto users:
 
 . . .
 
-Two users are connected if they rated the same movie.
-
-Edge weight = number of movies in common.
+Two users are connected if they rated the same movie.  (Edge weight = number of movies in common.)  This projection enables standard graph algorithms on user similarity.
 
 ```{r}
 #| label: fig-user-projection
 #| fig-cap: "User projection: users connected by shared movie ratings"
 #| fig-height: 3.5
+
+# TODO: Adjust the content to fit on one slide.
 
 # Project onto users
 user_proj <- bipartite_projection(g, which = "false")  # "false" = first type (users)
@@ -335,8 +348,6 @@ plot(user_proj,
      edge.color = "gray50",
      main = "")
 ```
-
-This projection enables standard graph algorithms on user similarity.
 
 ## From Structure to Prediction
 
@@ -356,7 +367,7 @@ This projection enables standard graph algorithms on user similarity.
 
 A **knowledge graph** represents structured knowledge:
 
-- **Nodes** have types (Person, Skill, Course, Role)
+- **Nodes** have types (Person, Skill, Course, Work-Role)
 - **Edges** have labels (has_skill, requires, teaches)
 - **Properties** attach to edges (proficiency level)
 
@@ -370,19 +381,22 @@ This is richer than a simple network: it encodes **semantics**.
 #| label: tbl-lg-structure
 #| tbl-cap: "LearningGraph structure"
 
-tibble::tribble(
+# TODO: put tibbles like this in one of the helper scripts
+lg_struct_tbl <- tibble::tribble(
   ~"Node Types", ~"Edge Types",
   "Learner (6)", "has_skill (learner → skill)",
   "Skill (18)", "requires_skill (role → skill)",
   "Work Role (3)", "prerequisite (skill → skill)",
   "Course (6)", "teaches (course → skill)",
   "Competency (7)", "skill_in_competency (skill → competency)"
-) |> knitr::kable()
+)
+
+lg_struct_tbl |> knitr::kable()
 ```
 
 Based on the IC Data Science Competency Resource Guide (2023).
 
-Inspired by Workera.ai's skills intelligence platform.
+Inspired by Workera.ai's skills-intelligence platform.
 
 ## The Schema
 
@@ -390,13 +404,16 @@ Inspired by Workera.ai's skills intelligence platform.
 #| label: tbl-lg-schema
 #| tbl-cap: "LearningGraph edge schema"
 
-tibble::tribble(
+# TODO: put tibbles like this in one of the helper scripts
+lg_schema <- tibble::tribble(
   ~"Edge Type", ~"Source", ~"Target", ~"Property", ~"Semantics",
   "has_skill", "learner", "skill", "proficiency", "current level",
   "requires_skill", "work_role", "skill", "proficiency", "minimum threshold",
   "prerequisite", "skill", "skill", "—", "conceptual dependency",
   "teaches", "course", "skill", "proficiency", "maximum ceiling"
-) |> knitr::kable()
+)
+
+lg_schema |> knitr::kable()
 ```
 
 The schema defines what assertions are well-formed—enabling both validation and inference.
@@ -405,8 +422,12 @@ The schema defines what assertions are well-formed—enabling both validation an
 
 ```{r}
 #| label: fig-lg-prerequisite
-#| fig-cap: "Skill prerequisite structure (directed acyclic graph)"
+#| fig-cap: "Skill prerequisite structure: a DAG (directed acyclic graph)"
 #| fig-height: 5
+
+# TODO: This is a powerful diagram that shows 
+# conceptual dependence.  Let's find a way to 
+# make the graph, or a subgraph, more legible.
 
 # Build prerequisite graph from eda4mldata
 data(learning_graph)
@@ -449,6 +470,11 @@ Entry points: Programming, Data Collection, Probability Theory, Linear Algebra
 ```{r}
 #| label: tbl-alice-gap
 
+# TODO: Tony to adjust gap scenarios to align 
+# proficiency levels required by work roles with 
+# the ODNI DSci-CRG.  Requriements are currently 
+# set too high.
+
 # Compute Alice's gap
 learner_skills <- learning_graph$edges$has_skill |>
   filter(learner_id == 1) |>  # Alice
@@ -480,6 +506,8 @@ gap |> knitr::kable()
 ```{r}
 #| label: learning-path-demo
 
+# TODO: call functions using `pkgLLfn()` format
+
 path <- shortest_paths(g_prereq, 
                        from = "Programming", 
                        to = "Statistical Learning",
@@ -497,7 +525,7 @@ The prerequisite DAG encodes *conceptual dependencies*—what you must understan
 
 ## Real-World Application: Workera
 
-This isn't hypothetical. Companies like **Workera** (co-founded by Kian Katanforoosh, Andrew Ng as chairman) have built businesses on exactly this structure.
+This isn't hypothetical. Companies like **Workera** (co-founded by Kian Katanforoosh, with Andrew Ng as chairman) have built businesses on exactly this structure.
 
 . . .
 
@@ -616,7 +644,7 @@ A page is important if important pages link to it.
 
 $$\text{PR}(v) = \frac{1-d}{N} + d \sum_{u \to v} \frac{\text{PR}(u)}{\text{out-degree}(u)}$$
 
-where $d \approx 0.85$ is the damping factor.
+where $d \approx 0.85$ is the damping factor, and out-degree counts out-going edges.
 
 # Finding Structure
 
@@ -663,13 +691,13 @@ Its **eigenvectors** reveal structure:
 
 . . .
 
-**Fiedler vector** (second eigenvector) minimizes the ratio cut—a principled way to split a graph.
+**Fiedler vector** (second eigenvector) provides a principled way to split a graph.
 
 # Graphs and Machine Learning
 
 ## Graphs as Feature Sources
 
-Traditional ML on graphs: extract features, then apply standard methods.
+Traditional ML on graphs: extract features, then apply standard ML methods to features.
 
 . . .
 
@@ -703,7 +731,7 @@ Traditional ML on graphs: extract features, then apply standard methods.
 
 These are *graph-derived features* for a classification problem.
 
-## Graph Neural Networks (Brief)
+## GNN: Graph Neural Networks (Brief)
 
 Modern approach: learn node representations directly from graph structure.
 
@@ -719,7 +747,7 @@ $$h_v^{(k+1)} = \text{UPDATE}\left(h_v^{(k)}, \text{AGGREGATE}\left(\{h_u^{(k)} 
 
 GNNs can learn features automatically—but require substantial data and compute.
 
-For many problems, classical graph features remain competitive and interpretable.
+For many problems, classical graph features be preferred: easier to interpret, and less compute-intensive.
 
 # The Dual Perspectives Revisited
 
