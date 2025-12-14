@@ -134,26 +134,30 @@ The club split. Zachary had recorded who interacted with whom *outside* the club
 #| fig-cap: "Zachary's Karate Club network (34 members, 78 connections)"
 #| fig-height: 5.5
 
-karate <- igraph::make_graph("Zachary")
+# TODO: Adopt Tony's preferred format for 
+# function calls: `pkg::fn()`
+# TODO: record the preference so that repeated
+# pleas to adopt it are no longer necessary
+karate <- make_graph("Zachary")
 
 # Set up node attributes
-igraph::V(karate)$name <- 1:igraph::vcount(karate)
+V(karate)$name <- 1:vcount(karate)
 
 # Known faction membership (ground truth)
 # Mr. Hi's faction (node 1) vs John A's faction (node 34)
 faction <- c(1,1,1,1,1,1,1,1,2,2,1,1,1,1,2,2,1,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,2,2)
-igraph::V(karate)$faction <- faction
-igraph::V(karate)$color <- ifelse(faction == 1, "#E41A1C", "#377EB8")
+V(karate)$faction <- faction
+V(karate)$color <- ifelse(faction == 1, "#E41A1C", "#377EB8")
 
 # Highlight the two leaders
-igraph::V(karate)$size <- 15
-igraph::V(karate)$size[1] <- 25   # Mr. Hi
-igraph::V(karate)$size[34] <- 25  # John A
+V(karate)$size <- 15
+V(karate)$size[1] <- 25   # Mr. Hi
+V(karate)$size[34] <- 25  # John A
 
 set.seed(42)
 plot(karate, 
-     layout = igraph::layout_with_fr(karate),
-     vertex.label = igraph::V(karate)$name,
+     layout = layout_with_fr(karate),
+     vertex.label = V(karate)$name,
      vertex.label.color = "white",
      vertex.label.cex = 0.8,
      edge.color = "gray70",
@@ -190,13 +194,13 @@ The one "misclassified" member (node 9) had stronger ties to Mr. Hi's group but 
 #| fig-cap: "Karate Club with nodes sized by betweenness centrality"
 #| fig-height: 4.5
 
-betw <- igraph::betweenness(karate, normalized = TRUE)
-igraph::V(karate)$size <- 10 + 40 * betw  # Scale for visibility
+betw <- betweenness(karate, normalized = TRUE)
+V(karate)$size <- 10 + 40 * betw  # Scale for visibility
 
 set.seed(42)
 plot(karate,
-     layout = igraph::layout_with_fr(karate),
-     vertex.label = igraph::V(karate)$name,
+     layout = layout_with_fr(karate),
+     vertex.label = V(karate)$name,
      vertex.label.color = "white",
      vertex.label.cex = 0.7,
      edge.color = "gray70",
@@ -215,18 +219,18 @@ Can an algorithm recover the factions without knowing the ground truth?
 #| fig-height: 4.5
 
 # Reset size
-igraph::V(karate)$size <- 15
-igraph::V(karate)$size[1] <- 25
-igraph::V(karate)$size[34] <- 25
+V(karate)$size <- 15
+V(karate)$size[1] <- 25
+V(karate)$size[34] <- 25
 
 # Detect communities
-comm <- igraph::cluster_louvain(karate)
-igraph::V(karate)$color <- igraph::membership(comm)
+comm <- cluster_louvain(karate)
+V(karate)$color <- membership(comm)
 
 set.seed(42)
 plot(karate,
-     layout = igraph::layout_with_fr(karate),
-     vertex.label = igraph::V(karate)$name,
+     layout = layout_with_fr(karate),
+     vertex.label = V(karate)$name,
      vertex.label.color = "white",
      vertex.label.cex = 0.8,
      edge.color = "gray70",
@@ -276,24 +280,24 @@ MovieLens is a movie recommendation dataset from the GroupLens research lab.
 set.seed(123)
 n_users <- 5
 n_movies <- 6
-edges <- tibble::tibble(
+edges <- tibble(
   user = c(1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5),
   movie = c(1, 2, 3, 2, 4, 1, 3, 5, 4, 6, 2, 5, 6)
 )
 
-g <- igraph::graph_from_data_frame(
-  edges |> dplyr::mutate(user = paste0("U", user), movie = paste0("M", movie)),
+g <- graph_from_data_frame(
+  edges |> mutate(user = paste0("U", user), movie = paste0("M", movie)),
   directed = FALSE
 )
 
 # Set bipartite type
-igraph::V(g)$type <- grepl("^M", igraph::V(g)$name)
-igraph::V(g)$color <- ifelse(igraph::V(g)$type, "#2ECC71", "#9B59B6")
-igraph::V(g)$shape <- ifelse(igraph::V(g)$type, "square", "circle")
-igraph::V(g)$size <- 20
+V(g)$type <- grepl("^M", V(g)$name)
+V(g)$color <- ifelse(V(g)$type, "#2ECC71", "#9B59B6")
+V(g)$shape <- ifelse(V(g)$type, "square", "circle")
+V(g)$size <- 20
 
 plot(g,
-     layout = igraph::layout_as_bipartite(g),
+     layout = layout_as_bipartite(g),
      vertex.label.color = "white",
      edge.color = "gray60",
      main = "")
@@ -332,51 +336,20 @@ Two users are connected if they rated the same movie.  (Edge weight = number of 
 
 ```{r}
 #| label: fig-user-projection
-#| fig-cap: "User projection: the dashed edge connects users who share a movie"
-#| fig-height: 4
+#| fig-cap: "User projection: users connected by shared movie ratings"
+#| fig-height: 3.5
 
-# Show bipartite graph with projection illustrated
-# Highlight one example: U1 and U2 both rated M2
+# Project onto users
+user_proj <- bipartite_projection(g, which = "false")  # "false" = first type (users)
+E(user_proj)$width <- E(user_proj)$weight * 2
 
-# Get bipartite layout
-layout_bp <- igraph::layout_as_bipartite(g)
+V(user_proj)$color <- "#9B59B6"
+V(user_proj)$size <- 25
 
-# Color edges: highlight U1-M2 and U2-M2
-edge_list <- igraph::as_edgelist(g)
-highlight_edges <- which(
-  (edge_list[,1] == "U1" & edge_list[,2] == "M2") |
-  (edge_list[,1] == "U2" & edge_list[,2] == "M2")
-)
-edge_colors <- rep("gray60", igraph::ecount(g))
-edge_colors[highlight_edges] <- "#E74C3C"
-edge_widths <- rep(1, igraph::ecount(g))
-edge_widths[highlight_edges] <- 3
-
-# Plot bipartite graph
-plot(g,
-     layout = layout_bp,
+plot(user_proj,
      vertex.label.color = "white",
-     edge.color = edge_colors,
-     edge.width = edge_widths,
+     edge.color = "gray50",
      main = "")
-
-# Add dashed projected edge between U1 and U2
-# Find coordinates of U1 and U2 in the layout
-u1_idx <- which(igraph::V(g)$name == "U1")
-u2_idx <- which(igraph::V(g)$name == "U2")
-
-segments(
-  x0 = layout_bp[u1_idx, 1], y0 = layout_bp[u1_idx, 2],
-  x1 = layout_bp[u2_idx, 1], y1 = layout_bp[u2_idx, 2],
-  lty = 2, lwd = 3, col = "#3498DB"
-)
-
-legend("bottom",
-       legend = c("Users", "Movies", "Shared rating", "Projected edge"),
-       fill = c("#9B59B6", "#2ECC71", "#E74C3C", "#3498DB"),
-       horiz = TRUE,
-       bty = "n",
-       cex = 0.8)
 ```
 
 ## From Structure to Prediction
@@ -411,36 +384,19 @@ This is richer than a simple network: it encodes **semantics**.
 #| label: tbl-lg-structure
 #| tbl-cap: "LearningGraph structure"
 
-# Derive structure summary from learning_graph dynamically
-lg_summarize_structure <- function(lg) {
-  # Count nodes by type
-  node_counts <- c(
-    Learner = nrow(lg$nodes$learners),
-    Skill = nrow(lg$nodes$skills),
-    `Work Role` = nrow(lg$nodes$work_roles),
-    Course = nrow(lg$nodes$courses),
-    Competency = nrow(lg$nodes$competencies)
-  )
-  
-  # Edge type descriptions
-  edge_info <- c(
-    "has_skill (learner → skill)",
-    "requires_skill (role → skill)",
-    "prerequisite (skill → skill)",
-    "teaches (course → skill)",
-    "skill_in_competency (skill → competency)"
-  )
-  
-  # Build display strings
-  node_strings <- paste0(names(node_counts), " (", node_counts, ")")
-  
-  tibble::tibble(
-    `Node Types` = node_strings,
-    `Edge Types` = edge_info
-  )
-}
+# TODO: derive lg_struct_tbl from helper functions
+# Currently, this is an orphaned object with no 
+# assurance that it matches eda4mldata::learning_graph
+lg_struct_tbl <- tibble::tribble(
+  ~"Node Types", ~"Edge Types",
+  "Learner (6)", "has_skill (learner → skill)",
+  "Skill (18)", "requires_skill (role → skill)",
+  "Work Role (3)", "prerequisite (skill → skill)",
+  "Course (6)", "teaches (course → skill)",
+  "Competency (7)", "skill_in_competency (skill → competency)"
+)
 
-lg_summarize_structure(learning_graph) |> knitr::kable()
+lg_struct_tbl |> knitr::kable()
 ```
 
 Based on the IC Data Science Competency Resource Guide (2023).
@@ -470,39 +426,39 @@ The schema defines what assertions are well-formed—enabling both validation an
 
 ```{r}
 #| label: fig-lg-prerequisite
-#| fig-cap: "Skills dependent on prerequisite skills, a Directed Acyclic Graph (DAG). Note: Courses _teach_ these skills but may bundle them differently."
+#| fig-cap: "Skill prerequisite structure: a DAG (directed acyclic graph)"
 #| fig-height: 5
 
 # Build prerequisite graph from eda4mldata
 data(learning_graph)
 
 prereq_edges <- 
-  learning_graph$edges$prerequisite |>
-  dplyr::left_join(
-    y  = learning_graph$nodes$skills |> 
-      dplyr::select(skill_id, skill_name),
+  learning_graph$ edges$ prerequisite |>
+  left_join(
+    y  = learning_graph$ nodes$ skills |> 
+      select(skill_id, skill_name),
     by = c("skill_from_id" = "skill_id")) |> 
-  dplyr::rename(from = skill_name) |> 
-  dplyr::left_join(
-    y = learning_graph$nodes$skills |> 
-      dplyr::select(skill_id, skill_name), 
+  rename(from = skill_name) |> 
+  left_join(
+    y = learning_graph$ nodes$ skills |> 
+      select(skill_id, skill_name), 
     by = c("skill_to_id" = "skill_id")) |>
-  dplyr::rename(to = skill_name) |>
-  dplyr::select(from, to)
+  rename(to = skill_name) |>
+  select(from, to)
 
-g_prereq <- igraph::graph_from_data_frame(prereq_edges, directed = TRUE)
+g_prereq <- graph_from_data_frame(prereq_edges, directed = TRUE)
 
 # Color by competency
 skill_cmp <- learning_graph$nodes$skills |>
-  dplyr::select(skill_name, cmp_id)
+  select(skill_name, cmp_id)
 cmp_colors <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", 
                 "#FF7F00", "#A65628", "#F781BF")
-igraph::V(g_prereq)$color <- cmp_colors[skill_cmp$cmp_id[match(igraph::V(g_prereq)$name, skill_cmp$skill_name)]]
-igraph::V(g_prereq)$size <- 12
+V(g_prereq)$color <- cmp_colors[skill_cmp$cmp_id[match(V(g_prereq)$name, skill_cmp$skill_name)]]
+V(g_prereq)$size <- 12
 
 set.seed(42)
 plot(g_prereq,
-     layout = igraph::layout_with_sugiyama(g_prereq)$layout,
+     layout = layout_with_sugiyama(g_prereq)$layout,
      vertex.label.cex = 0.6,
      vertex.label.color = "black",
      edge.arrow.size = 0.4,
@@ -510,7 +466,7 @@ plot(g_prereq,
      main = "")
 ```
 
-Entry point skills: Programming, Data Collection, Probability Theory, Linear Algebra
+Entry points: Programming, Data Collection, Probability Theory, Linear Algebra
 
 ## Gap Analysis
 
@@ -520,27 +476,26 @@ Entry point skills: Programming, Data Collection, Probability Theory, Linear Alg
 #| label: tbl-alice-gap
 
 # Compute Alice's gap
-# Note: Proficiency data may need adjustment; see eda4mldata for updates
-learner_skills <- learning_graph$edges$has_skill |>
-  dplyr::filter(learner_id == 1) |>  # Alice
-  dplyr::select(skill_id, current = proficiency)
+# TODO: Tony to lower work-role skill-requirements
+# Note 1: In the ODNI DSci-CRG, levels pertain to 
+# competencies, not KSA's
+# Note 2: level 4, Master, is an industry thought leader
+learner_skills <- learning_graph$ edges$ has_skill |>
+  filter(learner_id == 1) |>  # Alice
+  select(skill_id, current = proficiency)
 
-role_req <- learning_graph$edges$requires_skill |>
-  dplyr::filter(role_id == 2) |>  # Data Scientist
-  dplyr::select(skill_id, required = required_proficiency)
+role_req <- learning_graph$ edges$ requires_skill |>
+  filter(role_id == 2) |>  # Data Scientist
+  select(skill_id, required = required_proficiency)
 
 gap <- role_req |>
-  dplyr::left_join(learner_skills, by = "skill_id") |>
-  dplyr::mutate(
-    current = tidyr::replace_na(current, 0L),
-    gap = required - current
-  ) |>
-  dplyr::left_join(
-    learning_graph$nodes$skills |> dplyr::select(skill_id, skill_name),
-    by = "skill_id"
-  ) |>
-  dplyr::select(Skill = skill_name, Current = current, Required = required, Gap = gap) |>
-  dplyr::arrange(dplyr::desc(Gap)) |>
+  left_join(learner_skills, by = "skill_id") |>
+  mutate(current = replace_na(current, 0L),
+         gap = required - current) |>
+  left_join(learning_graph$nodes$skills |> select(skill_id, skill_name),
+            by = "skill_id") |>
+  select(Skill = skill_name, Current = current, Required = required, Gap = gap) |>
+  arrange(desc(Gap)) |>
   head(8)
 
 gap |> knitr::kable()
@@ -548,30 +503,27 @@ gap |> knitr::kable()
 
 ## Learning Paths: From Profile to Goal
 
-A learning path isn't simply a route from one skill to another.
+**Realistic question**: Given Alice's *current skills*, what's the shortest path to Statistical Learning?
 
 . . .
 
-Realistically, it's a path from a learner's *current skill profile* to a *target skill profile*.
-
-. . .
-
-**Alice's question**: Given everything I already know, what's the shortest path to Statistical Learning?
+This is more realistic than "skill A to skill B"—learners start with a *profile*, not a single skill.
 
 ```{r}
 #| label: alice-current-profile
 
-# Show Alice's current skills (as a table for clarity)
+# Show Alice's current skills
+# TODO: ensure current skills are consistent
+# See code-chunk `tbl-alice-gap` above
 alice_skills <- learning_graph$edges$has_skill |>
-  dplyr::filter(learner_id == 1) |>
-  dplyr::left_join(
-    learning_graph$nodes$skills |> dplyr::select(skill_id, skill_name),
-    by = "skill_id"
-  ) |>
-  dplyr::select(Skill = skill_name, Proficiency = proficiency) |>
-  dplyr::arrange(Skill)
+  filter(learner_id == 1) |>
+  left_join(learning_graph$nodes$skills |> select(skill_id, skill_name),
+            by = "skill_id") |>
+  select(Skill = skill_name, Proficiency = proficiency)
 
-alice_skills |> knitr::kable()
+cat("Alice's current skills:\n")
+cat(paste0("• ", alice_skills$Skill, " (level ", alice_skills$Proficiency, ")"), 
+    sep = "\n")
 ```
 
 ## Computing the Learning Path
@@ -590,7 +542,7 @@ cat(paste(seq_along(path), path, sep = ". ", collapse = "\n"))
 
 . . .
 
-The algorithm finds all *missing prerequisite skills* and returns them in a valid learning order.
+The algorithm finds all *missing prerequisites* and returns them in a valid learning order.
 
 ## Why This Isn't Exponentially Complex
 
@@ -609,7 +561,7 @@ The algorithm finds all *missing prerequisite skills* and returns them in a vali
 
 . . .
 
-Alice's profile defines her *frontier*, the skills adjacent to her current skill profile. We only traverse from there to the target.
+Alice's profile defines her *frontier*. We only traverse from there to the target.
 
 ## Visualizing the Path
 
@@ -637,20 +589,16 @@ comparison <- lg_compare_paths(learning_graph,
                                target_skill = "Statistical Learning")
 
 comparison |>
-  dplyr::mutate(
+  mutate(
     path_display = purrr::map_chr(path, ~paste(.x, collapse = " → "))
   ) |>
-  dplyr::select(Learner = learner_name, `Steps Required` = path_length) |>
+  select(Learner = learner_name, `Steps Required` = path_length) |>
   knitr::kable()
 ```
 
 . . .
 
-**Key insight**: Learning paths are properties of *learner-skill pairs*, not skills alone.
-
-. . .
-
-The DAG of prerequisite skills is fixed; the learner's position on it varies. _The_ path to Statistical Learning doesn't exist—only Alice's path, Bob's path, Carol's path.
+**Key insight**: The same target requires different effort depending on where you start.
 
 ## The Algorithm
 
@@ -667,7 +615,7 @@ lg_learning_path <- function(lg, learner_id, target_skill) {
   missing <- setdiff(ancestors, current)
  
   # 4. Return in topological order (valid learning sequence)
-  igraph::topo_sort(igraph::induced_subgraph(missing))
+  igraph::topo_sort(induced_subgraph(missing))
 }
 ```
 
@@ -688,7 +636,7 @@ This isn't hypothetical. Companies like **Workera** (co-founded by Kian Katanfor
 
 ## The Dual Perspective Again
 
-**Understanding**: The knowledge graph encodes domain expertise—what skills exist, how they relate, and the work-roles that require them.
+**Understanding**: The knowledge graph encodes domain expertise—what skills exist, how they relate, what roles require.
 
 . . .
 
@@ -696,11 +644,7 @@ This isn't hypothetical. Companies like **Workera** (co-founded by Kian Katanfor
 
 . . .
 
-This *knowledge graph* goes beyond storing knowledge; it enables reasoning about learning paths.
-
-. . .
-
-With these examples as motivation, we now turn to the formal concepts underlying graph analysis.
+The graph doesn't just store knowledge—it **enables reasoning** about learning pathways.
 
 # Fundamental Concepts
 

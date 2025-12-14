@@ -332,51 +332,20 @@ Two users are connected if they rated the same movie.  (Edge weight = number of 
 
 ```{r}
 #| label: fig-user-projection
-#| fig-cap: "User projection: the dashed edge connects users who share a movie"
-#| fig-height: 4
+#| fig-cap: "User projection: users connected by shared movie ratings"
+#| fig-height: 3.5
 
-# Show bipartite graph with projection illustrated
-# Highlight one example: U1 and U2 both rated M2
+# Project onto users
+user_proj <- igraph::bipartite_projection(g, which = "false")  # "false" = first type (users)
+igraph::E(user_proj)$width <- igraph::E(user_proj)$weight * 2
 
-# Get bipartite layout
-layout_bp <- igraph::layout_as_bipartite(g)
+igraph::V(user_proj)$color <- "#9B59B6"
+igraph::V(user_proj)$size <- 25
 
-# Color edges: highlight U1-M2 and U2-M2
-edge_list <- igraph::as_edgelist(g)
-highlight_edges <- which(
-  (edge_list[,1] == "U1" & edge_list[,2] == "M2") |
-  (edge_list[,1] == "U2" & edge_list[,2] == "M2")
-)
-edge_colors <- rep("gray60", igraph::ecount(g))
-edge_colors[highlight_edges] <- "#E74C3C"
-edge_widths <- rep(1, igraph::ecount(g))
-edge_widths[highlight_edges] <- 3
-
-# Plot bipartite graph
-plot(g,
-     layout = layout_bp,
+plot(user_proj,
      vertex.label.color = "white",
-     edge.color = edge_colors,
-     edge.width = edge_widths,
+     edge.color = "gray50",
      main = "")
-
-# Add dashed projected edge between U1 and U2
-# Find coordinates of U1 and U2 in the layout
-u1_idx <- which(igraph::V(g)$name == "U1")
-u2_idx <- which(igraph::V(g)$name == "U2")
-
-segments(
-  x0 = layout_bp[u1_idx, 1], y0 = layout_bp[u1_idx, 2],
-  x1 = layout_bp[u2_idx, 1], y1 = layout_bp[u2_idx, 2],
-  lty = 2, lwd = 3, col = "#3498DB"
-)
-
-legend("bottom",
-       legend = c("Users", "Movies", "Shared rating", "Projected edge"),
-       fill = c("#9B59B6", "#2ECC71", "#E74C3C", "#3498DB"),
-       horiz = TRUE,
-       bty = "n",
-       cex = 0.8)
 ```
 
 ## From Structure to Prediction

@@ -1,0 +1,29 @@
+book-outline-2025-12-14-1030
+
+Welcome
+Preface
+Foundations
+1  Exploratory Data Analysis
+2  Conditional Distributions
+3  Clustering: EDA in Higher Dimensions
+4  Statistical Simulation
+5  Sampling and Study Design
+6  Information Theory
+Linear Algebra
+7  Linear Regression
+8  Principal Component Analysis
+9  Linear Discriminant Analysis
+Text Data
+10  Text as Data
+11  Topic Models
+Time Series Data
+12  Time Series Data
+13  Time Domain Methods
+14  Frequency Domain Methods
+Network Data
+15  Graph Theory for Machine Learning
+Appendices
+16  Markov Chain Monte Carlo
+17  EM: the Expectation-Maximization Algorithm
+18  Summary
+References

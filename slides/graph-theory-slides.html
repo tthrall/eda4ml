@@ -245,6 +245,10 @@ EDA for Machine Learning
 <div class="fragment">
 <p>Graph analysis makes this especially vivid.</p>
 <table class="caption-top">
+<colgroup>
+<col style="width: 56%">
+<col style="width: 43%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Perspective</th>
@@ -254,7 +258,7 @@ EDA for Machine Learning
 <tbody>
 <tr class="odd">
 <td><strong>Prediction</strong></td>
-<td>Who will connect next? What should we recommend?</td>
+<td>Which nodes will connect next? What should we recommend?</td>
 </tr>
 <tr class="even">
 <td><strong>Understanding</strong></td>
@@ -440,7 +444,7 @@ Figure&nbsp;4: Bipartite graph: users connect to movies, never to each other
 <img data-src="graph-theory-slides_files/figure-revealjs/fig-user-projection-1.png" width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-user-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: User projection: users connected by shared movie ratings
+Figure&nbsp;5: User projection: the dashed edge connects users who share a movie
 </figcaption>
 </figure>
 </div>
@@ -585,8 +589,8 @@ Table&nbsp;2: LearningGraph edge schema
 <h2>Skill Prerequisites as a DAG</h2>
 
 <img data-src="graph-theory-slides_files/figure-revealjs/fig-lg-prerequisite-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-lg-prerequisite"><p class="caption">
-Figure&nbsp;6: Skill prerequisite structure: a DAG (directed acyclic graph)
-</p><p>Entry points: Programming, Data Collection, Probability Theory, Linear Algebra</p>
+Figure&nbsp;6: Skills dependent on prerequisite skills, a Directed Acyclic Graph (DAG). Note: Courses <em>teach</em> these skills but may bundle them differently.
+</p><p>Entry point skills: Programming, Data Collection, Probability Theory, Linear Algebra</p>
 </section>
 <section id="gap-analysis" class="slide level2">
 <h2>Gap Analysis</h2>
@@ -667,20 +671,48 @@ Table&nbsp;3
 </section>
 <section id="learning-paths-from-profile-to-goal" class="slide level2">
 <h2>Learning Paths: From Profile to Goal</h2>
-<p><strong>Realistic question</strong>: Given Alice’s <em>current skills</em>, what’s the shortest path to Statistical Learning?</p>
+<p>A learning path isn’t simply a route from one skill to another.</p>
 <div class="fragment">
-<p>This is more realistic than “skill A to skill B”—learners start with a <em>profile</em>, not a single skill.</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Alice's current skills:</code></pre>
+<p>Realistically, it’s a path from a learner’s <em>current skill profile</em> to a <em>target skill profile</em>.</p>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>• Probability Theory (level 3)
-• Linear Algebra (level 3)
-• Optimization (level 2)
-• Programming (level 1)
-• Exploratory Data Analysis (level 1)
-• Linear Models (level 2)</code></pre>
+<div class="fragment">
+<p><strong>Alice’s question</strong>: Given everything I already know, what’s the shortest path to Statistical Learning?</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Skill</th>
+<th style="text-align: right;">Proficiency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Exploratory Data Analysis</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Linear Algebra</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Linear Models</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Optimization</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Probability Theory</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Programming</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -697,7 +729,7 @@ Table&nbsp;3
 </div>
 </div>
 <div class="fragment">
-<p>The algorithm finds all <em>missing prerequisites</em> and returns them in a valid learning order.</p>
+<p>The algorithm finds all <em>missing prerequisite skills</em> and returns them in a valid learning order.</p>
 </div>
 </section>
 <section id="why-this-isnt-exponentially-complex" class="slide level2">
@@ -730,7 +762,7 @@ Table&nbsp;3
 </table>
 </div>
 <div class="fragment">
-<p>Alice’s profile defines her <em>frontier</em>. We only traverse from there to the target.</p>
+<p>Alice’s profile defines her <em>frontier</em>, the skills adjacent to her current skill profile. We only traverse from there to the target.</p>
 </div>
 </section>
 <section id="visualizing-the-path" class="slide level2">
@@ -782,25 +814,28 @@ Table&nbsp;4: Learning paths vary by starting profile
 </div>
 </div>
 <div class="fragment">
-<p><strong>Key insight</strong>: The same target requires different effort depending on where you start.</p>
+<p><strong>Key insight</strong>: Learning paths are properties of <em>learner-skill pairs</em>, not skills alone.</p>
+</div>
+<div class="fragment">
+<p>The DAG of prerequisite skills is fixed; the learner’s position on it varies. <em>The</em> path to Statistical Learning doesn’t exist—only Alice’s path, Bob’s path, Carol’s path.</p>
 </div>
 </section>
 <section id="the-algorithm" class="slide level2">
 <h2>The Algorithm</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>lg_learning_path <span class="ot">&lt;-</span> <span class="cf">function</span>(lg, learner_id, target_skill) {</span>
-<span id="cb5-2"><a href=""></a> </span>
-<span id="cb5-3"><a href=""></a>  <span class="co"># 1. Get learner's current skills</span></span>
-<span id="cb5-4"><a href=""></a>  current <span class="ot">&lt;-</span> <span class="fu">get_learner_skills</span>(lg, learner_id)</span>
-<span id="cb5-5"><a href=""></a> </span>
-<span id="cb5-6"><a href=""></a>  <span class="co"># 2. Find all ancestors of target (transitive prerequisites)</span></span>
-<span id="cb5-7"><a href=""></a>  ancestors <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">subcomponent</span>(prereq_graph, target, <span class="at">mode =</span> <span class="st">"in"</span>)</span>
-<span id="cb5-8"><a href=""></a> </span>
-<span id="cb5-9"><a href=""></a>  <span class="co"># 3. Filter to skills learner doesn't have</span></span>
-<span id="cb5-10"><a href=""></a>  missing <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(ancestors, current)</span>
-<span id="cb5-11"><a href=""></a> </span>
-<span id="cb5-12"><a href=""></a>  <span class="co"># 4. Return in topological order (valid learning sequence)</span></span>
-<span id="cb5-13"><a href=""></a>  igraph<span class="sc">::</span><span class="fu">topo_sort</span>(<span class="fu">induced_subgraph</span>(missing))</span>
-<span id="cb5-14"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>lg_learning_path <span class="ot">&lt;-</span> <span class="cf">function</span>(lg, learner_id, target_skill) {</span>
+<span id="cb3-2"><a href=""></a> </span>
+<span id="cb3-3"><a href=""></a>  <span class="co"># 1. Get learner's current skills</span></span>
+<span id="cb3-4"><a href=""></a>  current <span class="ot">&lt;-</span> <span class="fu">get_learner_skills</span>(lg, learner_id)</span>
+<span id="cb3-5"><a href=""></a> </span>
+<span id="cb3-6"><a href=""></a>  <span class="co"># 2. Find all ancestors of target (transitive prerequisites)</span></span>
+<span id="cb3-7"><a href=""></a>  ancestors <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">subcomponent</span>(prereq_graph, target, <span class="at">mode =</span> <span class="st">"in"</span>)</span>
+<span id="cb3-8"><a href=""></a> </span>
+<span id="cb3-9"><a href=""></a>  <span class="co"># 3. Filter to skills learner doesn't have</span></span>
+<span id="cb3-10"><a href=""></a>  missing <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(ancestors, current)</span>
+<span id="cb3-11"><a href=""></a> </span>
+<span id="cb3-12"><a href=""></a>  <span class="co"># 4. Return in topological order (valid learning sequence)</span></span>
+<span id="cb3-13"><a href=""></a>  igraph<span class="sc">::</span><span class="fu">topo_sort</span>(igraph<span class="sc">::</span><span class="fu">induced_subgraph</span>(missing))</span>
+<span id="cb3-14"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This is <strong>graph reachability</strong>, not combinatorial search.</p>
 </section>
 <section id="real-world-application-workera" class="slide level2">
@@ -837,12 +872,15 @@ Table&nbsp;4: Learning paths vary by starting profile
 </section>
 <section id="the-dual-perspective-again" class="slide level2">
 <h2>The Dual Perspective Again</h2>
-<p><strong>Understanding</strong>: The knowledge graph encodes domain expertise—what skills exist, how they relate, what roles require.</p>
+<p><strong>Understanding</strong>: The knowledge graph encodes domain expertise—what skills exist, how they relate, and the work-roles that require them.</p>
 <div class="fragment">
 <p><strong>Prediction/Decision Support</strong>: Given where a learner is, what should they learn next? What’s the most efficient path to their goal?</p>
 </div>
 <div class="fragment">
-<p>The graph doesn’t just store knowledge—it <strong>enables reasoning</strong> about learning pathways.</p>
+<p>This <em>knowledge graph</em> goes beyond storing knowledge; it enables reasoning about learning paths.</p>
+</div>
+<div class="fragment">
+<p>With these examples as motivation, we now turn to the formal concepts underlying graph analysis.</p>
 </div>
 </section></section>
 <section>
