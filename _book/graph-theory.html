@@ -443,7 +443,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">02:56 Mon 15-Dec-2025</p>
+      <p class="date">08:48 Mon 15-Dec-2025</p>
     </div>
   </div>
   
@@ -599,7 +599,7 @@ Figure&nbsp;15.3: Communities detected by the Louvain algorithm, which had no kn
 </section>
 <section id="movielens-bipartite-graphs-and-recommendation" class="level2" data-number="15.3">
 <h2 data-number="15.3" class="anchored" data-anchor-id="movielens-bipartite-graphs-and-recommendation"><span class="header-section-number">15.3</span> MovieLens: Bipartite Graphs and Recommendation</h2>
-<p>The MovieLens dataset contains millions of movie ratings from thousands of users.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> For our purposes, we use a small subset: 100 users, 20 movies, and 697 ratings on a 1–5 scale.</p>
+<p>The MovieLens dataset contains millions of movie ratings from thousands of users. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> For our purposes, we use a small subset: 100 users, 20 movies, and 697 ratings on a 1–5 scale.</p>
 <p>This data has a natural graph structure, but not the same kind we saw in the Karate Club. There, nodes were all of one type (people) and edges represented a single relationship (social interaction). Here, we have two distinct types of nodes—users and movies—and edges connect nodes of <em>different</em> types. A user rates a movie; movies do not rate each other; users do not rate users.</p>
 <p>This is a <strong>bipartite graph</strong>: a graph whose nodes partition into two disjoint sets, with edges only between sets, never within.</p>
 <section id="the-bipartite-structure" class="level3" data-number="15.3.1">
@@ -815,7 +815,7 @@ Table&nbsp;15.1: LearningGraph structure: node types and edge types
 </figure>
 </div>
 </div>
-<p>This schema enables questions that simpler graphs cannot express:</p>
+<p>This schema addresses questions that simpler graphs cannot:</p>
 <ul>
 <li>What skills does Alice have, and at what proficiency levels?</li>
 <li>What skills does the Data Scientist role require?</li>
@@ -1063,7 +1063,7 @@ Table&nbsp;15.4: Learner profiles in the LearningGraph
 </div>
 </div>
 <p>Each learner has a different skill profile, and therefore a different learning path to any given target. Beth, a senior analyst with strong applied skills, might need mathematical foundations. Charlie, a CS major, might need statistical training. The prerequisite DAG is fixed; each learner’s position on it varies.</p>
-<p>This is the practical value of the knowledge graph representation. By encoding skills, proficiencies, prerequisites, and requirements as graph structure, we can compute personalized recommendations. The graph doesn’t just store information—it enables reasoning about learning.</p>
+<p>This is the practical value of the knowledge graph representation. By encoding skills, proficiencies, prerequisites, and requirements in a graph structure, we can compute personalized recommendations. The graph doesn’t just store information—it enables reasoning about learning.</p>
 </section>
 </section>
 <section id="fundamental-concepts" class="level2" data-number="15.5">
@@ -1145,7 +1145,7 @@ Q = \frac{1}{2m} \sum_{ij} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i
 <section id="community-detection-algorithms" class="level3" data-number="15.7.2">
 <h3 data-number="15.7.2" class="anchored" data-anchor-id="community-detection-algorithms"><span class="header-section-number">15.7.2</span> Community Detection Algorithms</h3>
 <p><strong>The Louvain algorithm</strong> greedily optimizes modularity. It starts with each node in its own community, then iteratively moves nodes to neighboring communities if doing so increases modularity. Once no improvement is possible, it aggregates communities into super-nodes and repeats. The algorithm is fast and scales to large networks.</p>
-<p><strong>Spectral clustering</strong> uses the eigenvectors of the graph Laplacian. The Laplacian’s second-smallest eigenvalue (the <em>Fiedler value</em>) measures how easily the graph can be cut into two pieces. The corresponding eigenvector (the <em>Fiedler vector</em>) provides a continuous relaxation of the optimal cut—nodes can be partitioned based on the sign or value of their Fiedler vector entries.</p>
+<p><strong>Spectral clustering</strong> uses the eigenvectors of the graph Laplacian. The Laplacian’s second smallest eigenvalue (the <em>Fiedler value</em>) measures how easily the graph can be cut into two pieces. The corresponding eigenvector (the <em>Fiedler vector</em>) provides a continuous relaxation of the optimal cut—nodes can be partitioned based on the sign or value of their Fiedler vector entries. <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <p>The connection between graph cuts and eigenvectors is deep. It links community detection to the spectral theory we developed for PCA and dimensionality reduction in earlier chapters.</p>
 </section>
 <section id="communities-and-prediction" class="level3" data-number="15.7.3">
@@ -1191,11 +1191,14 @@ Q = \frac{1}{2m} \sum_{ij} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i
 <li><p><strong>Machine learning connections</strong>: Link prediction, node classification, graph neural networks.</p></li>
 </ul>
 <p><strong>The unifying theme</strong>: Graph structure encodes relationships that were created by real processes—social dynamics, information flow, logical dependencies. Analyzing that structure reveals those processes and enables prediction of future behavior. The same graph that helps us understand why a network looks the way it does also helps us predict what it will do next.</p>
-<p><strong>Connections to earlier chapters</strong>: Matrix representations connect to linear algebra (Chapter 3). Spectral methods connect to eigenvalue decomposition and PCA (Chapter 4). Random walks connect to probability (Chapter 2). The LearningGraph draws on the skills framework from throughout the textbook.</p>
+<p><strong>Connections to earlier chapters</strong>: Matrix representations connect to linear algebra (Part 2). Spectral methods connect to eigenvalue decomposition and PCA (Chapter 8). Random walks connect to probability (Chapter 2). The LearningGraph draws on topics that span earlier chapters.</p>
 <p>Graphs are everywhere in modern data science: social networks, knowledge bases, recommendation systems, molecular structures, program analysis, causal inference. The concepts in this chapter provide the foundation for working with this ubiquitous data type.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Harper_Konstan_2015" class="csl-entry" role="listitem">
+Harper, F. Maxwell, and Joseph A. Konstan. 2015. <span>“The <span>MovieLens</span> Datasets: History and Context.”</span> <em>ACM Transactions on Interactive Intelligent Systems</em> 5 (4): 19:1–19. <a href="https://doi.org/10.1145/2827872">https://doi.org/10.1145/2827872</a>.
+</div>
 <div id="ref-Zachary_1977" class="csl-entry" role="listitem">
 Zachary, Wayne W. 1977. <span>“An Information Flow Model for Conflict and Fission in Small Groups.”</span> <em>Journal of Anthropological Research</em> 33 (4): 452–73. <a href="https://doi.org/10.1086/jar.33.4.3629752">https://doi.org/10.1086/jar.33.4.3629752</a>.
 </div>
@@ -1205,8 +1208,9 @@ Zachary, Wayne W. 1977. <span>“An Information Flow Model for Conflict and Fiss
 <hr>
 <ol>
 <li id="fn1"><p>See <span class="citation" data-cites="Zachary_1977">Zachary (<a href="references.html#ref-Zachary_1977" role="doc-biblioref">1977</a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>See <span class="citation" data-cites="Harper_Konstan_2015">(<a href="references.html#ref-Harper_Konstan_2015" role="doc-biblioref"><strong>Harper_Konstan_2015?</strong></a>)</span>. The GroupLens research lab at the University of Minnesota has maintained MovieLens since 1997.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See <span class="citation" data-cites="Harper_Konstan_2015">Harper and Konstan (<a href="references.html#ref-Harper_Konstan_2015" role="doc-biblioref">2015</a>)</span>. The GroupLens research lab at the University of Minnesota has maintained MovieLens since 1997.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>Based on the <em>Competency Resource Guide for Data Science</em> (2023), Office of the Director of National Intelligence (UNCLASSIFIED). Structure inspired by Workera.ai’s skills intelligence platform.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>The graph partitioning problem asks: how can nodes be partitioned into two disconnected groups so as to minimize the number (total weight) of the edges cut? This problem is NP-hard. Spectral methods relax the discrete problem (assign each node to group 0 or 1) to a continuous one (assign each node a real number). The Fiedler vector solves this relaxed problem; rounding its entries back to discrete values yields an approximate solution to the original problem.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
