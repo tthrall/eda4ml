@@ -412,8 +412,8 @@ Figure&nbsp;3: Communities detected by Louvain algorithm
 <section id="bipartite-structure" class="slide level2">
 <h2>Bipartite Structure</h2>
 
-<img data-src="graph-theory-slides_files/figure-revealjs/fig-bipartite-schematic-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-bipartite-schematic"><p class="caption">
-Figure&nbsp;4: Bipartite graph: users connect to movies, never to each other
+<img data-src="graph-theory-slides_files/figure-revealjs/fig-movielens-bipartite-1.png" width="768" class="r-stretch quarto-figure-center" id="fig-movielens-bipartite"><p class="caption">
+Figure&nbsp;4: A bipartite graph connecting users to the movies they rated.
 </p><p>Users and movies are <strong>different types</strong> of nodes. Edges connect users to movies they’ve rated.</p>
 </section>
 <section id="the-recommendation-question" class="slide level2">
@@ -435,16 +435,16 @@ Figure&nbsp;4: Bipartite graph: users connect to movies, never to each other
 <h2>Projection: User Similarity</h2>
 <p>We can “project” the bipartite graph onto users:</p>
 <div class="fragment">
-<p>Two users are connected if they rated the same movie. (Edge weight = number of movies in common.) This projection enables standard graph algorithms on user similarity.</p>
+<p>Two users are connected if they rated the same movie. This projection enables standard graph algorithms on user similarity.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-user-projection" class="quarto-float quarto-figure quarto-figure-center">
 <figure class="quarto-float quarto-float-fig">
 <div aria-describedby="fig-user-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img data-src="graph-theory-slides_files/figure-revealjs/fig-user-projection-1.png" width="768">
+<img data-src="graph-theory-slides_files/figure-revealjs/fig-user-projection-1.png" style="width:70.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-user-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: User projection: the dashed edge connects users who share a movie
+Figure&nbsp;5: User projection: U1 and U2 both rated Forrest Gump (red), creating a projected edge (black).
 </figcaption>
 </figure>
 </div>
@@ -510,7 +510,7 @@ Table&nbsp;1: LearningGraph structure
 <td style="text-align: left;">prerequisite (skill → skill)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Course (6)</td>
+<td style="text-align: left;">Course (15)</td>
 <td style="text-align: left;">teaches (course → skill)</td>
 </tr>
 <tr class="odd">
@@ -616,50 +616,50 @@ Table&nbsp;3
 <tr class="odd">
 <td style="text-align: left;">Exploratory Data Analysis</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">4</td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Inference and Prediction</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Statistical Learning</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Feature Engineering</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Problem Formulation</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Data Narratives</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Limitations</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Programming</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">3</td>
 <td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
 </tr>
 </tbody>
 </table>
