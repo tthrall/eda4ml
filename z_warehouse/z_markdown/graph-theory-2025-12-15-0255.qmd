@@ -498,7 +498,7 @@ lg_structure <- tibble::tribble(
 knitr::kable(lg_structure, align = c("l", "r", "l"))
 ```
 
-This schema addresses questions that simpler graphs cannot:
+This schema enables questions that simpler graphs cannot express:
 
 - What skills does Alice have, and at what proficiency levels?
 - What skills does the Data Scientist role require?

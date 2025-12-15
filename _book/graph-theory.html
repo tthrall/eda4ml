@@ -52,7 +52,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./mcmc-appendix.html" rel="next">
-<link href="./ts-fourier.html" rel="prev">
+<link href="./ts-freq-domain.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -230,14 +230,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -253,20 +259,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,20 +282,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  <a href="./ts-time-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  <a href="./ts-freq-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></a>
   </div>
 </li>
       </ul>
@@ -329,7 +329,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -362,53 +362,62 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#types-of-data-in-which-graphs-arise" id="toc-types-of-data-in-which-graphs-arise" class="nav-link active" data-scroll-target="#types-of-data-in-which-graphs-arise"><span class="header-section-number">15.1</span> Types of Data in which Graphs Arise</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">15.1</span> Introduction</a>
   <ul>
-  <li><a href="#transaction-examples" id="toc-transaction-examples" class="nav-link" data-scroll-target="#transaction-examples"><span class="header-section-number">15.1.1</span> Transaction examples</a></li>
-  <li><a href="#relationship-examples" id="toc-relationship-examples" class="nav-link" data-scroll-target="#relationship-examples"><span class="header-section-number">15.1.2</span> Relationship examples</a></li>
+  <li><a href="#two-perspectives-one-structure" id="toc-two-perspectives-one-structure" class="nav-link" data-scroll-target="#two-perspectives-one-structure"><span class="header-section-number">15.1.1</span> Two Perspectives, One Structure</a></li>
+  <li><a href="#three-examples" id="toc-three-examples" class="nav-link" data-scroll-target="#three-examples"><span class="header-section-number">15.1.2</span> Three Examples</a></li>
+  <li><a href="#chapter-roadmap" id="toc-chapter-roadmap" class="nav-link" data-scroll-target="#chapter-roadmap"><span class="header-section-number">15.1.3</span> Chapter Roadmap</a></li>
   </ul></li>
-  <li><a href="#glossary-of-basic-terms" id="toc-glossary-of-basic-terms" class="nav-link" data-scroll-target="#glossary-of-basic-terms"><span class="header-section-number">15.2</span> Glossary of Basic Terms</a></li>
-  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="header-section-number">15.3</span> Properties</a>
+  <li><a href="#zacharys-karate-club" id="toc-zacharys-karate-club" class="nav-link" data-scroll-target="#zacharys-karate-club"><span class="header-section-number">15.2</span> Zachary’s Karate Club</a>
   <ul>
-  <li><a href="#matrix-representations" id="toc-matrix-representations" class="nav-link" data-scroll-target="#matrix-representations"><span class="header-section-number">15.3.1</span> Matrix Representations</a>
-  <ul class="collapse">
-  <li><a href="#adjacency-matrix" id="toc-adjacency-matrix" class="nav-link" data-scroll-target="#adjacency-matrix"><span class="header-section-number">15.3.1.1</span> Adjacency matrix</a></li>
-  <li><a href="#degree-matrix" id="toc-degree-matrix" class="nav-link" data-scroll-target="#degree-matrix"><span class="header-section-number">15.3.1.2</span> Degree matrix</a></li>
-  <li><a href="#laplacian-matrix" id="toc-laplacian-matrix" class="nav-link" data-scroll-target="#laplacian-matrix"><span class="header-section-number">15.3.1.3</span> Laplacian matrix</a></li>
+  <li><a href="#the-network" id="toc-the-network" class="nav-link" data-scroll-target="#the-network"><span class="header-section-number">15.2.1</span> The Network</a></li>
+  <li><a href="#centrality-who-matters" id="toc-centrality-who-matters" class="nav-link" data-scroll-target="#centrality-who-matters"><span class="header-section-number">15.2.2</span> Centrality: Who Matters?</a></li>
+  <li><a href="#community-detection" id="toc-community-detection" class="nav-link" data-scroll-target="#community-detection"><span class="header-section-number">15.2.3</span> Community Detection</a></li>
   </ul></li>
-  <li><a href="#betweenness-centrality" id="toc-betweenness-centrality" class="nav-link" data-scroll-target="#betweenness-centrality"><span class="header-section-number">15.3.2</span> Betweenness centrality</a>
-  <ul class="collapse">
-  <li><a href="#nodes" id="toc-nodes" class="nav-link" data-scroll-target="#nodes"><span class="header-section-number">15.3.2.1</span> Nodes</a></li>
-  <li><a href="#edges" id="toc-edges" class="nav-link" data-scroll-target="#edges"><span class="header-section-number">15.3.2.2</span> Edges</a></li>
-  </ul></li>
-  <li><a href="#connected-components" id="toc-connected-components" class="nav-link" data-scroll-target="#connected-components"><span class="header-section-number">15.3.3</span> Connected components</a></li>
-  <li><a href="#communities" id="toc-communities" class="nav-link" data-scroll-target="#communities"><span class="header-section-number">15.3.4</span> Communities</a></li>
-  <li><a href="#modularity" id="toc-modularity" class="nav-link" data-scroll-target="#modularity"><span class="header-section-number">15.3.5</span> Modularity</a>
-  <ul class="collapse">
-  <li><a href="#undirected-graphs" id="toc-undirected-graphs" class="nav-link" data-scroll-target="#undirected-graphs"><span class="header-section-number">15.3.5.1</span> Undirected graphs</a></li>
-  <li><a href="#directed-graphs" id="toc-directed-graphs" class="nav-link" data-scroll-target="#directed-graphs"><span class="header-section-number">15.3.5.2</span> Directed graphs</a></li>
-  <li><a href="#agglomerative-versus-divisive-algorithms" id="toc-agglomerative-versus-divisive-algorithms" class="nav-link" data-scroll-target="#agglomerative-versus-divisive-algorithms"><span class="header-section-number">15.3.5.3</span> Agglomerative versus divisive algorithms</a></li>
-  </ul></li>
-  </ul></li>
-  <li><a href="#algorithms-general" id="toc-algorithms-general" class="nav-link" data-scroll-target="#algorithms-general"><span class="header-section-number">15.4</span> Algorithms: General</a>
+  <li><a href="#movielens-bipartite-graphs-and-recommendation" id="toc-movielens-bipartite-graphs-and-recommendation" class="nav-link" data-scroll-target="#movielens-bipartite-graphs-and-recommendation"><span class="header-section-number">15.3</span> MovieLens: Bipartite Graphs and Recommendation</a>
   <ul>
-  <li><a href="#page-rank" id="toc-page-rank" class="nav-link" data-scroll-target="#page-rank"><span class="header-section-number">15.4.1</span> Page Rank</a></li>
-  <li><a href="#floyd-warshall" id="toc-floyd-warshall" class="nav-link" data-scroll-target="#floyd-warshall"><span class="header-section-number">15.4.2</span> Floyd-Warshall</a></li>
-  <li><a href="#dijkstra" id="toc-dijkstra" class="nav-link" data-scroll-target="#dijkstra"><span class="header-section-number">15.4.3</span> Dijkstra</a></li>
-  <li><a href="#brandes" id="toc-brandes" class="nav-link" data-scroll-target="#brandes"><span class="header-section-number">15.4.4</span> Brandes</a>
-  <ul class="collapse">
-  <li><a href="#single-source-shortest-path" id="toc-single-source-shortest-path" class="nav-link" data-scroll-target="#single-source-shortest-path"><span class="header-section-number">15.4.4.1</span> Single-source shortest path</a></li>
-  <li><a href="#backpropagation" id="toc-backpropagation" class="nav-link" data-scroll-target="#backpropagation"><span class="header-section-number">15.4.4.2</span> Backpropagation</a></li>
+  <li><a href="#the-bipartite-structure" id="toc-the-bipartite-structure" class="nav-link" data-scroll-target="#the-bipartite-structure"><span class="header-section-number">15.3.1</span> The Bipartite Structure</a></li>
+  <li><a href="#projection-from-bipartite-to-similarity" id="toc-projection-from-bipartite-to-similarity" class="nav-link" data-scroll-target="#projection-from-bipartite-to-similarity"><span class="header-section-number">15.3.2</span> Projection: From Bipartite to Similarity</a></li>
+  <li><a href="#from-structure-to-recommendation" id="toc-from-structure-to-recommendation" class="nav-link" data-scroll-target="#from-structure-to-recommendation"><span class="header-section-number">15.3.3</span> From Structure to Recommendation</a></li>
+  <li><a href="#the-dual-view" id="toc-the-dual-view" class="nav-link" data-scroll-target="#the-dual-view"><span class="header-section-number">15.3.4</span> The Dual View</a></li>
   </ul></li>
-  </ul></li>
-  <li><a href="#algorithms-clustering" id="toc-algorithms-clustering" class="nav-link" data-scroll-target="#algorithms-clustering"><span class="header-section-number">15.5</span> Algorithms: Clustering</a>
+  <li><a href="#the-learninggraph-knowledge-graphs-and-learning-paths" id="toc-the-learninggraph-knowledge-graphs-and-learning-paths" class="nav-link" data-scroll-target="#the-learninggraph-knowledge-graphs-and-learning-paths"><span class="header-section-number">15.4</span> The LearningGraph: Knowledge Graphs and Learning Paths</a>
   <ul>
-  <li><a href="#girvan-newman" id="toc-girvan-newman" class="nav-link" data-scroll-target="#girvan-newman"><span class="header-section-number">15.5.1</span> Girvan-Newman</a></li>
-  <li><a href="#spectral-clustering" id="toc-spectral-clustering" class="nav-link" data-scroll-target="#spectral-clustering"><span class="header-section-number">15.5.2</span> Spectral clustering</a></li>
-  <li><a href="#clauset-newman-moore" id="toc-clauset-newman-moore" class="nav-link" data-scroll-target="#clauset-newman-moore"><span class="header-section-number">15.5.3</span> Clauset-Newman-Moore</a></li>
-  <li><a href="#louvain" id="toc-louvain" class="nav-link" data-scroll-target="#louvain"><span class="header-section-number">15.5.4</span> Louvain</a></li>
-  <li><a href="#leiden" id="toc-leiden" class="nav-link" data-scroll-target="#leiden"><span class="header-section-number">15.5.5</span> Leiden</a></li>
+  <li><a href="#the-schema" id="toc-the-schema" class="nav-link" data-scroll-target="#the-schema"><span class="header-section-number">15.4.1</span> The Schema</a></li>
+  <li><a href="#skills-and-prerequisites" id="toc-skills-and-prerequisites" class="nav-link" data-scroll-target="#skills-and-prerequisites"><span class="header-section-number">15.4.2</span> Skills and Prerequisites</a></li>
+  <li><a href="#courses-and-curricular-prerequisites" id="toc-courses-and-curricular-prerequisites" class="nav-link" data-scroll-target="#courses-and-curricular-prerequisites"><span class="header-section-number">15.4.3</span> Courses and Curricular Prerequisites</a></li>
+  <li><a href="#gap-analysis" id="toc-gap-analysis" class="nav-link" data-scroll-target="#gap-analysis"><span class="header-section-number">15.4.4</span> Gap Analysis</a></li>
+  <li><a href="#learning-paths" id="toc-learning-paths" class="nav-link" data-scroll-target="#learning-paths"><span class="header-section-number">15.4.5</span> Learning Paths</a></li>
+  <li><a href="#different-profiles-different-paths" id="toc-different-profiles-different-paths" class="nav-link" data-scroll-target="#different-profiles-different-paths"><span class="header-section-number">15.4.6</span> Different Profiles, Different Paths</a></li>
   </ul></li>
+  <li><a href="#fundamental-concepts" id="toc-fundamental-concepts" class="nav-link" data-scroll-target="#fundamental-concepts"><span class="header-section-number">15.5</span> Fundamental Concepts</a>
+  <ul>
+  <li><a href="#nodes-and-edges" id="toc-nodes-and-edges" class="nav-link" data-scroll-target="#nodes-and-edges"><span class="header-section-number">15.5.1</span> Nodes and Edges</a></li>
+  <li><a href="#weighted-edges" id="toc-weighted-edges" class="nav-link" data-scroll-target="#weighted-edges"><span class="header-section-number">15.5.2</span> Weighted Edges</a></li>
+  <li><a href="#paths-and-connectivity" id="toc-paths-and-connectivity" class="nav-link" data-scroll-target="#paths-and-connectivity"><span class="header-section-number">15.5.3</span> Paths and Connectivity</a></li>
+  <li><a href="#directed-acyclic-graphs" id="toc-directed-acyclic-graphs" class="nav-link" data-scroll-target="#directed-acyclic-graphs"><span class="header-section-number">15.5.4</span> Directed Acyclic Graphs</a></li>
+  <li><a href="#matrix-representations" id="toc-matrix-representations" class="nav-link" data-scroll-target="#matrix-representations"><span class="header-section-number">15.5.5</span> Matrix Representations</a></li>
+  </ul></li>
+  <li><a href="#measuring-importance-centrality" id="toc-measuring-importance-centrality" class="nav-link" data-scroll-target="#measuring-importance-centrality"><span class="header-section-number">15.6</span> Measuring Importance: Centrality</a>
+  <ul>
+  <li><a href="#degree-centrality" id="toc-degree-centrality" class="nav-link" data-scroll-target="#degree-centrality"><span class="header-section-number">15.6.1</span> Degree Centrality</a></li>
+  <li><a href="#betweenness-centrality" id="toc-betweenness-centrality" class="nav-link" data-scroll-target="#betweenness-centrality"><span class="header-section-number">15.6.2</span> Betweenness Centrality</a></li>
+  <li><a href="#closeness-centrality" id="toc-closeness-centrality" class="nav-link" data-scroll-target="#closeness-centrality"><span class="header-section-number">15.6.3</span> Closeness Centrality</a></li>
+  <li><a href="#pagerank" id="toc-pagerank" class="nav-link" data-scroll-target="#pagerank"><span class="header-section-number">15.6.4</span> PageRank</a></li>
+  </ul></li>
+  <li><a href="#finding-structure-communities" id="toc-finding-structure-communities" class="nav-link" data-scroll-target="#finding-structure-communities"><span class="header-section-number">15.7</span> Finding Structure: Communities</a>
+  <ul>
+  <li><a href="#modularity" id="toc-modularity" class="nav-link" data-scroll-target="#modularity"><span class="header-section-number">15.7.1</span> Modularity</a></li>
+  <li><a href="#community-detection-algorithms" id="toc-community-detection-algorithms" class="nav-link" data-scroll-target="#community-detection-algorithms"><span class="header-section-number">15.7.2</span> Community Detection Algorithms</a></li>
+  <li><a href="#communities-and-prediction" id="toc-communities-and-prediction" class="nav-link" data-scroll-target="#communities-and-prediction"><span class="header-section-number">15.7.3</span> Communities and Prediction</a></li>
+  </ul></li>
+  <li><a href="#graphs-and-machine-learning" id="toc-graphs-and-machine-learning" class="nav-link" data-scroll-target="#graphs-and-machine-learning"><span class="header-section-number">15.8</span> Graphs and Machine Learning</a>
+  <ul>
+  <li><a href="#link-prediction" id="toc-link-prediction" class="nav-link" data-scroll-target="#link-prediction"><span class="header-section-number">15.8.1</span> Link Prediction</a></li>
+  <li><a href="#node-classification" id="toc-node-classification" class="nav-link" data-scroll-target="#node-classification"><span class="header-section-number">15.8.2</span> Node Classification</a></li>
+  <li><a href="#graph-neural-networks" id="toc-graph-neural-networks" class="nav-link" data-scroll-target="#graph-neural-networks"><span class="header-section-number">15.8.3</span> Graph Neural Networks</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">15.9</span> Summary</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/graph-theory.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -434,7 +443,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:37 Wed 3-Dec-2025</p>
+      <p class="date">02:56 Mon 15-Dec-2025</p>
     </div>
   </div>
   
@@ -447,130 +456,357 @@ window.Quarto = {
 
 
 <hr>
-<p>In mathematics and computer science, <em>graph theory</em> is the study of graphs, which are mathematical structures used to model pairwise relations between objects. A graph in this context is made up of <em>vertices</em> (also called nodes or points) which are connected by <em>edges</em> (also called arcs, links or lines). A distinction is made between <em>undirected</em> graphs, where edges link two vertices symmetrically, and <em>directed</em> graphs, where edges link two vertices asymmetrically. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
-<section id="types-of-data-in-which-graphs-arise" class="level2" data-number="15.1">
-<h2 data-number="15.1" class="anchored" data-anchor-id="types-of-data-in-which-graphs-arise"><span class="header-section-number">15.1</span> Types of Data in which Graphs Arise</h2>
-<section id="transaction-examples" class="level3" data-number="15.1.1">
-<h3 data-number="15.1.1" class="anchored" data-anchor-id="transaction-examples"><span class="header-section-number">15.1.1</span> Transaction examples</h3>
-<p>Suppose <span class="math inline">\(A\)</span> contacts or pays <span class="math inline">\(B\)</span>, where the <em>nodes</em> <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are people (or perhaps software functions). The edge connecting <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> might be labeled “contact” or “pay”, in which case we need to distinguish whose contacting or paying whom. That information is given by the <em>direction</em> of the edge.</p>
-<p>On the other hand, suppose we have just two types of node: people and products. And we have just one type of edge, say, “purchase”. Thus person <span class="math inline">\(A\)</span> purchases product <span class="math inline">\(B\)</span>. The subject-object relationship is evident from the distinct types of node. Then the “A-B” connection could just as well be read as: <span class="math inline">\(B\)</span> is purchased by <span class="math inline">\(A\)</span>. Given the distinct types of node, the connection could be represented by an <em>undirected</em> edge. (This situation gives rise to a <em>bipartite</em> graph.)</p>
+<section id="introduction" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">15.1</span> Introduction</h2>
+<p>In previous chapters we have seen that understanding and decision support are complementary: knowing <em>why</em> a pattern exists enables us to predict <em>what</em> will happen next. For network data this stereoscopic view of theory and application is especially useful.</p>
+<p>Graphs arise whenever entities are connected: people linked by friendship, proteins linked by interaction, web pages linked by hyperlinks, concepts linked by semantic relationships. The mathematical abstraction is simple—<em>nodes</em> and <em>edges</em>—yet this structure appears across domains so diverse that graph theory has become a common language for network science, social science, biology, and machine learning.</p>
+<p>The connections encoded in a graph are not merely data to be stored. They are <em>information</em>: information about influence, about similarity, about pathways and dependencies. The structure of a social network reveals who influences whom. The structure of a citation network reveals how ideas propagate. The structure of a prerequisite graph reveals what must be learned before what. To analyze a graph is to extract this information, to move from raw connectivity to insight.</p>
+<section id="two-perspectives-one-structure" class="level3" data-number="15.1.1">
+<h3 data-number="15.1.1" class="anchored" data-anchor-id="two-perspectives-one-structure"><span class="header-section-number">15.1.1</span> Two Perspectives, One Structure</h3>
+<p>Graph analysis serves two complementary aims:</p>
+<ul>
+<li><p><strong>Understanding</strong>: What structure exists? What communities or clusters are present? Which nodes are central or influential? How does information flow through the network?</p></li>
+<li><p><strong>Prediction</strong>: What will happen next? Which nodes will connect? What should we recommend? What is the shortest path from here to there?</p></li>
+</ul>
+<p>These perspectives are not opposed. The same structural properties that reveal <em>why</em> a network behaves as it does also enable prediction of <em>what</em> it will do. Communities exist because people preferentially associate with others who are similar, a homophily that enables us to predict future connections. Nodes with high betweenness centrality control information flow and are more likely to broker new relationships.</p>
+<p>This duality runs throughout graph analysis. We detect communities to understand social structure, and we use that structure to predict group behavior. We measure node similarity to understand relationships, and we use that similarity for recommendation. Structure is created by the forging of links between nodes, and is therefore predictive of new links.</p>
 </section>
-<section id="relationship-examples" class="level3" data-number="15.1.2">
-<h3 data-number="15.1.2" class="anchored" data-anchor-id="relationship-examples"><span class="header-section-number">15.1.2</span> Relationship examples</h3>
-<p>Person <span class="math inline">\(A\)</span> knows person <span class="math inline">\(B\)</span>.</p>
-<p>Person <span class="math inline">\(A\)</span> helps to create content <span class="math inline">\(B\)</span> (article, book, movie, recording, …).</p>
-<p>Person <span class="math inline">\(A\)</span> attends event <span class="math inline">\(B\)</span>.</p>
-<p>Locations <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are connected via public transport.</p>
-<p><span class="math inline">\(A\)</span> is distance <span class="math inline">\(d\)</span> from <span class="math inline">\(B\)</span>. Then the <span class="math inline">\(A-B\)</span> edge might be given <em>weight</em> <span class="math inline">\(d\)</span>.</p>
-</section>
-</section>
-<section id="glossary-of-basic-terms" class="level2" data-number="15.2">
-<h2 data-number="15.2" class="anchored" data-anchor-id="glossary-of-basic-terms"><span class="header-section-number">15.2</span> Glossary of Basic Terms</h2>
-<p>A <em>graph</em> is an ordered pair <span class="math inline">\(G = (V, E)\)</span> of a set of vertices <span class="math inline">\(V\)</span> and a set of edges <span class="math inline">\(E\)</span>. Each edge consists of a pair of vertices <span class="math inline">\((A, B)\)</span>. The edge may be denoted as <span class="math inline">\(e(A, B)\)</span> or as <span class="math inline">\(A-B\)</span>. In an undirected graph the edge <span class="math inline">\(A-B\)</span> is identical to the edge <span class="math inline">\(B-A\)</span>, whereas in an directed graph <span class="math inline">\(A-B\)</span> denotes the edge from <span class="math inline">\(A\)</span> to <span class="math inline">\(B\)</span> and is distinct from <span class="math inline">\(B-A\)</span>, the edge from <span class="math inline">\(B\)</span> to <span class="math inline">\(A\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
-<div class="cell">
-<div id="tbl-graph-glossary" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-graph-glossary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;15.1: Graph Theory: Basic Terms
-</figcaption>
-<div aria-describedby="tbl-graph-glossary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Graph Theory: Basic Terms</caption>
+<section id="three-examples" class="level3" data-number="15.1.2">
+<h3 data-number="15.1.2" class="anchored" data-anchor-id="three-examples"><span class="header-section-number">15.1.2</span> Three Examples</h3>
+<p>We develop graph theory through three examples of increasing complexity:</p>
+<table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 84%">
+<col style="width: 29%">
+<col style="width: 25%">
+<col style="width: 45%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">term</th>
-<th style="text-align: left;">description</th>
+<th>Example</th>
+<th>Domain</th>
+<th>Key Concepts</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">acyclic</td>
-<td style="text-align: left;">a graph is acyclic if it has no cycles</td>
+<td>Zachary’s Karate Club</td>
+<td>Social network</td>
+<td>Community detection, centrality</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">adjacency</td>
-<td style="text-align: left;">binary indicator: given vertices are / are not endpoints of a common edge</td>
+<td>MovieLens</td>
+<td>Recommendations</td>
+<td>Bipartite graphs, projection</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">connected component</td>
-<td style="text-align: left;">a maximal connected subgraph</td>
+<td>LearningGraph</td>
+<td>Knowledge graph</td>
+<td>Typed nodes, DAGs, path queries</td>
+</tr>
+</tbody>
+</table>
+<p>Each example illuminates different aspects of graph structure and different analytical questions. The Karate Club shows how network topology predicts group behavior. MovieLens shows how bipartite structure enables recommendation. The LearningGraph shows how typed nodes and labeled edges enable richer reasoning about learning pathways.</p>
+</section>
+<section id="chapter-roadmap" class="level3" data-number="15.1.3">
+<h3 data-number="15.1.3" class="anchored" data-anchor-id="chapter-roadmap"><span class="header-section-number">15.1.3</span> Chapter Roadmap</h3>
+<p>This chapter proceeds as follows:</p>
+<p><strong>Examples first</strong>: We begin with data—social networks, recommendation systems, knowledge graphs—examining each from both structural and predictive perspectives. These examples build intuition for what graph analysis can reveal.</p>
+<p><strong>Fundamental concepts</strong>: We define the basic vocabulary: nodes, edges, directed and undirected graphs, weighted edges, paths, connectivity. We introduce matrix representations—adjacency, degree, Laplacian—that connect graph structure to linear algebra.</p>
+<p><strong>Measuring importance</strong>: We develop centrality measures that quantify which nodes matter. Different questions lead to different measures: degree centrality counts connections; betweenness centrality measures control of information flow; PageRank propagates importance through the network.</p>
+<p><strong>Finding structure</strong>: We examine community detection—algorithms that partition a graph into densely connected subgroups. Modularity provides a quality measure; spectral methods connect community structure to the eigenvectors of the graph Laplacian.</p>
+<p><strong>Graphs and machine learning</strong>: We show how graph structure becomes features for prediction tasks. Link prediction asks which unconnected nodes will connect; recommendation asks what to suggest based on network neighbors. We briefly introduce graph neural networks, which learn representations directly from graph structure.</p>
+<p>Throughout, we maintain the dual perspective: structural analysis and prediction are two views of the same underlying reality.</p>
+</section>
+</section>
+<section id="zacharys-karate-club" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="zacharys-karate-club"><span class="header-section-number">15.2</span> Zachary’s Karate Club</h2>
+<p>In the early 1970s, sociologist Wayne Zachary spent two years observing a university karate club.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> He recorded who interacted with whom <em>outside</em> the formal club setting—who practiced together, who socialized, who sought each other out. The result was a social network of 34 members and 78 connections.</p>
+<p>During Zachary’s observation period, a conflict arose between the club’s instructor (Mr.&nbsp;Hi, node 1) and its president (John A, node 34). The dispute escalated. Eventually, the club split into two factions—some members following Mr.&nbsp;Hi to form a new club, others remaining with John A.</p>
+<p>Zachary had recorded the social network <em>before</em> the split occurred. This created a natural experiment: could the network structure predict which faction each member would join?</p>
+<section id="the-network" class="level3" data-number="15.2.1">
+<h3 data-number="15.2.1" class="anchored" data-anchor-id="the-network"><span class="header-section-number">15.2.1</span> The Network</h3>
+<p><a href="#fig-karate-network" class="quarto-xref">Figure&nbsp;<span>15.1</span></a> displays the Karate Club network. Node colors indicate the actual faction each member joined after the split—red for Mr.&nbsp;Hi’s group, blue for John A’s group. The two leaders are shown as larger nodes.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-karate-network" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-karate-network-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-karate-network-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-karate-network-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.1: Zachary’s Karate Club network. Colors indicate faction membership after the split; larger nodes mark the two leaders.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Visual inspection already suggests structure. The network separates into two densely connected regions with relatively few edges between them. Node 1 (Mr.&nbsp;Hi) and node 34 (John A) are clearly hubs of their respective groups. The social topology foreshadows the coming split.</p>
+<p>Zachary’s result was striking: the network correctly predicted 33 of 34 members’ choices. The single “misclassified” member (node 9) had stronger ties to Mr.&nbsp;Hi’s group but followed a close friend to John A’s faction. Even this exception proves the rule—the prediction failed because of a social tie, just not the ones the algorithm counted.</p>
+</section>
+<section id="centrality-who-matters" class="level3" data-number="15.2.2">
+<h3 data-number="15.2.2" class="anchored" data-anchor-id="centrality-who-matters"><span class="header-section-number">15.2.2</span> Centrality: Who Matters?</h3>
+<p>The Karate Club raises a fundamental question: which nodes are important? Different notions of importance lead to different measures.</p>
+<p><strong>Degree centrality</strong> is the simplest: count the connections. A node with many edges is central in the sense of having many direct relationships. In the Karate Club, Mr.&nbsp;Hi (node 1) has degree 16—he interacts with nearly half the club members. John A (node 34) has degree 17.</p>
+<p>But raw connection count may miss something. Consider node 3, who interacts with both leaders. This node may be important not because of how many connections it has, but because of <em>where</em> it sits in the network—bridging the two factions.</p>
+<p><strong>Betweenness centrality</strong> captures this idea. A node has high betweenness if it lies on many shortest paths between other nodes. Formally, for node <span class="math inline">\(v\)</span>:</p>
+<p><span class="math display">\[
+\gamma(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}
+\]</span></p>
+<p>where <span class="math inline">\(\sigma_{st}\)</span> is the number of shortest paths from node <span class="math inline">\(s\)</span> to node <span class="math inline">\(t\)</span>, and <span class="math inline">\(\sigma_{st}(v)\)</span> is the number of those paths that pass through <span class="math inline">\(v\)</span>. A node with high betweenness is a <em>bridge</em>—removing it would fragment the network or force information to take longer routes.</p>
+<p><a href="#fig-karate-betweenness" class="quarto-xref">Figure&nbsp;<span>15.2</span></a> shows the Karate Club with nodes sized by betweenness centrality.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-karate-betweenness" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-karate-betweenness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-karate-betweenness-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-karate-betweenness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.2: Karate Club with nodes sized by betweenness centrality. Mr.&nbsp;Hi (node 1) has the highest betweenness—he bridges many pairs of members.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Mr.&nbsp;Hi has the highest betweenness. As the instructor, he connects to members who might not otherwise interact—beginners who come for lessons, advanced students who assist him, social members who attend club events. He is not just well-connected; he is a <em>connector</em>. John A, despite having slightly higher degree, has lower betweenness—his connections are more concentrated within his faction.</p>
+<p>This distinction matters. When the club split, Mr.&nbsp;Hi’s bridging position meant that his departure fragmented more relationships than John A’s would have. Betweenness centrality identified this structural importance.</p>
+</section>
+<section id="community-detection" class="level3" data-number="15.2.3">
+<h3 data-number="15.2.3" class="anchored" data-anchor-id="community-detection"><span class="header-section-number">15.2.3</span> Community Detection</h3>
+<p>The visual structure of <a href="#fig-karate-network" class="quarto-xref">Figure&nbsp;<span>15.1</span></a> suggests two groups. Can an algorithm recover this partition without knowing the ground truth?</p>
+<p>Community detection algorithms seek to partition a graph into subgroups that are internally dense and externally sparse. The intuition is that communities represent meaningful clusters—people who preferentially interact with each other, proteins that function together, web pages on related topics.</p>
+<p>The <strong>Louvain algorithm</strong> is a widely used method that greedily optimizes <em>modularity</em>—a measure comparing the actual density of edges within groups to what would be expected in a random graph. High modularity indicates genuine community structure, not just arbitrary partitioning.</p>
+<p><a href="#fig-karate-louvain" class="quarto-xref">Figure&nbsp;<span>15.3</span></a> shows the communities detected by the Louvain algorithm.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-karate-louvain" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-karate-louvain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-karate-louvain-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-karate-louvain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.3: Communities detected by the Louvain algorithm, which had no knowledge of the actual split.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The algorithm, knowing nothing about the dispute or its outcome, finds a partition closely matching the actual split. The modularity score is 0.419—well above the threshold of 0.3 typically indicating significant community structure.</p>
+<p>This is not a coincidence. The algorithm detects communities because the network <em>has</em> community structure. People who are similar tend to associate with one another. The same homophily that created the dense within-group connections also predicted which faction members would join. The algorithm did not foresee the future; it revealed structure that was already present.</p>
+<p>The Karate Club is a small example, but its lesson scales. The network structure that existed before the conflict predicted the outcome of the conflict—not because algorithms are clairvoyant, but because the topology encoded the social relationships that would determine people’s choices.</p>
+<p>Our next example shifts from social networks to recommendations, and from a single graph to a bipartite structure connecting users and items.</p>
+</section>
+</section>
+<section id="movielens-bipartite-graphs-and-recommendation" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="movielens-bipartite-graphs-and-recommendation"><span class="header-section-number">15.3</span> MovieLens: Bipartite Graphs and Recommendation</h2>
+<p>The MovieLens dataset contains millions of movie ratings from thousands of users.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> For our purposes, we use a small subset: 100 users, 20 movies, and 697 ratings on a 1–5 scale.</p>
+<p>This data has a natural graph structure, but not the same kind we saw in the Karate Club. There, nodes were all of one type (people) and edges represented a single relationship (social interaction). Here, we have two distinct types of nodes—users and movies—and edges connect nodes of <em>different</em> types. A user rates a movie; movies do not rate each other; users do not rate users.</p>
+<p>This is a <strong>bipartite graph</strong>: a graph whose nodes partition into two disjoint sets, with edges only between sets, never within.</p>
+<section id="the-bipartite-structure" class="level3" data-number="15.3.1">
+<h3 data-number="15.3.1" class="anchored" data-anchor-id="the-bipartite-structure"><span class="header-section-number">15.3.1</span> The Bipartite Structure</h3>
+<p><a href="#fig-movielens-bipartite" class="quarto-xref">Figure&nbsp;<span>15.4</span></a> shows a portion of the MovieLens bipartite graph. Users appear on the left, movies on the right. An edge connects user <span class="math inline">\(u\)</span> to movie <span class="math inline">\(m\)</span> if user <span class="math inline">\(u\)</span> rated movie <span class="math inline">\(m\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-movielens-bipartite" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-movielens-bipartite-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-movielens-bipartite-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-movielens-bipartite-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.4: A bipartite graph connecting users to the movies they rated. Users appear on the left, movies on the right.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The bipartite structure immediately suggests a recommendation strategy. If user U1 and user U3 have both watched Toy Story and Star Wars, they may have similar tastes. If U3 has also watched a movie that U1 hasn’t seen, that movie becomes a candidate recommendation for U1. The graph encodes a path: U1 → shared movie → U3 → candidate movie.</p>
+<p>This is <strong>collaborative filtering</strong> expressed as graph traversal: find users similar to you (connected through shared items), then recommend items those similar users have chosen.</p>
+</section>
+<section id="projection-from-bipartite-to-similarity" class="level3" data-number="15.3.2">
+<h3 data-number="15.3.2" class="anchored" data-anchor-id="projection-from-bipartite-to-similarity"><span class="header-section-number">15.3.2</span> Projection: From Bipartite to Similarity</h3>
+<p>The bipartite graph contains all the information, but reasoning about user similarity is easier in a different representation. We can <strong>project</strong> the bipartite graph onto one of its node types.</p>
+<p>The <em>user projection</em> creates a new graph containing only user nodes. Two users are connected in the projection if they share at least one movie in the original bipartite graph. The edge weight can reflect how many movies they share—more shared movies implies stronger similarity.</p>
+<p><a href="#fig-user-projection" class="quarto-xref">Figure&nbsp;<span>15.5</span></a> illustrates this transformation.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-user-projection" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-user-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-user-projection-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-user-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.5: User projection: Users U1 and U2 both rated Forrest Gump (red edges), so the projection connects them directly (black edge).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the bipartite graph, U1 and U2 are not directly connected—users never connect to users. But both rated Forrest Gump (shown in red). The projection creates a direct edge between them (black line), representing their shared taste.</p>
+<p><a href="#fig-user-projection-full" class="quarto-xref">Figure&nbsp;<span>15.6</span></a> shows the complete user projection for our example.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-user-projection-full" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-user-projection-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-user-projection-full-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-user-projection-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.6: The user projection graph. Edge thickness reflects the number of shared movies.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The projection transforms a bipartite user-item graph into a user-user similarity network. Users who share many movies are strongly connected; users with no overlap are disconnected. This is the same structure we analyzed in the Karate Club—but derived from behavioral data rather than observed directly.</p>
+</section>
+<section id="from-structure-to-recommendation" class="level3" data-number="15.3.3">
+<h3 data-number="15.3.3" class="anchored" data-anchor-id="from-structure-to-recommendation"><span class="header-section-number">15.3.3</span> From Structure to Recommendation</h3>
+<p>The user projection enables a simple recommendation algorithm:</p>
+<ol type="1">
+<li>Find the target user’s neighbors in the projection (users with shared movies)</li>
+<li>Weight neighbors by similarity (number of shared movies)</li>
+<li>Collect movies those neighbors have rated but the target user hasn’t</li>
+<li>Rank candidates by weighted frequency</li>
+</ol>
+<p>This is <strong>user-based collaborative filtering</strong> expressed as graph operations. The projection makes explicit the similarity relationships implicit in the bipartite structure.</p>
+<p>We can equally well project onto movies rather than users. The <em>movie projection</em> connects movies that share viewers. Two movies watched by the same users are likely similar in some way—genre, tone, appeal to a particular audience. This yields <strong>item-based collaborative filtering</strong>: given a movie the user liked, recommend movies connected to it in the movie projection.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-movie-projection" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-movie-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-movie-projection-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-movie-projection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.7: The movie projection graph. Movies that share viewers are connected.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-dual-view" class="level3" data-number="15.3.4">
+<h3 data-number="15.3.4" class="anchored" data-anchor-id="the-dual-view"><span class="header-section-number">15.3.4</span> The Dual View</h3>
+<p>The MovieLens example illustrates how different graph representations serve different purposes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Representation</th>
+<th>Nodes</th>
+<th>Edges</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bipartite</td>
+<td>Users + Movies</td>
+<td>Ratings</td>
+<td>Complete information, rating prediction</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">connected graph</td>
-<td style="text-align: left;">a graph is connected if each pair of vertices is connected</td>
+<td>User projection</td>
+<td>Users</td>
+<td>Shared movies</td>
+<td>Finding similar users</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">connected vertices</td>
-<td style="text-align: left;">a pair of vertices that co-occur in some path</td>
+<td>Movie projection</td>
+<td>Movies</td>
+<td>Shared viewers</td>
+<td>Finding similar movies</td>
+</tr>
+</tbody>
+</table>
+<p>All three representations contain the same underlying information—the bipartite structure can be reconstructed from either projection plus the original edges. But each view makes certain analyses natural. The bipartite graph shows what happened; the projections show similarity patterns that support recommendation.</p>
+<p>This flexibility is characteristic of graph analysis. The same data can be represented in multiple ways, each illuminating different aspects of the structure.</p>
+<p>Our next example moves from implicit structure (ratings that imply similarity) to explicit structure (typed nodes, labeled edges, declared relationships). Knowledge graphs make the semantics of connections explicit, enabling richer reasoning.</p>
+</section>
+</section>
+<section id="the-learninggraph-knowledge-graphs-and-learning-paths" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="the-learninggraph-knowledge-graphs-and-learning-paths"><span class="header-section-number">15.4</span> The LearningGraph: Knowledge Graphs and Learning Paths</h2>
+<p>The Karate Club and MovieLens examples used graphs with simple structure: nodes of one or two types, edges representing a single relationship. Many real-world applications require richer representations. A <em>knowledge graph</em> extends the basic graph model with multiple node types, labeled edge types, and properties attached to both nodes and edges.</p>
+<p>The <strong>LearningGraph</strong> is a knowledge graph for skills-based learning in data science.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> It represents the relationships among skills, courses, learners, work roles, and competency areas. Unlike the Karate Club (where all nodes are people) or MovieLens (users and movies), the LearningGraph has five distinct node types and five edge types, each with specific semantics.</p>
+<section id="the-schema" class="level3" data-number="15.4.1">
+<h3 data-number="15.4.1" class="anchored" data-anchor-id="the-schema"><span class="header-section-number">15.4.1</span> The Schema</h3>
+<p><a href="#tbl-lg-schema" class="quarto-xref">Table&nbsp;<span>15.1</span></a> summarizes the LearningGraph structure.</p>
+<div class="cell">
+<div id="tbl-lg-schema" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lg-schema-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.1: LearningGraph structure: node types and edge types
+</figcaption>
+<div aria-describedby="tbl-lg-schema-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 6%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Component</th>
+<th style="text-align: right;">Count</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Skills</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">Knowledge and skill areas (KSAs) from the data science competency framework</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">cycle</td>
-<td style="text-align: left;">a finite path whose first and last vertex are the same</td>
+<td style="text-align: left;">Courses</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">Courses that teach skills, with prerequisites</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">degree</td>
-<td style="text-align: left;">number of incident edges of a vertex</td>
+<td style="text-align: left;">Learners</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Fictional learner profiles with current skill levels</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">directed edge</td>
-<td style="text-align: left;">an ordered pair of vertices (called endpoints of the edge)</td>
+<td style="text-align: left;">Work Roles</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Data Analyst, Data Scientist, AI/ML Specialist</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">edge</td>
-<td style="text-align: left;">a specified pair of vertices (in a hypergraph, more than two vertices)</td>
+<td style="text-align: left;">Competencies</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Competency areas grouping related skills</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">edge weight</td>
-<td style="text-align: left;">a numerical value assigned to an edge</td>
+<td style="text-align: left;">has_skill</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: left;">Learner → Skill edges with proficiency level</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">graph</td>
-<td style="text-align: left;">a system of vertices (nodes) and edges</td>
+<td style="text-align: left;">requires_skill</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">Work Role → Skill edges with required proficiency</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">incidence</td>
-<td style="text-align: left;">if a vertex is an endpoint of an edge, the (vertex, edge) pair is said to be incident</td>
+<td style="text-align: left;">prerequisite</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">Skill → Skill conceptual dependencies</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">neighborhood, 1-hop</td>
-<td style="text-align: left;">the subgraph of vertices adjacent to a referenced vertex</td>
+<td style="text-align: left;">course_prereq</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">Course → Course curricular ordering</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">neighborhood, 1.5-hop</td>
-<td style="text-align: left;">the subgraph induced by a vertex, its adjacent vertices, and their adjacent vertices</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">neighborhood, 2-hop</td>
-<td style="text-align: left;">the subgraph of vertices of distance 2 from a referenced vertex</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">path</td>
-<td style="text-align: left;">a sequence of adjacent vertices</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">simple path</td>
-<td style="text-align: left;">a path in which no vertex is repeated</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">subgraph</td>
-<td style="text-align: left;">a subset of edges along with their endpoints and possibly additional vertices</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">subgraph, induced</td>
-<td style="text-align: left;">a subset of vertices along with the edges having both endpoints in the subset</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">tree, directed</td>
-<td style="text-align: left;">a directed graph having a distinguished root vertex R such that there is exactly one path from R to any other vertex V</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">tree, undirected</td>
-<td style="text-align: left;">a connected, acyclic graph</td>
+<td style="text-align: left;">teaches</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">Course → Skill with proficiency ceiling</td>
 </tr>
 </tbody>
 </table>
@@ -579,438 +815,398 @@ Table&nbsp;15.1: Graph Theory: Basic Terms
 </figure>
 </div>
 </div>
+<p>This schema enables questions that simpler graphs cannot express:</p>
+<ul>
+<li>What skills does Alice have, and at what proficiency levels?</li>
+<li>What skills does the Data Scientist role require?</li>
+<li>What is the gap between Alice’s current profile and the role requirements?</li>
+<li>What courses could Alice take to close that gap?</li>
+<li>In what order should she take them?</li>
+</ul>
 </section>
-<section id="properties" class="level2" data-number="15.3">
-<h2 data-number="15.3" class="anchored" data-anchor-id="properties"><span class="header-section-number">15.3</span> Properties</h2>
-<section id="matrix-representations" class="level3" data-number="15.3.1">
-<h3 data-number="15.3.1" class="anchored" data-anchor-id="matrix-representations"><span class="header-section-number">15.3.1</span> Matrix Representations</h3>
-<p>Let <span class="math inline">\(G\)</span> be a graph having <span class="math inline">\(n_V\)</span> nodes.</p>
-<section id="adjacency-matrix" class="level4" data-number="15.3.1.1">
-<h4 data-number="15.3.1.1" class="anchored" data-anchor-id="adjacency-matrix"><span class="header-section-number">15.3.1.1</span> Adjacency matrix</h4>
-<p>The <span class="math inline">\(n_V \times n_V\)</span> adjacency matrix identifies adjacent nodes, and is defined as follows. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
-<p><span id="eq-adjacency-matrix"><span class="math display">\[
-\begin{align}
-  A_{j, k} &amp;=
-  \begin{cases}
-    1 &amp; \text{ if } e(\nu_j, \nu_k) \in E \\
-    0 &amp; \text{ otherwise}
-  \end{cases}
-\end{align}
-\qquad(15.1)\]</span></span></p>
-<p>The same information can be represented by a matrix having just two columns that lists only those vertex pairs <span class="math inline">\((\nu_1, \nu_2)\)</span> that define an edge of the graph. Such a sparse matrix representation may also be used to list only a subset of edges. The selected subset may be designed, for example, to achieve computational efficiency.</p>
+<section id="skills-and-prerequisites" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="skills-and-prerequisites"><span class="header-section-number">15.4.2</span> Skills and Prerequisites</h3>
+<p>The 18 skills span mathematical foundations (probability, linear algebra, optimization), statistical methods (linear models, inference, experimental design), data analysis (EDA, visualization, feature engineering), and collaboration (problem formulation, data narratives). Each skill belongs to one of seven competency areas.</p>
+<p>Skills have <em>conceptual prerequisites</em>: understanding linear algebra helps with optimization; probability theory underlies inference. These dependencies form a directed acyclic graph (DAG)—a graph with directed edges and no cycles.</p>
+<p><a href="#fig-lg-prerequisite" class="quarto-xref">Figure&nbsp;<span>15.8</span></a> shows the skill prerequisite structure.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-lg-prerequisite" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lg-prerequisite-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-lg-prerequisite-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lg-prerequisite-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.8: Skill prerequisite structure (a DAG). Courses teach these skills but may bundle them differently.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The DAG structure is essential. Because there are no cycles, skills can be <em>topologically sorted</em>—arranged so that every prerequisite comes before the skills that depend on it. This ordering defines valid learning sequences.</p>
 </section>
-<section id="degree-matrix" class="level4" data-number="15.3.1.2">
-<h4 data-number="15.3.1.2" class="anchored" data-anchor-id="degree-matrix"><span class="header-section-number">15.3.1.2</span> Degree matrix</h4>
-<p>In an undirected graph, the degree matrix is an <span class="math inline">\(n_V \times n_V\)</span> diagonal matrix <span class="math inline">\(D\)</span> in which diagonal element <span class="math inline">\(D_{i, i}\)</span> counts the number of edges incident with node <span class="math inline">\(\nu_i\)</span>. <span class="math inline">\(D_{i, i}\)</span> is called the degree of node <span class="math inline">\(\nu_i\)</span>, and is related to the adjacency matrix as follows. <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
-<p><span id="eq-degree-matrix"><span class="math display">\[
-\begin{align}
-  D_{i, i} &amp;= \sum_{k = 1}^{n_V} A_{i, k}
-\end{align}
-\qquad(15.2)\]</span></span></p>
-<p>In a directed graph the adjacency matrix may not be symmetric. The edges incident with node <span class="math inline">\(\nu_i\)</span> of the form <span class="math inline">\(e(\nu_i, \nu_k)\)</span> are “out-edges” of <span class="math inline">\(\nu_i\)</span>, whereas those of the form <span class="math inline">\(e(\nu_j, \nu_i)\)</span> are “in-edges”. The “out-degree” <span class="math inline">\(D_{i, i}^{(out)}\)</span> and “in-degree” <span class="math inline">\(D_{i, i}^{(in)}\)</span> are respectively the sum across columns of each row, and the sum across rows of each column.</p>
-<p><span id="eq-degree-matrix-in-out"><span class="math display">\[
-\begin{align}
-  D_{i, i}^{(out)} &amp;= \sum_{k = 1}^{n_V} A_{i, k} \\
-  D_{i, i}^{(in)}  &amp;= \sum_{j = 1}^{n_V} A_{j, i}
-\end{align}
-\qquad(15.3)\]</span></span></p>
+<section id="courses-and-curricular-prerequisites" class="level3" data-number="15.4.3">
+<h3 data-number="15.4.3" class="anchored" data-anchor-id="courses-and-curricular-prerequisites"><span class="header-section-number">15.4.3</span> Courses and Curricular Prerequisites</h3>
+<p>The 15 courses provide complete coverage of all 18 skills. Each course teaches one to three skills and has its own prerequisites—not at the skill level, but at the course level. You must take Linear Algebra (C04) before Optimization Methods (C06), not because “linear algebra” the skill is prerequisite to “optimization” the skill (though it is), but because the courses are designed that way.</p>
+<p><a href="#fig-lg-courses" class="quarto-xref">Figure&nbsp;<span>15.9</span></a> shows the course prerequisite DAG.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-lg-courses" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lg-courses-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="graph-theory_files/figure-html/fig-lg-courses-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lg-courses-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.9: Course prerequisite structure. Entry points (no prerequisites): C01 Programming, C03 Probability, C04 Linear Algebra.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Three courses have no prerequisites and serve as entry points: C01 (Introduction to Programming), C03 (Probability Theory), and C04 (Linear Algebra). From these foundations, learners progress through intermediate courses to capstone courses like C14 (Statistical Learning) and C15 (Data Science Communication).</p>
+<p>This dual prerequisite structure—skills and courses—reflects a real distinction. Skill prerequisites are conceptual: you need probability to understand inference. Course prerequisites are practical: the instructor assumes you’ve seen certain material. The two structures are related but not identical, because courses bundle skills in ways that don’t perfectly mirror the skill DAG.</p>
 </section>
-<section id="laplacian-matrix" class="level4" data-number="15.3.1.3">
-<h4 data-number="15.3.1.3" class="anchored" data-anchor-id="laplacian-matrix"><span class="header-section-number">15.3.1.3</span> Laplacian matrix</h4>
-<p>In an undirected graph, the Laplacian (or Kirchhoff) matrix is an <span class="math inline">\(n_V \times n_V\)</span> matrix <span class="math inline">\(L\)</span> defined as follows. <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
-<p><span id="eq-Laplacian-matrix"><span class="math display">\[
-\begin{align}
-  L &amp;= D - A
-\end{align}
-\qquad(15.4)\]</span></span></p>
-<p>Consequently</p>
-<p><span id="eq-Laplacian-matrix-elements"><span class="math display">\[
-\begin{align}
-  L_{j, k} &amp;=
-  \begin{cases}
-    D_{j, j} &amp; \text{ if } j = k \\
-    -1 &amp; \text{ if } j\ne k \text{ and } e(\nu_j, \nu_k) \in E \\
-    0 &amp; \text{ otherwise}
-  \end{cases}
-\end{align}
-\qquad(15.5)\]</span></span></p>
+<section id="gap-analysis" class="level3" data-number="15.4.4">
+<h3 data-number="15.4.4" class="anchored" data-anchor-id="gap-analysis"><span class="header-section-number">15.4.4</span> Gap Analysis</h3>
+<p>A learner has a <em>skill profile</em>: a set of skills at various proficiency levels. A work role has <em>requirements</em>: skills needed at minimum proficiency levels. The gap between profile and requirements identifies what the learner needs to develop.</p>
+<p><a href="#tbl-alice-gap" class="quarto-xref">Table&nbsp;<span>15.2</span></a> shows a gap analysis for Alice, a math major, against the Data Scientist role requirements.</p>
+<div class="cell">
+<div id="tbl-alice-gap" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-alice-gap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.2: Gap analysis: Alice’s current skills versus Data Scientist requirements
+</figcaption>
+<div aria-describedby="tbl-alice-gap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Skill</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Current</th>
+<th style="text-align: center;">Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Exploratory Data Analysis</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Inference and Prediction</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Statistical Learning</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Feature Engineering</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Problem Formulation</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Data Narratives</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Limitations</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Programming</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Alice has strong mathematical foundations but gaps in applied skills. She needs to develop programming, data narratives, feature engineering, and several other competencies to qualify as a Data Scientist. The gap analysis quantifies the distance between where she is and where she needs to be.</p>
 </section>
-</section>
-<section id="betweenness-centrality" class="level3" data-number="15.3.2">
-<h3 data-number="15.3.2" class="anchored" data-anchor-id="betweenness-centrality"><span class="header-section-number">15.3.2</span> Betweenness centrality</h3>
-<p>Question: Which nodes and edges are “central”? <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
-<section id="nodes" class="level4" data-number="15.3.2.1">
-<h4 data-number="15.3.2.1" class="anchored" data-anchor-id="nodes"><span class="header-section-number">15.3.2.1</span> Nodes</h4>
-<p>The notion of <code>betweenness centrality</code> is that a node <span class="math inline">\(v\)</span> is central to a graph if it is often included in the shortest paths between any connected nodes of the graph. This notion was formally defined in the late 1970’s as the following measure <span class="math inline">\(\gamma_V(v)\)</span> of the betweenness centrality of node <span class="math inline">\(v\)</span>.</p>
-<p><span id="eq-v-b-centrality-defn"><span class="math display">\[
-\begin{align}
-  \gamma_V(v) &amp;= \sum_{s, t \ne v}
-    \frac{\sigma_{s, t} (v)}{\sigma_{s, t}}
-\end{align}
-\qquad(15.6)\]</span></span></p>
-<p>where</p>
-<p><span id="eq-v-b-centrality-2"><span class="math display">\[
-\begin{align}
-  (s, t) &amp;= \text{ distinct connected nodes} \\
-  \mathcal{P}_{s, t} &amp;= \text{ shortest paths from } s \text{ to } t \\
-  \mathcal{P}_{s, t} (v) &amp;= \text{ shortest paths from } s \text{ to } t \text{ that pass through } v \\
-  \sigma_{s, t} &amp;= \text{ number of paths in } \mathcal{P}_{s, t} \\
-  \sigma_{s, t} (v) &amp;= \text{ number of paths in } \mathcal{P}_{s, t} (v)
-\end{align}
-\qquad(15.7)\]</span></span></p>
-<p>The following conventions simplify the notation.</p>
-<p><span id="eq-centrality-conventions"><span class="math display">\[
-\begin{align}
-  \sigma_{s, t} &amp;= 1 &amp; \text{ if } s = t \\
-  \sigma_{s, t} (v) &amp;= 0 &amp; \text{ if } v \in \{ s, t \}
-\end{align}
-\qquad(15.8)\]</span></span></p>
-<p>Note that each term in the sum within <a href="#eq-v-b-centrality-defn" class="quarto-xref">Equation&nbsp;<span>15.6</span></a> is a fraction known as the <em>pair dependency</em> of <span class="math inline">\((s, t)\)</span> on <span class="math inline">\(v\)</span>, denoted as follows.</p>
-<p><span id="eq-pair-dependency-defn"><span class="math display">\[
-\begin{align}
-  \delta_{s, t}(v) &amp;= \frac{\sigma_{s, t} (v)}{\sigma_{s, t}}
-\end{align}
-\qquad(15.9)\]</span></span></p>
-<p>This is the proportion of shortest paths from node <span class="math inline">\(s\)</span> to node <span class="math inline">\(t\)</span> that include node <span class="math inline">\(v\)</span>. The proportion thus falls within the closed unit interval: <span class="math inline">\(0 \le \delta_{s, t}(v) \le 1\)</span>.</p>
-<p>A related quantity is the <em>single dependency</em> of <span class="math inline">\(s\)</span> on <span class="math inline">\(v\)</span>, defined as follows.</p>
-<p><span id="eq-single-dependency-defn"><span class="math display">\[
-\begin{align}
-  \delta_s(v) &amp;= \sum_{t \not \in \{s, v \}} \delta_{s, t}(v)
-\end{align}
-\qquad(15.10)\]</span></span></p>
-<p>In words, for a fixed starting point <span class="math inline">\(s\)</span> and a fixed intermediate node <span class="math inline">\(v\)</span> this is the sum over end-points <span class="math inline">\(t\)</span> of the paired dependency of <span class="math inline">\((s, t)\)</span> on <span class="math inline">\(v\)</span>. Then we have</p>
-<p><span id="eq-v-b-centrality-3"><span class="math display">\[
-\begin{align}
-  \gamma_V(v) &amp;= \sum_{s \ne v} \delta_s(v)
-\end{align}
-\qquad(15.11)\]</span></span></p>
-</section>
-<section id="edges" class="level4" data-number="15.3.2.2">
-<h4 data-number="15.3.2.2" class="anchored" data-anchor-id="edges"><span class="header-section-number">15.3.2.2</span> Edges</h4>
-<p>The betweenness centrality of an edge is defined similarly to that for a node.</p>
-<p><span id="eq-e-b-centrality-defn"><span class="math display">\[
-\begin{align}
-  \gamma_E(e) &amp;= \sum_{s, t \in V}
-    \frac{\sigma_{s, t} (e)}{\sigma_{s, t}}
-\end{align}
-\qquad(15.12)\]</span></span></p>
-<p>Summation is over all pairs <span class="math inline">\((s, t)\)</span> of connected nodes. Each term of the summation is a fraction, namely the proportion of shortest paths from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span> that include edge <span class="math inline">\(e\)</span>.</p>
-</section>
-</section>
-<section id="connected-components" class="level3" data-number="15.3.3">
-<h3 data-number="15.3.3" class="anchored" data-anchor-id="connected-components"><span class="header-section-number">15.3.3</span> Connected components</h3>
-<p>In graph theory, a component of an undirected graph is a connected subgraph that is not part of any larger connected subgraph. The components of any graph partition its vertices into disjoint sets, and are the induced subgraphs of those sets. A graph that is itself connected has exactly one component, namely the entire graph. Components are sometimes called connected components. In <code>R</code> graph components can be determined by function <code>igraph::components()</code>. <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
-</section>
-<section id="communities" class="level3" data-number="15.3.4">
-<h3 data-number="15.3.4" class="anchored" data-anchor-id="communities"><span class="header-section-number">15.3.4</span> Communities</h3>
-<p>In graph theory, the notion of “community” (or cluster, or module) is similar to but less stringent than that of a connected component. A community is a subgraph, with many edges joining vertices of the same community and comparatively few edges joining vertices of different communities. <a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
-</section>
-<section id="modularity" class="level3" data-number="15.3.5">
-<h3 data-number="15.3.5" class="anchored" data-anchor-id="modularity"><span class="header-section-number">15.3.5</span> Modularity</h3>
-<p>The strength of a given community structure of a graph can be measured as the <em>modularity</em> of the graph, which compares the actual number of edges between node pairs to the expected number in a randomly generated graph (constrained to preserve the degree of each node).</p>
-<p>Suppose that <span class="math inline">\(c(\nu_j)\)</span> is the assignment by classification function of <span class="math inline">\(c(\cdot)\)</span> of each node <span class="math inline">\(\nu_j\)</span> to one of the integers <span class="math inline">\(\{ 1, \ldots, n_c \}\)</span>. Let <span class="math inline">\(Q(c(\cdot))\)</span> denote the modularity measure of <span class="math inline">\(c(\cdot)\)</span>. Then <span class="math inline">\(Q(\cdot)\)</span> is defined compatably but distinctly for directed versus undirected graphs.</p>
-<section id="undirected-graphs" class="level4" data-number="15.3.5.1">
-<h4 data-number="15.3.5.1" class="anchored" data-anchor-id="undirected-graphs"><span class="header-section-number">15.3.5.1</span> Undirected graphs</h4>
-<p>For an undirected graph, modularity <span class="math inline">\(Q(\cdot)\)</span> is defined as follows.</p>
-<p><span id="eq-modularity-defn"><span class="math display">\[
-\begin{align}
-  Q &amp;= \frac{1}{2 n_E} \sum_{j, k = 1}^{n_V} \left (A_{j, k} - \frac{D_{j, j} \; D_{k, k}}{2 n_E} \right ) \; \delta(c(\nu_j), c(\nu_k))
-\end{align}
-\qquad(15.13)\]</span></span></p>
-<p>where</p>
-<p><span id="eq-modularity-defn-2"><span class="math display">\[
-\begin{align}
-  n_E &amp;= \left| E \right| \text{ = number of edges} \\
-  n_V &amp;= \left| V \right| \text{ = number of nodes} \\
-  A &amp;= \text{adjacency matrix} \\
-  D_{i, i} &amp;= \text{degree of node } \nu_i \\
-  \delta(\cdot) &amp;= \text{Kronecker delta function}
-\end{align}
-\qquad(15.14)\]</span></span></p>
-</section>
-<section id="directed-graphs" class="level4" data-number="15.3.5.2">
-<h4 data-number="15.3.5.2" class="anchored" data-anchor-id="directed-graphs"><span class="header-section-number">15.3.5.2</span> Directed graphs</h4>
-<p>For a directed graph, modularity <span class="math inline">\(Q(\cdot)\)</span> is defined thus.</p>
-<p><span id="eq-modularity-defn-in-out"><span class="math display">\[
-\begin{align}
-  Q &amp;= \frac{1}{n_E} \sum_{j, k = 1}^{n_V} \left (A_{j, k} - \frac{D_{j, j}^{(out)}D_{k, k}^{(in)}}{n_E} \right ) \; \delta(c(\nu_j), c(\nu_k))
-\end{align}
-\qquad(15.15)\]</span></span></p>
-</section>
-<section id="agglomerative-versus-divisive-algorithms" class="level4" data-number="15.3.5.3">
-<h4 data-number="15.3.5.3" class="anchored" data-anchor-id="agglomerative-versus-divisive-algorithms"><span class="header-section-number">15.3.5.3</span> Agglomerative versus divisive algorithms</h4>
-<p>Consider an algorithm designed to determine community structure based on modularity. A divisive algorithm might initially assign all nodes to a single community by setting <span class="math inline">\(n_c = 1\)</span>. An agglomerative algorithm might initially assign each node to its own community by setting <span class="math inline">\(n_c = n_V\)</span>.</p>
-<p>See <span class="citation" data-cites="wiki_graph_modularity"><span>“Modularity (Networks) | Wikipedia”</span> (<a href="references.html#ref-wiki_graph_modularity" role="doc-biblioref">2025</a>)</span> for further details. The modularity of a graph can be calculated in <code>R</code> by function <code>igraph:modularity()</code>.</p>
-</section>
-</section>
-</section>
-<section id="algorithms-general" class="level2" data-number="15.4">
-<h2 data-number="15.4" class="anchored" data-anchor-id="algorithms-general"><span class="header-section-number">15.4</span> Algorithms: General</h2>
-<section id="page-rank" class="level3" data-number="15.4.1">
-<h3 data-number="15.4.1" class="anchored" data-anchor-id="page-rank"><span class="header-section-number">15.4.1</span> Page Rank</h3>
-<p>Question: In a directed graph, which nodes have the most in-links?</p>
-<p><code>PageRank</code> was the first algorithm used by Google to find relevant web pages in response to user queries. The algorithm determines the number and quality of links to a page under the assumption that more important websites are likely to receive more links from other websites. <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></p>
-<p>This idea can be applied to any directed graph. Here’s an outline of a similar algorithm that assigns a score <span class="math inline">\(s(\nu)\)</span> to each node <span class="math inline">\(\nu\)</span> of directed graph <span class="math inline">\(G = (V, E)\)</span> having <span class="math inline">\(n_V\)</span> nodes. For each node <span class="math inline">\(\nu\)</span> the score is initially set to <span class="math inline">\(s(\nu) = \frac{1}{n_V}\)</span>. Then the algorithm iterates over the following steps: <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a></p>
+<section id="learning-paths" class="level3" data-number="15.4.5">
+<h3 data-number="15.4.5" class="anchored" data-anchor-id="learning-paths"><span class="header-section-number">15.4.5</span> Learning Paths</h3>
+<p>A <em>learning path</em> answers the question: given my current skills, what is the shortest route to a target skill?</p>
+<p>This question sounds simple, but it requires care. A naive approach would find the shortest path in the skill prerequisite graph. But Alice already has some skills—she doesn’t need to traverse the entire graph. Her learning path should account for her starting position.</p>
+<p>The algorithm works as follows:</p>
 <ol type="1">
-<li><em>Distribute</em> <span class="math inline">\(s(\nu)\)</span> equally among the out-neighbors of <span class="math inline">\(\nu\)</span>.</li>
-<li><em>Update</em> <span class="math inline">\(s(\nu)\)</span> to be the sum of all scores received from the in-neighbors of <span class="math inline">\(\nu\)</span>.</li>
-<li><em>Shrink</em> toward uniformity: set <span class="math inline">\(s(\nu) \leftarrow (1 - \epsilon) s(\nu) + \epsilon \frac{1}{n_V}\)</span>, for some <span class="math inline">\(\epsilon \approx 0.15\)</span>.</li>
+<li>Identify all prerequisites of the target skill (traverse the DAG backward)</li>
+<li>Remove skills Alice already has at sufficient proficiency</li>
+<li>Topologically sort the remaining skills</li>
+<li>The result is a valid learning sequence</li>
 </ol>
-<p>The algorithm can also be expressed using the <span class="math inline">\(n_V \times n_V\)</span> matrix <span class="math inline">\(T\)</span> to represent the distribution of each node’s score to the scores of its out-neighbors, so that</p>
-<p><span id="eq-transition-matrix"><span class="math display">\[
-\begin{align}
-  T_{j, k}  &amp;=
-  \begin{cases}
-    \frac{1}{d_j} &amp; \text{if } \nu_j \text{ has a directed link to } \nu_k \\
-    0 &amp; \text{ otherwise}
-  \end{cases} \\ \\
-  &amp;\text{where} \\ \\
-  d_j &amp;= \text{number of out-neighbors of } \nu_j
-\end{align}
-\qquad(15.16)\]</span></span></p>
-<p>Let <span class="math inline">\(s^{(i)}_\bullet = (s^{(i)}_1, \ldots, s^{(i)}_{n_V})\)</span> denote the vector of node-scores at the <span class="math inline">\(i^{th}\)</span> iteration. Also let <span class="math inline">\(1_\bullet = (1, \ldots, 1)\)</span> denote the vector of length <span class="math inline">\(n_V\)</span> each of whose elements is equal to unity, so that <span class="math inline">\(1_\bullet \otimes 1_\bullet\)</span> denotes the <span class="math inline">\(n_V \times n_V\)</span> matrix each of whose elements is equal to unity. Then the algorithm can be represented as the following linear system, iterated over index <span class="math inline">\(i\)</span>.</p>
-<p><span id="eq-node-score-iteration"><span class="math display">\[
-\begin{align}
-  s^{(0)}_\bullet &amp;= \frac{1}{n_V} 1_\bullet \\
-  s^{(i)}_\bullet &amp;= s^{(i-1)}_\bullet \; \times \; M \\
-  M &amp;= (1 - \epsilon) \; T \; + \; \frac{\epsilon}{n_V} \; 1_\bullet \otimes 1_\bullet
-\end{align}
-\qquad(15.17)\]</span></span></p>
-<p>The matrix <span class="math inline">\(T\)</span> is a Markov transition matrix: that is, the elements of each row are non-negative and sum to unity. Then there is at least one probability vector <span class="math inline">\(\pi_\bullet\)</span> for which <span class="math inline">\(\pi_\bullet \times T = \pi_\bullet\)</span>. Vector <span class="math inline">\(\pi_\bullet\)</span> is thus a left eigenvector of <span class="math inline">\(T\)</span> corresponding to an eigenvalue of 1, and is a stationary probability vector corresponding to <span class="math inline">\(T\)</span>. <a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
-<p>Matrix <span class="math inline">\(M\)</span> is also a Markov transition matrix with its own stationary distribution, say <span class="math inline">\(\bar{s}_\bullet\)</span>. Moreover, <span class="math inline">\(M\)</span> is irreducible, meaning that <span class="math inline">\(M\)</span> assigns positive probability of reaching any node from any other node. Consequently <span class="math inline">\(\bar{s}_\bullet\)</span> is the <em>unique</em> stationary distribution of <span class="math inline">\(M\)</span>. It also follows that iterating the above linear system gives a sequence of score vectors <span class="math inline">\(s^{(i)}_\bullet\)</span> that converge to <span class="math inline">\(\bar{s}_\bullet\)</span>.</p>
-<p><span id="eq-converge-to-stationary-dstn"><span class="math display">\[
-\begin{align}
-  \lim_{i \rightarrow \infty}{s^{(i)}_\bullet} &amp;= \bar{s}_\bullet
-\end{align}
-\qquad(15.18)\]</span></span></p>
-<p>In 1999 Google noted that acceptable convergence of the <code>PageRank</code> algorithm typically required about 50 iterations for internet-sized graphs. <a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
-<p>The algorithm is implemented in <code>R</code> as the function <code>igraph::page_rank()</code>.</p>
+<p><a href="#tbl-alice-path" class="quarto-xref">Table&nbsp;<span>15.3</span></a> shows Alice’s learning path to Statistical Learning.</p>
+<div class="cell">
+<div id="tbl-alice-path" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-alice-path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.3: Alice’s learning path to Statistical Learning, given her current profile
+</figcaption>
+<div aria-describedby="tbl-alice-path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 23%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Step</th>
+<th style="text-align: left;">Skill</th>
+<th style="text-align: left;">Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Inference and Prediction</td>
+<td style="text-align: left;">Prerequisite for Statistical Learning; requires Linear Models (Alice has)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">Statistical Learning</td>
+<td style="text-align: left;">Target skill; requires Inference and Prediction</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Alice’s path is short because she already has strong foundations. A computer science major like Charlie, with different starting skills, would face a different path to the same target. Learning paths are properties of <em>learner-skill pairs</em>, not skills alone.</p>
 </section>
-<section id="floyd-warshall" class="level3" data-number="15.4.2">
-<h3 data-number="15.4.2" class="anchored" data-anchor-id="floyd-warshall"><span class="header-section-number">15.4.2</span> Floyd-Warshall</h3>
-<p>Question: In a directed weighted graph, what is the distance from one node to another: how long is the shortest path?</p>
-<p>Suppose we are given a directed weighted graph <span class="math inline">\(G\)</span> having <span class="math inline">\(n_V\)</span> nodes indexed as <span class="math inline">\(\{ \nu_1, \nu_2, \ldots, \nu_{n_V} \}\)</span>. For any path from node <span class="math inline">\(\nu_j\)</span> to node <span class="math inline">\(\nu_k\)</span>, the length of the path is the sum of the weights of the edges making up the path.</p>
-<p>Consider the shortest of those paths from <span class="math inline">\(\nu_j\)</span> to <span class="math inline">\(\nu_k\)</span> that are restricted to intermediary nodes <span class="math inline">\(N_m = \{ \nu_1, \nu_2, \ldots, \nu_m \}\)</span>, that is, constrained to exclude intermediary nodes other than those in <span class="math inline">\(N_m\)</span>. If there is such a shortest path that moreover excludes node <span class="math inline">\(\nu_m\)</span>, then it is also the shortest path restricted to intermediary nodes <span class="math inline">\(N_{m - 1} = \{ \nu_1, \nu_2, \ldots, \nu_{m - 1} \}\)</span>.</p>
-<p>Otherwise, if any shortest path includes node <span class="math inline">\(\nu_m\)</span>, that path is the concatenation of: (1) a shortest path from <span class="math inline">\(\nu_j\)</span> to <span class="math inline">\(\nu_m\)</span> restricted to nodes <span class="math inline">\(N_{m - 1}\)</span>; and (2) a shortest path from <span class="math inline">\(\nu_m\)</span> to <span class="math inline">\(\nu_k\)</span> restricted to nodes <span class="math inline">\(N_{m - 1}\)</span>.</p>
-<p>If node <span class="math inline">\(\nu_j\)</span> happens to be connected to <span class="math inline">\(\nu_k\)</span> by the edge <span class="math inline">\(\nu_j - \nu_k\)</span>, then that edge qualifies as the shortest path restricted to the empty set of intermediary nodes.</p>
-<p>We now use these observations about intermediary nodes to construct an algorithm to determine the minimal distance from any node to any node. We will record these distances in the <span class="math inline">\(n_v \times n_V\)</span> matrix <span class="math inline">\(D\)</span>. <a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
-<p><span id="eq-distance-matrix-defn"><span class="math display">\[
-\begin{align}
-  D_{j, k} &amp;= \text{distance from } \nu_j \text{ to } \nu_k
-\end{align}
-\qquad(15.19)\]</span></span></p>
-<p>We set initial values to matrix <span class="math inline">\(D\)</span> as follows.</p>
-<p><span id="eq-distance-matrix-initial-values"><span class="math display">\[
-\begin{align}
-  D^{(0)}_{j, k} &amp;=
-  \begin{cases}
-    \text{weight of edge } \nu_j - \nu_k &amp; \text{if that edge exists} \\
-    \infty &amp; \text{otherwise}
-  \end{cases}
-\end{align}
-\qquad(15.20)\]</span></span></p>
-<p>We now update these matrix values as follows.</p>
-<p><span id="eq-distance-matrix-updates"><span class="math display">\[
-\begin{align}
-  D^{(i + 1)}_{j, k} &amp;= \min \left \{ D^{(i)}_{j, k} \;,\; \{ D^{(i)}_{j, m} + D^{(i)}_{m, k} \}_{m \not \in \{ j, k \}} \right \}
-\end{align}
-\qquad(15.21)\]</span></span></p>
-<p>The algorithm is implemented in <code>R</code> as the function <code>Rfast::floyd()</code>.</p>
-</section>
-<section id="dijkstra" class="level3" data-number="15.4.3">
-<h3 data-number="15.4.3" class="anchored" data-anchor-id="dijkstra"><span class="header-section-number">15.4.3</span> Dijkstra</h3>
-<p>Question: In a weighted graph, how long is the shortest path between two given nodes, or between a given node and every other node?</p>
-<p><span class="math inline">\(G\)</span> is now an undirected, weighted graph, again having <span class="math inline">\(n_V\)</span> nodes. A starting node <span class="math inline">\(\nu_1\)</span> is identified, but the remaining nodes will be later indexed as <span class="math inline">\(\{ \nu_2, \ldots, \nu_{n_V} \}\)</span> as part of the algorithm. The <span class="math inline">\(n_v \times n_V\)</span> distance matrix <span class="math inline">\(D\)</span> is now symmetric. Our goal is to determine the values of the first row of <span class="math inline">\(D\)</span> (or possibly an identified target cell in the first row).</p>
-<p>Dijkstra’s algorithm starts with infinite distances and tries to improve them step by step: <a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a></p>
-<ol type="1">
-<li>Create a set <span class="math inline">\(\mathcal{U}\)</span> of unvisited nodes, with <span class="math inline">\(\mathcal{U}\)</span> initialized as <span class="math inline">\(V\)</span>, the set of all nodes.</li>
-<li>Assign an initial distance <span class="math inline">\(D^{(0)}_{1, j}\)</span> from <span class="math inline">\(\nu_1\)</span> to every node <span class="math inline">\(\nu_j\)</span>, with <span class="math inline">\(D^{(0)}_{1, 1} = 0\)</span> and <span class="math inline">\(D^{(0)}_{1, j} = \infty\)</span> for <span class="math inline">\(j \ne 1\)</span>.</li>
-<li>From the unvisited set, select the current node, <span class="math inline">\(\nu_i\)</span>, to be the one with the smallest (finite) distance; initially (for <span class="math inline">\(i = 1\)</span>), this is the starting node <span class="math inline">\(\nu_1\)</span> (having distance zero). If the unvisited set is empty, or contains only nodes with infinite distance (which are unreachable), then the algorithm terminates by skipping to step 6. If the only concern is the path to a target node, the algorithm terminates once the current node is the target node. Otherwise, the algorithm continues.</li>
-<li>Now examine nodes adjacent to <span class="math inline">\(\nu_i\)</span> that are still elements of <span class="math inline">\(\mathcal{U}\)</span>. Calculate the distance of each adjacent node from <span class="math inline">\(\nu_1\)</span> through the current node <span class="math inline">\(\nu_i\)</span>. Update the distance from <span class="math inline">\(\nu_1\)</span> to the adjacent node to be the minimum of the previously recorded distance and the new calculation.</li>
-<li>After considering all of the current node’s unvisited neighbors, the current node is removed from the unvisited set. Thus a visited node is never rechecked, which is correct because the distance recorded on the current node is minimal (as ensured in step 3), and thus final. Repeat from step 3.</li>
-<li>Once the loop exits (steps 3–5), every visited node contains its shortest distance from the starting node.</li>
-</ol>
-<p>The algorithm is implemented in <code>R</code> as the function <code>igraph::distances()</code>.</p>
-</section>
-<section id="brandes" class="level3" data-number="15.4.4">
-<h3 data-number="15.4.4" class="anchored" data-anchor-id="brandes"><span class="header-section-number">15.4.4</span> Brandes</h3>
-<p>Brandes’ algorithm calculates the betweenness centrality of all nodes in a graph, with the aid of the following definitions. <a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a></p>
-<p>Let <span class="math inline">\(\mathcal{l}(s, v)\)</span> denote the length of a shortest path from node <span class="math inline">\(s\)</span> to node <span class="math inline">\(v\)</span>. Note: Brandes’ algorithm assumes that all edge-weights are equal to unity (or share some other positive constant value).</p>
-<p>Also let <span class="math inline">\(\mathcal{C}_s(v)\)</span> denote the neighbors of <span class="math inline">\(v\)</span> that are closer to <span class="math inline">\(s\)</span> than is <span class="math inline">\(v\)</span>.</p>
-<p><span id="eq-closer-than-v"><span class="math display">\[
-\begin{align}
-  \mathcal{C}_s(v) &amp;= \left \{ u \in V :
-    (u-v) \in E \; \wedge \; \mathcal{l}(s, u) &lt; \mathcal{l}(s, v) \right \}
-\end{align}
-\qquad(15.22)\]</span></span></p>
-<p>The idea here is that for any given node <span class="math inline">\(s\)</span>, the remaining nodes can be partitioned based on their distance from <span class="math inline">\(s\)</span>. The partition is simplified by the assumption that all edges have the same weight (unity or some other positive constant). Node <span class="math inline">\(v\)</span> belongs to the set of nodes that are the same distance from <span class="math inline">\(s\)</span> as is <span class="math inline">\(v\)</span>. If node <span class="math inline">\(u\)</span> is adjacent to <span class="math inline">\(v\)</span> and is closer to <span class="math inline">\(s\)</span> than is <span class="math inline">\(v\)</span>, then it must be just one unit closer and thus belong to that corresponding set of nodes.</p>
-<p>For each vertex <span class="math inline">\(s\)</span> the algorithm iterates over two stages: (1) shortest path determination ; and (2) back-propagation. The algorithm is implemented in <code>R</code> as the function <code>igraph::betweenness()</code>.</p>
-<section id="single-source-shortest-path" class="level4" data-number="15.4.4.1">
-<h4 data-number="15.4.4.1" class="anchored" data-anchor-id="single-source-shortest-path"><span class="header-section-number">15.4.4.1</span> Single-source shortest path</h4>
-<p><a href="#eq-closer-than-v" class="quarto-xref">Equation&nbsp;<span>15.22</span></a> yields the following iterative formula for <span class="math inline">\(\sigma_{s, v}\)</span>. <a href="#fn16" class="footnote-ref" id="fnref16" role="doc-noteref"><sup>16</sup></a></p>
-<p><span id="eq-sigma-recursion"><span class="math display">\[
-\begin{align}
-  \sigma_{s, v} &amp;= \sum_{u \in \mathcal{C}_s(v)} \sigma_{s, u}
-\end{align}
-\qquad(15.23)\]</span></span></p>
-<p>That is, if node <span class="math inline">\(v\)</span> is not adjacent to node <span class="math inline">\(s\)</span> then any shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span> must have a member of <span class="math inline">\(\mathcal{C}_s(v)\)</span> as its penultimate node, and these penultimate nodes partition the shortest paths from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span>. On the other hand, if <span class="math inline">\((s-v)\)</span> is an edge then that edge is the unique shortest path from <span class="math inline">\(s\)</span> to <span class="math inline">\(v\)</span>, in which case <span class="math inline">\(\sigma_{s, v} = 1\)</span>.</p>
-</section>
-<section id="backpropagation" class="level4" data-number="15.4.4.2">
-<h4 data-number="15.4.4.2" class="anchored" data-anchor-id="backpropagation"><span class="header-section-number">15.4.4.2</span> Backpropagation</h4>
-<p>Brandes proved the following recursive formula for vertex dependencies:</p>
-<p><span id="eq-delta-recursion"><span class="math display">\[
-\begin{align}
-  \delta_{s} (u) &amp;= \sum_{v : u \in \mathcal{C}_s(v)}
-    \frac{\sigma_{s, u}}{\sigma_{s, v}} \times (\delta_s(v) + 1)
-\end{align}
-\qquad(15.24)\]</span></span></p>
-<p>According to this formula the single dependency of <span class="math inline">\(s\)</span> on a vertex <span class="math inline">\(u\)</span> at distance <span class="math inline">\(\mathcal{l}(s, u)\)</span> is determined by the the set of nodes at the next greater distance. Furthermore, the order of summation is irrelevant, which enables calculations to start at the most distant set of nodes.</p>
-</section>
+<section id="different-profiles-different-paths" class="level3" data-number="15.4.6">
+<h3 data-number="15.4.6" class="anchored" data-anchor-id="different-profiles-different-paths"><span class="header-section-number">15.4.6</span> Different Profiles, Different Paths</h3>
+<p>The LearningGraph contains six learner profiles with different backgrounds:</p>
+<div class="cell">
+<div id="tbl-learner-profiles" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-learner-profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.4: Learner profiles in the LearningGraph
+</figcaption>
+<div aria-describedby="tbl-learner-profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Role</th>
+<th style="text-align: left;">Organization</th>
+<th style="text-align: left;">Background</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Alice</td>
+<td style="text-align: left;">student</td>
+<td style="text-align: left;">Xavier U</td>
+<td style="text-align: left;">Math major, junior year</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Beth</td>
+<td style="text-align: left;">employee</td>
+<td style="text-align: left;">DataCorp</td>
+<td style="text-align: left;">Senior analyst, 5 years experience</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Charlie</td>
+<td style="text-align: left;">student</td>
+<td style="text-align: left;">Xavier U</td>
+<td style="text-align: left;">CS major, senior year</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dan</td>
+<td style="text-align: left;">student</td>
+<td style="text-align: left;">Xavier U</td>
+<td style="text-align: left;">Statistics minor, interested in ML</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Elliot</td>
+<td style="text-align: left;">employee</td>
+<td style="text-align: left;">DataCorp</td>
+<td style="text-align: left;">Junior data engineer, 1 year</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fiona</td>
+<td style="text-align: left;">employee</td>
+<td style="text-align: left;">DataCorp</td>
+<td style="text-align: left;">Mid-level data scientist, 3 years</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Each learner has a different skill profile, and therefore a different learning path to any given target. Beth, a senior analyst with strong applied skills, might need mathematical foundations. Charlie, a CS major, might need statistical training. The prerequisite DAG is fixed; each learner’s position on it varies.</p>
+<p>This is the practical value of the knowledge graph representation. By encoding skills, proficiencies, prerequisites, and requirements as graph structure, we can compute personalized recommendations. The graph doesn’t just store information—it enables reasoning about learning.</p>
 </section>
 </section>
-<section id="algorithms-clustering" class="level2" data-number="15.5">
-<h2 data-number="15.5" class="anchored" data-anchor-id="algorithms-clustering"><span class="header-section-number">15.5</span> Algorithms: Clustering</h2>
-<section id="girvan-newman" class="level3" data-number="15.5.1">
-<h3 data-number="15.5.1" class="anchored" data-anchor-id="girvan-newman"><span class="header-section-number">15.5.1</span> Girvan-Newman</h3>
-<p>Question: How can one identify highly connected communities of nodes? <a href="#fn17" class="footnote-ref" id="fnref17" role="doc-noteref"><sup>17</sup></a></p>
-<p>If a graph contains groups (communities) of nodes that are only loosely connected by a few inter-group edges, then all shortest paths between different communities must go along one of these few edges. Thus the edges connecting communities will have high edge betweenness. By removing these edges, the communities are separated from one another and so the underlying community structure of the graph is revealed.</p>
-<p>Girvan–Newman is a hierarchical, divisive algorithm that detects communities by iteratively removing a most central edge, and then recomputing the betweenness centrality of edges belonging to the component containing the removed edge. The connected components of the resulting graph are the communities.</p>
-<p>The algorithm is as follows.</p>
-<ol type="1">
-<li>Calculate the betweenness for all edges.</li>
-<li>Remove the edge with the highest betweenness.</li>
-<li>Recalculate betweennesses for all edges affected by the removal.</li>
-<li>Repeat from step 2 until no edges remain.</li>
-</ol>
-<p>The algorithm is implemented in <code>R</code> as the function <code>igraph::cluster_edge_betweenness()</code>.</p>
+<section id="fundamental-concepts" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="fundamental-concepts"><span class="header-section-number">15.5</span> Fundamental Concepts</h2>
+<p>The examples above introduced graph concepts informally. We now define them precisely.</p>
+<section id="nodes-and-edges" class="level3" data-number="15.5.1">
+<h3 data-number="15.5.1" class="anchored" data-anchor-id="nodes-and-edges"><span class="header-section-number">15.5.1</span> Nodes and Edges</h3>
+<p>A <strong>graph</strong> <span class="math inline">\(G = (V, E)\)</span> consists of a set of <em>nodes</em> (or vertices) <span class="math inline">\(V\)</span> and a set of <em>edges</em> <span class="math inline">\(E\)</span>. Each edge connects two nodes. In an <strong>undirected graph</strong>, an edge between nodes <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> is symmetric: if <span class="math inline">\(u\)</span> connects to <span class="math inline">\(v\)</span>, then <span class="math inline">\(v\)</span> connects to <span class="math inline">\(u\)</span>. In a <strong>directed graph</strong>, edges have direction: an edge from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span> does not imply an edge from <span class="math inline">\(v\)</span> to <span class="math inline">\(u\)</span>.</p>
+<p>The Karate Club is an undirected graph—friendship is mutual. The skill prerequisite graph is directed—“probability is prerequisite to inference” does not imply the reverse. The MovieLens bipartite graph is undirected—a rating connects user and movie symmetrically.</p>
 </section>
-<section id="spectral-clustering" class="level3" data-number="15.5.2">
-<h3 data-number="15.5.2" class="anchored" data-anchor-id="spectral-clustering"><span class="header-section-number">15.5.2</span> Spectral clustering</h3>
-<p>Spectral clustering is another hierarchical, divisive method for community detection in an undirected graph. It is based on a spectral decomposition of the normalized Laplacian matrix. An outline of the iterative algorithm is as follows.</p>
-<ol type="1">
-<li>Compute the adjacent <span class="math inline">\((A)\)</span>, degree <span class="math inline">\((D)\)</span>, and normalized Laplacian <span class="math inline">\((\tilde{L})\)</span> matrices, with</li>
-</ol>
-<p><span id="eq-Laplacian-matrix-normalized"><span class="math display">\[
-\begin{align}
-  \tilde{L} &amp;= I - D^{-1/2} \; A \; D^{-1/2}
-\end{align}
-\qquad(15.25)\]</span></span></p>
-<p>noting that</p>
-<p><span id="eq-Laplacian-matrix-evec-0"><span class="math display">\[
-\begin{align}
-  \tilde{L} \times (D^{1/2} \times 1_{\bullet}) &amp;= 0
-\end{align}
-\qquad(15.26)\]</span></span></p>
-<ol start="2" type="1">
-<li><p>Compute the eigenvector <span class="math inline">\(x\)</span> corresponding to the second smallest eigenvalue of <span class="math inline">\((\tilde{L})\)</span>.</p></li>
-<li><p>For each node <span class="math inline">\(\nu_j\)</span> calculate the inner product <span class="math inline">\(&lt;A_{j, \bullet}, x&gt;\)</span> (the <span class="math inline">\(x-\)</span>coordinate of <span class="math inline">\(\nu_j\)</span>).</p></li>
-<li><p>Cluster nodes based on the sign (negative, or non-negative) of their <span class="math inline">\(x-\)</span>coordinate.</p></li>
-</ol>
-<p>See <span class="citation" data-cites="wiki_spectral_clustering"><span>“Spectral Clustering | Wikipedia”</span> (<a href="references.html#ref-wiki_spectral_clustering" role="doc-biblioref">2025</a>)</span> for further details. The algorithm can be implemented in <code>R</code> as the function <code>rSpectral::spectral_igraph_membership()</code>.</p>
+<section id="weighted-edges" class="level3" data-number="15.5.2">
+<h3 data-number="15.5.2" class="anchored" data-anchor-id="weighted-edges"><span class="header-section-number">15.5.2</span> Weighted Edges</h3>
+<p>An edge may carry a <strong>weight</strong>—a numerical value representing strength, distance, or capacity. In the user projection, edge weights count shared movies. In a transportation network, weights might represent travel time. In the LearningGraph, the <code>has_skill</code> edges carry proficiency levels as weights.</p>
 </section>
-<section id="clauset-newman-moore" class="level3" data-number="15.5.3">
-<h3 data-number="15.5.3" class="anchored" data-anchor-id="clauset-newman-moore"><span class="header-section-number">15.5.3</span> Clauset-Newman-Moore</h3>
-<p>The Clauset-Newman-Moore (CNM) algorithm is a hierarchical agglomeration algorithm to find community structure in a graph. It does so by local (“greedy”) optimization. It greedily merges clusters to increase modularity, and halts when the increase falls under some threshold. It may be forced to track the hierarchy of clusters formed, and halt only when it has created a single cluster of the entire graph. See <span class="citation" data-cites="Clauset_Newman_Moore_2004">Clauset, Newman, and Moore (<a href="references.html#ref-Clauset_Newman_Moore_2004" role="doc-biblioref">2004</a>)</span> for details. The algorithm is implemented in <code>R</code> as the function <code>igraph::cluster_fast_greedy()</code>.</p>
+<section id="paths-and-connectivity" class="level3" data-number="15.5.3">
+<h3 data-number="15.5.3" class="anchored" data-anchor-id="paths-and-connectivity"><span class="header-section-number">15.5.3</span> Paths and Connectivity</h3>
+<p>A <strong>path</strong> from node <span class="math inline">\(u\)</span> to node <span class="math inline">\(v\)</span> is a sequence of edges connecting them. The <strong>length</strong> of a path is the number of edges (or, for weighted graphs, the sum of edge weights). A <strong>shortest path</strong> minimizes this length.</p>
+<p>Two nodes are <strong>connected</strong> if a path exists between them. A graph is <strong>connected</strong> if every pair of nodes is connected. A <strong>connected component</strong> is a maximal connected subgraph—a piece of the graph where all nodes connect to each other but not to nodes outside the piece.</p>
 </section>
-<section id="louvain" class="level3" data-number="15.5.4">
-<h3 data-number="15.5.4" class="anchored" data-anchor-id="louvain"><span class="header-section-number">15.5.4</span> Louvain</h3>
-<p>The Louvain method, like the Clauset-Newman-Moore (CNM) algorithm, uses local optimization of subgraph modularity to find community structure in a graph. Here’s an outline of the algorithm.</p>
-<ol type="1">
-<li>Perform CNM until modularity is maximized.</li>
-<li>Contract each cluster to a single new node.</li>
-<li>Set the edge-weight between new nodes to the sum of all old edge-weights between the old clusters.</li>
-<li>Return to step 1 with the contracted graph.</li>
-</ol>
-<p>See <span class="citation" data-cites="wiki_louvain_method"><span>“Louvain Method | Wikipedia”</span> (<a href="references.html#ref-wiki_louvain_method" role="doc-biblioref">2025</a>)</span> for further details.</p>
-<p>Louvain produces non-overlapping communities: each node belongs to at most one community. This may be unrealistic in real-world applications. As an alternative, the Leiden algorithm can produce overlapping communities.</p>
-<p>The Louvain method is implemented in <code>R</code> as the function <code>igraph::cluster_louvain()</code>.</p>
+<section id="directed-acyclic-graphs" class="level3" data-number="15.5.4">
+<h3 data-number="15.5.4" class="anchored" data-anchor-id="directed-acyclic-graphs"><span class="header-section-number">15.5.4</span> Directed Acyclic Graphs</h3>
+<p>A <strong>directed acyclic graph (DAG)</strong> is a directed graph with no cycles—no path leads from a node back to itself. DAGs arise naturally in dependency structures: prerequisites, causation, temporal ordering. The key property of a DAG is that its nodes can be <em>topologically sorted</em>—arranged in a linear order where every edge points forward.</p>
+<p>Both the skill prerequisite graph and the course prerequisite graph are DAGs. This is not coincidental; cycles in prerequisites would be incoherent (“you need A before B and B before A”).</p>
 </section>
-<section id="leiden" class="level3" data-number="15.5.5">
-<h3 data-number="15.5.5" class="anchored" data-anchor-id="leiden"><span class="header-section-number">15.5.5</span> Leiden</h3>
-<p>The Leiden method, developed in 2019 as a modification of the Louvain method, allows the identification of overlapping communities. See <span class="citation" data-cites="wiki_leiden_algo"><span>“Leiden Algorithm | Wikipedia”</span> (<a href="references.html#ref-wiki_leiden_algo" role="doc-biblioref">2025</a>)</span> for details. The algorithm is implemented in <code>R</code> as the function <code>igraph::cluster_leiden()</code>.</p>
+<section id="matrix-representations" class="level3" data-number="15.5.5">
+<h3 data-number="15.5.5" class="anchored" data-anchor-id="matrix-representations"><span class="header-section-number">15.5.5</span> Matrix Representations</h3>
+<p>Graphs can be represented as matrices, connecting graph theory to linear algebra.</p>
+<p>The <strong>adjacency matrix</strong> <span class="math inline">\(A\)</span> is an <span class="math inline">\(n \times n\)</span> matrix where <span class="math inline">\(n = |V|\)</span> is the number of nodes. Entry <span class="math inline">\(A_{ij} = 1\)</span> if there is an edge from node <span class="math inline">\(i\)</span> to node <span class="math inline">\(j\)</span>, and <span class="math inline">\(A_{ij} = 0\)</span> otherwise. For undirected graphs, <span class="math inline">\(A\)</span> is symmetric. For weighted graphs, <span class="math inline">\(A_{ij}\)</span> holds the edge weight instead of 1.</p>
+<p>The <strong>degree matrix</strong> <span class="math inline">\(D\)</span> is a diagonal matrix where <span class="math inline">\(D_{ii}\)</span> equals the degree of node <span class="math inline">\(i\)</span>—the number of edges incident to it. For directed graphs, we distinguish <em>in-degree</em> (incoming edges) and <em>out-degree</em> (outgoing edges).</p>
+<p>The <strong>Laplacian matrix</strong> <span class="math inline">\(L = D - A\)</span> combines adjacency and degree information. The Laplacian has remarkable properties: its eigenvalues and eigenvectors reveal graph structure. We will use the Laplacian for spectral clustering in the section on community detection.</p>
+</section>
+</section>
+<section id="measuring-importance-centrality" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="measuring-importance-centrality"><span class="header-section-number">15.6</span> Measuring Importance: Centrality</h2>
+<p>Which nodes matter most? The answer depends on what “important” means. Different centrality measures capture different notions of importance.</p>
+<section id="degree-centrality" class="level3" data-number="15.6.1">
+<h3 data-number="15.6.1" class="anchored" data-anchor-id="degree-centrality"><span class="header-section-number">15.6.1</span> Degree Centrality</h3>
+<p>The simplest measure: count the connections. A node’s <strong>degree centrality</strong> is its degree—the number of edges incident to it. In the Karate Club, Mr.&nbsp;Hi and John A have the highest degrees.</p>
+<p>For directed graphs, we distinguish <strong>in-degree centrality</strong> (how many edges point to the node) and <strong>out-degree centrality</strong> (how many edges point from it). A web page with high in-degree is linked by many other pages; a page with high out-degree links to many others.</p>
+<p>Degree centrality is local—it considers only immediate neighbors. A node could have few connections but occupy a strategic position in the network.</p>
+</section>
+<section id="betweenness-centrality" class="level3" data-number="15.6.2">
+<h3 data-number="15.6.2" class="anchored" data-anchor-id="betweenness-centrality"><span class="header-section-number">15.6.2</span> Betweenness Centrality</h3>
+<p><strong>Betweenness centrality</strong> measures how often a node lies on shortest paths between other nodes. For node <span class="math inline">\(v\)</span>:</p>
+<p><span class="math display">\[
+\gamma(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}
+\]</span></p>
+<p>where <span class="math inline">\(\sigma_{st}\)</span> is the number of shortest paths from <span class="math inline">\(s\)</span> to <span class="math inline">\(t\)</span>, and <span class="math inline">\(\sigma_{st}(v)\)</span> is the number that pass through <span class="math inline">\(v\)</span>.</p>
+<p>High betweenness indicates a <em>broker</em> or <em>bridge</em>—a node that controls flow between other parts of the network. In the Karate Club, Mr.&nbsp;Hi’s high betweenness reflected his role connecting different subgroups.</p>
+</section>
+<section id="closeness-centrality" class="level3" data-number="15.6.3">
+<h3 data-number="15.6.3" class="anchored" data-anchor-id="closeness-centrality"><span class="header-section-number">15.6.3</span> Closeness Centrality</h3>
+<p><strong>Closeness centrality</strong> measures how quickly a node can reach all others. It is the inverse of the average shortest path distance from the node to all other nodes:</p>
+<p><span class="math display">\[
+c(v) = \frac{n - 1}{\sum_{u \neq v} d(v, u)}
+\]</span></p>
+<p>where <span class="math inline">\(d(v, u)\)</span> is the shortest path length from <span class="math inline">\(v\)</span> to <span class="math inline">\(u\)</span>, and <span class="math inline">\(n\)</span> is the number of nodes.</p>
+<p>A node with high closeness can efficiently disseminate information—it is “close” to everyone in the network.</p>
+</section>
+<section id="pagerank" class="level3" data-number="15.6.4">
+<h3 data-number="15.6.4" class="anchored" data-anchor-id="pagerank"><span class="header-section-number">15.6.4</span> PageRank</h3>
+<p><strong>PageRank</strong>, developed for ranking web pages, measures importance recursively: a node is important if important nodes point to it. The algorithm simulates a random walk on the graph, where a walker follows edges with probability <span class="math inline">\((1 - \epsilon)\)</span> and jumps to a random node with probability <span class="math inline">\(\epsilon\)</span>.</p>
+<p>The stationary distribution of this walk defines PageRank scores. Nodes that attract many random walkers—by having many incoming edges, especially from other high-PageRank nodes—receive high scores.</p>
+<p>PageRank differs from degree centrality by considering the <em>quality</em> of connections, not just quantity. A link from a major hub counts more than a link from a peripheral node.</p>
+</section>
+</section>
+<section id="finding-structure-communities" class="level2" data-number="15.7">
+<h2 data-number="15.7" class="anchored" data-anchor-id="finding-structure-communities"><span class="header-section-number">15.7</span> Finding Structure: Communities</h2>
+<p>Many real networks have <strong>community structure</strong>—groups of nodes that are densely connected internally but sparsely connected to other groups. The Karate Club had two communities corresponding to the eventual factions. Social networks cluster by interest groups, friend circles, or organizations. Biological networks cluster by functional modules.</p>
+<section id="modularity" class="level3" data-number="15.7.1">
+<h3 data-number="15.7.1" class="anchored" data-anchor-id="modularity"><span class="header-section-number">15.7.1</span> Modularity</h3>
+<p>How do we know if a partition into communities is good? <strong>Modularity</strong> compares the actual number of within-community edges to the expected number in a random graph with the same degree sequence:</p>
+<p><span class="math display">\[
+Q = \frac{1}{2m} \sum_{ij} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i, c_j)
+\]</span></p>
+<p>where <span class="math inline">\(m\)</span> is the total number of edges, <span class="math inline">\(k_i\)</span> is the degree of node <span class="math inline">\(i\)</span>, <span class="math inline">\(c_i\)</span> is the community assignment of node <span class="math inline">\(i\)</span>, and <span class="math inline">\(\delta(c_i, c_j) = 1\)</span> if nodes <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are in the same community.</p>
+<p>Modularity ranges from <span class="math inline">\(-0.5\)</span> to <span class="math inline">\(1\)</span>. Values above <span class="math inline">\(0.3\)</span> typically indicate significant community structure. The Karate Club partition achieved modularity around <span class="math inline">\(0.4\)</span>.</p>
+</section>
+<section id="community-detection-algorithms" class="level3" data-number="15.7.2">
+<h3 data-number="15.7.2" class="anchored" data-anchor-id="community-detection-algorithms"><span class="header-section-number">15.7.2</span> Community Detection Algorithms</h3>
+<p><strong>The Louvain algorithm</strong> greedily optimizes modularity. It starts with each node in its own community, then iteratively moves nodes to neighboring communities if doing so increases modularity. Once no improvement is possible, it aggregates communities into super-nodes and repeats. The algorithm is fast and scales to large networks.</p>
+<p><strong>Spectral clustering</strong> uses the eigenvectors of the graph Laplacian. The Laplacian’s second-smallest eigenvalue (the <em>Fiedler value</em>) measures how easily the graph can be cut into two pieces. The corresponding eigenvector (the <em>Fiedler vector</em>) provides a continuous relaxation of the optimal cut—nodes can be partitioned based on the sign or value of their Fiedler vector entries.</p>
+<p>The connection between graph cuts and eigenvectors is deep. It links community detection to the spectral theory we developed for PCA and dimensionality reduction in earlier chapters.</p>
+</section>
+<section id="communities-and-prediction" class="level3" data-number="15.7.3">
+<h3 data-number="15.7.3" class="anchored" data-anchor-id="communities-and-prediction"><span class="header-section-number">15.7.3</span> Communities and Prediction</h3>
+<p>Community detection is not merely descriptive. In the Karate Club, detected communities predicted faction membership. In social networks, communities predict information spread—ideas propagate within communities more easily than between them. In biological networks, proteins in the same community often participate in the same biological processes.</p>
+<p>This predictive power follows from the same principle we have seen throughout: structure reflects process. Communities exist because of preferential attachment, homophily, or functional interaction. The same processes that created the communities will shape future behavior.</p>
+</section>
+</section>
+<section id="graphs-and-machine-learning" class="level2" data-number="15.8">
+<h2 data-number="15.8" class="anchored" data-anchor-id="graphs-and-machine-learning"><span class="header-section-number">15.8</span> Graphs and Machine Learning</h2>
+<p>Graph structure provides features for machine learning tasks. We briefly survey three directions.</p>
+<section id="link-prediction" class="level3" data-number="15.8.1">
+<h3 data-number="15.8.1" class="anchored" data-anchor-id="link-prediction"><span class="header-section-number">15.8.1</span> Link Prediction</h3>
+<p>Given a graph observed at time <span class="math inline">\(t\)</span>, which edges will appear at time <span class="math inline">\(t + 1\)</span>? <strong>Link prediction</strong> uses structural features to forecast new connections.</p>
+<p>Simple predictors include:</p>
+<ul>
+<li><strong>Common neighbors</strong>: Nodes sharing many neighbors are likely to connect</li>
+<li><strong>Jaccard coefficient</strong>: Common neighbors normalized by total neighbors</li>
+<li><strong>Adamic-Adar</strong>: Common neighbors weighted by their rarity</li>
+</ul>
+<p>These predictors work because of homophily and transitivity: friends of friends tend to become friends.</p>
+</section>
+<section id="node-classification" class="level3" data-number="15.8.2">
+<h3 data-number="15.8.2" class="anchored" data-anchor-id="node-classification"><span class="header-section-number">15.8.2</span> Node Classification</h3>
+<p>Given labels for some nodes, predict labels for others. In a social network, if some users are labeled as interested in a topic, which other users share that interest?</p>
+<p>Graph structure provides features: a node’s neighbors’ labels, its centrality measures, its community membership. More sophisticated approaches propagate labels through the network or learn node embeddings that capture structural similarity.</p>
+</section>
+<section id="graph-neural-networks" class="level3" data-number="15.8.3">
+<h3 data-number="15.8.3" class="anchored" data-anchor-id="graph-neural-networks"><span class="header-section-number">15.8.3</span> Graph Neural Networks</h3>
+<p><strong>Graph neural networks (GNNs)</strong> learn node representations directly from graph structure. The key idea is <em>message passing</em>: each node aggregates information from its neighbors, then updates its own representation. Stacking multiple layers allows information to propagate across longer distances.</p>
+<p>GNNs have achieved strong results on molecular property prediction, social network analysis, and recommendation systems. They represent a synthesis of graph theory and deep learning—using neural networks to learn the features that graph analysis traditionally handcrafted.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="15.9">
+<h2 data-number="15.9" class="anchored" data-anchor-id="summary"><span class="header-section-number">15.9</span> Summary</h2>
+<p>Graphs provide a natural representation for relational data: social connections, interactions, dependencies, similarities. The key concepts are simple—nodes and edges—but support rich analysis.</p>
+<p><strong>What we covered</strong>:</p>
+<ul>
+<li><p><strong>Three examples</strong>: The Karate Club showed community detection and centrality. MovieLens showed bipartite structure and projection for recommendation. The LearningGraph showed typed nodes, DAGs, and path-based reasoning.</p></li>
+<li><p><strong>Fundamental concepts</strong>: Directed and undirected graphs, weighted edges, paths and connectivity, DAGs, matrix representations.</p></li>
+<li><p><strong>Centrality measures</strong>: Degree, betweenness, closeness, PageRank—different notions of importance for different questions.</p></li>
+<li><p><strong>Community detection</strong>: Modularity as a quality measure, Louvain and spectral methods for finding communities.</p></li>
+<li><p><strong>Machine learning connections</strong>: Link prediction, node classification, graph neural networks.</p></li>
+</ul>
+<p><strong>The unifying theme</strong>: Graph structure encodes relationships that were created by real processes—social dynamics, information flow, logical dependencies. Analyzing that structure reveals those processes and enables prediction of future behavior. The same graph that helps us understand why a network looks the way it does also helps us predict what it will do next.</p>
+<p><strong>Connections to earlier chapters</strong>: Matrix representations connect to linear algebra (Chapter 3). Spectral methods connect to eigenvalue decomposition and PCA (Chapter 4). Random walks connect to probability (Chapter 2). The LearningGraph draws on the skills framework from throughout the textbook.</p>
+<p>Graphs are everywhere in modern data science: social networks, knowledge bases, recommendation systems, molecular structures, program analysis, causal inference. The concepts in this chapter provide the foundation for working with this ubiquitous data type.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-wiki_adjacency_matrix" class="csl-entry" role="listitem">
-<span>“Adjacency Matrix | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Adjacency_matrix">https://en.wikipedia.org/wiki/Adjacency_matrix</a>.
-</div>
-<div id="ref-wiki_betweenness_centrality" class="csl-entry" role="listitem">
-<span>“Betweenness Centrality | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Betweenness_centrality">https://en.wikipedia.org/wiki/Betweenness_centrality</a>.
-</div>
-<div id="ref-wiki_Brandes_algo" class="csl-entry" role="listitem">
-<span>“Brandes’ Algorithm | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Brandes%27_algorithm">https://en.wikipedia.org/wiki/Brandes%27_algorithm</a>.
-</div>
-<div id="ref-Clauset_Newman_Moore_2004" class="csl-entry" role="listitem">
-Clauset, Aaron, M. E. J. Newman, and Cristopher Moore. 2004. <span>“Finding Community Structure in Very Large Networks.”</span> <em>Physical Review E</em>. https://doi.org/<a href="https://doi.org/10.1103/PhysRevE.70.066111">https://doi.org/10.1103/PhysRevE.70.066111</a>.
-</div>
-<div id="ref-wiki_connected_component" class="csl-entry" role="listitem">
-<span>“Component (Graph Theory) | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Component_(graph_theory)">https://en.wikipedia.org/wiki/Component_(graph_theory)</a>.
-</div>
-<div id="ref-wiki_degree_matrix" class="csl-entry" role="listitem">
-<span>“Degree Matrix | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Degree_matrix">https://en.wikipedia.org/wiki/Degree_matrix</a>.
-</div>
-<div id="ref-wiki_Dijkstra_algo" class="csl-entry" role="listitem">
-<span>“Dijkstra’s Algorithm | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm</a>.
-</div>
-<div id="ref-wiki_Floyd_Warshall_algo" class="csl-entry" role="listitem">
-<span>“Floyd–Warshall Algorithm | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm">https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm</a>.
-</div>
-<div id="ref-Fortunato_2010" class="csl-entry" role="listitem">
-Fortunato, Santo. 2010. <span>“Community Detection in Graphs.”</span> <em>Physics Reports</em>, February. <a href="https://doi.org/10.1016/j.physrep.2009.11.002">https://doi.org/10.1016/j.physrep.2009.11.002</a>.
-</div>
-<div id="ref-wiki_Girvan_Newman_algo" class="csl-entry" role="listitem">
-<span>“Girvan–Newman Algorithm | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Girvan%E2%80%93Newman_algorithm">https://en.wikipedia.org/wiki/Girvan%E2%80%93Newman_algorithm</a>.
-</div>
-<div id="ref-wiki_graph_glossary" class="csl-entry" role="listitem">
-<span>“Glossary of Graph Theory | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Glossary_of_graph_theory">https://en.wikipedia.org/wiki/Glossary_of_graph_theory</a>.
-</div>
-<div id="ref-wiki_graph_theory" class="csl-entry" role="listitem">
-<span>“Graph Theory | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Graph_theory">https://en.wikipedia.org/wiki/Graph_theory</a>.
-</div>
-<div id="ref-wiki_Laplacian_matrix" class="csl-entry" role="listitem">
-<span>“Laplacian Matrix | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Laplacian_matrix">https://en.wikipedia.org/wiki/Laplacian_matrix</a>.
-</div>
-<div id="ref-wiki_leiden_algo" class="csl-entry" role="listitem">
-<span>“Leiden Algorithm | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Leiden_algorithm">https://en.wikipedia.org/wiki/Leiden_algorithm</a>.
-</div>
-<div id="ref-wiki_louvain_method" class="csl-entry" role="listitem">
-<span>“Louvain Method | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Louvain_method">https://en.wikipedia.org/wiki/Louvain_method</a>.
-</div>
-<div id="ref-wiki_Markov_chain" class="csl-entry" role="listitem">
-<span>“Markov Chain | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Markov_chain">https://en.wikipedia.org/wiki/Markov_chain</a>.
-</div>
-<div id="ref-wiki_graph_modularity" class="csl-entry" role="listitem">
-<span>“Modularity (Networks) | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Modularity_(networks)">https://en.wikipedia.org/wiki/Modularity_(networks)</a>.
-</div>
-<div id="ref-wiki_PageRank" class="csl-entry" role="listitem">
-<span>“PageRank | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/PageRank">https://en.wikipedia.org/wiki/PageRank</a>.
-</div>
-<div id="ref-wiki_spectral_clustering" class="csl-entry" role="listitem">
-<span>“Spectral Clustering | Wikipedia.”</span> 2025. <em>Wikipedia</em>, October. <a href="https://en.wikipedia.org/wiki/Spectral_clustering">https://en.wikipedia.org/wiki/Spectral_clustering</a>.
+<div id="ref-Zachary_1977" class="csl-entry" role="listitem">
+Zachary, Wayne W. 1977. <span>“An Information Flow Model for Conflict and Fission in Small Groups.”</span> <em>Journal of Anthropological Research</em> 33 (4): 452–73. <a href="https://doi.org/10.1086/jar.33.4.3629752">https://doi.org/10.1086/jar.33.4.3629752</a>.
 </div>
 </div>
-</section>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>See <span class="citation" data-cites="wiki_graph_theory"><span>“Graph Theory | Wikipedia”</span> (<a href="references.html#ref-wiki_graph_theory" role="doc-biblioref">2025</a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>See <span class="citation" data-cites="wiki_graph_glossary"><span>“Glossary of Graph Theory | Wikipedia”</span> (<a href="references.html#ref-wiki_graph_glossary" role="doc-biblioref">2025</a>)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>See <span class="citation" data-cites="wiki_adjacency_matrix"><span>“Adjacency Matrix | Wikipedia”</span> (<a href="references.html#ref-wiki_adjacency_matrix" role="doc-biblioref">2025</a>)</span>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>See <span class="citation" data-cites="wiki_degree_matrix"><span>“Degree Matrix | Wikipedia”</span> (<a href="references.html#ref-wiki_degree_matrix" role="doc-biblioref">2025</a>)</span>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p>See <span class="citation" data-cites="wiki_Laplacian_matrix"><span>“Laplacian Matrix | Wikipedia”</span> (<a href="references.html#ref-wiki_Laplacian_matrix" role="doc-biblioref">2025</a>)</span>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p>See <span class="citation" data-cites="wiki_betweenness_centrality"><span>“Betweenness Centrality | Wikipedia”</span> (<a href="references.html#ref-wiki_betweenness_centrality" role="doc-biblioref">2025</a>)</span>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7"><p>See <span class="citation" data-cites="wiki_connected_component"><span>“Component (Graph Theory) | Wikipedia”</span> (<a href="references.html#ref-wiki_connected_component" role="doc-biblioref">2025</a>)</span>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8"><p>See <span class="citation" data-cites="Fortunato_2010">Fortunato (<a href="references.html#ref-Fortunato_2010" role="doc-biblioref">2010</a>)</span>.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn9"><p>See <span class="citation" data-cites="wiki_PageRank"><span>“PageRank | Wikipedia”</span> (<a href="references.html#ref-wiki_PageRank" role="doc-biblioref">2025</a>)</span>.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn10"><p>We assume each node has an edge to at least one other node. This can be enforced if needed. One possibility is to remove the set <span class="math inline">\(\mathcal{N}\)</span> of those nodes <span class="math inline">\(\mathcal{n}\)</span> having no out-link to any other node, and to also remove any edges of the form <span class="math inline">\(\nu - \mathcal{n}\)</span> incident with nodes in <span class="math inline">\(\mathcal{N}\)</span>. Another possibility is to change the set of out-nodes of node <span class="math inline">\(\mathcal{n} \in \mathcal{N}\)</span> from the empty set to the singleton set <span class="math inline">\(\{ \mathcal{n} \}\)</span>.<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn11"><p>See <span class="citation" data-cites="wiki_Markov_chain"><span>“Markov Chain | Wikipedia”</span> (<a href="references.html#ref-wiki_Markov_chain" role="doc-biblioref">2025</a>)</span>.<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn12"><p>See <span class="citation" data-cites="wiki_PageRank"><span>“PageRank | Wikipedia”</span> (<a href="references.html#ref-wiki_PageRank" role="doc-biblioref">2025</a>)</span>.<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn13"><p>See <span class="citation" data-cites="wiki_Floyd_Warshall_algo"><span>“Floyd–Warshall Algorithm | Wikipedia”</span> (<a href="references.html#ref-wiki_Floyd_Warshall_algo" role="doc-biblioref">2025</a>)</span>.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn14"><p>See <span class="citation" data-cites="wiki_Dijkstra_algo"><span>“Dijkstra’s Algorithm | Wikipedia”</span> (<a href="references.html#ref-wiki_Dijkstra_algo" role="doc-biblioref">2025</a>)</span>.<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn15"><p>See <span class="citation" data-cites="wiki_Brandes_algo"><span>“Brandes’ Algorithm | Wikipedia”</span> (<a href="references.html#ref-wiki_Brandes_algo" role="doc-biblioref">2025</a>)</span>.<a href="#fnref15" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn16"><p>This formula assumes that if <span class="math inline">\((u-v) \in E\)</span>, then the <span class="math inline">\((u-v)\)</span> edge is among the shortest paths from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span>. If all edges have the same weight, then the <span class="math inline">\((u-v)\)</span> edge is the unique shortest path from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span>.<a href="#fnref16" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn17"><p>See <span class="citation" data-cites="wiki_Girvan_Newman_algo"><span>“Girvan–Newman Algorithm | Wikipedia”</span> (<a href="references.html#ref-wiki_Girvan_Newman_algo" role="doc-biblioref">2025</a>)</span>.<a href="#fnref17" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>See <span class="citation" data-cites="Zachary_1977">Zachary (<a href="references.html#ref-Zachary_1977" role="doc-biblioref">1977</a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See <span class="citation" data-cites="Harper_Konstan_2015">(<a href="references.html#ref-Harper_Konstan_2015" role="doc-biblioref"><strong>Harper_Konstan_2015?</strong></a>)</span>. The GroupLens research lab at the University of Minnesota has maintained MovieLens since 1997.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Based on the <em>Competency Resource Guide for Data Science</em> (2023), Office of the Director of National Intelligence (UNCLASSIFIED). Structure inspired by Workera.ai’s skills intelligence platform.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -1416,13 +1612,13 @@ Fortunato, Santo. 2010. <span>“Community Detection in Graphs.”</span> <em>Ph
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ts-fourier.html" class="pagination-link" aria-label="Time Series Spectrum Analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span>
+      <a href="./ts-freq-domain.html" class="pagination-link" aria-label="Frequency Domain Methods">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./mcmc-appendix.html" class="pagination-link" aria-label="Markov Chain Monte Carlo">
-        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./mcmc-appendix.html" class="pagination-link" aria-label="MCMC: Markov Chain Monte Carlo">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
