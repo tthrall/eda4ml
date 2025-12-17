@@ -643,6 +643,44 @@ $$ {#eq-std-error-calc}
 
 Our sample average of 405 micrograms probably deviates from the actual deficit of NB10 by no more 2 micrograms or so.
 
+## Analyst Degrees of Freedom
+
+The examples above involve problems with data collection: selection bias in the *Literary Digest* poll, confounding in the observational studies, measurement error in the NB10 weights. But even when data are sound, analytical choices can lead to divergent conclusions.
+
+Silberzahn and Uhlmann (2015) coordinated a striking demonstration of this fact. They recruited 29 research teams to analyze identical data answering the same question: do soccer referees give more red cards to dark-skinned players? Each team received the same dataset—over 2,000 matches with player skin tone ratings and referee decisions. Each team chose its own analytical approach.
+
+The results were sobering. Teams made different decisions about which variables to include as controls, how to handle the nested structure of players within teams, which statistical models to employ, and how to define the outcome. The estimated effect sizes ranged from essentially zero to substantial discrimination. Some teams found statistically significant bias; others found none.
+
+This variation arose not from sloppiness but from legitimate analytical choices. Reasonable researchers, applying defensible methods to the same data, reached different conclusions. The phenomenon—sometimes called the "garden of forking paths"—reveals that analysis is not mechanical. Every dataset admits multiple reasonable approaches, and those approaches can yield different answers.
+
+Not everyone draws the same lesson from this study. Some view it as evidence that analytical flexibility has corrupted research practice—that clearer standards would have produced convergence. We read it differently: as a demonstration that analysis inherently requires judgment, and that transparency about choices is essential precisely because reasonable approaches can diverge. The solution is not to eliminate judgment but to make it visible.
+
+::: {.callout-note}
+#### ML Connection
+The analyst degrees of freedom documented by Silberzahn and Uhlmann appear throughout ML pipelines:
+
+- **Feature engineering**: Which variables to include? How to encode categoricals? Whether to create interactions?
+- **Model selection**: Which algorithm family? What architecture? How much regularization?
+- **Hyperparameter tuning**: Which parameters to tune? What search strategy? How many iterations?
+- **Evaluation**: Which metrics? What validation scheme? How to handle class imbalance?
+
+Two practitioners with the same training data may build models with meaningfully different performance characteristics based on these choices. The "best" model depends on decisions the analyst makes—decisions that are rarely uniquely determined by the data.
+:::
+
+### Implications for Practice
+
+The Silberzahn study does not counsel despair. It counsels humility and transparency:
+
+**Document choices explicitly.** Record not just what you did but what alternatives you considered. Future readers need to understand the path you took through the garden of forking paths.
+
+**Assess sensitivity.** When feasible, check whether conclusions change under alternative specifications. If they do, report that. A finding that depends critically on one particular choice is less robust than one that survives multiple approaches.
+
+**Pre-register when possible.** For confirmatory analyses, specifying the analytical plan before seeing results disciplines the process. Pre-registration does not eliminate judgment, but it distinguishes exploratory from confirmatory findings.
+
+**Distinguish exploration from confirmation.** EDA is explicitly exploratory—we examine data to generate hypotheses and guide modeling. But when we transition to formal inference or prediction, we should acknowledge which choices were data-driven and which were pre-specified.
+
+The *Literary Digest* failed because of data problems. The Silberzahn study shows that even with good data, analytical choices matter. Both lessons inform responsible practice.
+
 ## The Role of EDA
 
 Exploratory data analysis occupies a critical position between study design and model development. The study design determines what data *could* be collected and how representative it *should* be; EDA reveals what was *actually* collected and whether the design intentions were achieved.
