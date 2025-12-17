@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Send comments to: Tony T (adthral)">
+<meta name="author" content="Send comments to: Tony T (tthrall)">
 
-<title>16&nbsp; Summary – EDA for Machine Learning</title>
+<title>18&nbsp; Summary – EDA for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -39,10 +74,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-133c58409b7dc85f2ab3edd4502409fb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -83,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -126,7 +161,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Statistics</span></a>
+ <span class="menu-text">Foundations</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -162,6 +197,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -175,14 +216,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Some Linear Algebra</span></span></a>
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -198,20 +245,14 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -227,20 +268,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  <a href="./ts-time-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  <a href="./ts-freq-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></a>
   </div>
 </li>
       </ul>
@@ -248,7 +289,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Graph Theory</span></a>
+ <span class="menu-text">Network Data</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -257,7 +298,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
   </div>
 </li>
       </ul>
@@ -273,8 +314,14 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,7 +329,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -301,19 +348,38 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#review-of-selected-topics" id="toc-review-of-selected-topics" class="nav-link active" data-scroll-target="#review-of-selected-topics"><span class="header-section-number">16.1</span> Review of Selected Topics</a>
-  <ul class="collapse">
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">16.1.1</span> Introduction</a></li>
-  <li><a href="#overview-of-topics" id="toc-overview-of-topics" class="nav-link" data-scroll-target="#overview-of-topics"><span class="header-section-number">16.1.2</span> Overview of Topics</a></li>
-  <li><a href="#class-exercise-select-topics-for-further-discussion" id="toc-class-exercise-select-topics-for-further-discussion" class="nav-link" data-scroll-target="#class-exercise-select-topics-for-further-discussion"><span class="header-section-number">16.1.3</span> Class Exercise: Select Topics for Further Discussion</a></li>
-  <li><a href="#topics-nominated-for-further-discussion" id="toc-topics-nominated-for-further-discussion" class="nav-link" data-scroll-target="#topics-nominated-for-further-discussion"><span class="header-section-number">16.1.4</span> Topics Nominated for Further Discussion</a></li>
+  <li><a href="#the-journey-we-have-taken" id="toc-the-journey-we-have-taken" class="nav-link active" data-scroll-target="#the-journey-we-have-taken"><span class="header-section-number">18.1</span> The Journey We Have Taken</a>
+  <ul>
+  <li><a href="#the-eda-mindset" id="toc-the-eda-mindset" class="nav-link" data-scroll-target="#the-eda-mindset"><span class="header-section-number">18.1.1</span> The EDA Mindset</a></li>
   </ul></li>
-  <li><a href="#preparing-to-teach-part-1" id="toc-preparing-to-teach-part-1" class="nav-link" data-scroll-target="#preparing-to-teach-part-1"><span class="header-section-number">16.2</span> Preparing to Teach Part 1</a>
-  <ul class="collapse">
-  <li><a href="#primary-references-for-the-course" id="toc-primary-references-for-the-course" class="nav-link" data-scroll-target="#primary-references-for-the-course"><span class="header-section-number">16.2.1</span> Primary References for the Course</a></li>
-  <li><a href="#topics" id="toc-topics" class="nav-link" data-scroll-target="#topics"><span class="header-section-number">16.2.2</span> Topics</a></li>
-  <li><a href="#class-exercises" id="toc-class-exercises" class="nav-link" data-scroll-target="#class-exercises"><span class="header-section-number">16.2.3</span> Class Exercises</a></li>
-  <li><a href="#selection-of-topics" id="toc-selection-of-topics" class="nav-link" data-scroll-target="#selection-of-topics"><span class="header-section-number">16.2.4</span> Selection of Topics</a></li>
+  <li><a href="#connections-across-the-book" id="toc-connections-across-the-book" class="nav-link" data-scroll-target="#connections-across-the-book"><span class="header-section-number">18.2</span> Connections Across the Book</a>
+  <ul>
+  <li><a href="#foundational-threads" id="toc-foundational-threads" class="nav-link" data-scroll-target="#foundational-threads"><span class="header-section-number">18.2.1</span> Foundational Threads</a></li>
+  <li><a href="#the-projection-theme" id="toc-the-projection-theme" class="nav-link" data-scroll-target="#the-projection-theme"><span class="header-section-number">18.2.2</span> The Projection Theme</a></li>
+  <li><a href="#two-perspectives-one-reality" id="toc-two-perspectives-one-reality" class="nav-link" data-scroll-target="#two-perspectives-one-reality"><span class="header-section-number">18.2.3</span> Two Perspectives, One Reality</a></li>
+  </ul></li>
+  <li><a href="#the-analysts-responsibility" id="toc-the-analysts-responsibility" class="nav-link" data-scroll-target="#the-analysts-responsibility"><span class="header-section-number">18.3</span> The Analyst’s Responsibility</a>
+  <ul>
+  <li><a href="#choices-matter" id="toc-choices-matter" class="nav-link" data-scroll-target="#choices-matter"><span class="header-section-number">18.3.1</span> Choices Matter</a></li>
+  <li><a href="#what-eda-contributes" id="toc-what-eda-contributes" class="nav-link" data-scroll-target="#what-eda-contributes"><span class="header-section-number">18.3.2</span> What EDA Contributes</a></li>
+  </ul></li>
+  <li><a href="#classical-methods-in-the-age-of-llms" id="toc-classical-methods-in-the-age-of-llms" class="nav-link" data-scroll-target="#classical-methods-in-the-age-of-llms"><span class="header-section-number">18.4</span> Classical Methods in the Age of LLMs</a>
+  <ul>
+  <li><a href="#enduring-advantages" id="toc-enduring-advantages" class="nav-link" data-scroll-target="#enduring-advantages"><span class="header-section-number">18.4.1</span> Enduring Advantages</a></li>
+  <li><a href="#hybrid-workflows" id="toc-hybrid-workflows" class="nav-link" data-scroll-target="#hybrid-workflows"><span class="header-section-number">18.4.2</span> Hybrid Workflows</a></li>
+  </ul></li>
+  <li><a href="#where-to-go-next" id="toc-where-to-go-next" class="nav-link" data-scroll-target="#where-to-go-next"><span class="header-section-number">18.5</span> Where to Go Next</a>
+  <ul>
+  <li><a href="#deeper-theory" id="toc-deeper-theory" class="nav-link" data-scroll-target="#deeper-theory"><span class="header-section-number">18.5.1</span> Deeper Theory</a></li>
+  <li><a href="#practical-application" id="toc-practical-application" class="nav-link" data-scroll-target="#practical-application"><span class="header-section-number">18.5.2</span> Practical Application</a></li>
+  <li><a href="#the-companion-package" id="toc-the-companion-package" class="nav-link" data-scroll-target="#the-companion-package"><span class="header-section-number">18.5.3</span> The Companion Package</a></li>
+  </ul></li>
+  <li><a href="#closing-thoughts" id="toc-closing-thoughts" class="nav-link" data-scroll-target="#closing-thoughts"><span class="header-section-number">18.6</span> Closing Thoughts</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">18.7</span> Resources</a>
+  <ul>
+  <li><a href="#books" id="toc-books" class="nav-link" data-scroll-target="#books"><span class="header-section-number">18.7.1</span> Books</a></li>
+  <li><a href="#articles" id="toc-articles" class="nav-link" data-scroll-target="#articles"><span class="header-section-number">18.7.2</span> Articles</a></li>
+  <li><a href="#online-resources" id="toc-online-resources" class="nav-link" data-scroll-target="#online-resources"><span class="header-section-number">18.7.3</span> Online Resources</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/summary.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -323,7 +389,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-summary" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></h1>
+<h1 class="title"><span id="sec-summary" class="quarto-section-identifier"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></h1>
 </div>
 
 
@@ -333,364 +399,212 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Send comments to: Tony T (adthral) </p>
+             <p>Send comments to: Tony T (tthrall) </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">20:59 Tue 14-Oct-2025</p>
+      <p class="date">03:43 Wed 17-Dec-2025</p>
     </div>
   </div>
   
     
   </div>
   
-<div>
-  <div class="abstract">
-    <div class="block-title">Abstract</div>
-    Review of selected topics.
-  </div>
-</div>
 
 
 </header>
 
 
 <hr>
-<section id="review-of-selected-topics" class="level2" data-number="16.1">
-<h2 data-number="16.1" class="anchored" data-anchor-id="review-of-selected-topics"><span class="header-section-number">16.1</span> Review of Selected Topics</h2>
-<section id="introduction" class="level3" data-number="16.1.1">
-<h3 data-number="16.1.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">16.1.1</span> Introduction</h3>
-<p>We first review the course material in order to prepare you (should you choose) to present this material going forward. The primary reference is <code>eda_v3</code>:</p>
+<section id="the-journey-we-have-taken" class="level2" data-number="18.1">
+<h2 data-number="18.1" class="anchored" data-anchor-id="the-journey-we-have-taken"><span class="header-section-number">18.1</span> The Journey We Have Taken</h2>
+<p>This book began with a bargain: <em>we develop practical skills through their conceptual foundations, because understanding why methods work is what allows you to apply them intelligently</em>. We have now traveled through exploratory data analysis, linear algebra, text, time series, and networks. It is time to look back at the path and forward to where it leads.</p>
+<p>The dual aims of data analysis—understanding and prediction, scientific insight and decision support—have appeared in every chapter. These aims are not alternatives but partners. A model that predicts without understanding is fragile; a model that explains without predicting is untestable. The most effective analysts move fluidly between these perspectives, and the methods we have developed support both.</p>
+<section id="the-eda-mindset" class="level3" data-number="18.1.1">
+<h3 data-number="18.1.1" class="anchored" data-anchor-id="the-eda-mindset"><span class="header-section-number">18.1.1</span> The EDA Mindset</h3>
+<p>Exploratory data analysis is not a checklist of techniques. It is a mindset: a commitment to looking at data from multiple angles, to asking questions before fitting models, to letting patterns emerge rather than imposing them. John Tukey, who gave EDA its name, understood that the most important discoveries often come from noticing something unexpected—an outlier, a nonlinearity, a subgroup that behaves differently.</p>
+<p>This mindset has guided our approach throughout:</p>
 <ul>
-<li>Notes on Exploratory Data Analysis (EDA)
-<ul>
-<li>MATH4350 version 3</li>
-<li>by Karen Trageser</li>
-</ul></li>
+<li><p>In Part 1, we examined distributions, conditioning, clustering, and simulation—building intuition about what data can reveal before any formal model is fit.</p></li>
+<li><p>In Part 2, we developed the linear algebra of regression, PCA, and LDA—but always with geometric interpretation, always asking what the mathematics <em>means</em>.</p></li>
+<li><p>In Part 3, we converted text to numbers and discovered latent themes—but we also asked when classical methods still win and how they complement modern LLMs.</p></li>
+<li><p>In Part 4, we analyzed time series from two perspectives, time domain and frequency domain, showing that different views of the same reality illuminate different aspects of the data.</p></li>
+<li><p>In Part 5, we represented relationships as graphs and asked what structure exists, which nodes matter, and how information flows.</p></li>
 </ul>
-<p>The subsequent material for the course is based on the following <code>ml</code> reference:</p>
-<ul>
-<li>Machine Learning: a Concise Introduction
-<ul>
-<li>by Steven W. Knox</li>
-<li>next edition pending publication by Wiley</li>
-<li>(Course notes: ML Topics &amp; Techniques, version 2.93)</li>
-</ul></li>
-</ul>
-<p>We first compare the <code>eda_v3</code> content to the selection of last week’s topics. We’ll then form small teams to select topics for discussion in the remainder of the session.</p>
-<p>Then we prepare to you to teach the course by discussing content and ideas to be emphasized, intended participants, desired learning outcomes, and instructor preparation.</p>
+<p>In each domain, the EDA mindset precedes and accompanies formal analysis. We look before we model. We ask before we fit.</p>
 </section>
-<section id="overview-of-topics" class="level3" data-number="16.1.2">
-<h3 data-number="16.1.2" class="anchored" data-anchor-id="overview-of-topics"><span class="header-section-number">16.1.2</span> Overview of Topics</h3>
-<p>Here are the chapter titles of <code>eda_v3</code>.</p>
-<div class="cell">
-<div id="tbl-eda-v3-outline" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-eda-v3-outline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;16.1: EDA v3 chapters
-</figcaption>
-<div aria-describedby="tbl-eda-v3-outline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>EDA v3 chapters</caption>
+</section>
+<section id="connections-across-the-book" class="level2" data-number="18.2">
+<h2 data-number="18.2" class="anchored" data-anchor-id="connections-across-the-book"><span class="header-section-number">18.2</span> Connections Across the Book</h2>
+<p>The chapters of this book are not isolated topics. They form a network of interconnected ideas. Understanding these connections deepens comprehension and reveals how methods developed in one context apply in another.</p>
+<section id="foundational-threads" class="level3" data-number="18.2.1">
+<h3 data-number="18.2.1" class="anchored" data-anchor-id="foundational-threads"><span class="header-section-number">18.2.1</span> Foundational Threads</h3>
+<p>Several concepts from Part 1 recur throughout the book:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 61%">
+</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;">chpt</th>
-<th style="text-align: left;">title</th>
+<th>Foundation</th>
+<th>Later Applications</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Introduction</td>
+<td>Conditional distributions (<a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>)</td>
+<td>Regression (<a href="lin-reg.html" class="quarto-xref"><span>Chapter 7</span></a>), Classification (<span class="quarto-unresolved-ref">?sec-lin-discr</span>)</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Exploratory Data Analysis (EDA)</td>
+<td>Clustering (<a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a>)</td>
+<td>Community detection (<a href="graph-theory.html" class="quarto-xref"><span>Chapter 15</span></a>), Topic models (<a href="topic-models.html" class="quarto-xref"><span>Chapter 11</span></a>)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">Unsupervised Learning</td>
+<td>Simulation (<a href="simulation.html" class="quarto-xref"><span>Chapter 4</span></a>)</td>
+<td>MCMC (<a href="mcmc-appendix.html" class="quarto-xref"><span>Chapter 16</span></a>), Bootstrap inference</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">Some Linear Algebra</td>
+<td>Information theory (<a href="info-theory.html" class="quarto-xref"><span>Chapter 6</span></a>)</td>
+<td>Entropy in text analysis, Model selection criteria</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">Dimension Reduction</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">Topic Modeling</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">Sampling</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">Time Series</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">9</td>
-<td style="text-align: left;">App-A: Probability Review</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">10</td>
-<td style="text-align: left;">App-B: SVD Notes by Carla Martin</td>
+<td>Study design (<a href="study-design.html" class="quarto-xref"><span>Chapter 5</span></a>)</td>
+<td>Every application—data quality underlies all</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p>And here are the topics we discussed last week.</p>
-<div class="cell">
-<div id="tbl-initial-topics" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-initial-topics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;16.2: Topics discussed Jan 13-17
-</figcaption>
-<div aria-describedby="tbl-initial-topics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Topics discussed Jan 13-17</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">date</th>
-<th style="text-align: left;">time</th>
-<th style="text-align: left;">topic</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">2025-01-13</td>
-<td style="text-align: left;">AM</td>
-<td style="text-align: left;">Exploratory Data Analysis</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2025-01-13</td>
-<td style="text-align: left;">PM</td>
-<td style="text-align: left;">Conditional Distributions</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">2025-01-14</td>
-<td style="text-align: left;">AM</td>
-<td style="text-align: left;">Clustering: EDA in Higher Dimensions</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2025-01-14</td>
-<td style="text-align: left;">PM</td>
-<td style="text-align: left;">Text Analysis</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">2025-01-15</td>
-<td style="text-align: left;">AM</td>
-<td style="text-align: left;">Sampling and Study Design</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2025-01-15</td>
-<td style="text-align: left;">PM</td>
-<td style="text-align: left;">Linear Algebra</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">2025-01-16</td>
-<td style="text-align: left;">AM</td>
-<td style="text-align: left;">Dimension Reduction</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">2025-01-17</td>
-<td style="text-align: left;">AM</td>
-<td style="text-align: left;">Time Series</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">2025-01-17</td>
-<td style="text-align: left;">PM</td>
-<td style="text-align: left;">Time Series &amp; Point Processes: Frequency Analysis</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
+<p>The conditioning framework from <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>—examining how one variable relates to another—is the conceptual foundation for all regression and classification methods. The clustering intuition from <a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a> reappears when we detect communities in networks or topics in documents. The simulation tools from <a href="simulation.html" class="quarto-xref"><span>Chapter 4</span></a> enable the MCMC methods that fit complex models like LDA.</p>
 </section>
-<section id="class-exercise-select-topics-for-further-discussion" class="level3" data-number="16.1.3">
-<h3 data-number="16.1.3" class="anchored" data-anchor-id="class-exercise-select-topics-for-further-discussion"><span class="header-section-number">16.1.3</span> Class Exercise: Select Topics for Further Discussion</h3>
-<p>Which topics presented last week merit further discussion? Which topics from <code>eda_v3</code> would you like to know more about? Form a team of 2-4 classmates, and take 10 minutes to record the 1-2 topics of greatest interest to you. We’ll then use the remainder of the session to discuss them and follow up with write-ups.</p>
+<section id="the-projection-theme" class="level3" data-number="18.2.2">
+<h3 data-number="18.2.2" class="anchored" data-anchor-id="the-projection-theme"><span class="header-section-number">18.2.2</span> The Projection Theme</h3>
+<p>A geometric insight unifies much of Part 2: <strong>projection onto subspaces</strong>. Linear regression finds the point in feature space closest to the response vector. PCA finds the subspace that captures maximum variance. LDA finds the subspace that maximizes class separation. These are all orthogonal projections—different questions answered by the same geometric operation.</p>
+<p>This insight extends beyond Part 2. Topic models project documents onto a topic simplex. Spectral clustering uses eigenvectors of the graph Laplacian—a projection that reveals community structure. The mathematics of projection, developed for regression, illuminates methods across the book.</p>
 </section>
-<section id="topics-nominated-for-further-discussion" class="level3" data-number="16.1.4">
-<h3 data-number="16.1.4" class="anchored" data-anchor-id="topics-nominated-for-further-discussion"><span class="header-section-number">16.1.4</span> Topics Nominated for Further Discussion</h3>
-<p>Here are the topics nominated for further discussion by one or more teams.</p>
-<div class="cell">
-<div id="tbl-topics-for-discussion" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-topics-for-discussion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;16.3: Topics Nominated by Teams
-</figcaption>
-<div aria-describedby="tbl-topics-for-discussion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Topics Nominated by Teams</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">topic</th>
-<th style="text-align: right;">n_teams</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Time Series Forecasting</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">LDA: Latent Dirichlet Allocation</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SVD:Singular Value Decomposition</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">KDE: Kernel Density Estimation</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Clustering</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">PCA v MDS v SNE: when to use?</td>
-<td style="text-align: right;">1</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
+<section id="two-perspectives-one-reality" class="level3" data-number="18.2.3">
+<h3 data-number="18.2.3" class="anchored" data-anchor-id="two-perspectives-one-reality"><span class="header-section-number">18.2.3</span> Two Perspectives, One Reality</h3>
+<p>A recurring theme in Parts 4 and 5 deserves emphasis: the same phenomenon can be viewed from complementary perspectives.</p>
+<p>For time series, the <strong>time domain</strong> asks how the present relates to the past (autocorrelation, forecasting), while the <strong>frequency domain</strong> asks what periodic components are present (spectrum, filtering). These descriptions contain identical information—they are Fourier transform pairs—yet they illuminate different aspects of the data.</p>
+<p>For networks, <strong>structural analysis</strong> asks what communities exist and which nodes are central, while <strong>predictive analysis</strong> asks which links will form and what should be recommended. Structure and prediction are two views of the same underlying reality: the patterns that reveal <em>why</em> a network behaves as it does also predict <em>what</em> it will do.</p>
+<p>This duality—understanding and prediction as complementary views—is the central theme of the book, made concrete in each domain we have studied.</p>
 </section>
 </section>
-<section id="preparing-to-teach-part-1" class="level2" data-number="16.2">
-<h2 data-number="16.2" class="anchored" data-anchor-id="preparing-to-teach-part-1"><span class="header-section-number">16.2</span> Preparing to Teach Part 1</h2>
-<p>Here are the class exercises from our last session concerning the EDA content.</p>
-<div class="cell">
-<div id="tbl-part-1-review-exercises" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-part-1-review-exercises-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;16.4: Part 1 Review Class Exercises
-</figcaption>
-<div aria-describedby="tbl-part-1-review-exercises-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<caption>Part 1 Review: Class Exercises</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">heading</th>
-<th style="text-align: right;">prep (minutes)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Clarification Needed</td>
-<td style="text-align: right;">10</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection of Topics</td>
-<td style="text-align: right;">15</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Intended Participants</td>
-<td style="text-align: right;">10</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Learning Outcomes</td>
-<td style="text-align: right;">15</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Teaching Style</td>
-<td style="text-align: right;">10</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<section id="primary-references-for-the-course" class="level3" data-number="16.2.1">
-<h3 data-number="16.2.1" class="anchored" data-anchor-id="primary-references-for-the-course"><span class="header-section-number">16.2.1</span> Primary References for the Course</h3>
-<p>As noted in the previous session, the primary reference for Part 1 of MATH4350 is <code>eda_v3</code>:</p>
+<section id="the-analysts-responsibility" class="level2" data-number="18.3">
+<h2 data-number="18.3" class="anchored" data-anchor-id="the-analysts-responsibility"><span class="header-section-number">18.3</span> The Analyst’s Responsibility</h2>
+<section id="choices-matter" class="level3" data-number="18.3.1">
+<h3 data-number="18.3.1" class="anchored" data-anchor-id="choices-matter"><span class="header-section-number">18.3.1</span> Choices Matter</h3>
+<p>Throughout this book, we have presented methods as tools to be applied. But analysis is not mechanical. At every stage, the analyst makes choices: which variables to include, how to handle missing data, which model to fit, how to evaluate results. These choices matter.</p>
+<p>Silberzahn and Uhlmann (2015) coordinated a striking demonstration of this fact. Twenty-nine research teams analyzed identical data to answer the same question: do soccer referees give more red cards to dark-skinned players? Despite working with the same dataset, teams reached markedly different conclusions—from substantial bias to no effect at all. The variation arose not from data quality but from <em>analytical choices</em>: variable selection, model specification, handling of outliers.</p>
+<p>Not everyone draws the same lesson from this study. Some view it as evidence that analytical flexibility has corrupted research practice—that clearer standards would have produced convergence. We read it differently: as a demonstration that analysis inherently requires judgment, and that transparency about choices is essential precisely because reasonable approaches can diverge. The solution is not to eliminate judgment but to make it visible.</p>
+<p>This “many analysts” problem carries directly into machine learning. Two practitioners with the same training data may build models with different performance characteristics based on choices about feature engineering, hyperparameter tuning, model architecture, and evaluation metrics. The data do not uniquely determine the analysis.</p>
+</section>
+<section id="what-eda-contributes" class="level3" data-number="18.3.2">
+<h3 data-number="18.3.2" class="anchored" data-anchor-id="what-eda-contributes"><span class="header-section-number">18.3.2</span> What EDA Contributes</h3>
+<p>Exploratory data analysis does not eliminate analytical choices—nothing can. But EDA makes choices <em>visible</em>. When we examine distributions before modeling, we see the outliers that one specification might exclude and another include. When we visualize relationships, we notice the nonlinearities that one model captures and another misses. When we check residuals, we discover the patterns that reveal model limitations.</p>
+<p>The EDA mindset encourages:</p>
 <ul>
-<li>Notes on Exploratory Data Analysis (EDA)
-<ul>
-<li>MATH4350 version 3</li>
-<li>by Karen Trageser</li>
-</ul></li>
+<li><p><strong>Documentation</strong>: Record analytical choices explicitly. Future readers (including your future self) need to understand what was done and why.</p></li>
+<li><p><strong>Sensitivity analysis</strong>: Check whether conclusions depend on specific choices. If a different reasonable specification yields different results, report that.</p></li>
+<li><p><strong>Reproducibility</strong>: Provide code and data so others can verify and extend your work. The <code>eda4mldata</code> package accompanying this book exemplifies this commitment.</p></li>
+<li><p><strong>Humility</strong>: Recognize that analysis involves judgment. Present findings as what-the-data-suggest rather than what-is-certainly-true.</p></li>
 </ul>
-<p>The subsequent material for the course is based on the following <code>ml</code> reference:</p>
+<p>These practices do not guarantee correct conclusions. But they create the conditions for scientific progress: work that others can evaluate, critique, and build upon.</p>
+</section>
+</section>
+<section id="classical-methods-in-the-age-of-llms" class="level2" data-number="18.4">
+<h2 data-number="18.4" class="anchored" data-anchor-id="classical-methods-in-the-age-of-llms"><span class="header-section-number">18.4</span> Classical Methods in the Age of LLMs</h2>
+<p>Large language models have transformed what is possible with data. Tasks that once required careful feature engineering—summarization, classification, question answering—can now be accomplished by prompting an LLM. Why, then, learn classical methods?</p>
+<section id="enduring-advantages" class="level3" data-number="18.4.1">
+<h3 data-number="18.4.1" class="anchored" data-anchor-id="enduring-advantages"><span class="header-section-number">18.4.1</span> Enduring Advantages</h3>
+<p>The classical methods developed in this book retain important advantages:</p>
+<p><strong>Scale.</strong> Processing 100,000 documents or a decade of daily observations with an LLM is slow and expensive. Classical methods—tf-idf, topic models, spectral analysis—handle the same data in seconds.</p>
+<p><strong>Auditability.</strong> A regression coefficient has a precise meaning. A principal component loading can be examined and interpreted. An autocorrelation function reveals structure explicitly. LLM outputs, by contrast, emerge from processes that resist inspection.</p>
+<p><strong>Exploration.</strong> When you do not yet know what questions to ask, classical methods provide systematic exploration. What patterns exist? How do groups differ? What frequencies dominate? These questions can be answered without formulating specific prompts.</p>
+<p><strong>Foundation.</strong> Understanding classical methods makes you a better user of modern tools. Knowing what tf-idf measures helps you evaluate whether an LLM’s “important words” make sense. Understanding regression geometry helps you interpret embedding similarities. Classical concepts provide vocabulary for thinking about what any method—classical or modern—is actually doing.</p>
+</section>
+<section id="hybrid-workflows" class="level3" data-number="18.4.2">
+<h3 data-number="18.4.2" class="anchored" data-anchor-id="hybrid-workflows"><span class="header-section-number">18.4.2</span> Hybrid Workflows</h3>
+<p>In practice, classical and modern methods complement each other:</p>
+<ol type="1">
+<li><p><strong>Classical screening</strong>: Use tf-idf to identify distinctive documents, clustering to segment a corpus, time series decomposition to isolate trends.</p></li>
+<li><p><strong>Targeted deep dives</strong>: Apply LLMs to selected subsets—summarizing key documents, answering specific questions, generating interpretations.</p></li>
+<li><p><strong>Validation</strong>: Check LLM outputs against classical statistics. Does the LLM’s summary emphasize what tf-idf identifies as distinctive? Do its themes align with topic model results?</p></li>
+<li><p><strong>Iteration</strong>: Let LLM insights suggest new classical analyses; let classical patterns prompt new LLM queries.</p></li>
+</ol>
+<p>This workflow combines the scale and auditability of classical methods with the flexibility of LLMs. Neither approach alone is sufficient; together, they enable deeper understanding than either could achieve independently.</p>
+</section>
+</section>
+<section id="where-to-go-next" class="level2" data-number="18.5">
+<h2 data-number="18.5" class="anchored" data-anchor-id="where-to-go-next"><span class="header-section-number">18.5</span> Where to Go Next</h2>
+<p>This book has introduced ideas and methods; it has not exhausted them. Here are paths for further study.</p>
+<section id="deeper-theory" class="level3" data-number="18.5.1">
+<h3 data-number="18.5.1" class="anchored" data-anchor-id="deeper-theory"><span class="header-section-number">18.5.1</span> Deeper Theory</h3>
+<p>For the mathematical foundations underlying the methods in this book:</p>
 <ul>
-<li>Machine Learning: a Concise Introduction
-<ul>
-<li>by Steven W. Knox</li>
-<li>next edition pending publication by Wiley</li>
-<li>(Course notes: ML Topics &amp; Techniques, version 2.93)</li>
-</ul></li>
+<li><p><strong>Linear algebra</strong>: Strang’s <em>Linear Algebra and Learning from Data</em> (2019) develops the connections between linear algebra and machine learning with exceptional clarity. His <em>Introduction to Linear Algebra</em> (6th ed., 2023) provides a gentler introduction.</p></li>
+<li><p><strong>Time series</strong>: Shumway and Stoffer’s <em>Time Series Analysis and Its Applications</em> (5th ed., 2025) is the definitive graduate text, covering both time-domain and frequency-domain methods comprehensively.</p></li>
+<li><p><strong>Topic models</strong>: Blei, Ng, and Jordan’s original paper “Latent Dirichlet Allocation” (JMLR, 2003) remains essential reading. Blei’s “Probabilistic Topic Models” (Communications of the ACM, 2012) provides an accessible overview.</p></li>
+<li><p><strong>Networks</strong>: Newman’s <em>Networks</em> (2nd ed., 2018) is encyclopedic. For a shorter introduction, Barabási’s <em>Network Science</em> is available free online.</p></li>
 </ul>
 </section>
-<section id="topics" class="level3" data-number="16.2.2">
-<h3 data-number="16.2.2" class="anchored" data-anchor-id="topics"><span class="header-section-number">16.2.2</span> Topics</h3>
-<p>The chapter titles of <code>eda_v3</code> are given in <a href="#tbl-eda-v3-outline" class="quarto-xref">Table&nbsp;<span>16.1</span></a>.</p>
-<p>These chapters represent a broad range of topics to be covered in just a few days. Each chapter can easily take up a one-semester course at the undergraduate or graduate level. Consequently we must select and organize topics very carefully to equip participants with essential tools and prepare them for the remainder of the course</p>
-<p>The topics we discussed last week are shown in <a href="#tbl-initial-topics" class="quarto-xref">Table&nbsp;<span>16.2</span></a>.</p>
-</section>
-<section id="class-exercises" class="level3" data-number="16.2.3">
-<h3 data-number="16.2.3" class="anchored" data-anchor-id="class-exercises"><span class="header-section-number">16.2.3</span> Class Exercises</h3>
-<p>For each of the following talking points, form a small group with one or two classmates, and take 10-15 minutes to prepare to report your thoughts to the class.</p>
-</section>
-<section id="selection-of-topics" class="level3" data-number="16.2.4">
-<h3 data-number="16.2.4" class="anchored" data-anchor-id="selection-of-topics"><span class="header-section-number">16.2.4</span> Selection of Topics</h3>
-<p>As you prepare to teach MATH4350, which topics and key points from <code>eda_v3</code> would you emphasize? Based on your experience with the material discussed last week, how would you organize classroom sessions? What guidance would you offer a friend preparing to teach this material? Take 15 minutes to prepare to report out to the class.</p>
-<section id="intended-participants" class="level4" data-number="16.2.4.1">
-<h4 data-number="16.2.4.1" class="anchored" data-anchor-id="intended-participants"><span class="header-section-number">16.2.4.1</span> Intended Participants</h4>
-<p>Last week several of us noted that the EDA content was presented largely from a mathematical viewpoint, prompting us to consider whether and how to engage those potential participants whose expertise was more computational than mathematical. Take 10 minutes to report out to the class on the questions below, or on related questions of your own.</p>
+<section id="practical-application" class="level3" data-number="18.5.2">
+<h3 data-number="18.5.2" class="anchored" data-anchor-id="practical-application"><span class="header-section-number">18.5.2</span> Practical Application</h3>
+<p>For hands-on data science in R:</p>
 <ul>
-<li><p>The US version of the course lays out pre-requisites in mathematics, statistics, and computation, citing established textbooks.</p></li>
-<li><p>For the UK version of the course, should those pre-requisites be modified? How?</p></li>
-<li><p>How should the readiness of a potential participant be assessed?</p></li>
-<li><p>When should a potential participant be advised to shore up needed pre-requisites on their own? What guidance should we give on courses or other learning resources? Are high-side refresher courses feasible?</p></li>
+<li><p><strong>General workflow</strong>: Wickham, Çetinkaya-Rundel, and Grolemund’s <em>R for Data Science</em> (2nd ed.) is the standard introduction to modern R practice.</p></li>
+<li><p><strong>Modeling</strong>: Kuhn and Silge’s <em>Tidy Modeling with R</em> extends the tidyverse philosophy to model fitting and evaluation.</p></li>
+<li><p><strong>Text analysis</strong>: Silge and Robinson’s <em>Text Mining with R: A Tidy Approach</em> covers the text analysis methods introduced in Part 3.</p></li>
+<li><p><strong>Visualization</strong>: Wickham’s <em>ggplot2: Elegant Graphics for Data Analysis</em> (3rd ed.) is the definitive guide to the visualization system used throughout this book.</p></li>
 </ul>
 </section>
-<section id="learning-outcomes" class="level4" data-number="16.2.4.2">
-<h4 data-number="16.2.4.2" class="anchored" data-anchor-id="learning-outcomes"><span class="header-section-number">16.2.4.2</span> Learning Outcomes</h4>
-<p>From last week’s discussions, we seem to be agreed that the goal of the EDA material should be to equip participants with tools they can (responsibly) use in their work, either immediately or eventually. Take 15 minutes to consider the questions below and then report to the class how you would express your goals for participant learning of the EDA content.</p>
-<ul>
-<li><p>Should this first week of content also be used to level-set, to ensure that participants share some common knowledge and vocabulary needed for the remainder of the course? If so, how should we define that baseline?</p></li>
-<li><p>As an instructor, should you attempt to detect gaps in needed participant knowledge? How would you go about that? How would you address such gaps?</p></li>
-<li><p>Responsible use of data science methods requires knowledge of the capabilities and limitations of the methods, and of one’s current level of proficiency in a wide-ranging set of competencies. How would you help participants get a clear picture of both?</p></li>
-<li><p>How would you summarize your goals as an instructor for participants with respect to the EDA content?</p></li>
-</ul>
+<section id="the-companion-package" class="level3" data-number="18.5.3">
+<h3 data-number="18.5.3" class="anchored" data-anchor-id="the-companion-package"><span class="header-section-number">18.5.3</span> The Companion Package</h3>
+<p>The <code>eda4mldata</code> package provides datasets used in this book, cleaned and documented for pedagogical use. Install it from GitHub:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"tthrall/eda4mldata"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The package includes classic datasets (Galton heights, wine quality, OECD Better Life Index), text corpora (H.G. Wells novels, AP news articles), time series examples, and the LearningGraph knowledge graph introduced in <a href="graph-theory.html" class="quarto-xref"><span>Chapter 15</span></a>. Use these datasets to practice the methods, extend the examples, and develop your own analyses.</p>
 </section>
-<section id="instructor-preparation" class="level4" data-number="16.2.4.3">
-<h4 data-number="16.2.4.3" class="anchored" data-anchor-id="instructor-preparation"><span class="header-section-number">16.2.4.3</span> Instructor Preparation</h4>
-<p>Each of us goes about learning a new area in our own distinct manner. As instructors we naturally emphasize what we know or enjoy most, and tend to present content in a way that we would want that content presented to us. How should we take advantage of instructor strengths while maintaining some degree of consistency in content and delivery? Take 10 minutes to consider the following questions and then report out to the class.</p>
+</section>
+<section id="closing-thoughts" class="level2" data-number="18.6">
+<h2 data-number="18.6" class="anchored" data-anchor-id="closing-thoughts"><span class="header-section-number">18.6</span> Closing Thoughts</h2>
+<p>John Tukey opened his 1977 book with a simple observation: “The greatest value of a picture is when it forces us to notice what we never expected to see.” This remains the essence of exploratory data analysis—not a set of techniques, but a willingness to be surprised.</p>
+<p>The methods in this book are tools for noticing. Histograms reveal distributions we might have assumed were normal. Scatter plots expose relationships we might have presumed were linear. Residual plots uncover structure we might have believed our models captured. Each visualization, each summary, each diagnostic is an opportunity to discover something unexpected.</p>
+<p>But noticing is only the beginning. The dual aims of data analysis—understanding and prediction—require that we move from observation to explanation, from pattern to mechanism, from exploration to action. The EDA mindset does not end with a striking visualization; it asks <em>why</em> the pattern exists and <em>what</em> it implies.</p>
+<p>This interplay between exploration and explanation, between understanding and prediction, is what makes data analysis both challenging and rewarding. The data we examine are not abstract numbers; they are traces of real phenomena—physical processes, human behaviors, social dynamics. To analyze data well is to engage with the world, to ask genuine questions, and to let evidence shape our understanding.</p>
+<p>The journey does not end here. Every dataset you encounter will pose new questions. Every analysis will require judgment. Every conclusion will be provisional, subject to revision as new data arrive and new methods emerge. The tools in this book are preparation for that ongoing work—a foundation for learning that continues beyond any single course or text.</p>
+<p>Look at your data. Ask questions. Be willing to be surprised. And remember that understanding and prediction, theory and practice, are not opposed—they are partners in the work of making sense of the world.</p>
+</section>
+<section id="resources" class="level2" data-number="18.7">
+<h2 data-number="18.7" class="anchored" data-anchor-id="resources"><span class="header-section-number">18.7</span> Resources</h2>
+<section id="books" class="level3" data-number="18.7.1">
+<h3 data-number="18.7.1" class="anchored" data-anchor-id="books"><span class="header-section-number">18.7.1</span> Books</h3>
+<p>Blei, D. M., Ng, A. Y., &amp; Jordan, M. I. (2003). Latent Dirichlet allocation. <em>Journal of Machine Learning Research</em>, 3, 993–1022.</p>
+<p>Freedman, D., Pisani, R., &amp; Purves, R. (2007). <em>Statistics</em> (4th ed.). W.W. Norton.</p>
+<p>Kuhn, M., &amp; Silge, J. (2022). <em>Tidy Modeling with R</em>. O’Reilly Media.</p>
+<p>Newman, M. (2018). <em>Networks</em> (2nd ed.). Oxford University Press.</p>
+<p>Shumway, R. H., &amp; Stoffer, D. S. (2025). <em>Time Series Analysis and Its Applications</em> (5th ed.). Springer.</p>
+<p>Silge, J., &amp; Robinson, D. (2017). <em>Text Mining with R: A Tidy Approach</em>. O’Reilly Media.</p>
+<p>Strang, G. (2019). <em>Linear Algebra and Learning from Data</em>. Wellesley-Cambridge Press.</p>
+<p>Tukey, J. W. (1977). <em>Exploratory Data Analysis</em>. Addison-Wesley.</p>
+<p>Wickham, H., Çetinkaya-Rundel, M., &amp; Grolemund, G. (2023). <em>R for Data Science</em> (2nd ed.). O’Reilly Media.</p>
+</section>
+<section id="articles" class="level3" data-number="18.7.2">
+<h3 data-number="18.7.2" class="anchored" data-anchor-id="articles"><span class="header-section-number">18.7.2</span> Articles</h3>
+<p>Silberzahn, R., &amp; Uhlmann, E. L. (2015). Crowdsourced research: Many hands make tight work. <em>Nature</em>, 526(7572), 189–191.</p>
+</section>
+<section id="online-resources" class="level3" data-number="18.7.3">
+<h3 data-number="18.7.3" class="anchored" data-anchor-id="online-resources"><span class="header-section-number">18.7.3</span> Online Resources</h3>
 <ul>
-<li><p>In the US <code>eda_v3</code> followed by <code>mlci</code> are the reference materials on which MATH4350 is based. Other instructors contribute content on specific topics, thereby enabling each instructor to assemble content as seems best. Is this a model for the UK version of the course? Where and how should the content be maintained?</p></li>
-<li><p>In your experience as an instructor, have you ever encountered a course participant who seemed to learn differently from the way you learn?</p></li>
-<li><p>As a community of instructors, how should we share our successes and challenges?</p></li>
-<li><p>How, if at all, should we vet potential instructors?</p></li>
+<li>Book source code: <a href="https://github.com/tthrall/eda4ml" class="uri">https://github.com/tthrall/eda4ml</a></li>
+<li>Companion package: <a href="https://github.com/tthrall/eda4mldata" class="uri">https://github.com/tthrall/eda4mldata</a></li>
+<li>R for Data Science: <a href="https://r4ds.hadley.nz/" class="uri">https://r4ds.hadley.nz/</a></li>
+<li>Text Mining with R: <a href="https://www.tidytextmining.com/" class="uri">https://www.tidytextmining.com/</a></li>
+<li>Network Science (Barabási): <a href="http://networksciencebook.com/" class="uri">http://networksciencebook.com/</a></li>
 </ul>
 
 
-</section>
 </section>
 </section>
 
@@ -1097,7 +1011,7 @@ Table&nbsp;16.4: Part 1 Review Class Exercises
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./em-algorithm.html" class="pagination-link" aria-label="EM: the Expectation-Maximization Algorithm">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

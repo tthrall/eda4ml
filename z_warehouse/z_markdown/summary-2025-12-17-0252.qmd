@@ -88,8 +88,6 @@ Throughout this book, we have presented methods as tools to be applied. But anal
 
 Silberzahn and Uhlmann (2015) coordinated a striking demonstration of this fact. Twenty-nine research teams analyzed identical data to answer the same question: do soccer referees give more red cards to dark-skinned players? Despite working with the same dataset, teams reached markedly different conclusions—from substantial bias to no effect at all. The variation arose not from data quality but from *analytical choices*: variable selection, model specification, handling of outliers.
 
-Not everyone draws the same lesson from this study. Some view it as evidence that analytical flexibility has corrupted research practice—that clearer standards would have produced convergence. We read it differently: as a demonstration that analysis inherently requires judgment, and that transparency about choices is essential precisely because reasonable approaches can diverge. The solution is not to eliminate judgment but to make it visible.
-
 This "many analysts" problem carries directly into machine learning. Two practitioners with the same training data may build models with different performance characteristics based on choices about feature engineering, hyperparameter tuning, model architecture, and evaluation metrics. The data do not uniquely determine the analysis.
 
 ### What EDA Contributes
