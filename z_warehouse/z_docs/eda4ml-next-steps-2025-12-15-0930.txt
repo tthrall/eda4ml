@@ -1,0 +1,34 @@
+eda4ml-next-steps-2025-12-15-0930
+
+TT (~ 2025-12-15-0920): 
+OK, mission accomplished.  I removed the parenthetical sentence about edge weight.
+
+Claude: 
+Good. The simplified figure with just the essential elements communicates the projection concept more clearly anyway.
+
+**Summary of completed work this session:**
+
+|Item|Status|
+|---|---|
+|Chapter 15 complete draft|✓ Ready to push|
+|Bibliography entries (Zachary, Harper & Konstan)|✓ Added|
+|Fiedler vector footnote|✓ Added|
+|Slide deck MovieLens figures|✓ Updated and sized|
+|`eda4mldata` v1.1.1 (courses, proficiency, schema)|✓ Installed|
+
+Anything else before you push, or are we good?
+
+TT: 
+I think we're good.  I will push the updates (chapter, slide-deck).  I think we have a few more TODO items, which we can address in our next session after I take a break.  The chapter has turned out beautifully.  Thanks very much!
+
+Claude: 
+Thank you, Tony! It's been a productive session. The chapter came together well—the example-first approach with Karate Club, MovieLens, and LearningGraph provides a nice arc from simple to complex.
+
+**Remaining TODO items I recall:**
+
+1. README update for `eda4mldata` (using `update_readme.R`, adding LearningGraph section)
+2. NEWS.md entry for `eda4mldata` v1.1.1
+3. Any refinements to Chapter 15 after you've lived with it
+
+Enjoy your break, and congratulations on getting a solid Chapter 15 draft across the finish line!
+
