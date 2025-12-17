@@ -414,7 +414,7 @@ window.Quarto = {
   <li><a href="#repeated-weighing-of-nb10" id="toc-repeated-weighing-of-nb10" class="nav-link" data-scroll-target="#repeated-weighing-of-nb10"><span class="header-section-number">5.4.3</span> Repeated Weighing of NB10</a></li>
   </ul></li>
   <li><a href="#accuracy-of-the-sample-average" id="toc-accuracy-of-the-sample-average" class="nav-link" data-scroll-target="#accuracy-of-the-sample-average"><span class="header-section-number">5.5</span> Accuracy of the Sample Average</a></li>
-  <li><a href="#analyst-degrees-of-freedom" id="toc-analyst-degrees-of-freedom" class="nav-link" data-scroll-target="#analyst-degrees-of-freedom"><span class="header-section-number">5.6</span> Analyst Degrees of Freedom</a>
+  <li><a href="#sec-analyst-degrees-of-freedom" id="toc-sec-analyst-degrees-of-freedom" class="nav-link" data-scroll-target="#sec-analyst-degrees-of-freedom"><span class="header-section-number">5.6</span> Analyst Degrees of Freedom</a>
   <ul>
   <li><a href="#implications-for-practice" id="toc-implications-for-practice" class="nav-link" data-scroll-target="#implications-for-practice"><span class="header-section-number">5.6.1</span> Implications for Practice</a></li>
   </ul></li>
@@ -446,7 +446,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">03:40 Wed 17-Dec-2025</p>
+      <p class="date">19:19 Wed 17-Dec-2025</p>
     </div>
   </div>
   
@@ -1482,24 +1482,41 @@ ML Connection
 \qquad(5.6)\]</span></span></p>
 <p>Our sample average of 405 micrograms probably deviates from the actual deficit of NB10 by no more 2 micrograms or so.</p>
 </section>
-<section id="analyst-degrees-of-freedom" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="analyst-degrees-of-freedom"><span class="header-section-number">5.6</span> Analyst Degrees of Freedom</h2>
+<section id="sec-analyst-degrees-of-freedom" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sec-analyst-degrees-of-freedom"><span class="header-section-number">5.6</span> Analyst Degrees of Freedom</h2>
 <p>The examples above involve problems with data collection: selection bias in the <em>Literary Digest</em> poll, confounding in the observational studies, measurement error in the NB10 weights. But even when data are sound, analytical choices can lead to divergent conclusions.</p>
-<p>Silberzahn and Uhlmann (2015) coordinated a striking demonstration of this fact. They recruited 29 research teams to analyze identical data answering the same question: do soccer referees give more red cards to dark-skinned players? Each team received the same dataset—over 2,000 matches with player skin tone ratings and referee decisions. Each team chose its own analytical approach.</p>
-<p>The results were sobering. Teams made different decisions about which variables to include as controls, how to handle the nested structure of players within teams, which statistical models to employ, and how to define the outcome. The estimated effect sizes ranged from essentially zero to substantial discrimination. Some teams found statistically significant bias; others found none.</p>
-<p>This variation arose not from sloppiness but from legitimate analytical choices. Reasonable researchers, applying defensible methods to the same data, reached different conclusions. The phenomenon—sometimes called the “garden of forking paths”—reveals that analysis is not mechanical. Every dataset admits multiple reasonable approaches, and those approaches can yield different answers.</p>
-<p>Not everyone draws the same lesson from this study. Some view it as evidence that analytical flexibility has corrupted research practice—that clearer standards would have produced convergence. We read it differently: as a demonstration that analysis inherently requires judgment, and that transparency about choices is essential precisely because reasonable approaches can diverge. The solution is not to eliminate judgment but to make it visible.</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<p>A striking demonstration of this comes from <span class="citation" data-cites="Silberzahn_2018">Silberzahn et al. (<a href="references.html#ref-Silberzahn_2018" role="doc-biblioref">2018</a>)</span>, who recruited 29 independent research teams to answer the same question using the same dataset: <em>Are soccer referees more likely to give red cards to dark-skinned players than to light-skinned players?</em></p>
+<p>The results were sobering. Teams used 21 distinct combinations of covariates. Estimated effect sizes ranged from 0.89 to 2.93 (in odds-ratio terms), with some teams finding a statistically significant effect and others finding none. All teams were competent. All had access to identical data. Yet they reached materially different conclusions.</p>
+<p>What explains this divergence? Each team made defensible choices about data cleaning, variable selection, model specification, and statistical framework. These choices—what <span class="citation" data-cites="Holmes_2018">Holmes (<a href="references.html#ref-Holmes_2018" role="doc-biblioref">2018</a>)</span> calls the “flexibility” available to modern analysts—compound multiplicatively. An analyst who considers two options at each of five decision points faces <span class="math inline">\(2^5 = 32\)</span> possible analytical paths. In high-dimensional settings, the combinatorics become staggering.</p>
+<p>Holmes illustrates the danger with a simple example from immunology. Suppose an ELISA <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> test produces a positive result for 4 of 50 patients at a particular protein site. Under the null hypothesis (no true effect), observing four or more positives has probability 0.00175—seemingly strong evidence. But if the researcher actually tested 60 candidate sites and reported only the most promising one, the probability of observing a maximum this extreme rises to approximately 0.10. The same data, viewed honestly, no longer supports rejection of the null. This is not fraud; it is the natural consequence of selecting results after examining the data.</p>
+<p>The problem intensifies when visualization enters the workflow. Holmes warns of “Pareidolia”—the human tendency to perceive meaningful patterns in random configurations. The same cognitive capacity that makes us excellent at exploratory pattern detection makes us vulnerable to over-interpreting noise, particularly when we have flexibility in choosing which patterns to highlight.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="The Garden of Forking Paths">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-ML Connection
+The Garden of Forking Paths
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The analyst degrees of freedom documented by Silberzahn and Uhlmann appear throughout ML pipelines:</p>
+<p><span class="citation" data-cites="Gelman_Loken_2014">Gelman and Loken (<a href="references.html#ref-Gelman_Loken_2014" role="doc-biblioref">2014</a>)</span> use the evocative phrase “garden of forking paths” to describe how analysts navigate decision trees during data analysis. Even without conscious p-hacking, the paths not taken remain invisible in the final report, making the reported results appear more conclusive than they are.</p>
+</div>
+</div>
+<p>What the Silberzahn study reveals empirically and the Holmes paper elaborates theoretically is that translating a real-world question into a technical formulation admits many defensible specifications. The question “are dark-skinned players penalized more often?” can be operationalized through different measures of skin tone, different sets of covariates, different model families, and different inferential frameworks. Each choice is a branching point; each branch leads to potentially different conclusions.</p>
+<p>This is precisely where exploratory data analysis finds its proper role—and its proper limits. EDA is the appropriate setting for examining data structure, identifying anomalies, generating hypotheses, and discovering which analytical choices might matter. But EDA should not be confused with confirmatory analysis. As <span class="citation" data-cites="Holmes_2018">Holmes (<a href="references.html#ref-Holmes_2018" role="doc-biblioref">2018</a>)</span> emphasizes, a “clear division between exploratory and confirmatory stages” is essential. The exploratory phase generates candidate models and hypotheses; the confirmatory phase tests them on held-out data or through pre-registered protocols.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="ML Connection: Training, Validation, and Test">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+ML Connection: Training, Validation, and Test
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The machine learning practice of partitioning data into training, validation, and test sets institutionalizes this separation. The training set supports exploration and model fitting. The validation set guides hyperparameter tuning and model selection. The test set—touched only once, at the end—provides an honest estimate of generalization performance. This discipline exists precisely because the flexibility to optimize on visible data inflates apparent performance.</p>
+<p>The analyst degrees of freedom documented by <span class="citation" data-cites="Silberzahn_2018">Silberzahn et al. (<a href="references.html#ref-Silberzahn_2018" role="doc-biblioref">2018</a>)</span> appear throughout ML pipelines:</p>
 <ul>
 <li><strong>Feature engineering</strong>: Which variables to include? How to encode categoricals? Whether to create interactions?</li>
 <li><strong>Model selection</strong>: Which algorithm family? What architecture? How much regularization?</li>
@@ -1511,11 +1528,13 @@ ML Connection
 </div>
 <section id="implications-for-practice" class="level3" data-number="5.6.1">
 <h3 data-number="5.6.1" class="anchored" data-anchor-id="implications-for-practice"><span class="header-section-number">5.6.1</span> Implications for Practice</h3>
-<p>The Silberzahn study does not counsel despair. It counsels humility and transparency:</p>
-<p><strong>Document choices explicitly.</strong> Record not just what you did but what alternatives you considered. Future readers need to understand the path you took through the garden of forking paths.</p>
-<p><strong>Assess sensitivity.</strong> When feasible, check whether conclusions change under alternative specifications. If they do, report that. A finding that depends critically on one particular choice is less robust than one that survives multiple approaches.</p>
-<p><strong>Pre-register when possible.</strong> For confirmatory analyses, specifying the analytical plan before seeing results disciplines the process. Pre-registration does not eliminate judgment, but it distinguishes exploratory from confirmatory findings.</p>
-<p><strong>Distinguish exploration from confirmation.</strong> EDA is explicitly exploratory—we examine data to generate hypotheses and guide modeling. But when we transition to formal inference or prediction, we should acknowledge which choices were data-driven and which were pre-specified.</p>
+<p>The Silberzahn study does not counsel despair. It counsels humility and transparency. The practical implications for data analysts are threefold:</p>
+<ol type="1">
+<li><p><strong>Transparency.</strong> Document analytical choices and, where feasible, the alternatives considered. Readers cannot assess robustness if they cannot see the decision points. Record not just what you did but what alternatives you considered—future readers need to understand the path you took through the garden of forking paths.</p></li>
+<li><p><strong>Sensitivity analysis.</strong> When key conclusions depend on contestable choices, examine how results change under alternative specifications. Stability across reasonable alternatives strengthens confidence; instability signals that conclusions are provisional.</p></li>
+<li><p><strong>Communication.</strong> Report uncertainty honestly. A finding that holds under one defensible specification but not others warrants different language than one that proves robust across multiple approaches. For confirmatory analyses, pre-registering the analytical plan before seeing results disciplines the process and distinguishes exploratory from confirmatory findings.</p></li>
+</ol>
+<p>None of this diminishes the value of exploratory work. Discovery requires exploration. But discovery claims require confirmation—ideally on independent data, or at minimum through transparent acknowledgment of the analytical flexibility involved.</p>
 <p>The <em>Literary Digest</em> failed because of data problems. The Silberzahn study shows that even with good data, analytical choices matter. Both lessons inform responsible practice.</p>
 </section>
 </section>
@@ -1546,8 +1565,17 @@ ML Connection
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Gelman_Loken_2014" class="csl-entry" role="listitem">
+Gelman, Andrew, and Eric Loken. 2014. <span>“The Statistical Crisis in Science.”</span> <em>American Scientist</em> 102 (6): 460–65. <a href="https://doi.org/10.1511/2014.111.460">https://doi.org/10.1511/2014.111.460</a>.
+</div>
+<div id="ref-Holmes_2018" class="csl-entry" role="listitem">
+Holmes, Susan P. 2018. <span>“Statistical Proof? The Problem of Irreproducibility.”</span> <em>Bulletin of the American Mathematical Society</em> 55 (1): 31–55. <a href="https://doi.org/10.1090/bull/1597">https://doi.org/10.1090/bull/1597</a>.
+</div>
 <div id="ref-Mucci_Stryker_2025" class="csl-entry" role="listitem">
 Mucci, Tim, and Cole Stryker. 2025. <span>“What Is MLOps?”</span> <em>IBM</em>, November. <a href="https://www.ibm.com/think/topics/mlops">https://www.ibm.com/think/topics/mlops</a>.
+</div>
+<div id="ref-Silberzahn_2018" class="csl-entry" role="listitem">
+Silberzahn, Raphael, Eric L. Uhlmann, Daniel P. Martin, Pasquale Anselmi, Frederik Aust, Eli Awtrey, Štěpán Bahík, et al. 2018. <span>“Many Analysts, One Data Set: Making Transparent How Variations in Analytic Choices Affect Results.”</span> <em>Advances in Methods and Practices in Psychological Science</em> 1 (3): 337–56. <a href="https://doi.org/10.1177/2515245917747646">https://doi.org/10.1177/2515245917747646</a>.
 </div>
 </div>
 </section>
@@ -1557,6 +1585,7 @@ Mucci, Tim, and Cole Stryker. 2025. <span>“What Is MLOps?”</span> <em>IBM</e
 <li id="fn1"><p>Gallup and others used quota sampling in pre-election surveys from 1936 though 1948. Interviewers consistently chose a disproportionate number of people who wound up voting Republican, but until 1948, a close election, the Democratic lead was larger than this oversampling of Republicans.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>On the other hand, if a percentage or average is known to vary across identifiable subsets (strata) of the population, then <em>stratified sampling</em> can yield more accurate estimates than simple random sampling.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>Each interviewer is given a prescribed protocol for selecting an eligible voter within the household (e.g., oldest eligible female, if present, or else youngest eligible male), with these prescriptions possibly varying among interviewers.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://www.immunology.org/public-information/bitesized-immunology/experimental-techniques/enzyme-linked-immunosorbent-assay">ELISA</a> stands for Enzyme-linked immunosorbent assay.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

@@ -643,34 +643,21 @@ $$ {#eq-std-error-calc}
 
 Our sample average of 405 micrograms probably deviates from the actual deficit of NB10 by no more 2 micrograms or so.
 
-## Analyst Degrees of Freedom {#sec-analyst-degrees-of-freedom}
+## Analyst Degrees of Freedom
 
 The examples above involve problems with data collection: selection bias in the *Literary Digest* poll, confounding in the observational studies, measurement error in the NB10 weights. But even when data are sound, analytical choices can lead to divergent conclusions.
 
-A striking demonstration of this comes from @Silberzahn_2018, who recruited 29 independent research teams to answer the same question using the same dataset: *Are soccer referees more likely to give red cards to dark-skinned players than to light-skinned players?*
+Silberzahn and Uhlmann (2015) coordinated a striking demonstration of this fact. They recruited 29 research teams to analyze identical data answering the same question: do soccer referees give more red cards to dark-skinned players? Each team received the same dataset—over 2,000 matches with player skin tone ratings and referee decisions. Each team chose its own analytical approach.
 
-The results were sobering. Teams used 21 distinct combinations of covariates. Estimated effect sizes ranged from 0.89 to 2.93 (in odds-ratio terms), with some teams finding a statistically significant effect and others finding none. All teams were competent. All had access to identical data. Yet they reached materially different conclusions.
+The results were sobering. Teams made different decisions about which variables to include as controls, how to handle the nested structure of players within teams, which statistical models to employ, and how to define the outcome. The estimated effect sizes ranged from essentially zero to substantial discrimination. Some teams found statistically significant bias; others found none.
 
-What explains this divergence? Each team made defensible choices about data cleaning, variable selection, model specification, and statistical framework. These choices—what @Holmes_2018 calls the "flexibility" available to modern analysts—compound multiplicatively. An analyst who considers two options at each of five decision points faces $2^5 = 32$ possible analytical paths. In high-dimensional settings, the combinatorics become staggering.
+This variation arose not from sloppiness but from legitimate analytical choices. Reasonable researchers, applying defensible methods to the same data, reached different conclusions. The phenomenon—sometimes called the "garden of forking paths"—reveals that analysis is not mechanical. Every dataset admits multiple reasonable approaches, and those approaches can yield different answers.
 
-Holmes illustrates the danger with a simple example from immunology. Suppose an ELISA [^ELISA] test produces a positive result for 4 of 50 patients at a particular protein site. Under the null hypothesis (no true effect), observing four or more positives has probability 0.00175—seemingly strong evidence. But if the researcher actually tested 60 candidate sites and reported only the most promising one, the probability of observing a maximum this extreme rises to approximately 0.10. The same data, viewed honestly, no longer supports rejection of the null. This is not fraud; it is the natural consequence of selecting results after examining the data.
+Not everyone draws the same lesson from this study. Some view it as evidence that analytical flexibility has corrupted research practice—that clearer standards would have produced convergence. We read it differently: as a demonstration that analysis inherently requires judgment, and that transparency about choices is essential precisely because reasonable approaches can diverge. The solution is not to eliminate judgment but to make it visible.
 
-[^ELISA]: [ELISA](https://www.immunology.org/public-information/bitesized-immunology/experimental-techniques/enzyme-linked-immunosorbent-assay) stands for Enzyme-linked immunosorbent assay.
-
-The problem intensifies when visualization enters the workflow. Holmes warns of "Pareidolia"—the human tendency to perceive meaningful patterns in random configurations. The same cognitive capacity that makes us excellent at exploratory pattern detection makes us vulnerable to over-interpreting noise, particularly when we have flexibility in choosing which patterns to highlight.
-
-::: {.callout-note title="The Garden of Forking Paths"}
-@Gelman_Loken_2014 use the evocative phrase "garden of forking paths" to describe how analysts navigate decision trees during data analysis. Even without conscious p-hacking, the paths not taken remain invisible in the final report, making the reported results appear more conclusive than they are.
-:::
-
-What the Silberzahn study reveals empirically and the Holmes paper elaborates theoretically is that translating a real-world question into a technical formulation admits many defensible specifications. The question "are dark-skinned players penalized more often?" can be operationalized through different measures of skin tone, different sets of covariates, different model families, and different inferential frameworks. Each choice is a branching point; each branch leads to potentially different conclusions.
-
-This is precisely where exploratory data analysis finds its proper role—and its proper limits. EDA is the appropriate setting for examining data structure, identifying anomalies, generating hypotheses, and discovering which analytical choices might matter. But EDA should not be confused with confirmatory analysis. As @Holmes_2018 emphasizes, a "clear division between exploratory and confirmatory stages" is essential. The exploratory phase generates candidate models and hypotheses; the confirmatory phase tests them on held-out data or through pre-registered protocols.
-
-::: {.callout-tip title="ML Connection: Training, Validation, and Test"}
-The machine learning practice of partitioning data into training, validation, and test sets institutionalizes this separation. The training set supports exploration and model fitting. The validation set guides hyperparameter tuning and model selection. The test set—touched only once, at the end—provides an honest estimate of generalization performance. This discipline exists precisely because the flexibility to optimize on visible data inflates apparent performance.
-
-The analyst degrees of freedom documented by @Silberzahn_2018 appear throughout ML pipelines:
+::: {.callout-note}
+#### ML Connection
+The analyst degrees of freedom documented by Silberzahn and Uhlmann appear throughout ML pipelines:
 
 - **Feature engineering**: Which variables to include? How to encode categoricals? Whether to create interactions?
 - **Model selection**: Which algorithm family? What architecture? How much regularization?
@@ -682,15 +669,15 @@ Two practitioners with the same training data may build models with meaningfully
 
 ### Implications for Practice
 
-The Silberzahn study does not counsel despair. It counsels humility and transparency. The practical implications for data analysts are threefold:
+The Silberzahn study does not counsel despair. It counsels humility and transparency:
 
-1. **Transparency.** Document analytical choices and, where feasible, the alternatives considered. Readers cannot assess robustness if they cannot see the decision points. Record not just what you did but what alternatives you considered—future readers need to understand the path you took through the garden of forking paths.
+**Document choices explicitly.** Record not just what you did but what alternatives you considered. Future readers need to understand the path you took through the garden of forking paths.
 
-2. **Sensitivity analysis.** When key conclusions depend on contestable choices, examine how results change under alternative specifications. Stability across reasonable alternatives strengthens confidence; instability signals that conclusions are provisional.
+**Assess sensitivity.** When feasible, check whether conclusions change under alternative specifications. If they do, report that. A finding that depends critically on one particular choice is less robust than one that survives multiple approaches.
 
-3. **Communication.** Report uncertainty honestly. A finding that holds under one defensible specification but not others warrants different language than one that proves robust across multiple approaches. For confirmatory analyses, pre-registering the analytical plan before seeing results disciplines the process and distinguishes exploratory from confirmatory findings.
+**Pre-register when possible.** For confirmatory analyses, specifying the analytical plan before seeing results disciplines the process. Pre-registration does not eliminate judgment, but it distinguishes exploratory from confirmatory findings.
 
-None of this diminishes the value of exploratory work. Discovery requires exploration. But discovery claims require confirmation—ideally on independent data, or at minimum through transparent acknowledgment of the analytical flexibility involved.
+**Distinguish exploration from confirmation.** EDA is explicitly exploratory—we examine data to generate hypotheses and guide modeling. But when we transition to formal inference or prediction, we should acknowledge which choices were data-driven and which were pre-specified.
 
 The *Literary Digest* failed because of data problems. The Silberzahn study shows that even with good data, analytical choices matter. Both lessons inform responsible practice.
 
