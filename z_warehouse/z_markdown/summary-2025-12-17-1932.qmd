@@ -56,13 +56,13 @@ Several concepts from Part 1 recur throughout the book:
 
 | Foundation | Later Applications |
 |------------|-------------------|
-| Conditional distributions (@sec-conditioning) | Regression (@sec-lin-reg), Classification (@sec-lda) |
+| Conditional distributions (@sec-conditioning) | Regression (@sec-lin-reg), Classification (@sec-lin-discr) |
 | Clustering (@sec-clustering) | Community detection (@sec-graph-theory), Topic models (@sec-topic-models) |
 | Simulation (@sec-simulation) | MCMC (@sec-mcmc-appendix), Bootstrap inference |
 | Information theory (@sec-info-theory) | Entropy in text analysis, Model selection criteria |
 | Study design (@sec-study-design) | Every application—data quality underlies all |
 
-The conditioning framework from @sec-conditioning—examining how one variable relates to another—is the conceptual foundation for all regression and classification methods. The clustering intuition from @sec-clustering reappears when we detect communities in networks or topics in documents. The simulation tools from @sec-simulation enable the MCMC methods that fit complex models like Latent Dirichlet Allocation.
+The conditioning framework from @sec-conditioning—examining how one variable relates to another—is the conceptual foundation for all regression and classification methods. The clustering intuition from @sec-clustering reappears when we detect communities in networks or topics in documents. The simulation tools from @sec-simulation enable the MCMC methods that fit complex models like LDA.
 
 ### The Projection Theme
 
@@ -194,6 +194,8 @@ Look at your data. Ask questions. Be willing to be surprised. And remember that 
 
 ### Books
 
+Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent Dirichlet allocation. *Journal of Machine Learning Research*, 3, 993–1022.
+
 Freedman, D., Pisani, R., & Purves, R. (2007). *Statistics* (4th ed.). W.W. Norton.
 
 Kuhn, M., & Silge, J. (2022). *Tidy Modeling with R*. O'Reilly Media.
@@ -211,8 +213,6 @@ Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.
 Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for Data Science* (2nd ed.). O'Reilly Media.
 
 ### Articles
-
-Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent Dirichlet allocation. *Journal of Machine Learning Research*, 3, 993–1022.
 
 Holmes, S. P. (2018). Statistical proof? The problem of irreproducibility. *Bulletin of the American Mathematical Society*, 55(1), 31–55.
 
