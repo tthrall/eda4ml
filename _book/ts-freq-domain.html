@@ -430,7 +430,7 @@ window.Quarto = {
   <li><a href="#the-duality-in-practice" id="toc-the-duality-in-practice" class="nav-link" data-scroll-target="#the-duality-in-practice"><span class="header-section-number">14.9.3</span> The Duality in Practice</a></li>
   </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">14.10</span> Summary</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">14.11</span> Exercises</a></li>
+  <li><a href="#sec-ts-freq-domain-exercises" id="toc-sec-ts-freq-domain-exercises" class="nav-link" data-scroll-target="#sec-ts-freq-domain-exercises"><span class="header-section-number">14.11</span> Exercises</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">14.12</span> Resources</a></li>
   <li><a href="#sec-ts-freq-domain-glossary" id="toc-sec-ts-freq-domain-glossary" class="nav-link" data-scroll-target="#sec-ts-freq-domain-glossary"><span class="header-section-number">14.13</span> Appendix: Glossary of Notation</a></li>
   </ul>
@@ -458,7 +458,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">18:12 Fri 12-Dec-2025</p>
+      <p class="date">15:26 Thu 18-Dec-2025</p>
     </div>
   </div>
   
@@ -933,8 +933,8 @@ Figure&nbsp;14.11: Coherence between Honolulu and NYC temperatures
 <li><p><strong>The dual perspectives are complementary</strong>. Time-domain methods serve forecasting; frequency-domain methods serve understanding. Complete analysis draws on both.</p></li>
 </ol>
 </section>
-<section id="exercises" class="level2" data-number="14.11">
-<h2 data-number="14.11" class="anchored" data-anchor-id="exercises"><span class="header-section-number">14.11</span> Exercises</h2>
+<section id="sec-ts-freq-domain-exercises" class="level2" data-number="14.11">
+<h2 data-number="14.11" class="anchored" data-anchor-id="sec-ts-freq-domain-exercises"><span class="header-section-number">14.11</span> Exercises</h2>
 <ol type="1">
 <li><p><strong>Periodogram variability</strong>: Generate 256 observations of white noise and compute the periodogram using <code>stats::spec.pgram()</code> with no smoothing (<code>spans = NULL</code>). What is the approximate range of periodogram values? Repeat with <code>spans = c(7,7)</code>. How does smoothing affect the variability?</p></li>
 <li><p><strong>AR spectrum identification</strong>: Using <code>astsa::arma.spec()</code>, plot the theoretical spectra of AR(1) processes with <span class="math inline">\(\phi = 0.9\)</span>, <span class="math inline">\(\phi = 0.5\)</span>, and <span class="math inline">\(\phi = -0.5\)</span>. How does the AR parameter affect spectrum shape?</p></li>

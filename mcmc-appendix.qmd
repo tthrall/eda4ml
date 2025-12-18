@@ -124,7 +124,7 @@ Equations of this form are called _detailed balance equations_ (or _local balanc
 
 ## Metropolis-Hastings Algorithm[^art-MH-algo]
 
-[^art-MH-algo]: See @MH_algo_Wikipedia_2025.
+[^art-MH-algo]: See @wiki_MH_algo.
 
 Suppose now that $q(Y \; | \; X )$ is a transition density from which we can generate a random sequence $X(0), X(1), \ldots$, and let $p(x)$ denote the prescribed stationary distribution of $X(\cdot)$. Also suppose that the current state of the generated sequence is $X(t) = x$.
 

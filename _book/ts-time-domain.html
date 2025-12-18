@@ -86,7 +86,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./ts-intro.html" rel="next">
+<link href="./ts-freq-domain.html" rel="next">
 <link href="./ts-data.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -329,20 +329,8 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  <a href="./ts-freq-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></a>
   </div>
 </li>
       </ul>
@@ -359,7 +347,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
   </div>
 </li>
       </ul>
@@ -376,13 +364,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
   </div>
 </li>
       </ul>
@@ -390,7 +378,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -472,7 +460,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">13.12</span> Looking Ahead</a></li>
   <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">13.13</span> Chapter Summary</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">13.14</span> Exercises</a></li>
+  <li><a href="#sec-ts-time-domain-exercises" id="toc-sec-ts-time-domain-exercises" class="nav-link" data-scroll-target="#sec-ts-time-domain-exercises"><span class="header-section-number">13.14</span> Exercises</a></li>
   <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">13.15</span> Resources</a></li>
   <li><a href="#sec-ts-time-domain-glossary" id="toc-sec-ts-time-domain-glossary" class="nav-link" data-scroll-target="#sec-ts-time-domain-glossary"><span class="header-section-number">13.16</span> Appendix: Glossary of Notation</a></li>
   </ul>
@@ -500,7 +488,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">12:37 Fri 12-Dec-2025</p>
+      <p class="date">15:26 Thu 18-Dec-2025</p>
     </div>
   </div>
   
@@ -794,7 +782,7 @@ Figure&nbsp;13.4: Random walk with drift: forecast is linear; prediction interva
 </div>
 </div>
 </div>
-<p><a href="ts-forecast.html#fig-rw-drift" class="quarto-xref">Figure&nbsp;<span>12.4</span></a> shows a simulated random walk with drift and its forecast. The forecast (red line) projects linearly from the last observed value with slope equal to the estimated drift. The prediction intervals (gray band) widen with horizon—reflecting the accumulation of uncertainty as we forecast further ahead.</p>
+<p><a href="#fig-rw-drift" class="quarto-xref">Figure&nbsp;<span>13.4</span></a> shows a simulated random walk with drift and its forecast. The forecast (red line) projects linearly from the last observed value with slope equal to the estimated drift. The prediction intervals (gray band) widen with horizon—reflecting the accumulation of uncertainty as we forecast further ahead.</p>
 </section>
 </section>
 <section id="seasonal-models" class="level2" data-number="13.8">
@@ -865,7 +853,7 @@ Figure&nbsp;13.7: CO₂ five-year forecast from ARIMA(1,1,1)×(0,1,1)₁₂
 </div>
 </div>
 </div>
-<p><a href="ts-forecast.html#fig-cardox-forecast" class="quarto-xref">Figure&nbsp;<span>12.8</span></a> shows the five-year forecast from this model. The forecast captures both the upward trend and the seasonal oscillation, with prediction intervals that widen as we project further into the future.</p>
+<p><a href="#fig-cardox-forecast" class="quarto-xref">Figure&nbsp;<span>13.7</span></a> shows the five-year forecast from this model. The forecast captures both the upward trend and the seasonal oscillation, with prediction intervals that widen as we project further into the future.</p>
 </section>
 </section>
 <section id="forecasting" class="level2" data-number="13.9">
@@ -1026,8 +1014,8 @@ Figure&nbsp;13.8: Recruitment: 24-month AR(2) forecast with 95% prediction inter
 <li><p><strong>Understanding enables prediction</strong>: The ACF/PACF patterns reflect the memory structure that makes forecasting possible.</p></li>
 </ol>
 </section>
-<section id="exercises" class="level2" data-number="13.14">
-<h2 data-number="13.14" class="anchored" data-anchor-id="exercises"><span class="header-section-number">13.14</span> Exercises</h2>
+<section id="sec-ts-time-domain-exercises" class="level2" data-number="13.14">
+<h2 data-number="13.14" class="anchored" data-anchor-id="sec-ts-time-domain-exercises"><span class="header-section-number">13.14</span> Exercises</h2>
 <ol type="1">
 <li><p><strong>AR(1) simulation</strong>: Generate 200 observations from an AR(1) process with <span class="math inline">\(\phi_1 = 0.6\)</span> using <code>stats::arima.sim()</code>. Plot the series, ACF, and PACF. Do the diagnostic patterns match the theory?</p></li>
 <li><p><strong>MA(1) simulation</strong>: Generate 200 observations from an MA(1) process with <span class="math inline">\(\theta_1 = 0.6\)</span>. Plot the series, ACF, and PACF. How do they differ from the AR(1) patterns?</p></li>
@@ -1521,8 +1509,8 @@ Hyndman, R. J., and G. Athanasopoulos. 2021. <em>Forecasting: Principles and Pra
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ts-intro.html" class="pagination-link" aria-label="Time Series Data Analysis">
-        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ts-freq-domain.html" class="pagination-link" aria-label="Frequency Domain Methods">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

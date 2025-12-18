@@ -399,11 +399,9 @@ window.Quarto = {
   <li><a href="#regression-to-the-mean" id="toc-regression-to-the-mean" class="nav-link" data-scroll-target="#regression-to-the-mean"><span class="header-section-number">1.6.8</span> Regression to the Mean</a></li>
   <li><a href="#a-note-on-showing-code" id="toc-a-note-on-showing-code" class="nav-link" data-scroll-target="#a-note-on-showing-code"><span class="header-section-number">1.6.9</span> A Note on Showing Code</a></li>
   </ul></li>
-  <li><a href="#class-exercise-diamond-data" id="toc-class-exercise-diamond-data" class="nav-link" data-scroll-target="#class-exercise-diamond-data"><span class="header-section-number">1.7</span> Class Exercise: Diamond Data</a></li>
-  <li><a href="#class-exercise-general-social-survey-data" id="toc-class-exercise-general-social-survey-data" class="nav-link" data-scroll-target="#class-exercise-general-social-survey-data"><span class="header-section-number">1.8</span> Class Exercise: General Social Survey Data</a></li>
-  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">1.9</span> Looking Ahead</a></li>
-  <li><a href="#team-exercises" id="toc-team-exercises" class="nav-link" data-scroll-target="#team-exercises"><span class="header-section-number">1.10</span> Team Exercises</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">1.11</span> Resources</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead"><span class="header-section-number">1.7</span> Looking Ahead</a></li>
+  <li><a href="#sec-eda-exercises" id="toc-sec-eda-exercises" class="nav-link" data-scroll-target="#sec-eda-exercises"><span class="header-section-number">1.8</span> Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">1.9</span> Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/eda.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -429,7 +427,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10:19 Sat 6-Dec-2025</p>
+      <p class="date">15:26 Thu 18-Dec-2025</p>
     </div>
   </div>
   
@@ -906,64 +904,8 @@ Table&nbsp;1.3: Summary statistics for height differences
 <p>The pattern is: start with data, specify aesthetic mappings (which variables map to which visual properties), add geometric objects (points, lines, bars), and customize labels. This “grammar of graphics” approach, implemented in ggplot2, provides a flexible framework for constructing visualizations.</p>
 </section>
 </section>
-<section id="class-exercise-diamond-data" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="class-exercise-diamond-data"><span class="header-section-number">1.7</span> Class Exercise: Diamond Data</h2>
-<p>The ggplot2 package includes a data set of prices and attributes for nearly 54,000 diamonds. This exercise gives you practice formulating and addressing EDA questions.</p>
-<p>Team up with a classmate. Load the diamond data and spend 20 minutes exploring it. Here are some guiding questions:</p>
-<p><strong>Understanding the data:</strong></p>
-<ul>
-<li>How many observations (rows) are there? How many variables (columns)?</li>
-<li>What are the variable names? Which are numeric, which are categorical?</li>
-<li>For categorical variables: how many levels does each have? What are they?</li>
-</ul>
-<p><strong>Distributions:</strong></p>
-<ul>
-<li>What is the distribution of price? Is it symmetric or skewed? Are there outliers?</li>
-<li>What is the distribution of carat (weight)? How does it relate to price?</li>
-<li>For categorical variables like cut, color, and clarity: what are the frequencies of each level?</li>
-</ul>
-<p><strong>Relationships:</strong></p>
-<ul>
-<li>Which variables appear to be associated with price?</li>
-<li>Are any of the predictor variables correlated with each other?</li>
-</ul>
-<p><strong>Potential questions for modeling:</strong></p>
-<ul>
-<li>If you wanted to predict diamond price, which variables would you include?</li>
-<li>Are there any data quality issues that might affect modeling?</li>
-</ul>
-<p>Prepare to report one interesting finding to the class.</p>
-</section>
-<section id="class-exercise-general-social-survey-data" class="level2" data-number="1.8">
-<h2 data-number="1.8" class="anchored" data-anchor-id="class-exercise-general-social-survey-data"><span class="header-section-number">1.8</span> Class Exercise: General Social Survey Data</h2>
-<p>The <a href="https://gss.norc.org/">General Social Survey</a> (GSS) is a long-running US survey conducted by NORC at the University of Chicago. It tracks changes in American social attitudes and demographics. The forcats package includes a subset of GSS data (gss_cat) useful for practicing with categorical variables.</p>
-<p>Team up with a classmate. Load the gss_cat data and spend 20 minutes exploring it. Here are some guiding questions:</p>
-<p><strong>Understanding the data:</strong></p>
-<ul>
-<li>How many observations and variables are there?</li>
-<li>What years are covered? How many respondents per year?</li>
-<li>What categorical variables are included? How many levels does each have?</li>
-</ul>
-<p><strong>Distributions:</strong></p>
-<ul>
-<li>What is the distribution of age? Of TV hours watched?</li>
-<li>What are the most common responses for marital status? Religion? Political party?</li>
-</ul>
-<p><strong>Relationships:</strong></p>
-<ul>
-<li>Does TV watching vary by age? By marital status?</li>
-<li>How has the distribution of religious affiliation changed over the years covered?</li>
-<li>Are there associations between political party and other variables?</li>
-</ul>
-<p><strong>Challenges with categorical data:</strong></p>
-<ul>
-<li>Are there categories with very few observations? How might this affect analysis?</li>
-<li>Are there categories that might reasonably be combined?</li>
-</ul>
-<p>Prepare to report one interesting finding to the class.</p>
-</section>
-<section id="looking-ahead" class="level2" data-number="1.9">
-<h2 data-number="1.9" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">1.9</span> Looking Ahead</h2>
+<section id="looking-ahead" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="looking-ahead"><span class="header-section-number">1.7</span> Looking Ahead</h2>
 <p>This chapter has introduced EDA as a question-driven approach to understanding data. The remaining chapters of Part 1 develop specific tools and concepts:</p>
 <p><strong><a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>: Conditional Distributions.</strong> We return to the father-son data and examine the “graph of averages”—the conditional mean of son’s height given father’s height. This leads to the regression line, a linear approximation to the conditional mean, and to formal measures of association including the correlation coefficient.</p>
 <p><strong><a href="clustering.html" class="quarto-xref"><span>Chapter 3</span></a>: Clustering.</strong> When data have many variables, we may want to organize observations into groups (clusters) that are similar to each other. Clustering is EDA in higher dimensions: an unsupervised method for discovering structure without predefined categories.</p>
@@ -972,18 +914,20 @@ Table&nbsp;1.3: Summary statistics for height differences
 <p><strong><a href="info-theory.html" class="quarto-xref"><span>Chapter 6</span></a>: Information Theory.</strong> As a coda to Part 1, we introduce entropy, mutual information, and related concepts from information theory. These provide an alternative framework for measuring association and uncertainty—one that underlies many machine learning algorithms.</p>
 <p>Throughout these chapters, the EDA mindset remains central: look at the data, ask questions, and let the data guide your understanding.</p>
 </section>
-<section id="team-exercises" class="level2" data-number="1.10">
-<h2 data-number="1.10" class="anchored" data-anchor-id="team-exercises"><span class="header-section-number">1.10</span> Team Exercises</h2>
+<section id="sec-eda-exercises" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="sec-eda-exercises"><span class="header-section-number">1.8</span> Exercises</h2>
 <ol type="1">
-<li><p><strong>Response versus predictor variables.</strong> For the father-son height data, which variable would you designate as the “response” and which as the “predictor”? Could a reasonable argument be made for the reverse? What do “response” and “predictor” mean in this context? Describe a situation where this distinction would not apply.</p></li>
-<li><p><strong>Regression to the mean.</strong> Galton observed that extremely tall or short fathers tend to have sons who are not quite so extreme. Using the summary table of sons’ heights by father’s height, can you see evidence of this phenomenon? How would you quantify it?</p></li>
-<li><p><strong>Diamond data exploration.</strong> Choose one relationship in the diamond data (e.g., price vs.&nbsp;carat, or price vs.&nbsp;cut) and explore it using at least two different visualizations. What do the visualizations reveal? Do they suggest any hypotheses for further investigation?</p></li>
-<li><p><strong>Survey data exploration.</strong> Using the gss_cat data, investigate how one variable has changed over time (across the years in the data set). What patterns do you observe? What questions does this raise?</p></li>
-<li><p><strong>Misleading summaries.</strong> Find or construct an example where summary statistics (mean, standard deviation, correlation) give a misleading impression of the data. What visualization would reveal the true structure? (Hint: Anscombe’s quartet, which we will encounter in <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>, is one famous example.)</p></li>
+<li><p><strong>(Diamond Data Exploration)</strong> The ggplot2 package includes a dataset of prices and attributes for nearly 54,000 diamonds (<code>diamonds &lt;- ggplot2::diamonds</code>). Explore the data by considering: How many observations and variables are there? Which are numeric, which categorical? What is the distribution of price—symmetric or skewed? What is the distribution of carat and how does it relate to price? Which variables appear to be associated with price? If you wanted to predict diamond price, which variables would you include?</p></li>
+<li><p><strong>(GSS Data Exploration)</strong> The forcats package includes a subset of General Social Survey data (<code>gss_cat &lt;- forcats::gss_cat</code>). Explore the data by considering: How many observations and variables? What years are covered? What is the distribution of age and TV hours watched? Does TV watching vary by age or marital status? How has religious affiliation changed over the years? Are there categories with very few observations that might need combining?</p></li>
+<li><p><strong>(Response vs.&nbsp;Predictor)</strong> For the father-son height data, which variable would you designate as the “response” and which as the “predictor”? Could a reasonable argument be made for the reverse? What do “response” and “predictor” mean in this context? Describe a situation where this distinction would not apply.</p></li>
+<li><p><strong>(Regression to the Mean)</strong> Galton observed that extremely tall or short fathers tend to have sons who are not quite so extreme. Using the summary table of sons’ heights by father’s height, can you see evidence of this phenomenon? How would you quantify it?</p></li>
+<li><p><strong>(Diamond Relationships)</strong> Choose one relationship in the diamond data (e.g., price vs.&nbsp;carat, or price vs.&nbsp;cut) and explore it using at least two different visualizations. What do the visualizations reveal? Do they suggest any hypotheses for further investigation?</p></li>
+<li><p><strong>(Survey Trends)</strong> Using the gss_cat data, investigate how one variable has changed over time (across the years in the data set). What patterns do you observe? What questions does this raise?</p></li>
+<li><p><strong>(Misleading Summaries)</strong> Find or construct an example where summary statistics (mean, standard deviation, correlation) give a misleading impression of the data. What visualization would reveal the true structure? (Hint: Anscombe’s quartet, which we will encounter in <a href="conditioning.html" class="quarto-xref"><span>Chapter 2</span></a>, is one famous example.)</p></li>
 </ol>
 </section>
-<section id="resources" class="level2" data-number="1.11">
-<h2 data-number="1.11" class="anchored" data-anchor-id="resources"><span class="header-section-number">1.11</span> Resources</h2>
+<section id="resources" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="resources"><span class="header-section-number">1.9</span> Resources</h2>
 <p><a href="https://www.goodreads.com/book/show/527129.Exploratory_Data_Analysis">Exploratory Data Analysis</a> by John W. Tukey — the original 1977 book that established EDA as a field.</p>
 <p><a href="https://r4ds.hadley.nz/">R for Data Science (2e)</a> by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund — a modern introduction to data science in R, with extensive coverage of EDA and visualization.</p>
 <p><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming with R</a> by Garrett Grolemund — an introduction to R programming.</p>

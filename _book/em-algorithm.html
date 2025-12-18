@@ -8,7 +8,7 @@
 
 <meta name="author" content="Send comments to: Tony T (tthrall)">
 
-<title>15&nbsp; EM: the Expectation-Maximization Algorithm – EDA for Machine Learning</title>
+<title>17&nbsp; EM: the Expectation-Maximization Algorithm – EDA for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -87,7 +87,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./summary.html" rel="next">
-<link href="./graph-theory.html" rel="prev">
+<link href="./mcmc-appendix.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -167,7 +167,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./em-algorithm.html">Appendices</a></li><li class="breadcrumb-item"><a href="./em-algorithm.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mcmc-appendix.html">Appendices</a></li><li class="breadcrumb-item"><a href="./em-algorithm.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -210,7 +210,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Statistics</span></a>
+ <span class="menu-text">Foundations</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -246,6 +246,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sampling and Study Design</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./info-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Information Theory</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -259,14 +265,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./la-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  <a href="./lin-reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reduce-dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  <a href="./pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lin-discr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Linear Discriminant Analysis</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,20 +294,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./text-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Text Analysis</span></span></a>
+  <a href="./text-as-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Text as Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dirichlet-dstn.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Dirichlet Distribution</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./latent-dirichlet-alloc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latent Dirichlet Allocation</span></span></a>
+  <a href="./topic-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Topic Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -311,20 +317,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  <a href="./ts-time-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  <a href="./ts-freq-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></a>
   </div>
 </li>
       </ul>
@@ -332,7 +338,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Graph Theory</span></a>
+ <span class="menu-text">Network Data</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -341,7 +347,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./graph-theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span></a>
   </div>
 </li>
       </ul>
@@ -357,8 +363,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./em-algorithm.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></a>
   </div>
 </li>
       </ul>
@@ -366,7 +378,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -385,29 +397,29 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">15.1</span> Background</a></li>
-  <li><a href="#example-old-faithful-eruptions" id="toc-example-old-faithful-eruptions" class="nav-link" data-scroll-target="#example-old-faithful-eruptions"><span class="header-section-number">15.2</span> Example: Old Faithful eruptions</a>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">17.1</span> Background</a></li>
+  <li><a href="#example-old-faithful-eruptions" id="toc-example-old-faithful-eruptions" class="nav-link" data-scroll-target="#example-old-faithful-eruptions"><span class="header-section-number">17.2</span> Example: Old Faithful eruptions</a>
   <ul>
-  <li><a href="#delay-and-duration" id="toc-delay-and-duration" class="nav-link" data-scroll-target="#delay-and-duration"><span class="header-section-number">15.2.1</span> Delay and Duration</a></li>
-  <li><a href="#gausian-mixture-model" id="toc-gausian-mixture-model" class="nav-link" data-scroll-target="#gausian-mixture-model"><span class="header-section-number">15.2.2</span> Gausian Mixture Model</a></li>
-  <li><a href="#latent-variable-cluster-membership" id="toc-latent-variable-cluster-membership" class="nav-link" data-scroll-target="#latent-variable-cluster-membership"><span class="header-section-number">15.2.3</span> Latent Variable: Cluster Membership</a></li>
-  <li><a href="#initial-estimates" id="toc-initial-estimates" class="nav-link" data-scroll-target="#initial-estimates"><span class="header-section-number">15.2.4</span> Initial Estimates</a></li>
-  <li><a href="#log-likelihood" id="toc-log-likelihood" class="nav-link" data-scroll-target="#log-likelihood"><span class="header-section-number">15.2.5</span> Log Likelihood</a></li>
+  <li><a href="#delay-and-duration" id="toc-delay-and-duration" class="nav-link" data-scroll-target="#delay-and-duration"><span class="header-section-number">17.2.1</span> Delay and Duration</a></li>
+  <li><a href="#gausian-mixture-model" id="toc-gausian-mixture-model" class="nav-link" data-scroll-target="#gausian-mixture-model"><span class="header-section-number">17.2.2</span> Gausian Mixture Model</a></li>
+  <li><a href="#latent-variable-cluster-membership" id="toc-latent-variable-cluster-membership" class="nav-link" data-scroll-target="#latent-variable-cluster-membership"><span class="header-section-number">17.2.3</span> Latent Variable: Cluster Membership</a></li>
+  <li><a href="#initial-estimates" id="toc-initial-estimates" class="nav-link" data-scroll-target="#initial-estimates"><span class="header-section-number">17.2.4</span> Initial Estimates</a></li>
+  <li><a href="#log-likelihood" id="toc-log-likelihood" class="nav-link" data-scroll-target="#log-likelihood"><span class="header-section-number">17.2.5</span> Log Likelihood</a></li>
   </ul></li>
-  <li><a href="#em-iterations" id="toc-em-iterations" class="nav-link" data-scroll-target="#em-iterations"><span class="header-section-number">15.3</span> EM Iterations</a></li>
-  <li><a href="#group-membership-over-time" id="toc-group-membership-over-time" class="nav-link" data-scroll-target="#group-membership-over-time"><span class="header-section-number">15.4</span> Group Membership over Time</a></li>
-  <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">15.5</span> Closing Remarks</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">15.6</span> Resources</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">15.7</span> References</a></li>
+  <li><a href="#em-iterations" id="toc-em-iterations" class="nav-link" data-scroll-target="#em-iterations"><span class="header-section-number">17.3</span> EM Iterations</a></li>
+  <li><a href="#group-membership-over-time" id="toc-group-membership-over-time" class="nav-link" data-scroll-target="#group-membership-over-time"><span class="header-section-number">17.4</span> Group Membership over Time</a></li>
+  <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">17.5</span> Closing Remarks</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">17.6</span> Resources</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">17.7</span> References</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/em-algorithm.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./em-algorithm.html">Appendices</a></li><li class="breadcrumb-item"><a href="./em-algorithm.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mcmc-appendix.html">Appendices</a></li><li class="breadcrumb-item"><a href="./em-algorithm.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-em-algorithm" class="quarto-section-identifier"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></h1>
+<h1 class="title"><span id="sec-em-algorithm" class="quarto-section-identifier"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">EM: the Expectation-Maximization Algorithm</span></span></h1>
 </div>
 
 
@@ -424,7 +436,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">18:03 Mon 1-Dec-2025</p>
+      <p class="date">16:30 Thu 18-Dec-2025</p>
     </div>
   </div>
   
@@ -437,14 +449,14 @@ window.Quarto = {
 
 
 <hr>
-<section id="background" class="level2" data-number="15.1">
-<h2 data-number="15.1" class="anchored" data-anchor-id="background"><span class="header-section-number">15.1</span> Background</h2>
+<section id="background" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="background"><span class="header-section-number">17.1</span> Background</h2>
 <p>Latent Dirichlet Allocation (LDA) was proposed as a method of topic modeling in 2003 in a paper by Blei, Ng, and Jordan. The method is briefly mentioned in Part 1 of the course. Several course participants requested a more detailed description. This note prepares for the requested response by introducing the EM Algorithm.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 </section>
-<section id="example-old-faithful-eruptions" class="level2" data-number="15.2">
-<h2 data-number="15.2" class="anchored" data-anchor-id="example-old-faithful-eruptions"><span class="header-section-number">15.2</span> Example: Old Faithful eruptions</h2>
-<section id="delay-and-duration" class="level3" data-number="15.2.1">
-<h3 data-number="15.2.1" class="anchored" data-anchor-id="delay-and-duration"><span class="header-section-number">15.2.1</span> Delay and Duration</h3>
+<section id="example-old-faithful-eruptions" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="example-old-faithful-eruptions"><span class="header-section-number">17.2</span> Example: Old Faithful eruptions</h2>
+<section id="delay-and-duration" class="level3" data-number="17.2.1">
+<h3 data-number="17.2.1" class="anchored" data-anchor-id="delay-and-duration"><span class="header-section-number">17.2.1</span> Delay and Duration</h3>
 <p>The figure below represents the duration of eruptions (“duration”) and the interval between eruptions (“delay”)<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> of the “Old Faithful” geyser in Yellowstone National Park, Wyoming from August 1 to August 15, 1985.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <div class="cell">
 <div class="cell-output-display">
@@ -454,15 +466,15 @@ window.Quarto = {
 <img src="em-algorithm_files/figure-html/fig-faithful-tbl-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-faithful-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15.1: Old Faithful eruptions: delay and duration (minutes)
+Figure&nbsp;17.1: Old Faithful eruptions: delay and duration (minutes)
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="gausian-mixture-model" class="level3" data-number="15.2.2">
-<h3 data-number="15.2.2" class="anchored" data-anchor-id="gausian-mixture-model"><span class="header-section-number">15.2.2</span> Gausian Mixture Model</h3>
+<section id="gausian-mixture-model" class="level3" data-number="17.2.2">
+<h3 data-number="17.2.2" class="anchored" data-anchor-id="gausian-mixture-model"><span class="header-section-number">17.2.2</span> Gausian Mixture Model</h3>
 <p>The figure shows two clusters of data points.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Here is probability model in which the delay and duration of each eruption follows one of two possible bivariate normal distributions depending on the group, <span class="math inline">\(G\)</span>, to which it belongs.</p>
 <p><span id="eq-nrm-2-given-group"><span class="math display">\[
 \begin{align}
@@ -474,7 +486,7 @@ Figure&nbsp;15.1: Old Faithful eruptions: delay and duration (minutes)
     2 &amp; \text{with probability } p_2 = 1 - p_1
   \end{cases}
 \end{align}
-\qquad(15.1)\]</span></span></p>
+\qquad(17.1)\]</span></span></p>
 <p>Averaging across the two groups, a randomly selected eruption has the following mixture of bivariate normal distributions.</p>
 <p><span id="eq-nrm-2-mixture"><span class="math display">\[
 \begin{align}
@@ -483,16 +495,16 @@ Figure&nbsp;15.1: Old Faithful eruptions: delay and duration (minutes)
   \\
   &amp; \text{where } p_1 + p_2 = 1\\
 \end{align}
-\qquad(15.2)\]</span></span></p>
+\qquad(17.2)\]</span></span></p>
 <p>Fitting a single multivariate normal distribution is straightforward<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>, but less so for the above mixture of bivariate normal distributions. The Expectation-Maximization (EM) algorithm provides an approach for doing so, as follows.</p>
 </section>
-<section id="latent-variable-cluster-membership" class="level3" data-number="15.2.3">
-<h3 data-number="15.2.3" class="anchored" data-anchor-id="latent-variable-cluster-membership"><span class="header-section-number">15.2.3</span> Latent Variable: Cluster Membership</h3>
+<section id="latent-variable-cluster-membership" class="level3" data-number="17.2.3">
+<h3 data-number="17.2.3" class="anchored" data-anchor-id="latent-variable-cluster-membership"><span class="header-section-number">17.2.3</span> Latent Variable: Cluster Membership</h3>
 <p>In the EM framework, we iteratively assign group-membership, <span class="math inline">\(G = g \in \{ 1, 2 \}\)</span>, to each data point. Based on this set of assignments we update the parameter estimates (the “E” step of the EM algorithm). The new set of parameter estimates yields a new estimate of the likelihood function. We then re-assign cluster-membership to maximize the updated likelihood estimate (the “M” step). The iteration terminates once the magnitude of changes falls below a prescribed threshold.</p>
 <p>In <code>R</code> this procedure is implemented by the function <code>mixtools::mvnormalmixEM()</code>.</p>
 </section>
-<section id="initial-estimates" class="level3" data-number="15.2.4">
-<h3 data-number="15.2.4" class="anchored" data-anchor-id="initial-estimates"><span class="header-section-number">15.2.4</span> Initial Estimates</h3>
+<section id="initial-estimates" class="level3" data-number="17.2.4">
+<h3 data-number="17.2.4" class="anchored" data-anchor-id="initial-estimates"><span class="header-section-number">17.2.4</span> Initial Estimates</h3>
 <p>Based on the preceding figure we adopt the following initial estimates of the parameters.</p>
 <ol type="1">
 <li><p>Calculate the respective medians of the (<code>delay</code>, <code>duration</code>) variables.</p></li>
@@ -505,7 +517,7 @@ Figure&nbsp;15.1: Old Faithful eruptions: delay and duration (minutes)
 <div id="tbl-faithful-4-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-faithful-4-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;15.1: Summary statistics for initial groups of data points
+Table&nbsp;17.1: Summary statistics for initial groups of data points
 </figcaption>
 <div aria-describedby="tbl-faithful-4-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -586,7 +598,7 @@ Table&nbsp;15.1: Summary statistics for initial groups of data points
 <div id="tbl-initial-est" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-initial-est-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;15.2: Initial parameter estimates
+Table&nbsp;17.2: Initial parameter estimates
 </figcaption>
 <div aria-describedby="tbl-initial-est-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -638,7 +650,7 @@ Table&nbsp;15.2: Initial parameter estimates
 <img src="em-algorithm_files/figure-html/fig-faithful-2-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-faithful-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15.2: Old Faithful eruptions: initial normal estimates
+Figure&nbsp;17.2: Old Faithful eruptions: initial normal estimates
 </figcaption>
 </figure>
 </div>
@@ -646,8 +658,8 @@ Figure&nbsp;15.2: Old Faithful eruptions: initial normal estimates
 </div>
 <p>This completes the initial “E” step in the EM algorithm, the estimation of parameter values.</p>
 </section>
-<section id="log-likelihood" class="level3" data-number="15.2.5">
-<h3 data-number="15.2.5" class="anchored" data-anchor-id="log-likelihood"><span class="header-section-number">15.2.5</span> Log Likelihood</h3>
+<section id="log-likelihood" class="level3" data-number="17.2.5">
+<h3 data-number="17.2.5" class="anchored" data-anchor-id="log-likelihood"><span class="header-section-number">17.2.5</span> Log Likelihood</h3>
 <p>We now begin the initial “M” step (maximization) of the EM algorithm. Using the above parameter estimates we now assign cluster membership (variable <code>g</code>) to the points not yet labeled by maximizing the likelihood function, or equivalently (and more conveniently), the logarithm of the likelihood function.</p>
 <p>In general, recall that a multivariate normal distribution having mean vector <span class="math inline">\(\mu_{\bullet} \in \mathbb{R}^m\)</span> and covariance matrix <span class="math inline">\(\Sigma\)</span> has likelihood function equal to the product of the multivariate normal density evaluated at each observation vector, say <span class="math inline">\(x_{\bullet}^{(\nu)}\)</span>, (that is, at each row of the design matrix <span class="math inline">\(X\)</span>).</p>
 <p><span class="math display">\[
@@ -687,7 +699,7 @@ Figure&nbsp;15.2: Old Faithful eruptions: initial normal estimates
 <img src="em-algorithm_files/figure-html/fig-f-tag-tbl-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-f-tag-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15.3: Old Faithful: inital clustering of all points
+Figure&nbsp;17.3: Old Faithful: inital clustering of all points
 </figcaption>
 </figure>
 </div>
@@ -698,7 +710,7 @@ Figure&nbsp;15.3: Old Faithful: inital clustering of all points
 <div id="tbl-f-tag-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-f-tag-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;15.3: Summary statistics for initial clusters of data points
+Table&nbsp;17.3: Summary statistics for initial clusters of data points
 </figcaption>
 <div aria-describedby="tbl-f-tag-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -743,8 +755,8 @@ Table&nbsp;15.3: Summary statistics for initial clusters of data points
 </div>
 </section>
 </section>
-<section id="em-iterations" class="level2" data-number="15.3">
-<h2 data-number="15.3" class="anchored" data-anchor-id="em-iterations"><span class="header-section-number">15.3</span> EM Iterations</h2>
+<section id="em-iterations" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="em-iterations"><span class="header-section-number">17.3</span> EM Iterations</h2>
 <p>We illustrate the iterations of the EM algorithm using function <code>mvnormalmixEM()</code> in R package <code>mixtools</code>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> We provide the function with our initial estimates of normal parameters.</p>
 <div class="cell">
 <details class="code-fold">
@@ -798,7 +810,7 @@ number of iterations= 12 </code></pre>
 <div id="tbl-f-em-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-f-em-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;15.4: Summary statistics for final groups of data points
+Table&nbsp;17.4: Summary statistics for final groups of data points
 </figcaption>
 <div aria-describedby="tbl-f-em-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -849,15 +861,15 @@ Table&nbsp;15.4: Summary statistics for final groups of data points
 <img src="em-algorithm_files/figure-html/fig-f-em-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-f-em-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15.4: Old Faithful eruptions: final normal estimates
+Figure&nbsp;17.4: Old Faithful eruptions: final normal estimates
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="group-membership-over-time" class="level2" data-number="15.4">
-<h2 data-number="15.4" class="anchored" data-anchor-id="group-membership-over-time"><span class="header-section-number">15.4</span> Group Membership over Time</h2>
+<section id="group-membership-over-time" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="group-membership-over-time"><span class="header-section-number">17.4</span> Group Membership over Time</h2>
 <p>According to the EM algorithm, here is the pattern of group membership as a function of time. More precisely, here is the posterior probability of group-1 membership as a function of cumulative delay expressed in days.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -867,7 +879,7 @@ Figure&nbsp;15.4: Old Faithful eruptions: final normal estimates
 <img src="em-algorithm_files/figure-html/fig-grp-per-cum-delay-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grp-per-cum-delay-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15.5: Group 1 posterior probability over cumulative delay (days)
+Figure&nbsp;17.5: Group 1 posterior probability over cumulative delay (days)
 </figcaption>
 </figure>
 </div>
@@ -875,29 +887,32 @@ Figure&nbsp;15.5: Group 1 posterior probability over cumulative delay (days)
 </div>
 <p>Recall that group 1 refers to the eruptions having shorter delays and shorter durations. The figure shows that these are interupted by short stretches of eruptions from group 2. The figure also show that posterior probabilities come out to be nearly zero or else nearly unity, with rare exceptions.</p>
 </section>
-<section id="closing-remarks" class="level2" data-number="15.5">
-<h2 data-number="15.5" class="anchored" data-anchor-id="closing-remarks"><span class="header-section-number">15.5</span> Closing Remarks</h2>
+<section id="closing-remarks" class="level2" data-number="17.5">
+<h2 data-number="17.5" class="anchored" data-anchor-id="closing-remarks"><span class="header-section-number">17.5</span> Closing Remarks</h2>
 <p>Several papers present the mathematics underlying the EM algorithm, and one can also find tutorials that illustrate the convergence of the algorithm.</p>
 </section>
-<section id="resources" class="level2" data-number="15.6">
-<h2 data-number="15.6" class="anchored" data-anchor-id="resources"><span class="header-section-number">15.6</span> Resources</h2>
+<section id="resources" class="level2" data-number="17.6">
+<h2 data-number="17.6" class="anchored" data-anchor-id="resources"><span class="header-section-number">17.6</span> Resources</h2>
 <p>In addition to the references listed below, see the following.</p>
 <p><a href="https://medium.com/@chloebee/the-em-algorithm-explained-52182dbb19d9">The EM Algorithm Explained</a> blog by Chloe Bi, 2019</p>
 </section>
-<section id="references" class="level2" data-number="15.7">
-<h2 data-number="15.7" class="anchored" data-anchor-id="references"><span class="header-section-number">15.7</span> References</h2>
+<section id="references" class="level2" data-number="17.7">
+<h2 data-number="17.7" class="anchored" data-anchor-id="references"><span class="header-section-number">17.7</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Anderson_Olkin_2002" class="csl-entry" role="listitem">
 Anderson, T. W., and Ingram Olkin. 2002. <span>“Maximum-Likelihood Estimation of the Parameters of a Multivariate Normal Distribution.”</span> <em>Linear Algebra and Its Applications</em>, May. <a href="https://www.sciencedirect.com/science/article/pii/0024379585900497">https://www.sciencedirect.com/science/article/pii/0024379585900497</a>.
 </div>
+<div id="ref-Peng_2022_adv_stat_comp" class="csl-entry" role="listitem">
+Peng, Roger D. 2025. <em>Advanced Statistical Computing</em>. <a href="https://bookdown.org/rdpeng/advstatcomp/">https://bookdown.org/rdpeng/advstatcomp/</a>.
+</div>
 </div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>See <span class="citation" data-cites="rdpeng2022advstatcomp">(<a href="references.html#ref-rdpeng2022advstatcomp" role="doc-biblioref"><strong>rdpeng2022advstatcomp?</strong></a>, chp. 4)</span>, and <span class="citation" data-cites="EM_algo_Wikipedia_2025">(<a href="references.html#ref-EM_algo_Wikipedia_2025" role="doc-biblioref"><strong>EM_algo_Wikipedia_2025?</strong></a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>See <span class="citation" data-cites="Peng_2022_adv_stat_comp">Peng (<a href="references.html#ref-Peng_2022_adv_stat_comp" role="doc-biblioref">2025</a>, chp. 4)</span>, and <span class="citation" data-cites="EM_algo_Wikipedia_2025">(<a href="references.html#ref-EM_algo_Wikipedia_2025" role="doc-biblioref"><strong>EM_algo_Wikipedia_2025?</strong></a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>“Delay” here refers to the length of time <em>preceding</em> the current eruption. The (<code>delay</code>, <code>duration</code>) variables are recorded in minutes.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>There are two prominent <code>R</code> packages representing the Old Faithful measurements during August, 1985. The <code>MASS::geyser</code> data set of 299 observations includes nocturnal measurements whose duration was coded as 2, 3 or 4 minutes, having originally been described as ‘short’, ‘medium’ or ‘long’. The <code>datasets::faithful</code> data set of 272 measurements, shown in the figure, excludes 27 of these nocturnal measurements.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>Old Faithful eruptions are conjectured to occur in 2 distinct temporal patterns due to the presence of an upper and lower chamber beneath the vertical column (tube) that forms the geyser. See <span class="citation" data-cites="Vandemeulebrouck_Roux_Cros_2013">(<a href="references.html#ref-Vandemeulebrouck_Roux_Cros_2013" role="doc-biblioref"><strong>Vandemeulebrouck_Roux_Cros_2013?</strong></a>)</span>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
@@ -1308,13 +1323,13 @@ Anderson, T. W., and Ingram Olkin. 2002. <span>“Maximum-Likelihood Estimation 
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./graph-theory.html" class="pagination-link" aria-label="Graph Theory for Machine Learning">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Graph Theory for Machine Learning</span></span>
+      <a href="./mcmc-appendix.html" class="pagination-link" aria-label="MCMC: Markov Chain Monte Carlo">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./summary.html" class="pagination-link" aria-label="Summary">
-        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -1,0 +1,1312 @@
+# Principal Component Analysis {#sec-pca}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: CRAN-libraries
+
+library(assertthat)
+library(beans)
+library(Cairo)
+library(conflicted)
+library(corrplot)
+library(GGally)
+library(HistData)
+library(here)
+library(ISLR2)
+library(knitr)
+library(MASS)
+library(mclust)
+library(patchwork)
+library(plotly)
+library(pracma)
+library(rlang)
+library(tidymodels)
+library(tidyverse)
+```
+
+```{r}
+#| label: conflicts-prefer
+
+# resolve conflicts with plotly
+conflicted::conflicts_prefer(plotly::layout)
+
+# resolve conflicts with tidymodels packages
+tidymodels::tidymodels_prefer()
+
+```
+
+```{r}
+#| label: local-libraries
+
+library(eda4mldata)
+
+```
+
+```{r}
+#| label: local-source
+
+source(here("code", "d_ball.R"))
+source(here("code", "eda4ml_set_seed.R"))
+source(here("code", "galton_ht_data.R"))
+source(here("code", "pc_aesthetics.R"))
+source(here("code", "vc_per_state.R"))
+source(here("code", "wine_quality_uci.R"))
+
+```
+
+## Introduction {#sec-pca-intro}
+
+This chapter addresses a fundamental question in data analysis: along which directions do the features of a data set vary most?  The answer—principal component analysis (PCA)—is one of the most widely used techniques in statistical learning, providing both a method for dimension reduction and a lens for understanding the structure of high-dimensional data.
+
+PCA connects to themes we have encountered throughout this book:
+
+- In @sec-eda we introduced exploratory data analysis as a mindset devoted to understanding data before modeling it.  PCA extends this mindset to high-dimensional settings where direct visualization is impossible.
+
+- In @sec-clustering we first confronted high-dimensional data, seeking structure through groupings of observations.  PCA offers a complementary perspective: rather than grouping *rows* of the data matrix, it finds *directions* (linear combinations of columns) that capture the most variation.
+
+- In @sec-lin-reg we developed the geometry of linear regression as orthogonal projection onto a model-specified subspace.  PCA employs the same geometric operation, but now the subspace is *data-derived*—we project onto directions determined by the data's own structure.
+
+- In @sec-info-theory we encountered the idea that information content relates to variability and uncertainty.  PCA operationalizes a version of this insight: directions of high variance carry more information about differences among observations than directions of low variance.
+
+A distinctive feature of PCA is that it admits a *closed-form solution*.  Unlike clustering algorithms that iterate toward local optima, or the MCMC and EM methods we will encounter in later chapters, PCA solves directly for the optimal directions via eigenvalue decomposition.  This places PCA in the classical tradition of analytical solutions—yet the problems it addresses are thoroughly modern, arising whenever we confront data sets with more features than we can visualize or easily interpret.
+
+We begin with concrete examples that motivate dimension reduction, examine the geometry of PCA in low dimensions where visualization is possible, develop the algebraic machinery, and then return to richer examples where PCA reveals structure invisible to direct inspection.
+
+## Motivating Examples {#sec-pca-data-examples}
+
+### US Arrests
+
+```{r}
+#| label: stats-per-us-state-1970s
+
+state_stats_lst <- list_state_stats()
+
+# (x, y) = (lat, long)
+st_ctr_tbl <- 
+  state_stats_lst$ st_ctr_tbl
+
+# 8 state stats: Population, ..., Area
+st_77_tbl <- 
+  state_stats_lst$ st_77_tbl
+
+# UrbanPop + 3 violent crimes: Assault, Murder, Rape
+arrests_wide <- 
+  state_stats_lst$ arrests_wide
+arrests_long <- 
+  state_stats_lst$ arrests_long
+
+# compilation of the above
+st_wide <- 
+  state_stats_lst$ st_wide
+st_wide_dscr <- 
+  state_stats_lst$ st_wide_dscr
+```
+
+Data analysis often begins with exploration, using tables and figures to learn about the data before formulating specific questions or hypotheses.  The exploration becomes more challenging as the dimensions of the data increase.  Here is a modest example.
+
+@McNeil_1977 reviewed the relationship among violent crime statistics per US state and the percentage of the population living in urban areas, variables described in @tbl-arrests-per-us-state-1973 below.  With just four variables, we can visualize the full data structure using scatter plot matrices (@fig-arrests-2d-scatter-matrix).  However, even this preliminary exploration reveals strong correlations among the three crime variables (Murder, Assault, Rape), suggesting that the data may effectively lie in fewer than four dimensions.
+
+```{r}
+#| label: tbl-arrests-per-us-state-1973
+
+st_wide_dscr |> 
+  dplyr::filter(
+    var %in% c("Assault", "Rape", "Murder", "UrbanPop")
+  ) |> 
+  dplyr::rename(variable = var, description = dscr) |> 
+  knitr::kable(
+    caption = "Arrests per US State (1973)")
+
+```
+
+@fig-arrests-violin below (a so-called "violin" plot [^violin-plot]) shows the distribution across the 50 states of each type of violent crime.  Rates are calculated as arrests per 100,000 population.  The figure shows these rates on a $\log_{10}$ scale, since assault arrests are many times more common than rape or murder arrests.
+
+[^violin-plot]: See for example, [Violin plot — geom_violin](https://ggplot2.tidyverse.org/reference/geom_violin.html).
+
+```{r}
+#| label: fig-arrests-violin
+#| fig-cap: "Violent Crime Rates per US State (1973)"
+
+g_arrests_violin <- arrests_long |> 
+  dplyr::filter(var != "UrbanPop") |> 
+  dplyr::mutate(var = forcats::as_factor(var)) |> 
+  dplyr::rename(crime = var) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = crime, y = rate, color = crime, fill = crime
+  )) + 
+  geom_violin(show.legend = FALSE) + 
+  scale_y_log10() + 
+  labs(
+    title = "Violent Crime Rates per US State (1973)", 
+    subtitle = "arrests per 100K population"
+  )
+
+g_arrests_violin
+
+```
+
+The figure above gives a view of three data variables—that is, three columns of the data matrix.  @fig-arrests-3d-scatter below, a 3D scatterplot, gives a complementary view: each of the 50 states appears as a point whose coordinates are the respective arrest rates for assault, rape, and murder, with colour indicating `UrbanPop`, the percentage of the state's population living in an urban area.  Since individual states correspond to the rows of the data matrix, this figure provides a row-based perspective.
+
+```{r}
+#| label: fig-arrests-3d-scatter
+#| fig-cap: "Violent Crime Rates in each US State (1973)"
+
+g_arrests_3d_scatter <- arrests_wide |> 
+  plot_ly(
+    x = ~Assault, 
+    y = ~Rape, 
+    z = ~Murder,
+    type = "scatter3d",
+    mode = "markers",
+    text = ~arrests_wide$ st_abb,
+    marker = list(
+      size = 5,
+      color = ~UrbanPop,
+      colorscale = "Viridis",
+      showscale = TRUE,
+      colorbar = list(title = "UrbanPop"))) |> 
+  layout(scene = list(
+    xaxis = list(title = "Assault"),
+    yaxis = list(title = "Rape"),
+    zaxis = list(title = "Murder")
+  ),
+  title = "Violent Crime Rates in each US State (1973)")
+
+g_arrests_3d_scatter
+
+```
+
+@fig-arrests-2d-scatter-matrix below exemplifies a matrix of 2D scatter plots, a display method that accommodates more than 3 variables (but not many more, practically speaking). 
+
+```{r}
+#| label: fig-arrests-2d-scatter-matrix
+#| fig-cap: "Arrests Variables: Relationships and Correlations"
+
+g_arrests_2d_scatter_matrix <- arrests_wide |> 
+  GGally::ggpairs(
+    columns = c("Assault", "Rape", "Murder", "UrbanPop"),
+    upper = list(continuous = wrap("cor", size = 3)),
+    lower = list(continuous = wrap("points", alpha = 0.5, size = 0.8)),
+    title = "Arrests Variables: Relationships and Correlations")
+
+g_arrests_2d_scatter_matrix
+
+```
+
+This figure provides both column-based and row-based views of the data matrix.  The correlation coefficients suggest redundancy: Murder and Assault are correlated at $r = 0.80$, Murder and Rape at $r = 0.56$, and Assault and Rape at $r = 0.67$.  Dimension reduction techniques can help us (1) visualize state-level crime patterns in fewer dimensions, (2) identify states with similar crime profiles, and (3) understand whether crime variation is driven by one dominant factor or multiple independent factors.
+
+### Dry Beans
+
+@Koklu_Ozkan_2020_multiclass published a data set of visual characteristics of dried beans "... in order to obtain uniform seed classification.  For the classification model, images of 13,611 grains of 7 different registered dry beans were taken with a high-resolution camera."  The resulting data set contains 16 morphological features extracted from each bean image, including measures of area, perimeter, compactness, length, width, and various shape factors.
+
+The classification goal is to predict bean variety from these morphological measurements.  Successful classification could improve sorting systems in agricultural processing.  However, many of these 16 features are inherently redundant: area and perimeter are strongly correlated, as are various length and width measurements.  Dimension reduction can reveal whether bean varieties differ primarily in size, shape, or both, and whether a smaller subset of derived features might achieve comparable classification accuracy with greater interpretability.
+
+The data are available in `R` package `beans`, containing a data matrix (tibble) of dimension $13611 \times 17$.  The last column is the response variable `class` that assigns one of seven types of bean to each bean image.  The remaining 16 columns are morphological measurements.
+
+@Kuhn_Silge_tmwr develop and evaluate classification models for these data.  They begin by examining the correlation coefficients for each pair of the 16 feature vectors.  @fig-beans-corrplot follows their example.
+
+```{r}
+#| label: beans-feature-names
+
+beans_features <- beans::beans |> 
+  dplyr::select(- class) |> 
+  names()
+beans_n_features <- beans_features |> length()
+```
+
+```{r}
+#| label: fig-beans-corrplot
+#| fig-cap: "Dry Beans: correlations among 16 features"
+
+beans_cor_mat <- beans::beans |> 
+  dplyr::select(- class) |> 
+  cor()
+
+beans_cor_mat |> 
+  corrplot::corrplot(
+    type = "upper", 
+    order = "hclust",
+    tl.cex = 0.6,
+    title = "Dry Beans: correlations among 16 features", 
+    mar = c(0, 0, 2, 0))
+```
+
+The figure reveals substantial correlation structure: many features are highly correlated (dark blue) or anti-correlated (dark red).  The hierarchical clustering used to order features has grouped related measurements together.  This pattern suggests that the effective dimensionality of the data is much lower than 16.
+
+### Wine Quality
+
+```{r}
+#| label: wine-quality-data
+
+wq_data <- get_wine_quality()
+wq_n_obs <- nrow(wq_data)
+wq_n_col <- ncol(wq_data)
+```
+
+@Cortez_2009 published a data set containing physicochemical measurements and quality ratings for Portuguese wines.  The data set includes both red and white wines, with 11 chemical properties measured for each wine and a quality score assigned by expert tasters.
+
+```{r}
+#| label: tbl-wine-quality-vars
+#| tbl-cap: "Wine Quality: chemical properties (11) and other variables (2)"
+
+wq_vars <- c(
+  "fixed acidity", "volatile acidity", "citric acid", "residual sugar", 
+  "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", 
+  "pH", "sulphates", "alcohol", "quality", "color"
+)
+wq_types <- c(rep("numeric", 11), "integer", "character")
+wq_descr <- c(
+  "tartaric acid (g/dm³)", 
+  "acetic acid (g/dm³)", 
+  "citric acid (g/dm³)", 
+  "residual sugar (g/dm³)", 
+  "sodium chloride (g/dm³)", 
+  "free SO₂ (mg/dm³)", 
+  "total SO₂ (mg/dm³)", 
+  "density (g/cm³)", 
+  "pH", 
+  "potassium sulphate (g/dm³)", 
+  "alcohol (% vol)", 
+  "quality rating (0-10)", 
+  "red or white"
+)
+
+tibble::tibble(
+  variable = wq_vars, 
+  type = wq_types, 
+  description = wq_descr
+) |> 
+  knitr::kable(caption = "Wine Quality: chemical properties (11) and other variables (2)")
+```
+
+The 11 chemical properties are constrained by fermentation chemistry—they are not independent measurements of unrelated quantities.  With `r format(wq_n_obs, big.mark = ",")` observations, the data set is large enough to support reliable estimation, but the correlations among features suggest that fewer than 11 dimensions may suffice to capture the essential variation.
+
+## The Curse of Dimensionality {#sec-pca-curse}
+
+The examples above have $d \le 16$ features—high enough to prevent direct visualization but modest by modern standards.  Contemporary data sets routinely have hundreds, thousands, or even millions of features.  Genomic studies measure expression levels of tens of thousands of genes; image analysis treats each pixel as a feature; natural language processing represents documents in vocabularies of hundreds of thousands of terms.
+
+Several challenges arise when $d$ is large, particularly when $d \gg n$ (more features than observations):
+
+- **Visualization**: We cannot plot points in $d$ dimensions to explore patterns or detect outliers.
+
+- **Over-fitting**: With $d \gg n$, infinitely many coefficient vectors produce identical predictions on the training data.  Model selection becomes impossible without regularization.
+
+- **Computation**: Storing and manipulating a $d \times d$ covariance matrix becomes prohibitively expensive.
+
+- **Geometric pathology**: Our intuition, grounded in two and three dimensions, fails in high-dimensional spaces.
+
+In 1957 Richard Bellman characterised these challenges as "the curse of dimensionality" [@Bellman_1957_dynamic].
+
+To illustrate the geometric pathology, consider a unit hypercube $[0,1]^d$ containing the largest possible inscribed ball.  The ratio $r(d)$ of their volumes shrinks dramatically: $r(3) \approx 0.52$, $r(10) \approx 0.0025$, and $r(100) \approx 2 \times 10^{-70}$.  In high dimensions, randomly generated points within the cube land overwhelmingly far from the centre.
+
+Yet @Donoho_2000_High_Dimensional_Data_Analysis identifies an opportunity within the curse: while *randomly generated* data in high dimensions behaves pathologically, *actual* data tend to be more coherent.  Consider the example data sets:
+
+- **US Arrests**: The three crime variables are highly correlated; they do not independently span 3D space.
+- **Dry Beans**: The 16 shape measurements reflect underlying bean geometry.
+- **Wine Quality**: The 11 chemical properties are constrained by fermentation chemistry.
+
+In each case, the data likely occupy a much lower-dimensional structure within the high-dimensional feature space.  If we can identify this structure, we are likely to *improve* subsequent statistical modeling—by reducing noise, mitigating over-fitting, and enabling visualization.
+
+This insight motivates dimension reduction: we seek to discover the low-dimensional structure that real data often possess.  PCA is the foundational method for this task when the structure is approximately linear.
+
+## Geometric Intuition {#sec-pca-geometry}
+
+Before developing the algebra of PCA, we build geometric intuition using examples where visualization is possible.
+
+### 2D Example: Galton Heights
+
+```{r}
+#| label: fms-galton
+
+galton_3d_lst <- get_galton_3d()
+
+galton_3d <- galton_3d_lst$ galton_3d
+
+fms_tbl <- galton_3d |> 
+  dplyr::filter(gender == "male") |> 
+  dplyr::select(- gender) |> 
+  dplyr::rename(son = child)
+
+# center data variables using base::scale()
+fms_ctr <- fms_tbl |> 
+  dplyr::mutate(dplyr::across(
+    .cols = c(mother, father, son), 
+    .fns  = scale, scale = FALSE
+  )) |> 
+  dplyr::mutate(dplyr::across(
+    .cols = c(mother, father, son), 
+    .fns  = as.vector
+  ))
+
+```
+
+```{r}
+#| label: fs-pca
+
+# PCA(father, son)
+fs_pca_lst <- fms_ctr |> 
+  dplyr::select(father, son) |> 
+  stats::prcomp(center = FALSE) |> 
+  pc_rot_diag()
+
+# rotation matrix
+fs_rot_mat <- fs_pca_lst$ rotation
+
+# slope coefficients for geom_abline()
+fs_slope_1 <- 
+  fs_rot_mat [["son",    "PC1"]] / 
+  fs_rot_mat [["father", "PC1"]]
+fs_slope_2 <- 
+  fs_rot_mat [["son",    "PC2"]] / 
+  fs_rot_mat [["father", "PC2"]]
+
+```
+
+```{r}
+#| label: pca-colors
+
+pc_colors_tbl <- get_pc_colors()
+
+pc_clr <- pc_colors_tbl$ color
+pc_ref <- pc_colors_tbl$ ref
+
+```
+
+```{r}
+#| label: fs-pca-end-pts
+
+fs_pca_end_pt_mat <- fs_pca_lst |> 
+  get_pc_segs()
+
+f_end_pc_1 <- fs_pca_end_pt_mat [["father", "PC1"]]
+f_end_pc_2 <- fs_pca_end_pt_mat [["father", "PC2"]]
+
+s_end_pc_1 <- fs_pca_end_pt_mat [["son",    "PC1"]]
+s_end_pc_2 <- fs_pca_end_pt_mat [["son",    "PC2"]]
+
+```
+
+@fig-fs-pca illustrates PCA for (father, son) centred heights from the Galton data introduced in @sec-la-intro.
+
+```{r}
+#| label: fig-fs-pca
+#| fig-cap: "Principal Components: (father, son) centred heights"
+
+g_fs_pcs <- fms_ctr |> 
+  dplyr::select(father, son) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = father, y = son
+  )) + 
+  ggplot2::geom_point() + 
+  ggplot2::coord_fixed(ratio = 1) + 
+  
+  # 1st pc
+  ggplot2::geom_abline(
+    intercept = 0, 
+    slope = fs_slope_1, 
+    color = pc_clr [[1]]) + 
+  ggplot2::geom_segment(
+    mapping = aes(
+      x = 0, xend = f_end_pc_1,
+      y = 0, yend = s_end_pc_1
+    ),
+    arrow = arrow(
+      length = unit(0.3, "cm"), 
+      ends = "last", type = "closed"
+    ),
+    linetype = 3, linewidth = 0.8, color = pc_clr [[1]]
+  ) + 
+  
+  # 2nd pc
+  ggplot2::geom_abline(
+    intercept = 0, 
+    slope = fs_slope_2, 
+    color = pc_clr [[2]]) + 
+  ggplot2::geom_segment(
+    mapping = aes(
+      x = 0, xend = f_end_pc_2,
+      y = 0, yend = s_end_pc_2
+    ),
+    arrow = arrow(
+      length = unit(0.3, "cm"), 
+      ends = "last", type = "closed"
+    ),
+    linetype = 3, linewidth = 0.8, color = pc_clr [[2]]
+  ) + 
+  
+  ggplot2::labs(
+    title = "PCA: (father, son) centred heights") + 
+  ggplot2::labs(
+    subtitle = bquote(
+      c[1] * ": " * ~ .(pc_ref [[1]]) * ", " * 
+      c[2] * ": " * ~ .(pc_ref [[2]])
+    )
+  )
+
+g_fs_pcs
+
+```
+
+The figure shows two principal components, $(c_1, c_2)$, as respective `r pc_ref [[1]]` and `r pc_ref [[2]]` lines perpendicular to one another.
+
+The `r pc_ref [[1]]` line $(c_1)$ points in the direction where the data varies most.  Geometrically, this is the direction such that projecting all points onto this line yields the maximum spread (variance) of projected values.  The `r pc_ref [[2]]` line $(c_2)$ is perpendicular to $c_1$ and captures the maximum remaining variance.  Together, the two principal components form a rotated coordinate system aligned with the data's natural variation.
+
+This geometric picture illuminates the connection to @sec-lin-reg.  In regression, we project the response vector onto the column space of the feature matrix—a subspace specified by the model of a linear response.  In PCA, there is no response variable; instead we project observations onto a subspace determined by the covariance structure of the feature matrix.  Both operations are orthogonal projections; they differ in how the target subspace is used.
+
+### 3D Example: US Arrests
+
+```{r}
+#| label: arrest-rate-z-scores
+
+z_arrests_mat <- arrests_wide |> 
+  dplyr::select(Assault, Rape, Murder) |> 
+  scale()
+
+z_arrests_tbl <- arrests_wide |> 
+  dplyr::select(st_abb, st_nm, UrbanPop) |> 
+  dplyr::mutate(
+    z_assault = z_arrests_mat [, "Assault"], 
+    z_rape    = z_arrests_mat [, "Rape"], 
+    z_murder  = z_arrests_mat [, "Murder"]
+  )
+
+```
+
+```{r}
+#| label: z-arrests-pca-lst
+
+z_arrests_pca_lst <- z_arrests_tbl |> 
+  dplyr::select(z_assault, z_rape, z_murder) |> 
+  stats::prcomp(center = FALSE) |> 
+  pc_rot_diag()
+
+n_arrests_rot_rows <- z_arrests_pca_lst$ rotation |> nrow()
+n_arrests_rot_cols <- z_arrests_pca_lst$ rotation |> ncol()
+
+```
+
+```{r}
+#| label: z-arrest-pca-end-pts
+
+arm_pca_end_pt_mat <- z_arrests_pca_lst |> 
+  get_pc_segs()
+
+```
+
+We now revisit `datasets::USArrests` to illustrate PCA in three dimensions.  A practical goal might be to define a single index of violent crime from the three crime types.
+
+The arrest rates for assault, rape, and murder are on quite different scales.  Without adjustment, assault rates would dominate total variance and consequently the determination of principal components.  As an initial adjustment, we transform each rate to a z-score by subtracting the mean and dividing by the standard deviation (calculated across the 50 states).
+
+@fig-arm-pca is a 3D scatterplot of these z-scores, also showing the three principal components $(c_1, c_2, c_3)$ in respective colours: `r pc_ref[[1]]`, `r pc_ref[[2]]`, and `r pc_ref[[3]]`.
+
+```{r}
+#| label: fig-arm-pca
+#| fig-cap: "US Arrest Z-scores: Principal Components"
+
+g_arm_pca <- plot_ly(
+  x = z_arrests_tbl$z_assault, 
+  y = z_arrests_tbl$z_rape, 
+  z = z_arrests_tbl$z_murder, 
+  type = "scatter3d",
+  mode = "markers",
+  text = z_arrests_tbl$st_abb, 
+  marker = list(
+    size = 4,
+    color = "steelblue",
+    opacity = 0.7
+  ),
+  name = "State"
+)
+
+for (i in 1:3) {
+  g_arm_pca <- g_arm_pca |> 
+    add_trace(
+      x = c(0, arm_pca_end_pt_mat["z_assault", i]), 
+      y = c(0, arm_pca_end_pt_mat["z_rape", i]), 
+      z = c(0, arm_pca_end_pt_mat["z_murder", i]), 
+      type = "scatter3d",
+      mode = "lines",
+      line = list(width = 6, color = pc_clr[i]),
+      name = paste0("PC", i),
+      showlegend = FALSE,
+      inherit = FALSE
+    )
+}
+
+g_arm_pca <- g_arm_pca |> layout(
+  scene = list(
+    xaxis = list(title = "z_Assault"),
+    yaxis = list(title = "z_Rape"),
+    zaxis = list(title = "z_Murder"),
+    aspectmode = "cube"
+  ),
+  title = "US Arrest Z-scores: Principal Components"
+)
+
+g_arm_pca
+
+```
+
+The first principal component $(c_1)$ is a promising representative of overall violent crime level.  As @fig-arm-loadings shows, the coefficient (loading) of each z-score variable on $c_1$ is positive.  A violent crime index aligned with $c_1$ would respond to an increase in any of the three crime types. [^crime-index]
+
+[^crime-index]: Constructing an actual policy index would require more than PCA, but PCA provides a principled starting point for understanding the correlation structure.
+
+```{r}
+#| label: z-arrests-rot
+
+z_arrests_rot_lst <- 
+  z_arrests_pca_lst |> 
+  get_rot_tbl_lst()
+
+z_arrests_rot_wide <- z_arrests_rot_lst$ rot_wide
+z_arrests_rot_long <- z_arrests_rot_lst$ rot_long
+
+```
+
+```{r}
+#| label: fig-arm-loadings
+#| fig-cap: "US Arrests: coefficients (loadings) of each principal component"
+
+g_arm_loadings <- z_arrests_rot_long |> 
+  dplyr::mutate(crime = forcats::as_factor(var)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = crime, y = coeff, color = pc, fill = pc
+  )) + 
+  ggplot2::geom_col(
+    color = rep(pc_clr, each = n_arrests_rot_cols), 
+    fill  = rep(pc_clr, each = n_arrests_rot_cols), 
+    show.legend = FALSE
+  ) + 
+  ggplot2::facet_grid(rows = vars(pc)) + 
+  ggplot2::geom_hline(
+    yintercept = 0, color = "red", 
+    linetype = 2, linewidth = 1
+  ) + 
+  ggplot2::labs(
+    title = "US Arrests: coefficients of each principal component"
+  )
+g_arm_loadings
+```
+
+```{r}
+#| label: z-arm-pc-stats
+
+z_arm_pc_stats <- z_arrests_pca_lst |> 
+  get_pc_stats()
+```
+
+We want any crime index to account for a substantial proportion of total variation.  Since the z-scores are constrained to have unit variance, total variation among the three z-scores is 3.  @tbl-z-arm-pc-stats shows how this variation is distributed across principal components.
+
+```{r}
+#| label: tbl-z-arm-pc-stats
+#| tbl-cap: "Arrest z-scores: variance of principal components"
+
+z_arm_pc_stats |> 
+  dplyr::mutate(across(
+    .cols = sd:var_pct, 
+    .fns = ~ signif(.x, digits = 2)
+  )) |> 
+  dplyr::select(- idx) |> 
+  dplyr::rename(variance = var) |> 
+  knitr::kable(
+    caption = "Arrest z-scores: variance of principal components"
+  )
+
+```
+
+The first principal component accounts for `r round(z_arm_pc_stats [[1, "var_pct"]])` percent of total variation—a strong candidate for a violent crime index.  The second component captures differences between states with high rape rates versus high murder rates (note the opposite signs of these loadings in @fig-arm-loadings), accounting for an additional `r round(z_arm_pc_stats [[2, "var_pct"]])` percent.
+
+## The Algebra of PCA {#sec-pca-algebra}
+
+We now develop the mathematical framework underlying the geometric intuition.  The treatment here presents the main ideas; a more detailed derivation appears in @sec-pca-appendix-svd.
+
+### Notation and Setup
+
+Let $X_{\bullet, \bullet}$ denote the $n \times d$ feature matrix with observations in rows and features in columns.  We assume $X_{\bullet, \bullet}$ has been *centred*: the mean of each column is zero.  This assumption simplifies notation without loss of generality, since we can always subtract column means before analysis.
+
+With centring, the $d \times d$ matrix $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ is proportional to the sample covariance matrix:
+
+$$
+cov(X_{\bullet, \bullet}) = \frac{1}{n-1} X_{\bullet, \bullet}^\top X_{\bullet, \bullet}
+$$ {#eq-cov-matrix}
+
+### First Principal Component
+
+The first principal component $c_{\bullet, 1}$ is a linear combination of the columns of $X_{\bullet, \bullet}$ with coefficient vector $v_{\bullet, 1}$:
+
+$$
+\begin{align}
+  c_{\bullet, 1} 
+  &= X_{\bullet, \bullet} \, v_{\bullet, 1}
+  & \text{with } \lVert v_{\bullet, 1} \rVert = 1
+\end{align}
+$$ {#eq-define-pc1}
+
+The coefficients $(v_{1,1}, \ldots, v_{d,1})$ are called the *loadings* of the features onto the first principal component.
+
+Of all unit vectors $v_\bullet \in \mathbb{R}^d$, the vector $v_{\bullet, 1}$ is distinguished by maximising the variance of the resulting linear combination:
+
+$$
+\begin{align}
+  var(c_{\bullet, 1}) 
+  &= \max \left\{ 
+      var(X_{\bullet, \bullet} \, v_\bullet) : \lVert v_\bullet \rVert = 1
+    \right\}
+\end{align}
+$$ {#eq-max-variance-pc1}
+
+This optimisation problem has a closed-form solution: $v_{\bullet, 1}$ is the eigenvector of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ corresponding to its largest eigenvalue $\sigma_1^2$.  That is:
+
+$$
+X_{\bullet, \bullet}^\top X_{\bullet, \bullet} \, v_{\bullet, 1} = \sigma_1^2 \, v_{\bullet, 1}
+$$ {#eq-eigen-pc1}
+
+The eigenvalue $\sigma_1^2$ equals the variance of $c_{\bullet, 1}$ (up to the factor $n-1$).
+
+### Subsequent Principal Components
+
+The remaining principal components are defined analogously.  The $k$th principal component $c_{\bullet, k}$ maximises variance subject to being orthogonal to all previous components:
+
+$$
+\begin{align}
+  c_{\bullet, k} &= X_{\bullet, \bullet} \, v_{\bullet, k} \\
+  \text{where } v_{\bullet, k} &\perp v_{\bullet, 1}, \ldots, v_{\bullet, k-1}
+\end{align}
+$$ {#eq-define-pck}
+
+The coefficient vectors $(v_{\bullet, 1}, \ldots, v_{\bullet, d})$ are the eigenvectors of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$, ordered by decreasing eigenvalue.  Since $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ is symmetric and positive semi-definite, these eigenvectors form an orthonormal basis for $\mathbb{R}^d$.
+
+If the feature matrix has rank $r \le \min(n, d)$, then only the first $r$ eigenvalues are positive.  The first $r$ principal components span the same subspace as the columns of $X_{\bullet, \bullet}$.
+
+### Scores
+
+The *scores* of the $k$th principal component are the elements of vector $c_{\bullet, k}$.  The $i$th score is:
+
+$$
+score_{i,k} = c_{i,k} = \langle x_{i, \bullet}, v_{\bullet, k} \rangle
+$$ {#eq-scores}
+
+Geometrically, this is the projection of the $i$th observation onto the direction defined by $v_{\bullet, k}$.  The collection of scores provides coordinates for observations in the principal component space.
+
+### The Closed-Form Solution
+
+A key feature of PCA is that it admits an exact, analytical solution.  We do not iterate toward an optimum; we compute eigenvalues and eigenvectors of a symmetric matrix.  This contrasts with:
+
+- Clustering algorithms (e.g., $k$-means) that iterate toward local optima
+- Topic models that require variational inference or MCMC sampling
+- Neural networks trained by gradient descent
+
+The availability of a closed-form solution reflects the mathematical structure of the problem: maximising a quadratic form (variance) subject to a quadratic constraint (unit norm) yields a linear eigenvalue problem.  This places PCA in the tradition of classical mathematical analysis, even as it addresses modern high-dimensional challenges.
+
+## Computation {#sec-pca-computation}
+
+Two computational approaches yield principal components:
+
+1. **Eigenvalue decomposition (EVD)**: Compute $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ and find its eigenvalues and eigenvectors.
+
+2. **Singular value decomposition (SVD)**: Factor the feature matrix directly as $X_{\bullet, \bullet} = U \Sigma V^\top$.
+
+The SVD approach is generally preferred for numerical stability and efficiency, particularly when $d$ is large.  The relationship between the two approaches is:
+
+- The right singular vectors (columns of $V$) are the principal component directions $v_{\bullet, k}$
+- The singular values (diagonal of $\Sigma$) are $\sigma_k$, the square roots of the eigenvalues
+- The left singular vectors (columns of $U$), scaled by singular values, give the scores
+
+In R, `stats::prcomp()` uses SVD internally.  The function returns:
+
+- `rotation`: the matrix of loadings (columns are $v_{\bullet, k}$)
+- `x`: the matrix of scores (columns are $c_{\bullet, k}$)
+- `sdev`: the standard deviations $\sigma_k$
+
+```{r}
+#| label: prcomp-example
+#| echo: true
+#| eval: false
+
+# Basic PCA workflow in R
+pca_result <- prcomp(X, center = TRUE, scale. = TRUE)
+
+# Loadings (principal component directions)
+pca_result$rotation
+
+# Scores (observations in PC space)
+pca_result$x
+
+# Variance explained
+summary(pca_result)
+```
+
+The `scale.` argument controls whether features are standardised to unit variance before PCA.  When features are measured on different scales (as in our examples), standardisation is typically appropriate.
+
+## Interpretation and Diagnostics {#sec-pca-diagnostics}
+
+### Scree Plots
+
+A *scree plot* displays the variance (or proportion of variance) explained by each principal component.  The name alludes to the hope of seeing a "cliff" for the first few components followed by "scree" (rubble) for the remainder—suggesting a natural truncation point.
+
+```{r}
+#| label: wq-all-numeric
+
+wq_all_numeric <- wq_data |> 
+  dplyr::mutate(is_red = (color == "red")) |> 
+  dplyr::select(- color)
+
+```
+
+```{r}
+#| label: wq-pca-lst
+
+wq_pca_lst <- wq_all_numeric |> 
+  stats::prcomp(scale. = TRUE) |> 
+  pc_rot_diag()
+```
+
+```{r}
+#| label: wq-pc-stats
+
+wq_pc_stats_tbl <- wq_pca_lst |> 
+  get_pc_stats() |> 
+  dplyr::mutate(cum_var_pct = cumsum(var_pct))
+```
+
+@fig-wq-scree illustrates a scree plot for the wine quality data.
+
+```{r}
+#| label: fig-wq-scree
+#| fig-cap: "Wine Quality PCA: variance of each component (scree plot)"
+
+g_wq_pc_variance <- wq_pc_stats_tbl |> 
+  dplyr::rename(
+    PC_index = idx, 
+    variance = var
+  ) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = PC_index, y = variance
+  )) + 
+  ggplot2::geom_line() + 
+  ggplot2::geom_point() +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 13, by = 2)
+  ) + 
+  ggplot2::labs(
+    title = "Wine Quality PCA: variance of each component",
+    x = "Principal Component",
+    y = "Variance"
+  )
+g_wq_pc_variance
+```
+
+@tbl-wq-pc-stats provides numeric detail, including cumulative variance explained.
+
+```{r}
+#| label: tbl-wq-pc-stats
+#| tbl-cap: "Wine Quality PCA: variance of each component"
+
+wq_pc_stats_tbl |> 
+  dplyr::mutate(
+    cum_var_pct = cumsum(var_pct)
+  ) |> 
+  dplyr::rename(
+    PC_index = idx, 
+    variance = var, 
+  ) |> 
+  knitr::kable(
+    caption = "Wine Quality PCA: variance of each component", 
+    digits = 2
+  )
+
+```
+
+The first three components capture about `r wq_pc_stats_tbl$cum_var_pct[[3]] |> round()` percent of total variance; six components are needed to reach  `r wq_pc_stats_tbl$cum_var_pct[[6]] |> round()` percent.  There is no dramatic "elbow"—the variance declines gradually—suggesting that the data's structure is distributed across multiple directions rather than concentrated in a few.
+
+### Loading Plots
+
+Loading plots display the coefficients that define each principal component, helping interpret what each component "means" in terms of original features.
+
+```{r}
+#| label: wq-rot
+
+wq_rot_lst <- 
+  wq_pca_lst |> 
+  get_rot_tbl_lst()
+
+wq_rot_wide <- wq_rot_lst$ rot_wide
+wq_rot_long <- wq_rot_lst$ rot_long
+
+```
+
+```{r}
+#| label: fig-wq-loadings
+#| fig-cap: "Wine Quality: loadings of first 3 principal components"
+
+g_wq_loadings <- wq_rot_long |> 
+  dplyr::filter(i_pc <= 3) |> 
+  dplyr::mutate(variable_index = forcats::as_factor(i_var)) |> 
+  ggplot2::ggplot(mapping = aes(
+    x = variable_index, y = coeff, color = pc, fill = pc
+  )) + 
+  ggplot2::geom_col(
+    show.legend = FALSE
+  ) + 
+  ggplot2::facet_grid(rows = vars(pc)) + 
+  ggplot2::geom_hline(
+    yintercept = 0, color = "red", 
+    linetype = 2, linewidth = 1
+  ) + 
+  ggplot2::labs(
+    title = "Wine Quality: loadings of first 3 principal components",
+    x = "Variable index",
+    y = "Loading"
+  )
+g_wq_loadings
+```
+
+Interpretation requires knowing which variable corresponds to each index.  The strong loading of variable 13 (`is_red`) on PC1 suggests that the first component largely captures the difference between red and white wines.
+
+### Biplots
+
+A *biplot* displays both scores (observations) and loadings (variables) in the same plot, typically using the first two principal components.  Observations appear as points; variables appear as vectors from the origin.  The angle between variable vectors approximates their correlation; the length of a vector indicates how well that variable is represented in the 2D projection.
+
+```{r}
+#| label: wq-scores-tbl
+
+wq_scores_wide <- wq_pca_lst$ x |> 
+  tibble::as_tibble() |> 
+  dplyr::mutate(
+    quality = wq_all_numeric$ quality, 
+    is_red  = wq_all_numeric$ is_red, 
+    color   = dplyr::if_else(is_red, "red", "white")) |> 
+  dplyr::select(is_red, color, quality, tidyr::everything())
+  
+```
+
+```{r}
+#| label: fig-wq-biplot
+#| fig-cap: "Wine Quality PCA: biplot of PC1 vs PC2"
+
+g_wq_scores_pc1_2 <- wq_scores_wide |> 
+  dplyr::rename(score_1 = PC1, score_2 = PC2) |> 
+ggplot2::ggplot(mapping = aes(
+  x = score_1, y = score_2, color = color
+)) + 
+  ggplot2::geom_point(alpha = 0.3) + 
+  ggplot2::scale_color_manual(values = c("red" = "darkred", "white" = "gold3")) +
+  ggplot2::labs(
+    title = "Wine Quality PCA: scores of PC1 vs PC2",
+    x = "PC1 score",
+    y = "PC2 score"
+  )
+g_wq_scores_pc1_2
+```
+
+The biplot reveals a striking pattern: observations separate into two clusters along PC1, corresponding almost perfectly to red versus white wines.  This confirms the loading plot's suggestion that PC1 captures wine colour.
+
+### Information-Theoretic Interpretation
+
+The connection between variance and information provides another perspective on PCA.  High variance directions carry more information about differences among observations; low variance directions may represent noise or measurement error.
+
+When we truncate to $r$ principal components, we retain the proportion $\sum_{k=1}^r \sigma_k^2 / \sum_{k=1}^d \sigma_k^2$ of total variance.  From an information-theoretic standpoint, this represents the proportion of "signal" we preserve.  The discarded components may contain some signal, but they are increasingly dominated by noise as we move to smaller eigenvalues.
+
+This interpretation connects to @sec-info-theory: variance, like entropy, measures spread or uncertainty.  Directions of high variance are directions where observations differ most—precisely the directions that are informative for distinguishing among observations.
+
+## Detailed Example: Wine Quality {#sec-pca-wine-example}
+
+We now present a complete PCA workflow for the wine quality data, illustrating the methods developed above.
+
+### Data Preparation
+
+The wine quality data contain 11 numeric chemical properties, plus wine colour and quality rating.  We re-code colour as a binary indicator `is_red` and include it among the features for PCA.
+
+```{r}
+#| label: wq-smy
+
+wq_smy <- wq_all_numeric |> 
+  tidyr::pivot_longer(
+    cols = tidyr::everything(), 
+    names_to = "variable", 
+    values_to = "value") |> 
+  dplyr::summarise(
+    .by = variable, 
+    mean  = mean(value), 
+    sd    = sd(value)
+  ) |> 
+  dplyr::mutate(i_var = 1:ncol(wq_all_numeric)) |> 
+  dplyr::select(i_var, tidyr::everything())
+```
+
+```{r}
+#| label: tbl-wq-smy
+#| tbl-cap: "Wine quality variables: mean and standard deviation"
+
+wq_smy |> knitr::kable(
+  caption = "Wine quality variables: mean and standard deviation", 
+  digits = 2
+)
+```
+
+The standard deviations vary considerably across features.  Total sulfur dioxide has a standard deviation of 56, while density has a standard deviation of 0.003.  Without standardisation, the sulfur dioxide variables would dominate the principal components simply due to their scale.  We therefore standardise all features to z-scores before conducting PCA.
+
+### Principal Component Extraction
+
+```{r}
+#| label: dmclust-wq-score-1
+
+score_1 <- wq_scores_wide$ PC1
+
+dmclust_wq_score_1 <- score_1 |> 
+  densityMclust(
+    G = 2, modelNames = "V", plot = FALSE)
+
+```
+
+```{r}
+#| label: score-1-dens-tbl
+
+score_1_dens_tbl <- tibble::tibble(
+  score_1 = dmclust_wq_score_1$ data [, 1], 
+  class   = dmclust_wq_score_1$ classification |> as.integer(), 
+  dens    = dmclust_wq_score_1$ density) |> 
+  dplyr::mutate(
+    is_red  = wq_scores_wide$ is_red, 
+    color   = wq_scores_wide$ color, 
+    quality = wq_scores_wide$ quality) |> 
+  dplyr::select(is_red, color, quality, tidyr::everything())
+
+```
+
+```{r}
+#| label: dmclust-wq-score-1-break
+
+score_1_break_tbl <- score_1_dens_tbl |> 
+  dplyr::summarise(
+    .by = class, 
+    min_score = min(score_1), 
+    max_score = max(score_1)
+  ) |> 
+  dplyr::arrange(class)
+
+score_1_break_pt <- 
+  (score_1_break_tbl [[1, "max_score"]] + 
+   score_1_break_tbl [[2, "min_score"]] ) / 2
+
+```
+
+The biplot (@fig-wq-biplot) revealed a split in the data along PC1.  To quantify this, we fit a two-component Gaussian mixture model to the PC1 scores.
+
+```{r}
+#| label: fig-score-1-density
+#| fig-cap: "PC1 scores: density from a Gaussian mixture model"
+
+dmclust_wq_score_1 |> plot(what = "density")
+
+```
+
+The two Gaussian components correspond closely to wine colour.  @tbl-xtabs-class-color shows the cross-tabulation.
+
+```{r}
+#| label: tbl-xtabs-class-color
+#| tbl-cap: "Wine Quality PCA: wine colour versus PC1 cluster"
+
+score_1_class_color_long <- score_1_dens_tbl |> 
+  dplyr::arrange(class, desc(color)) |> 
+  dplyr::summarise(
+    .by = c(class, color), 
+    n = n())
+
+score_1_class_color_wide <- score_1_class_color_long |> 
+  tidyr::pivot_wider(
+    names_from = "color", 
+    values_from = "n"
+  )
+
+score_1_class_color_wide |> 
+  knitr::kable(
+    caption = "Wine Quality PCA: wine colour versus PC1 cluster"
+  )
+
+```
+
+The correspondence is nearly perfect: the unsupervised PCA, with no knowledge of wine colour labels, has discovered the red/white distinction as the primary axis of variation.
+
+### Summary of Findings
+
+The PCA of wine quality data reveals:
+
+1. The 13 features require 6 or more principal components for adequate representation, capturing about `r wq_pc_stats_tbl$cum_var_pct[[6]] |> round()` percent of total variance.  The first 3 components capture only `r wq_pc_stats_tbl$cum_var_pct[[3]] |> round()` percent.
+
+2. The first principal component corresponds almost perfectly to wine colour.  This was discovered purely from the covariance structure, without using color labels.
+
+3. The discovery emerged through visualization (biplot) and was confirmed quantitatively (Gaussian mixture model, cross-tabulation).  This illustrates the EDA philosophy: PCA enables exploration that reveals structure.
+
+## PCA and the Singular Value Decomposition {#sec-pca-svd}
+
+The singular value decomposition (SVD) provides both the computational engine for PCA and a deeper understanding of what PCA accomplishes.
+
+### The SVD Factorisation
+
+Any $n \times d$ matrix $X_{\bullet, \bullet}$ can be factored as:
+
+$$
+X_{\bullet, \bullet} = U \Sigma V^\top
+$$ {#eq-svd-factorisation}
+
+where:
+
+- $U$ is an $n \times n$ orthogonal matrix (columns are *left singular vectors*)
+- $\Sigma$ is an $n \times d$ diagonal matrix (diagonal entries are *singular values* $\sigma_1 \ge \sigma_2 \ge \cdots \ge 0$)
+- $V$ is a $d \times d$ orthogonal matrix (columns are *right singular vectors*)
+
+### Connection to PCA
+
+The right singular vectors $v_{\bullet, k}$ (columns of $V$) are exactly the principal component directions—the eigenvectors of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$.  The singular values $\sigma_k$ are the square roots of the eigenvalues.
+
+The principal component scores can be computed as:
+
+$$
+c_{\bullet, k} = X_{\bullet, \bullet} v_{\bullet, k} = \sigma_k u_{\bullet, k}
+$$ {#eq-scores-from-svd}
+
+This shows that the scores are the left singular vectors scaled by singular values.
+
+### Truncated SVD and Dimension Reduction
+
+The SVD can be written as a sum of rank-1 matrices:
+
+$$
+X_{\bullet, \bullet} = \sum_{k=1}^r \sigma_k u_{\bullet, k} v_{\bullet, k}^\top
+$$ {#eq-svd-sum}
+
+where $r = \text{rank}(X_{\bullet, \bullet})$.  Truncating this sum to $r' < r$ terms yields the best rank-$r'$ approximation to $X_{\bullet, \bullet}$ in the least-squares sense (Eckart-Young theorem).
+
+This truncated SVD is precisely what PCA accomplishes: projecting onto the first $r'$ principal components gives the best $r'$-dimensional representation of the data.
+
+A detailed derivation of the SVD and its connection to PCA appears in @sec-pca-appendix-svd.
+
+## Limitations and Extensions {#sec-pca-limitations}
+
+### Linear Structure Only
+
+PCA finds linear structure: the principal components are linear combinations of features, and the reduced representation is a linear projection.  When data lie on or near a curved manifold, PCA may fail to capture the underlying structure.
+
+Consider data distributed along a spiral or S-curve in 3D space.  The data are intrinsically one-dimensional (position along the curve), but PCA will find directions of maximum variance that cut across the curve rather than along it.
+
+Nonlinear methods such as kernel PCA, t-SNE, and UMAP address this limitation, though at the cost of interpretability and computational complexity.  These methods are surveyed in @sec-lin-discr-other-methods.
+
+### Unsupervised: Labels Are Ignored
+
+PCA maximises variance without reference to any response variable.  The directions of maximum variance may not be the directions most useful for prediction or classification.
+
+For example, in a two-class problem, the classes might differ primarily along a direction of *low* overall variance.  PCA would rank this direction last, potentially discarding the very information needed for classification.
+
+Linear Discriminant Analysis (LDA), developed in @sec-lin-discr, addresses this by seeking directions that maximise *between-class* variance relative to *within-class* variance.  LDA is the supervised counterpart to PCA.
+
+### When Variance Is Uninformative
+
+PCA assumes that variance indicates importance.  This assumption can fail:
+
+- When features have been scaled inappropriately, variance may reflect measurement units rather than signal.
+- When noise is heteroscedastic, high-variance directions may be dominated by noise rather than signal.
+- When all directions have similar variance (spherical data), PCA provides no natural ordering.
+
+Careful preprocessing—centering, scaling, possibly transforming—is essential for meaningful PCA results.
+
+## Summary {#sec-pca-summary}
+
+Principal Component Analysis addresses the question: *along which directions do the features vary most?*  The answer emerges from the eigen-decomposition of the feature covariance matrix, or equivalently, from the singular value decomposition of the centred feature matrix.
+
+### Key Results
+
+1. **Principal components** are linear combinations of original features, defined by eigenvectors of the covariance matrix.  The first component captures maximum variance; subsequent components capture maximum variance orthogonal to those already found.
+
+2. **Dimension reduction** is achieved by projecting observations onto the first $r' < d$ principal components.  The proportion of variance retained quantifies information preservation.
+
+3. **The SVD** provides both the computational method and a theoretical framework.  The right singular vectors are principal component directions; singular values measure the importance of each direction.
+
+4. **Closed-form solution**: Unlike iterative methods for clustering or topic modelling, PCA solves an eigenvalue problem exactly.  This reflects the quadratic structure of variance maximisation.
+
+### Connections to Book Themes
+
+PCA exemplifies several themes developed throughout this book:
+
+- **Geometric thinking**: PCA is fundamentally about orthogonal projection onto data-determined subspaces.  The geometry of inner products, norms, and perpendicularity underlies both the theory and interpretation.
+
+- **Closed-form versus algorithmic**: PCA represents the classical tradition of analytical solutions.  In @sec-clustering we encountered $k$-means, which iterates toward local optima.  In subsequent chapters we will meet MCMC and EM, general algorithmic strategies for problems beyond analytical reach.  PCA's closed-form solution is available precisely because variance maximisation with a norm constraint yields a linear eigenvalue problem.
+
+- **Information and variance**: Directions of high variance carry information about differences among observations.  Truncating to the first few principal components preserves the most informative directions—a connection to @sec-info-theory.
+
+- **Supervised versus unsupervised**: PCA is unsupervised; it finds structure in features without reference to any response.  @sec-lin-discr develops LDA as the supervised counterpart, seeking directions that separate known classes.
+
+### Looking Ahead
+
+PCA provides a foundation for dimension reduction in subsequent chapters.  In @sec-lin-discr, we develop Linear Discriminant Analysis for supervised settings.  In Part III (Text Data), dimension reduction techniques will help represent documents in manageable spaces.  In Part IV (Time Series), spectral methods will decompose temporal variation.  Throughout, the geometric intuition developed here—projection onto informative subspaces—will guide our understanding.
+
+## Exercises {#sec-pca-exercises}
+
+### Computational Exercises
+
+**Exercise 8.1** (PCA by hand)
+Consider the following $4 \times 2$ data matrix with observations in rows:
+
+$$
+X = \begin{pmatrix}
+2 & 3 \\
+4 & 5 \\
+6 & 7 \\
+8 & 9
+\end{pmatrix}
+$$
+
+(a) Centre the matrix by subtracting the column means.
+
+(b) Compute $X^\top X$ (where $X$ now denotes the centred matrix) and find its eigenvalues and eigenvectors.
+
+(c) What proportion of total variance is captured by the first principal component?
+
+(d) Verify your results using `prcomp()` in R.
+
+**Exercise 8.2** (PCA on US Arrests data) 
+Using the full `USArrests` data set (all four variables):
+
+(a) Perform PCA with and without scaling.  How do the results differ?
+
+(b) Interpret the first two principal components.  What do they represent in terms of the original variables?
+
+(c) Create a biplot.  Which states appear as outliers, and why?
+
+**Exercise 8.3** (Wine quality PCA)
+Using the wine quality data:
+
+(a) Perform PCA on the 11 chemical properties only (excluding colour and quality).  How many components are needed to explain 90% of variance?
+
+(b) Colour points in a PC1-PC2 biplot by wine quality rating.  Is quality associated with the principal components?
+
+(c) Compare loadings when colour is included versus excluded as a feature.
+
+### Conceptual Exercises
+
+**Exercise 8.4** (Scaling decisions)
+A researcher measures height (in centimetres) and weight (in kilograms) for a sample of individuals and performs PCA.
+
+(a) Without scaling, which variable will dominate the first principal component?  Why?
+
+(b) The researcher converts height to metres.  How does this change the PCA results?
+
+(c) What general principle should guide scaling decisions in PCA?
+
+**Exercise 8.5** (PCA versus regression)
+Both PCA and linear regression involve projections.  Explain:
+
+(a) What determines the subspace onto which we project in regression versus PCA?
+
+(b) Why might directions of maximum variance differ from directions useful for prediction?
+
+(c) Give an example where PCA would miss structure that regression would find.
+
+**Exercise 8.6** (Geometric interpretation)
+For a $2 \times 2$ correlation matrix with correlation $\rho$ between two standardised variables:
+
+(a) Find the eigenvalues and eigenvectors as functions of $\rho$.
+
+(b) What happens to the principal components as $\rho \to 1$?  As $\rho \to 0$?
+
+(c) Interpret geometrically: what does the "shape" of the data cloud look like in each case?
+
+### Theoretical Exercises
+
+**Exercise 8.7** (Variance maximisation)
+Prove that the first principal component direction $v_{\bullet, 1}$ maximises $var(X_{\bullet, \bullet} v_\bullet)$ subject to $\|v_\bullet\| = 1$ by:
+
+(a) Writing the variance as a quadratic form $v_\bullet^\top A v_\bullet$ for an appropriate matrix $A$.
+
+(b) Using Lagrange multipliers to find the stationary points.
+
+(c) Showing that the maximum occurs at the eigenvector corresponding to the largest eigenvalue.
+
+**Exercise 8.8** (Orthogonality of principal components)
+Prove that if $v_{\bullet, j}$ and $v_{\bullet, k}$ are eigenvectors of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ with distinct eigenvalues, then the corresponding principal components $c_{\bullet, j} = X_{\bullet, \bullet} v_{\bullet, j}$ and $c_{\bullet, k} = X_{\bullet, \bullet} v_{\bullet, k}$ are orthogonal.
+
+**Exercise 8.9** (Total variance)
+Show that the total variance of the features equals the sum of eigenvalues:
+
+$$
+\sum_{j=1}^d var(x_{\bullet, j}) = \sum_{k=1}^d \sigma_k^2
+$$
+
+where $\sigma_k^2$ are the eigenvalues of the covariance matrix.  What does this imply about the proportion of variance explained by the first $r$ principal components?
+
+
+## Appendix: SVD Derivation {#sec-pca-appendix-svd}
+
+This appendix provides a detailed derivation of the singular value decomposition and its connection to principal components.  The treatment follows the development in @sec-pca-algebra but with fuller mathematical detail.
+
+### Setup
+
+Let $X_{\bullet, \bullet}$ denote the centred $n \times d$ feature matrix.  We seek orthogonal projections that best approximate the rows of $X_{\bullet, \bullet}$ in a lower-dimensional subspace.
+
+For any orthogonal projection $P$ from $\mathbb{R}^d$ to a subspace, define the loss function:
+
+$$
+\mathcal{L}(P) = \sum_{i=1}^n \| x_{i, \bullet} - P x_{i, \bullet} \|^2
+$$ {#eq-loss-function}
+
+This measures the total squared error when approximating observations by their projections.
+
+### Minimising Loss via Variance Maximisation
+
+Using properties of orthogonal projection, we can rewrite:
+
+$$
+\begin{align}
+\mathcal{L}(P) &= \sum_{i=1}^n \| x_{i, \bullet} \|^2 - \sum_{i=1}^n \| P x_{i, \bullet} \|^2 \\
+&= \text{Tr}(X_{\bullet, \bullet}^\top X_{\bullet, \bullet}) - \sum_{i=1}^n \| P x_{i, \bullet} \|^2
+\end{align}
+$$ {#eq-loss-rewrite}
+
+The first term is fixed (total variance of the data).  Thus minimising loss is equivalent to maximising the projected variance $\sum_{i=1}^n \| P x_{i, \bullet} \|^2$.
+
+### One-Dimensional Projection
+
+For projection onto a line spanned by unit vector $v_\bullet$, the projection matrix is $P = v_\bullet v_\bullet^\top$, and:
+
+$$
+\sum_{i=1}^n \| P x_{i, \bullet} \|^2 = \sum_{i=1}^n (v_\bullet^\top x_{i, \bullet})^2 = v_\bullet^\top X_{\bullet, \bullet}^\top X_{\bullet, \bullet} v_\bullet
+$$ {#eq-one-dim-variance}
+
+This is a quadratic form in $v_\bullet$.  Subject to $\| v_\bullet \| = 1$, this is maximised when $v_\bullet$ is the eigenvector of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ corresponding to its largest eigenvalue.
+
+### Sequential Construction
+
+Having found $v_{\bullet, 1}$, we seek $v_{\bullet, 2}$ orthogonal to $v_{\bullet, 1}$ that maximises variance in the orthogonal complement.  This is the eigenvector corresponding to the second-largest eigenvalue.
+
+Continuing, we obtain an orthonormal sequence $(v_{\bullet, 1}, \ldots, v_{\bullet, r})$ where $r = \text{rank}(X_{\bullet, \bullet})$.  The $k$th principal component is:
+
+$$
+c_{\bullet, k} = X_{\bullet, \bullet} v_{\bullet, k}
+$$ {#eq-pc-definition-appendix}
+
+with variance $\sigma_k^2$, the $k$th eigenvalue.
+
+### The SVD
+
+Define unit vectors $u_{\bullet, k} = c_{\bullet, k} / \sigma_k$.  These are orthonormal (proof: use orthogonality of principal components).  Extend both $(v_{\bullet, k})$ and $(u_{\bullet, k})$ to orthonormal bases for $\mathbb{R}^d$ and $\mathbb{R}^n$ respectively.
+
+Forming matrices $V = (v_{\bullet, 1}, \ldots, v_{\bullet, d})$ and $U = (u_{\bullet, 1}, \ldots, u_{\bullet, n})$, we have:
+
+$$
+X_{\bullet, \bullet} = U \Sigma V^\top
+$$ {#eq-svd-appendix}
+
+where $\Sigma$ is the $n \times d$ matrix with $\sigma_k$ on the diagonal and zeros elsewhere.
+
+This factorisation—the singular value decomposition—encapsulates all the information needed for PCA: the directions ($V$), the variances ($\Sigma^2$), and the scores ($U\Sigma$).

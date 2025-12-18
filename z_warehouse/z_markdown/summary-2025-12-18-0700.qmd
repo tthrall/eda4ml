@@ -1,0 +1,229 @@
+# Summary {#sec-summary}
+
+```{r}
+#| label: setup
+#| include: false
+
+knitr::opts_chunk$set(
+  echo    = FALSE, 
+  error   = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
+```
+
+```{r}
+#| label: libraries
+
+library(here)
+library(knitr)
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+## The Journey We Have Taken
+
+This book began with a bargain: *we develop practical skills through their conceptual foundations, because understanding why methods work is what allows you to apply them intelligently*. We have now traveled through exploratory data analysis, linear algebra, text, time series, and networks. It is time to look back at the path and forward to where it leads.
+
+The dual aims of data analysis—understanding and prediction, scientific insight and decision support—have appeared in every chapter. These aims are not alternatives but partners. A model that predicts without understanding is fragile; a model that explains without predicting is untestable. The most effective analysts move fluidly between these perspectives, and the methods we have developed support both.
+
+### The EDA Mindset
+
+Exploratory data analysis is not a checklist of techniques. It is a mindset: a commitment to looking at data from multiple angles, to asking questions before fitting models, to letting patterns emerge rather than imposing them. John Tukey, who gave EDA its name, understood that the most important discoveries often come from noticing something unexpected—an outlier, a nonlinearity, a subgroup that behaves differently.
+
+This mindset has guided our approach throughout:
+
+- In Part 1, we examined distributions, conditioning, clustering, and simulation—building intuition about what data can reveal before any formal model is fit.
+
+- In Part 2, we developed the linear algebra of regression, PCA, and LDA—but always with geometric interpretation, always asking what the mathematics *means*.
+
+- In Part 3, we converted text to numbers and discovered latent themes—but we also asked when classical methods still win and how they complement modern LLMs.
+
+- In Part 4, we analyzed time series from two perspectives, time domain and frequency domain, showing that different views of the same reality illuminate different aspects of the data.
+
+- In Part 5, we represented relationships as graphs and asked what structure exists, which nodes matter, and how information flows.
+
+In each domain, the EDA mindset precedes and accompanies formal analysis. We look before we model. We ask before we fit.
+
+## Connections Across the Book
+
+The chapters of this book are not isolated topics. They form a network of interconnected ideas. Understanding these connections deepens comprehension and reveals how methods developed in one context apply in another.
+
+### Foundational Threads
+
+Several concepts from Part 1 recur throughout the book:
+
+| Foundation | Later Applications |
+|------------|-------------------|
+| Conditional distributions (@sec-conditioning) | Regression (@sec-lin-reg), Classification (@sec-lin-discr) |
+| Clustering (@sec-clustering) | Community detection (@sec-graph-theory), Topic models (@sec-topic-models) |
+| Simulation (@sec-simulation) | MCMC (@sec-mcmc-appendix), Bootstrap inference |
+| Information theory (@sec-info-theory) | Entropy in text analysis, Model selection criteria |
+| Study design (@sec-study-design) | Every application—data quality underlies all |
+
+The conditioning framework from @sec-conditioning—examining how one variable relates to another—is the conceptual foundation for all regression and classification methods. The clustering intuition from @sec-clustering reappears when we detect communities in networks or topics in documents. The simulation tools from @sec-simulation enable the MCMC methods that fit complex models like Latent Dirichlet Allocation.
+
+### The Projection Theme
+
+A geometric insight unifies much of Part 2: **projection onto subspaces**. Linear regression finds the point in feature space closest to the response vector. PCA finds the subspace that captures maximum variance. LDA finds the subspace that maximizes class separation. These are all orthogonal projections—different questions answered by the same geometric operation.
+
+This insight extends beyond Part 2. Topic models project documents onto a topic simplex. Spectral clustering uses eigenvectors of the graph Laplacian—a projection that reveals community structure. The mathematics of projection, developed for regression, illuminates methods across the book.
+
+### Two Perspectives, One Reality
+
+A recurring theme in Parts 4 and 5 deserves emphasis: the same phenomenon can be viewed from complementary perspectives.
+
+For time series, the **time domain** asks how the present relates to the past (autocorrelation, forecasting), while the **frequency domain** asks what periodic components are present (spectrum, filtering). These descriptions contain identical information—they are Fourier transform pairs—yet they illuminate different aspects of the data.
+
+For networks, **structural analysis** asks what communities exist and which nodes are central, while **predictive analysis** asks which links will form and what should be recommended. Structure and prediction are two views of the same underlying reality: the patterns that reveal *why* a network behaves as it does also predict *what* it will do.
+
+This duality—understanding and prediction as complementary views—is the central theme of the book, made concrete in each domain we have studied.
+
+## The Analyst's Responsibility
+
+### Choices Matter
+
+Throughout this book, we have presented methods as tools to be applied. But analysis is not mechanical. At every stage, the analyst makes choices: which variables to include, how to handle missing data, which model to fit, how to evaluate results. These choices matter.
+
+@Silberzahn_2018 coordinated a striking demonstration of this fact. Twenty-nine research teams analyzed identical data to answer the same question: do soccer referees give more red cards to dark-skinned players? Despite working with the same dataset, teams reached markedly different conclusions—from substantial bias to no effect at all. The variation arose not from data quality but from *analytical choices*: variable selection, model specification, handling of outliers. @Holmes_2018 elaborates the theoretical foundation: analytical flexibility compounds multiplicatively, and the same data that seem to support a conclusion may fail to do so once the full space of choices is acknowledged.
+
+Not everyone draws the same lesson from these studies. Some view them as evidence that analytical flexibility has corrupted research practice—that clearer standards would have produced convergence. We read them differently: as demonstrations that analysis inherently requires judgment, and that transparency about choices is essential precisely because reasonable approaches can diverge. The solution is not to eliminate judgment but to make it visible.
+
+This "many analysts" problem carries directly into machine learning. Two practitioners with the same training data may build models with different performance characteristics based on choices about feature engineering, hyperparameter tuning, model architecture, and evaluation metrics. The data do not uniquely determine the analysis.
+
+### What EDA Contributes
+
+Exploratory data analysis does not eliminate analytical choices—nothing can. But EDA makes choices *visible*. When we examine distributions before modeling, we see the outliers that one specification might exclude and another include. When we visualize relationships, we notice the nonlinearities that one model captures and another misses. When we check residuals, we discover the patterns that reveal model limitations.
+
+The EDA mindset encourages:
+
+- **Documentation**: Record analytical choices explicitly. Future readers (including your future self) need to understand what was done and why.
+
+- **Sensitivity analysis**: Check whether conclusions depend on specific choices. If a different reasonable specification yields different results, report that.
+
+- **Reproducibility**: Provide code and data so others can verify and extend your work. The `eda4mldata` package accompanying this book exemplifies this commitment.
+
+- **Humility**: Recognize that analysis involves judgment. Present findings as what-the-data-suggest rather than what-is-certainly-true.
+
+These practices do not guarantee correct conclusions. But they create the conditions for scientific progress: work that others can evaluate, critique, and build upon.
+
+## Classical Methods in the Age of LLMs
+
+Large language models have transformed what is possible with data. Tasks that once required careful feature engineering—summarization, classification, question answering—can now be accomplished by prompting an LLM. Why, then, learn classical methods?
+
+### Enduring Advantages
+
+The classical methods developed in this book retain important advantages:
+
+**Scale.** Processing 100,000 documents or a decade of daily observations with an LLM is slow and expensive. Classical methods—tf-idf, topic models, spectral analysis—handle the same data in seconds.
+
+**Auditability.** A regression coefficient has a precise meaning. A principal component loading can be examined and interpreted. An autocorrelation function reveals structure explicitly. LLM outputs, by contrast, emerge from processes that resist inspection.
+
+**Exploration.** When you do not yet know what questions to ask, classical methods provide systematic exploration. What patterns exist? How do groups differ? What frequencies dominate? These questions can be answered without formulating specific prompts.
+
+**Foundation.** Understanding classical methods makes you a better user of modern tools. Knowing what tf-idf measures helps you evaluate whether an LLM's "important words" make sense. Understanding regression geometry helps you interpret embedding similarities. Classical concepts provide vocabulary for thinking about what any method—classical or modern—is actually doing.
+
+### Hybrid Workflows
+
+In practice, classical and modern methods complement each other:
+
+1. **Classical screening**: Use tf-idf to identify distinctive documents, clustering to segment a corpus, time series decomposition to isolate trends.
+
+2. **Targeted deep dives**: Apply LLMs to selected subsets—summarizing key documents, answering specific questions, generating interpretations.
+
+3. **Validation**: Check LLM outputs against classical statistics. Does the LLM's summary emphasize what tf-idf identifies as distinctive? Do its themes align with topic model results?
+
+4. **Iteration**: Let LLM insights suggest new classical analyses; let classical patterns prompt new LLM queries.
+
+This workflow combines the scale and auditability of classical methods with the flexibility of LLMs. Neither approach alone is sufficient; together, they enable deeper understanding than either could achieve independently.
+
+## Where to Go Next
+
+This book has introduced ideas and methods; it has not exhausted them. Here are paths for further study.
+
+### Deeper Theory
+
+For the mathematical foundations underlying the methods in this book:
+
+- **Linear algebra**: Strang's *Linear Algebra and Learning from Data* (2019) develops the connections between linear algebra and machine learning with exceptional clarity. His *Introduction to Linear Algebra* (6th ed., 2023) provides a gentler introduction.
+
+- **Time series**: Shumway and Stoffer's *Time Series Analysis and Its Applications* (5th ed., 2025) is the definitive graduate text, covering both time-domain and frequency-domain methods comprehensively.
+
+- **Topic models**: Blei, Ng, and Jordan's original paper "Latent Dirichlet Allocation" (JMLR, 2003) remains essential reading. Blei's "Probabilistic Topic Models" (Communications of the ACM, 2012) provides an accessible overview.
+
+- **Networks**: Newman's *Networks* (2nd ed., 2018) is encyclopedic. For a shorter introduction, Barabási's *Network Science* is available free online.
+
+### Practical Application
+
+For hands-on data science in R:
+
+- **General workflow**: Wickham, Çetinkaya-Rundel, and Grolemund's *R for Data Science* (2nd ed.) is the standard introduction to modern R practice.
+
+- **Modeling**: Kuhn and Silge's *Tidy Modeling with R* extends the tidyverse philosophy to model fitting and evaluation.
+
+- **Text analysis**: Silge and Robinson's *Text Mining with R: A Tidy Approach* covers the text analysis methods introduced in Part 3.
+
+- **Visualization**: Wickham's *ggplot2: Elegant Graphics for Data Analysis* (3rd ed.) is the definitive guide to the visualization system used throughout this book.
+
+### The Companion Package
+
+The `eda4mldata` package provides datasets used in this book, cleaned and documented for pedagogical use. Install it from GitHub:
+ 
+```r
+remotes::install_github("tthrall/eda4mldata")
+```
+
+The package includes classic datasets (Galton heights, wine quality, OECD Better Life Index), text corpora (H.G. Wells novels, AP news articles), time series examples, and the LearningGraph knowledge graph introduced in @sec-graph-theory. Use these datasets to practice the methods, extend the examples, and develop your own analyses.
+
+## Closing Thoughts
+
+John Tukey opened his 1977 book with a simple observation: "The greatest value of a picture is when it forces us to notice what we never expected to see." This remains the essence of exploratory data analysis—not a set of techniques, but a willingness to be surprised.
+
+The methods in this book are tools for noticing. Histograms reveal distributions we might have assumed were normal. Scatter plots expose relationships we might have presumed were linear. Residual plots uncover structure we might have believed our models captured. Each visualization, each summary, each diagnostic is an opportunity to discover something unexpected.
+
+But noticing is only the beginning. The dual aims of data analysis—understanding and prediction—require that we move from observation to explanation, from pattern to mechanism, from exploration to action. The EDA mindset does not end with a striking visualization; it asks *why* the pattern exists and *what* it implies.
+
+This interplay between exploration and explanation, between understanding and prediction, is what makes data analysis both challenging and rewarding. The data we examine are not abstract numbers; they are traces of real phenomena—physical processes, human behaviors, social dynamics. To analyze data well is to engage with the world, to ask genuine questions, and to let evidence shape our understanding.
+
+The journey does not end here. Every dataset you encounter will pose new questions. Every analysis will require judgment. Every conclusion will be provisional, subject to revision as new data arrive and new methods emerge. The tools in this book are preparation for that ongoing work—a foundation for learning that continues beyond any single course or text.
+
+Look at your data. Ask questions. Be willing to be surprised. And remember that understanding and prediction, theory and practice, are not opposed—they are partners in the work of making sense of the world.
+
+## Resources
+
+### Books
+
+Freedman, D., Pisani, R., & Purves, R. (2007). *Statistics* (4th ed.). W.W. Norton.
+
+Kuhn, M., & Silge, J. (2022). *Tidy Modeling with R*. O'Reilly Media.
+
+Newman, M. (2018). *Networks* (2nd ed.). Oxford University Press.
+
+Shumway, R. H., & Stoffer, D. S. (2025). *Time Series Analysis and Its Applications* (5th ed.). Springer.
+
+Silge, J., & Robinson, D. (2017). *Text Mining with R: A Tidy Approach*. O'Reilly Media.
+
+Strang, G. (2019). *Linear Algebra and Learning from Data*. Wellesley-Cambridge Press.
+
+Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.
+
+Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for Data Science* (2nd ed.). O'Reilly Media.
+
+### Articles
+
+Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent Dirichlet allocation. *Journal of Machine Learning Research*, 3, 993–1022.
+
+Holmes, S. P. (2018). Statistical proof? The problem of irreproducibility. *Bulletin of the American Mathematical Society*, 55(1), 31–55.
+
+Silberzahn, R., et al. (2018). Many analysts, one data set: Making transparent how variations in analytic choices affect results. *Advances in Methods and Practices in Psychological Science*, 1(3), 337–356.
+
+Silberzahn, R., & Uhlmann, E. L. (2015). Crowdsourced research: Many hands make tight work. *Nature*, 526(7572), 189–191.
+
+### Online Resources
+
+- Book source code: <https://github.com/tthrall/eda4ml>
+- Companion package: <https://github.com/tthrall/eda4mldata>
+- R for Data Science: <https://r4ds.hadley.nz/>
+- Text Mining with R: <https://www.tidytextmining.com/>
+- Network Science (Barabási): <http://networksciencebook.com/>

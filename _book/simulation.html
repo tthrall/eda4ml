@@ -317,20 +317,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data Analysis</span></span></a>
+  <a href="./ts-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Time Series Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-forecast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Series Forecasting</span></span></a>
+  <a href="./ts-time-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Time Domain Methods</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ts-fourier.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Time Series Spectrum Analysis</span></span></a>
+  <a href="./ts-freq-domain.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Frequency Domain Methods</span></span></a>
   </div>
 </li>
       </ul>
@@ -364,7 +364,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mcmc-appendix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Markov Chain Monte Carlo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">MCMC: Markov Chain Monte Carlo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -409,31 +409,30 @@ window.Quarto = {
   <li><a href="#simulation-design" id="toc-simulation-design" class="nav-link" data-scroll-target="#simulation-design"><span class="header-section-number">4.3.1</span> Simulation Design</a></li>
   <li><a href="#simulation-results" id="toc-simulation-results" class="nav-link" data-scroll-target="#simulation-results"><span class="header-section-number">4.3.2</span> Simulation Results</a></li>
   </ul></li>
-  <li><a href="#sec-class-exr" id="toc-sec-class-exr" class="nav-link" data-scroll-target="#sec-class-exr"><span class="header-section-number">4.4</span> Class Exercise</a></li>
-  <li><a href="#sec-mc-sim" id="toc-sec-mc-sim" class="nav-link" data-scroll-target="#sec-mc-sim"><span class="header-section-number">4.5</span> Monte Carlo Simulation</a>
+  <li><a href="#sec-mc-sim" id="toc-sec-mc-sim" class="nav-link" data-scroll-target="#sec-mc-sim"><span class="header-section-number">4.4</span> Monte Carlo Simulation</a>
   <ul>
-  <li><a href="#sec-est-pi" id="toc-sec-est-pi" class="nav-link" data-scroll-target="#sec-est-pi"><span class="header-section-number">4.5.1</span> Example 1: Estimate <span class="math inline">\(\pi\)</span></a></li>
-  <li><a href="#the-monte-carlo-principle" id="toc-the-monte-carlo-principle" class="nav-link" data-scroll-target="#the-monte-carlo-principle"><span class="header-section-number">4.5.2</span> The Monte Carlo Principle</a></li>
-  <li><a href="#sec-est-area" id="toc-sec-est-area" class="nav-link" data-scroll-target="#sec-est-area"><span class="header-section-number">4.5.3</span> Example 2: Estimate Area of an Arbitrary Region</a></li>
+  <li><a href="#sec-est-pi" id="toc-sec-est-pi" class="nav-link" data-scroll-target="#sec-est-pi"><span class="header-section-number">4.4.1</span> Example 1: Estimate <span class="math inline">\(\pi\)</span></a></li>
+  <li><a href="#the-monte-carlo-principle" id="toc-the-monte-carlo-principle" class="nav-link" data-scroll-target="#the-monte-carlo-principle"><span class="header-section-number">4.4.2</span> The Monte Carlo Principle</a></li>
+  <li><a href="#sec-est-area" id="toc-sec-est-area" class="nav-link" data-scroll-target="#sec-est-area"><span class="header-section-number">4.4.3</span> Example 2: Estimate Area of an Arbitrary Region</a></li>
   </ul></li>
-  <li><a href="#sec-importance-sampling" id="toc-sec-importance-sampling" class="nav-link" data-scroll-target="#sec-importance-sampling"><span class="header-section-number">4.6</span> Importance Sampling</a>
+  <li><a href="#sec-importance-sampling" id="toc-sec-importance-sampling" class="nav-link" data-scroll-target="#sec-importance-sampling"><span class="header-section-number">4.5</span> Importance Sampling</a>
   <ul>
-  <li><a href="#the-rare-event-problem" id="toc-the-rare-event-problem" class="nav-link" data-scroll-target="#the-rare-event-problem"><span class="header-section-number">4.6.1</span> The Rare Event Problem</a></li>
-  <li><a href="#the-importance-sampling-solution" id="toc-the-importance-sampling-solution" class="nav-link" data-scroll-target="#the-importance-sampling-solution"><span class="header-section-number">4.6.2</span> The Importance Sampling Solution</a></li>
-  <li><a href="#application-to-pz-6" id="toc-application-to-pz-6" class="nav-link" data-scroll-target="#application-to-pz-6"><span class="header-section-number">4.6.3</span> Application to <span class="math inline">\(P(Z &gt; 6)\)</span></a></li>
+  <li><a href="#the-rare-event-problem" id="toc-the-rare-event-problem" class="nav-link" data-scroll-target="#the-rare-event-problem"><span class="header-section-number">4.5.1</span> The Rare Event Problem</a></li>
+  <li><a href="#the-importance-sampling-solution" id="toc-the-importance-sampling-solution" class="nav-link" data-scroll-target="#the-importance-sampling-solution"><span class="header-section-number">4.5.2</span> The Importance Sampling Solution</a></li>
+  <li><a href="#application-to-pz-6" id="toc-application-to-pz-6" class="nav-link" data-scroll-target="#application-to-pz-6"><span class="header-section-number">4.5.3</span> Application to <span class="math inline">\(P(Z &gt; 6)\)</span></a></li>
   </ul></li>
-  <li><a href="#sec-bootstrap" id="toc-sec-bootstrap" class="nav-link" data-scroll-target="#sec-bootstrap"><span class="header-section-number">4.7</span> Bootstrap Resampling</a>
+  <li><a href="#sec-bootstrap" id="toc-sec-bootstrap" class="nav-link" data-scroll-target="#sec-bootstrap"><span class="header-section-number">4.6</span> Bootstrap Resampling</a>
   <ul>
-  <li><a href="#the-bootstrap-idea" id="toc-the-bootstrap-idea" class="nav-link" data-scroll-target="#the-bootstrap-idea"><span class="header-section-number">4.7.1</span> The Bootstrap Idea</a></li>
-  <li><a href="#bootstrap-implementation" id="toc-bootstrap-implementation" class="nav-link" data-scroll-target="#bootstrap-implementation"><span class="header-section-number">4.7.2</span> Bootstrap Implementation</a></li>
-  <li><a href="#bootstrap-example" id="toc-bootstrap-example" class="nav-link" data-scroll-target="#bootstrap-example"><span class="header-section-number">4.7.3</span> Bootstrap Example</a></li>
-  <li><a href="#why-bootstrap-matters-for-eda" id="toc-why-bootstrap-matters-for-eda" class="nav-link" data-scroll-target="#why-bootstrap-matters-for-eda"><span class="header-section-number">4.7.4</span> Why Bootstrap Matters for EDA</a></li>
-  <li><a href="#bootstrap-for-correlation" id="toc-bootstrap-for-correlation" class="nav-link" data-scroll-target="#bootstrap-for-correlation"><span class="header-section-number">4.7.5</span> Bootstrap for Correlation</a></li>
+  <li><a href="#the-bootstrap-idea" id="toc-the-bootstrap-idea" class="nav-link" data-scroll-target="#the-bootstrap-idea"><span class="header-section-number">4.6.1</span> The Bootstrap Idea</a></li>
+  <li><a href="#bootstrap-implementation" id="toc-bootstrap-implementation" class="nav-link" data-scroll-target="#bootstrap-implementation"><span class="header-section-number">4.6.2</span> Bootstrap Implementation</a></li>
+  <li><a href="#bootstrap-example" id="toc-bootstrap-example" class="nav-link" data-scroll-target="#bootstrap-example"><span class="header-section-number">4.6.3</span> Bootstrap Example</a></li>
+  <li><a href="#why-bootstrap-matters-for-eda" id="toc-why-bootstrap-matters-for-eda" class="nav-link" data-scroll-target="#why-bootstrap-matters-for-eda"><span class="header-section-number">4.6.4</span> Why Bootstrap Matters for EDA</a></li>
+  <li><a href="#bootstrap-for-correlation" id="toc-bootstrap-for-correlation" class="nav-link" data-scroll-target="#bootstrap-for-correlation"><span class="header-section-number">4.6.5</span> Bootstrap for Correlation</a></li>
   </ul></li>
-  <li><a href="#sec-mcmc-preview" id="toc-sec-mcmc-preview" class="nav-link" data-scroll-target="#sec-mcmc-preview"><span class="header-section-number">4.8</span> Advanced Topics: MCMC</a></li>
-  <li><a href="#sec-ml-connections" id="toc-sec-ml-connections" class="nav-link" data-scroll-target="#sec-ml-connections"><span class="header-section-number">4.9</span> Connections to Machine Learning</a></li>
-  <li><a href="#sec-team-exr" id="toc-sec-team-exr" class="nav-link" data-scroll-target="#sec-team-exr"><span class="header-section-number">4.10</span> Team Exercises</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">4.11</span> Resources</a></li>
+  <li><a href="#sec-mcmc-preview" id="toc-sec-mcmc-preview" class="nav-link" data-scroll-target="#sec-mcmc-preview"><span class="header-section-number">4.7</span> Advanced Topics: MCMC</a></li>
+  <li><a href="#sec-ml-connections" id="toc-sec-ml-connections" class="nav-link" data-scroll-target="#sec-ml-connections"><span class="header-section-number">4.8</span> Connections to Machine Learning</a></li>
+  <li><a href="#sec-simulation-exercises" id="toc-sec-simulation-exercises" class="nav-link" data-scroll-target="#sec-simulation-exercises"><span class="header-section-number">4.9</span> Exercises</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">4.10</span> Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tthrall/eda4ml/edit/main/simulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tthrall/eda4ml/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -459,7 +458,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">12:18 Thu 11-Dec-2025</p>
+      <p class="date">15:26 Thu 18-Dec-2025</p>
     </div>
   </div>
   
@@ -769,44 +768,11 @@ Table&nbsp;4.3: Variance comparison: mean vs.&nbsp;median
 <p>This example illustrates a recurring theme: understanding the properties of statistical procedures—here, variance and robustness under different distributional assumptions—is what allows us to choose wisely among them. The simulation confirms what mathematics predicts, but both the mathematics and the simulation serve the same end: grounding practical choices in principled understanding.</p>
 </section>
 </section>
-<section id="sec-class-exr" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="sec-class-exr"><span class="header-section-number">4.4</span> Class Exercise</h2>
-<p>With a teammate, verify the variance ratio result using your own simulation.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Simulation exercise structure
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li><strong>Set parameters:</strong> Choose sample size <span class="math inline">\(n\)</span> (e.g., 30) and number of replications <span class="math inline">\(R\)</span> (e.g., 5000)</li>
-<li><strong>Create storage:</strong> Initialize vectors to hold <span class="math inline">\(R\)</span> means and <span class="math inline">\(R\)</span> medians</li>
-<li><strong>Run the loop:</strong> For each replication <span class="math inline">\(r = 1, \ldots, R\)</span>:
-<ul>
-<li>Generate a sample of size <span class="math inline">\(n\)</span> from <code>rnorm()</code></li>
-<li>Compute and store the sample mean</li>
-<li>Compute and store the sample median</li>
-</ul></li>
-<li><strong>Analyze results:</strong>
-<ul>
-<li>Calculate <code>var(medians) / var(means)</code></li>
-<li>Compare to <span class="math inline">\(\pi/2 \approx 1.57\)</span></li>
-</ul></li>
-<li><strong>Extend:</strong> What happens if you use <code>rcauchy()</code> instead of <code>rnorm()</code>?</li>
-</ol>
-</div>
-</div>
-<p>Take 20 minutes to prepare to report your progress to the class.</p>
-</section>
-<section id="sec-mc-sim" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="sec-mc-sim"><span class="header-section-number">4.5</span> Monte Carlo Simulation</h2>
+<section id="sec-mc-sim" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-mc-sim"><span class="header-section-number">4.4</span> Monte Carlo Simulation</h2>
 <p>Monte Carlo simulation encompasses a broad set of algorithms that use random sampling to obtain numerical values. Mathematician <a href="https://en.wikipedia.org/wiki/Stanis%C5%82aw_Ulam">Stanislav Ulam</a> led the development of this approach (and coined the name) as part of the Manhattan Project during World War 2. The approach is used when other types of numerical calculation are not feasible.</p>
-<section id="sec-est-pi" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="sec-est-pi"><span class="header-section-number">4.5.1</span> Example 1: Estimate <span class="math inline">\(\pi\)</span></h3>
+<section id="sec-est-pi" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-est-pi"><span class="header-section-number">4.4.1</span> Example 1: Estimate <span class="math inline">\(\pi\)</span></h3>
 <p>Here is a classic illustration. Recall that a circle of radius <span class="math inline">\(r\)</span> has an area equal to <span class="math inline">\(\pi \; r^2\)</span>. Setting <span class="math inline">\(r = 1\)</span> we see that the unit circle has an area equal to <span class="math inline">\(\pi\)</span>. Centered at the origin of the plane, the area is divided equally among the four quadrants of the plane. Thus the area within the first quadrant equals <span class="math inline">\(\pi/4\)</span>. We can use random sampling to estimate <span class="math inline">\(\pi\)</span> as follows.</p>
 <ol type="1">
 <li>Generate pairs of independent standard uniform random variables <span class="math inline">\(\{ (X_j, Y_j) \}_{j = 1}^n\)</span>. They constitute uniformly random points in the unit square.</li>
@@ -830,8 +796,8 @@ Figure&nbsp;4.2: Monte Carlo estimation of π
 </div>
 <p>The precision of the estimate improves as the number <span class="math inline">\(n\)</span> of randomly generated points increases.</p>
 </section>
-<section id="the-monte-carlo-principle" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="the-monte-carlo-principle"><span class="header-section-number">4.5.2</span> The Monte Carlo Principle</h3>
+<section id="the-monte-carlo-principle" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="the-monte-carlo-principle"><span class="header-section-number">4.4.2</span> The Monte Carlo Principle</h3>
 <p>More generally, to estimate <span class="math inline">\(E[g(X)]\)</span> for some function <span class="math inline">\(g\)</span> and random variable <span class="math inline">\(X\)</span>:</p>
 <p><span class="math display">\[\hat{\theta} = \frac{1}{n}\sum_{i=1}^n g(X_i)\]</span></p>
 <p>where <span class="math inline">\(X_1, \ldots, X_n\)</span> are random samples from the distribution of <span class="math inline">\(X\)</span>.</p>
@@ -851,8 +817,8 @@ Figure&nbsp;4.3: Monte Carlo estimate converges to true value
 </div>
 </div>
 </section>
-<section id="sec-est-area" class="level3" data-number="4.5.3">
-<h3 data-number="4.5.3" class="anchored" data-anchor-id="sec-est-area"><span class="header-section-number">4.5.3</span> Example 2: Estimate Area of an Arbitrary Region</h3>
+<section id="sec-est-area" class="level3" data-number="4.4.3">
+<h3 data-number="4.4.3" class="anchored" data-anchor-id="sec-est-area"><span class="header-section-number">4.4.3</span> Example 2: Estimate Area of an Arbitrary Region</h3>
 <p>The figure below shows a simple closed curve within the unit square centered at the origin.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -872,11 +838,11 @@ Figure&nbsp;4.4: Monte Carlo estimation of area
 <p>This is a common application of Monte Carlo simulation: estimating the volume of a given region <span class="math inline">\(\mathcal{R}\)</span> in Euclidean space, under the assumption that, for any given point, we can determine whether the point is inside or outside the region.</p>
 </section>
 </section>
-<section id="sec-importance-sampling" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="sec-importance-sampling"><span class="header-section-number">4.6</span> Importance Sampling</h2>
+<section id="sec-importance-sampling" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-importance-sampling"><span class="header-section-number">4.5</span> Importance Sampling</h2>
 <p>The Monte Carlo approach described above is also called rejection sampling. It works well when the quantity of interest corresponds to a commonly occurring simulation event. But what if we want to estimate rare events?</p>
-<section id="the-rare-event-problem" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="the-rare-event-problem"><span class="header-section-number">4.6.1</span> The Rare Event Problem</h3>
+<section id="the-rare-event-problem" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="the-rare-event-problem"><span class="header-section-number">4.5.1</span> The Rare Event Problem</h3>
 <p>Suppose <span class="math inline">\(Z\)</span> has a standard normal distribution, and we want to estimate <span class="math inline">\(P(Z &gt; 6)\)</span>.</p>
 <div class="cell">
 <details class="code-fold">
@@ -906,15 +872,15 @@ Figure&nbsp;4.4: Monte Carlo estimation of area
 </div>
 <p>We would need billions of samples to see even one event. This is computationally infeasible.</p>
 </section>
-<section id="the-importance-sampling-solution" class="level3" data-number="4.6.2">
-<h3 data-number="4.6.2" class="anchored" data-anchor-id="the-importance-sampling-solution"><span class="header-section-number">4.6.2</span> The Importance Sampling Solution</h3>
+<section id="the-importance-sampling-solution" class="level3" data-number="4.5.2">
+<h3 data-number="4.5.2" class="anchored" data-anchor-id="the-importance-sampling-solution"><span class="header-section-number">4.5.2</span> The Importance Sampling Solution</h3>
 <p><strong>Key idea:</strong> Sample from a different distribution where the event of interest is common, then reweight the samples.</p>
 <p>Instead of sampling from <span class="math inline">\(p(x)\)</span>, sample from <span class="math inline">\(q(x)\)</span> where the event <span class="math inline">\(\{X &gt; 6\}\)</span> is likely. The expected value under <span class="math inline">\(p\)</span> can be expressed as a weighted expectation under <span class="math inline">\(q\)</span>:</p>
 <p><span class="math display">\[E_p[g(X)] = E_q\left[g(X) \cdot \frac{p(X)}{q(X)}\right]\]</span></p>
 <p>The ratio <span class="math inline">\(w(x) = p(x)/q(x)\)</span> is the <strong>importance weight</strong>.</p>
 </section>
-<section id="application-to-pz-6" class="level3" data-number="4.6.3">
-<h3 data-number="4.6.3" class="anchored" data-anchor-id="application-to-pz-6"><span class="header-section-number">4.6.3</span> Application to <span class="math inline">\(P(Z &gt; 6)\)</span></h3>
+<section id="application-to-pz-6" class="level3" data-number="4.5.3">
+<h3 data-number="4.5.3" class="anchored" data-anchor-id="application-to-pz-6"><span class="header-section-number">4.5.3</span> Application to <span class="math inline">\(P(Z &gt; 6)\)</span></h3>
 <p><strong>Strategy:</strong> Shift the normal distribution to center it near 6. Let <span class="math inline">\(q(x)\)</span> be a normal distribution centered at 6.</p>
 <div class="cell">
 <details class="code-fold">
@@ -976,12 +942,12 @@ Table&nbsp;4.4: Comparison of estimation methods
 <p>Importance sampling makes the estimation of rare event probabilities feasible. The approach generalizes to many problems where direct simulation is inefficient.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 </section>
 </section>
-<section id="sec-bootstrap" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="sec-bootstrap"><span class="header-section-number">4.7</span> Bootstrap Resampling</h2>
+<section id="sec-bootstrap" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="sec-bootstrap"><span class="header-section-number">4.6</span> Bootstrap Resampling</h2>
 <p>A common question in data analysis is: how precise is our estimate? Classical statistics derives standard error formulas for specific estimators under specific assumptions. But what if we’re using a novel estimator, or our assumptions are uncertain?</p>
 <p>The <strong>bootstrap</strong> provides a general-purpose approach to quantifying uncertainty.</p>
-<section id="the-bootstrap-idea" class="level3" data-number="4.7.1">
-<h3 data-number="4.7.1" class="anchored" data-anchor-id="the-bootstrap-idea"><span class="header-section-number">4.7.1</span> The Bootstrap Idea</h3>
+<section id="the-bootstrap-idea" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="the-bootstrap-idea"><span class="header-section-number">4.6.1</span> The Bootstrap Idea</h3>
 <ol type="1">
 <li>Treat the observed sample as a proxy for the population</li>
 <li>Draw samples <strong>with replacement</strong> from the observed data (bootstrap samples)</li>
@@ -989,8 +955,8 @@ Table&nbsp;4.4: Comparison of estimation methods
 <li>Use the variability across bootstrap samples to estimate uncertainty</li>
 </ol>
 </section>
-<section id="bootstrap-implementation" class="level3" data-number="4.7.2">
-<h3 data-number="4.7.2" class="anchored" data-anchor-id="bootstrap-implementation"><span class="header-section-number">4.7.2</span> Bootstrap Implementation</h3>
+<section id="bootstrap-implementation" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="bootstrap-implementation"><span class="header-section-number">4.6.2</span> Bootstrap Implementation</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -1016,8 +982,8 @@ Table&nbsp;4.4: Comparison of estimation methods
 </details>
 </div>
 </section>
-<section id="bootstrap-example" class="level3" data-number="4.7.3">
-<h3 data-number="4.7.3" class="anchored" data-anchor-id="bootstrap-example"><span class="header-section-number">4.7.3</span> Bootstrap Example</h3>
+<section id="bootstrap-example" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="bootstrap-example"><span class="header-section-number">4.6.3</span> Bootstrap Example</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-bootstrap" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1034,8 +1000,8 @@ Figure&nbsp;4.5: Bootstrap distribution of the sample mean
 </div>
 <p>For comparison, the normal theory 95% CI is [18.9, 37.7]—similar to the bootstrap result.</p>
 </section>
-<section id="why-bootstrap-matters-for-eda" class="level3" data-number="4.7.4">
-<h3 data-number="4.7.4" class="anchored" data-anchor-id="why-bootstrap-matters-for-eda"><span class="header-section-number">4.7.4</span> Why Bootstrap Matters for EDA</h3>
+<section id="why-bootstrap-matters-for-eda" class="level3" data-number="4.6.4">
+<h3 data-number="4.6.4" class="anchored" data-anchor-id="why-bootstrap-matters-for-eda"><span class="header-section-number">4.6.4</span> Why Bootstrap Matters for EDA</h3>
 <p>The bootstrap works for almost any statistic:</p>
 <ul>
 <li>Correlation coefficients</li>
@@ -1060,8 +1026,8 @@ Bootstrap for EDA
 </div>
 </div>
 </section>
-<section id="bootstrap-for-correlation" class="level3" data-number="4.7.5">
-<h3 data-number="4.7.5" class="anchored" data-anchor-id="bootstrap-for-correlation"><span class="header-section-number">4.7.5</span> Bootstrap for Correlation</h3>
+<section id="bootstrap-for-correlation" class="level3" data-number="4.6.5">
+<h3 data-number="4.6.5" class="anchored" data-anchor-id="bootstrap-for-correlation"><span class="header-section-number">4.6.5</span> Bootstrap for Correlation</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-boot-correlation" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1079,8 +1045,8 @@ Figure&nbsp;4.6: Bootstrap distribution of correlation (mpg vs.&nbsp;weight in m
 <p>The observed correlation between fuel efficiency and weight is -0.87, with a 95% bootstrap CI of [-0.93, -0.79]. The entire interval is negative, suggesting the negative association is robust.</p>
 </section>
 </section>
-<section id="sec-mcmc-preview" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="sec-mcmc-preview"><span class="header-section-number">4.8</span> Advanced Topics: MCMC</h2>
+<section id="sec-mcmc-preview" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="sec-mcmc-preview"><span class="header-section-number">4.7</span> Advanced Topics: MCMC</h2>
 <p>For some problems, neither direct simulation nor importance sampling is feasible. <strong>Markov Chain Monte Carlo (MCMC)</strong> methods address this by constructing a sequence of random values that converges to the desired distribution.</p>
 <p>MCMC is fundamental to Bayesian statistics and probabilistic machine learning, where we often need to sample from complex posterior distributions that cannot be sampled directly.</p>
 <p>The key ideas are:</p>
@@ -1104,25 +1070,26 @@ MCMC in this book
 </div>
 </div>
 </section>
-<section id="sec-ml-connections" class="level2" data-number="4.9">
-<h2 data-number="4.9" class="anchored" data-anchor-id="sec-ml-connections"><span class="header-section-number">4.9</span> Connections to Machine Learning</h2>
+<section id="sec-ml-connections" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="sec-ml-connections"><span class="header-section-number">4.8</span> Connections to Machine Learning</h2>
 <p>Simulation methods connect to machine learning in several ways:</p>
 <p><strong>Cross-validation</strong> repeatedly resamples data to estimate generalization error—a form of simulation-based model evaluation.</p>
 <p><strong>Stochastic gradient descent</strong> uses random sampling of training batches, introducing controlled randomness to enable optimization at scale.</p>
 <p><strong>Bayesian machine learning</strong> relies on MCMC and related methods (variational inference) to sample from posterior distributions over model parameters.</p>
 <p><strong>Posterior predictive checks</strong> use simulation to assess model fit: generate data from the fitted model and compare to observed data. Discrepancies reveal model failures.</p>
 </section>
-<section id="sec-team-exr" class="level2" data-number="4.10">
-<h2 data-number="4.10" class="anchored" data-anchor-id="sec-team-exr"><span class="header-section-number">4.10</span> Team Exercises</h2>
+<section id="sec-simulation-exercises" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="sec-simulation-exercises"><span class="header-section-number">4.9</span> Exercises</h2>
 <ol type="1">
-<li><p>As in the class exercise, generate <span class="math inline">\(R\)</span> samples, each a sample of size <span class="math inline">\(n\)</span>, but this time use the Cauchy distribution (<code>rcauchy()</code>) rather than normal distribution (<code>rnorm()</code>). Calculate the sample variance and construct a histogram of the <span class="math inline">\(R\)</span> sample means. What do you observe?</p></li>
-<li><p>Use the bootstrap to estimate a 95% confidence interval for the median of <code>mtcars$mpg</code>. How does the width compare to a bootstrap CI for the mean?</p></li>
-<li><p>Estimate <span class="math inline">\(P(Z &gt; 4)\)</span> using importance sampling with a shifted normal distribution centered at 4. Compare your estimate to <code>pnorm(4, lower.tail = FALSE)</code>.</p></li>
-<li><p>Suppose <span class="math inline">\((U_1, \ldots, U_n)\)</span> are independent and identically distributed random variables following the standard uniform distribution on the interval <span class="math inline">\((0, 1)\)</span>. Now set <span class="math inline">\(X_j = - \log_e(U_j)\)</span> for <span class="math inline">\(j = 1, \ldots, n\)</span>. What is the distribution of <span class="math inline">\((X_1, \ldots, X_n)\)</span>? Verify by simulation.</p></li>
+<li><p><strong>(Variance Ratio Simulation)</strong> Verify the variance ratio result using your own simulation. Set parameters: choose sample size <span class="math inline">\(n\)</span> (e.g., 30) and number of replications <span class="math inline">\(R\)</span> (e.g., 5000). Initialize vectors to hold <span class="math inline">\(R\)</span> means and <span class="math inline">\(R\)</span> medians. For each replication, generate a sample of size <span class="math inline">\(n\)</span> from <code>rnorm()</code>, compute and store the sample mean and median. Then calculate <code>var(medians) / var(means)</code> and compare to <span class="math inline">\(\pi/2 \approx 1.57\)</span>.</p></li>
+<li><p><strong>(Cauchy Distribution)</strong> As in the previous exercise, generate <span class="math inline">\(R\)</span> samples, each of size <span class="math inline">\(n\)</span>, but this time use the Cauchy distribution (<code>rcauchy()</code>) rather than normal distribution (<code>rnorm()</code>). Calculate the sample variance and construct a histogram of the <span class="math inline">\(R\)</span> sample means. What do you observe?</p></li>
+<li><p><strong>(Bootstrap Confidence Interval)</strong> Use the bootstrap to estimate a 95% confidence interval for the median of <code>mtcars$mpg</code>. How does the width compare to a bootstrap CI for the mean?</p></li>
+<li><p><strong>(Importance Sampling)</strong> Estimate <span class="math inline">\(P(Z &gt; 4)\)</span> using importance sampling with a shifted normal distribution centered at 4. Compare your estimate to <code>pnorm(4, lower.tail = FALSE)</code>.</p></li>
+<li><p><strong>(Inverse Transform)</strong> Suppose <span class="math inline">\((U_1, \ldots, U_n)\)</span> are independent and identically distributed random variables following the standard uniform distribution on the interval <span class="math inline">\((0, 1)\)</span>. Now set <span class="math inline">\(X_j = - \log_e(U_j)\)</span> for <span class="math inline">\(j = 1, \ldots, n\)</span>. What is the distribution of <span class="math inline">\((X_1, \ldots, X_n)\)</span>? Verify by simulation.</p></li>
 </ol>
 </section>
-<section id="resources" class="level2" data-number="4.11">
-<h2 data-number="4.11" class="anchored" data-anchor-id="resources"><span class="header-section-number">4.11</span> Resources</h2>
+<section id="resources" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="resources"><span class="header-section-number">4.10</span> Resources</h2>
 <p><a href="https://www.google.co.uk/books/edition/Statistical_Distributions/OA4AJZsnOpMC?hl=en">Statistical Distributions</a> by Forbes, Evans, Hastings, and Peacock</p>
 <p><a href="https://www.google.co.uk/books/edition/_/NSzEtAEACAAJ?hl=en&amp;sa=X&amp;ved=2ahUKEwiMpLHk3uiKAxUF9bsIHcSpBaIQre8FegQIGhAC">Distributions in Statistics</a> by Johnson and Kotz</p>
 <p><a href="https://bookdown.org/rdpeng/advstatcomp/">Advanced Statistical Computing</a> by Roger Peng</p>
