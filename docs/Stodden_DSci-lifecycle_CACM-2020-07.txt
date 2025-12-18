@@ -1,0 +1,28 @@
+Stodden_DSci-lifecycle_CACM-2020-07
+
+** Domain-level ** 
+
+1	Experimental Design; Data Management Plan
+2	Obtain/Collect/Generate Data; Build Data Models
+3	Hypothesis Generation; Data Exploration
+4	Data Cleaning/Organization/Merging
+5	Data Preparation; Missing Value Imputation/Feature Selection
+6	Model Estimation; Statistical Inference
+7	Simulation; Cross-validation
+8	Visualization
+9	Manuscript and Artifact Publication; Archiving for Re-use and Reproducibility
+
+
+** Infrastructure ** 
+
+1	Workflow Software; Data Management Plan Tools
+2	Database Structures
+3	Provenance Capture; Preregistration Tools
+4	Data Management Tools
+5	Scripts/Notebooks; Workflow Software
+6	Scripts/Notebooks; Scalable Algorithms
+7	Documentation Tools; Workflow Software
+8	Visualization Software; Scripts
+9	Containerization and Packaging Tools; Artifact Linking and Metadata Tools
+
+

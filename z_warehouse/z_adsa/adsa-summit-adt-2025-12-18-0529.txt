@@ -1,0 +1,51 @@
+DRAFT: Request to Join 2026 ADSA Leadership Summit
+Revised 2025-12-19
+
+---
+
+Dear Micaela,
+
+I hope this finds you well. You may remember me from the ADSA AI Working Group in 2024, where I participated in discussions on mapping work roles to the data lifecycle alongside Victor Piotrowski, Barney Maccabe, and others. I'm writing to request an invitation to the 2026 Leadership Summit in Tucson.
+
+I recently retired from NSA after ten years, but I remain actively engaged in data science education and workforce development. I believe I could contribute a perspective that may be underrepresented at the Summit: that of someone who has hired and developed data scientists in both the public and private sectors, and who has worked on both sides of the skills-marketplace problem—defining what employers need and assessing what candidates bring.
+
+**What I would bring to the Summit:**
+
+*Workforce standards development.* At NSA, I led the effort to update the Intelligence Community's Data Science Competency Resource Guide, released by ODNI in 2023. I subsequently led development of behaviorally-anchored assessments aligned with those standards—work that required translating competency frameworks into measurable outcomes. This experience speaks directly to the "Student Readiness and Workforce Development" session theme.
+
+*Cross-sector hiring perspective.* Before NSA, I hired data scientists in Silicon Valley tech firms and in insurance/financial services in New York. The challenge of matching employer needs to applicant qualifications looks different in each sector, and different again in government. I've seen what works and what doesn't when competency frameworks meet actual hiring decisions.
+
+*Curriculum-to-workforce alignment.* I've recently completed an online textbook, "Exploratory Data Analysis for Machine Learning," based on internal training I developed at NSA. The book advocates for hybrid workflows that integrate classical statistical methods with AI-based tools—a pedagogical stance that seems relevant to the "Data Science and AI Integration Across the Curriculum" session. I would be glad to share the book with Summit participants if useful.
+
+*Skills marketplace research.* Through collaboration with Workera.ai on skills intelligence platforms, I've explored how competency ontologies can make the labor market more efficient for both employers and job-seekers. This connects to ADSA's broader mission of providing transparency for students and employers navigating the landscape of data science credentials.
+
+I recognize that the Summit is by invitation only and that space is limited. If there's a way I can contribute—whether through a session, an unconference talk, or simply informed participation—I would welcome the opportunity.
+
+Thank you for considering my request. I'm happy to provide any additional information that would be helpful.
+
+All the best,
+Tony
+
+---
+
+**Bio paragraph (for reference):**
+
+Dr. Tony Thrall served with the National Security Agency from 2015 to 2025, most recently as Senior Data Science Authority. At NSA he led the effort to update the Intelligence Community's Data Science Competency Resource Guide (ODNI, 2023) and subsequently led development of aligned assessments and training content. He has recently completed "Exploratory Data Analysis for Machine Learning," an online textbook for Masters-level data science students. Prior to government service, Dr. Thrall worked in the technology industry in Silicon Valley and in the insurance and financial sectors in New York. He earned his MA in Education from Stanford University and his PhD in Statistics from UC Berkeley.
+
+---
+
+**Notes for Tony:**
+
+1. I've reframed the letter around what you'd contribute rather than why you'd like to attend.
+
+2. I've highlighted four distinct value propositions, each tied to Summit themes.
+
+3. The Workera.ai mention is brief but signals that you've worked on the skills-marketplace problem, not just opined about it.
+
+4. I dropped the specific session themes list at the end—the connections are now woven into the body.
+
+5. The tone is confident but not presumptuous. The closing acknowledges the invitation-only nature while offering flexibility in how you might contribute.
+
+6. Consider whether you want to mention Barney Maccabe more directly—e.g., "I enjoyed working with Barney and others on the AI Working Group" — since he's General Chair and could be an advocate.
+
+7. You might also consider a brief follow-up to Barney directly, letting him know you've written to Micaela.

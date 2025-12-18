@@ -1,0 +1,316 @@
+DSci-competencies-assessments-2023-11-01-1654
+
+From: Thrall, Anthony D <adthral@nsa.gov>
+Date: Nov 1, 2023, 4:54 PM
+To: Micaela, Juan, David, Jaclyn, jlmcken@uwe.nsa.gov, jesmckenzie@deloitte.com, Jianwei, adthral@uwe.nsa.gov, info@academicdatascience.org
+
+Attached:
+  - PDF 	CRG_Data Science_2023
+  - Word	DSci-CRG_DRAFT-tr-v3_2022-04-29
+
+Dear Micaela,
+
+I’ve attached the “Competency Resource Guide for Data Science” (DSci-CRG_2023) that the office of the Director of National Intelligence (ODNI) has determined to be releasable to the public.  I’ve also attached the tech report describing the development of the document.  I’ve included Deloitte and PDRI in this correspondence: Deloitte was instrumental in developing the CRG itself; PDRI helped to develop a behaviorally anchored self-assessment based on the CRG, and will continue to help develop knowledge-based assessments as well.
+
+Looking forward to continuing discussions on this and other topics.  All the best – Tony
+
+Tony Thrall, PhD
+Tech Director
+NSA Senior Data Science Authority
+
+adthral@radium.ncsc.mil
+adthral@uwe.nsa.gov
+
+
+From: Thrall, Anthony D
+Sent: Tuesday, October 31, 2023 2:48 PM
+To: 'adthral@nsa.ic.gov' <adthral@nsa.ic.gov>
+Subject: FW: [Non-DoD Source] Re: ADSA, DSci competencies and assessments
+
+[+ Jes M/Deloitte, Jackie MK/PDRI]
+
+From: Tony Thrall <tthrall@alumni.stanford.edu>
+Sent: Thursday, October 26, 2023 7:10 PM
+To: Micaela Parker <micaela@academicdatascience.org>
+Cc: Juan Gutierrez <juan.gutierrez3@utsa.edu>; David Mangeau <david.mongeau@utsa.edu>; Jianwei Niu <jianwei.niu@utsa.edu>; Thrall, Anthony D <adthral@nsa.gov>; adthral@uwe.nsa.gov; info@academicdatascience.org
+Subject: [Non-DoD Source] Re: ADSA, DSci competencies and assessments
+
++ info@academicdatascience.org
+
+
+On Thu, Oct 26, 2023 at 6:05 PM Tony Thrall <tthrall@alumni.stanford.edu> wrote:
+
+Dear Micaela, 
+
+It was a pleasure to talk to you and Juan earlier today about potential ADSA leadership and participation in emerging opportunities.
+
+As I mentioned, NSA has been very happy to support the Rowdy Datathon at UTSA (the second annual event being held this coming weekend).  Juan has been brilliant in his selfless leadership of this event, and has considered several possible ways to build on our success.  We would love to discuss those ideas with you, and ADSA's potential engagement.
+
+I also mentioned that the US Intelligence Community (IC) has revised its "Competency Resource Guide for Data Science", the culmination of an intensive 18-month effort by data science professionals from several IC elements.  I've just received permission to release that guide to interested parties, and would be happy to send that to you as soon as possible.  If you would be interested I can also send the accompanying technical report describing the development process.
+
+Following the submission of the draft guide in 2022, our team (now the IC Data Science Assessment Working Group [DSAWG]), has developed a behaviorally-anchored self-assessment, and we are working on additional knowledge-based assessments.  Ideally we would like to identify or establish an external credentialing body available to anyone interested.  The IC's acute need is to efficiently confirm the qualifications of data science contractors, but we think the best way to go about this is through an independent authority that the US Government, and others, could formally recognize.
+
+I would love to discuss these possibilities with you, David, Juan, Jianwei, and any others interested.  All the best  -- Tony 
+
+
+On Wed, Oct 18, 2023 at 6:21 AM adthral@uwe.nsa.gov <adthral@uwe.nsa.gov> wrote:
+
+Got it, Micaela.  Thanks very much.  -- Tony 
+
+From: Micaela Parker <micaela@academicdatascience.org>
+Sent: Tuesday, October 17, 2023 4:45 PM
+To: Tony Thrall (GOV) <adthral@uwe.nsa.gov>
+Subject: ADSA Annual Meeting: Reminders and Logistics
+
+Hi Tony,
+
+Melissa at UTSA said you want to join our ADSA Annual Meeting next week. Great! I sent her the registration link for you. Below you will find the last minute logistics information.
+
+Best,
+-Micaela
+
+Micaela S. Parker, Ph.D.
+Founder & Executive Director | Academic Data Science Alliance
+
+she/her 
+
+http://www.academicdatascience.org/
+
+ 
+
+---------- Forwarded message ---------
+From: Micaela Parker <micaela@academicdatascience.org>
+Date: Tue, Oct 10, 2023 at 10:34 AM
+Subject: ADSA Annual Meeting in TWO WEEKS! Reminders and Logistics
+To: Micaela Parker <micaela@academicdatascience.org>
+
+ 
+
+Image removed by sender.
+
+Dear ADSA Meeting Participant,
+
+ 
+
+We are so excited to see everyone in just 2 weeks in San Antonio!!
+
+In preparation, we are reaching out with some additional information and reminders. 
+
+ 
+
+REMINDER: Point your browser to http://adsaannualmeeting2023.sched.com/  There you can find the schedule of events as well as a list of speakers and participants. Please create an account and add yourself as a participant if you aren’t already there. Then add your professional profile info such as your bio, LinkedIn, website, link to resume, etc so we can get to know you! And be sure to download the Sched app on your phone for quick access and announcements during the event.
+
+ 
+
+➡️ Poetry!
+
+·         Poethon is back! Always a favorite at our Annual Meeting, Poethon gives participants the opportunity to create and share poetically expressive writing about their experiences with and perspectives on data and data science. Click here for more information, inspiration, and how to sign up to participate. You may read your own work or someone else’s work, or ask one of us to read.
+
+ 
+
+Shared Folders
+
+·         SESSION LEADS: Here is a link to the Shared Folders for Sessions where you can drop in your slides and any articles related to the topics of the sessions.
+
+ 
+
+⭐ Social Offset
+
+ADSA has partnered with SocialOffset because we are going to San Antonio with the intention of making the world a better place. We believe that understanding, embracing and prioritizing inclusion, diversity and equity in higher education is critical to competitiveness, innovation and our global pursuit of a more sustainable world. When you travel, every purchase you make generates tax revenue for a state government. That government may make policies that don't align with your personal values. Giving to a local charity working towards the equity goals you care about can help balance the scale. 
+
+Visit the 2023 ADSA Annual Meeting SocialOffset page to donate to vetted local organizations in San Antonio that make a difference in people’s lives and offset any spending that doesn’t align with your values by supporting local charities that do.
+
+ 
+
+COVID precautions: 
+
+·         ADSA has purchased masks and COVID tests. Both will be available at registration to make your stay more comfortable. We ask that if you suspect exposure or have symptoms to please test before joining the day’s events.
+
+ 
+
+Welcome Reception/Hotel:
+
+·         We will be hosting a welcome reception on Tuesday from 6 to 8 pm at the Drury Hotel San Antonio Riverwalk in room Frio III and the Riverwalk Patio. Part of the reception will be outside so dress accordingly. Hors d'oeuvres will be served and drink tickets will be provided upon check-in. 
+
+·         Our room block is also located at the same hotel and is an 8-minute walk to the meeting venue. Drury does provide a free hot breakfast every morning. If you will be checking in late, make sure to call Drury! Hotels sometimes give away rooms if you don’t confirm that you’re still coming.
+
+  
+
+Parking at UTSA: 
+
+·         For those driving to the meeting, the parking lot is located at 702 Dolorosa (see attached map). Visitors may park in any “unmarked spot.” Note: For faculty and staff of UTSA, you are still asked to park according to your permits - at the designated lots at the DT campus (not the visitor lot).
+
+ 
+
+Family Care Support and Self-Care:
+
+ADSA is pleased to offer up to $150/day for family care support (childcare, elder care, etc.) for working parents and guardians to attend and participate. Family care support is meant to help offset the cost of care provided on-site at the conference or for expenses incurred for care of a child, elderly parent, or other dependent at an off-site facility (daycare) or at home for the duration of the meeting. Receipts are not required but we ask you to itemize your expenses. If you would like to request family care reimbursement, please contact Megan Atkinson at megan@academicdatascience.org
+
+ 
+
+At the UTSA Meeting venue (San Pedro building), there will be a Meditation room and a Lactation room available.
+
+ 
+
+Meals:
+
+·         There will be coffee, tea, water, and snacks available every day during the morning and afternoon breaks. 
+
+·         Lunches are provided on-site Wednesday and Thursday only. These are boxed lunches so you can sit outside or in one of the conference rooms. Lunch discussion groups are encouraged. For example, to discuss the "NSF Proto-OKN Project and collaboration opportunities for knowledge graph education content" - contact Florence Hudson through the Sched chat if interested.
+
+·         Dinners are on your own. There will be a happy hour during the poster session on Wednesday. See below for dinner restaurant recommendations.
+
+Restaurants near Meeting Venue/Hotel:
+
+Less than 1 mile
+
+·         Iron Cactus Mexican Grill and Margarita Bar
+
+·         Casa Rio - location of our after party (more details to come) 
+
+·         Tributary
+
+·         The Republic of Texas
+
+·         Chart House
+
+·         La Focaccia Italian Grill 
+
+1 to 1.5 miles
+
+·         Vegan Avenue on Main - Vegan 
+
+·         Viva Vegeria - Vegan and gluten free 
+
+·         Elsewhere Bar & Kitchen   
+
+·         Shiro Japanese Bistro
+
+
+Prior to the start of the meeting please take a moment to review the ADSA Code of Conduct. We take reports of code of conduct violations seriously.
+
+Please don’t hesitate to ask us any questions you may still have. Thank you for participating in our Annual Meeting! We are so excited to see all of you in person! 
+
+ 
+
+-ADSA Team
+
+ 
+
+Micaela S. Parker, Ph.D.
+Founder & Executive Director | Academic Data Science Alliance
+
+she/her 
+
+Image removed by sender.
+
+http://www.academicdatascience.org/
+I gratefully acknowledge that I am living and learning on the shared and largely unceded traditional territory of the Coast Salish peoples, including the land which touches the shared waters of all tribes and bands within the Suquamish, Tulalip, and Muckleshoot nations.
+
+*Please note: I often work outside "normal business hours" because it works for me. I respect other working patterns. I do not expect a reply outside your working hours in your time zone.
+
+--
+
+Tony Thrall, PhD | +1 (650) 961-5148 | tthrall@Alumni.Stanford.edu | http://www.linkedin.com/in/tthrall
+ 2 Attachments
+  •  Scanned by Gmail
+
+Micaela Parker <micaela@academicdatascience.org>
+Nov 2, 2023, 1:15 PM
+to Anthony, Juan, David, Jaclyn, jlmcken@uwe.nsa.gov, jesmckenzie@deloitte.com, Jianwei, me, adthral@uwe.nsa.gov
+
+Hi Tony,
+
+My apologies for the silence - as you can imagine I've had a backlog to dig out of since our Annual Meeting concluded last week. 
+
+Thank you for sharing these documents. Really wonderful to see how thorough the NSA and the intelligence community are tackling the definition of a data scientist and data competencies. Our effort was not nearly as extensive, but based on the slides Juan presented at the meeting, I think we arrived at a similar place. 
+
+Here is the link to the webpage that summarizes our Working Group's initial mission and the pilot survey outcomes. Note, initially we went down this path to provide greater transparency for students and employers to understand the learning outcomes from the myriad Master's degrees being offered in data science. (i.e. which degree programs are the best fit for an incoming student, and how can employers best assess the skills and competencies of their hiring pool). However, in working towards this mission we realized we needed to start with a taxonomy of the foundations of data science. 
+
+What we came up with, roughly and still draft, is this framework, or taxonomy, that the Working Group co-created, upon which the survey was built.
+
+The taxonomy has four overarching themes:
+  - Foundations of Analytics
+  - Systems and Implementation
+  - Data Science Project Design
+  - Data Science in Practice
+
+I would love to discuss how we could merge our efforts to create a more cross-sector consensus around the foundations of data science. It would be even more powerful if we included some industry and non-profit groups in the discussion as well. Please let me know what you think would be the best next steps for these ideas.
+ 
+WRT the Rowdy Datathon: From my limited view, it seemed like the Rowdy Datathon was a great success! I loved the topic the students had to work on. I'll connect with Juan and David about their vision for the future of the event and then we can loop back to you. Does that work?
+
+Best,
+-Micaela
+
+Micaela S. Parker, Ph.D.
+Founder & Executive Director | Academic Data Science Alliance
+she/her 
+http://www.academicdatascience.org/
+ One attachment
+  •  Scanned by Gmail
+
+Thrall, Anthony D
+Nov 2, 2023, 6:52 PM
+Excellent, Micaela. I would love to work with industry on this topic. Along those lines, what are your thoughts about engaging the American Statistical Associat
+
+Micaela Parker <micaela@academicdatascience.org>
+Nov 3, 2023, 1:11 PM
+to Stella, Steve, Anthony, Juan, David, Jaclyn, jlmcken@uwe.nsa.gov, jesmckenzie@deloitte.com, Jianwei, me, adthral@uwe.nsa.gov
+
+Hi Tony,
+
+I love the idea of reaching out to the major professional societies. We have a tight relationship with ASA already (in fact, they are dues paying ADSA members!). 
+
+I would welcome an introduction to leadership at ACM so we can start building connections there - Jianwei: let me know if you can e-introduce me.
+
+And I owe someone at Deloitte an email, so we can reach out to them as well.
+
+Both directly and through our leadership we have connections to several industry sectors.
+
+BUT, I also agree with keeping the ultimate focus group (working group) small. 
+
+Perhaps as a starting point, to identify the respective needs of each sector, as you point out, ADSA (and anyone on this email who wants to help out!) starts to build a list of contacts. We can then reach out for an initial meeting with representatives from each sector with the dual goals of introducing the project and soliciting reactions/suggestions to the two taxonomies in their current form. A "what are we missing" and "what do you agree/disagree with'' approach. We can then decide if it makes sense at that point to merge the taxonomies or create parallel versions that allow an apples to apples comparison of the needs and expectations for data science and AI in the workforce in each sector and the degree programs that are currently available across the country.
+
+And here, let me add that I absolutely agree with a pivot to adding AI and thereby emphasizing the importance of both AI and data science skills in the future workforce. I think we want to be careful adding AI to the taxonomy in a way that makes it clear that AI is a tool for data science and a system that wouldn't exist without all the other work: data-collection, -curation, -management, -security, -privacy, -governance, -provenance, etc.
+
+In terms of timeline, let's aim for this project to get underway in 2024. We can work on the contacts list until the end of the year and then reach out for initial meetings in January. 
+
+You have nudged us to do something we have been talking about for some time, so thank you! ADSA can lead this cross sector information gathering and facilitate the focus groups and working group. Please let me know how much you and others in your office want to be involved at this point or if you prefer to hand-off and just be updated occasionally. 
+
+Best,
+-Micaela
+
+Micaela S. Parker, Ph.D.
+Founder & Executive Director | Academic Data Science Alliance
+she/her 
+http://www.academicdatascience.org/
+
+Juan Gutierrez
+Nov 3, 2023, 1:25 PM
+Tony, Micaela, This conversation is emblematic of what pollination and constructive collaboration could be. I’d like to add something for your consideration, or
+
+Thrall, Anthony D <adthral@nsa.gov>
+Nov 3, 2023, 2:57 PM
+to Jianwei, Micaela, Juan, David, Jaclyn, jlmcken@uwe.nsa.gov, jesmckenzie@deloitte.com, me, adthral@uwe.nsa.gov, Stella, Steve
+
+Sounds great, Micaela.  Count me in as an active volunteer.  I’ll follow up with suggested contacts.  All the best – Tony
+
+
+Thrall, Anthony D <adthral@nsa.gov>
+Attachments
+Nov 3, 2023, 3:06 PM
+to Jianwei, Juan, Micaela, David, Jaclyn, jlmcken@uwe.nsa.gov, jesmckenzie@deloitte.com, me, adthral@uwe.nsa.gov, Stella, Steve
+
+Excellent points, Juan.  You’ve reminded me of the presentation by David Donoho on the 100th birthday of John Tukey: 50 Years of Data Science.  Best – Tony
+
+David Donoho (2017) 50 Years of Data Science, Journal of Computational and Graphical Statistics, 26:4, 745-766, DOI: 10.1080/10618600.2017.1384734
+
+ABSTRACT
+
+More than 50 years ago, John Tukey called for a reformation of academic statistics. In “The Future of Data Analysis,” he pointed to the existence of an as-yet unrecognized science, whose subject of interest was learning from data, or “data analysis.” Ten to 20 years ago, John Chambers, Jeff Wu, Bill Cleveland, and Leo Breiman independently once again urged academic statistics to expand its boundaries beyond the classical domain of theoretical statistics; Chambers called for more emphasis on data preparation and presentation rather than statistical modeling; and Breiman called for emphasis on prediction rather than inference. Cleveland and Wu even suggested the catchy name “data science” for this envisioned field. A recent and growing phenomenon has been the emergence of “data science” programs at major universities, including UC Berkeley, NYU, MIT, and most prominently, the University of Michigan, which in September 2015 announced a $100M “Data Science Initiative” that aims to hire 35 new faculty. Teaching in these new programs has significant overlap in curricular subject matter with traditional statistics courses; yet many academic statisticians perceive the new programs as “cultural appropriation.” This article reviews some ingredients of the current “data science moment,” including recent commentary about data science in the popular media, and about how/whether data science is really different from statistics. The now-contemplated field of data science amounts to a superset of the fields of statistics and machine learning, which adds some technology for “scaling up” to “big data.” This chosen superset is motivated by commercial rather than intellectual developments. Choosing in this way is likely to miss out on the really important intellectual event of the next 50 years. Because all of science itself will soon become data that can be mined, the imminent revolution in data science is not about mere “scaling up,” but instead the emergence of scientific studies of data analysis science-wide. In the future, we will be able to predict how a proposal to change data analysis workflows would impact the validity of data analysis across all of science, even predicting the impacts field-by-field. Drawing on work by Tukey, Cleveland, Chambers, and Breiman, I present a vision of data science based on the activities of people who are “learning from data,” and I describe an academic field dedicated to improving that activity in an evidence-based manner. This new field is a better academic enlargement of statistics and machine learning than today’s data science initiatives, while being able to accommodate the same short-term goals. Based on a presentation at the Tukey Centennial Workshop, Princeton, NJ, September 18, 2015.
+
+ One attachment
+  •  Scanned by Gmail
+
+
+
