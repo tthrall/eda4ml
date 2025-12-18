@@ -1050,7 +1050,7 @@ node_features <- tibble::tibble(
 )
 
 # Preview
-node_features |> print(n = 6)
+head(node_features)
 ```
 
 This feature matrix can be joined with node labels (e.g., faction membership) for supervised learning, or used directly for clustering or anomaly detection.
