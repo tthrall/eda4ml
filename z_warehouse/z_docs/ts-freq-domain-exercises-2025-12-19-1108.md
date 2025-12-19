@@ -1,0 +1,21 @@
+## Exercises {#sec-ts-freq-domain-exercises}
+
+1. **White Noise Spectrum.** Generate 500 observations of Gaussian white noise using `stats::rnorm()`. (a) Compute and plot the raw periodogram using `stats::spec.pgram()` with no smoothing. (b) The true spectrum is flat (constant). How much does the periodogram deviate? (c) Apply smoothing with `spans = c(7, 7)` and compare. (d) Repeat the exercise several times with different random seeds. What do you observe about the variability of the raw periodogram vs. the smoothed estimate?
+
+2. **Periodogram Distribution.** For the white noise simulations above, at a fixed Fourier frequency $\lambda_j$, the periodogram ordinate $I(\lambda_j)$ follows a $\chi_2^2/2$ distribution (scaled by the true spectrum). (a) Generate 1000 periodogram ordinates at a single frequency by repeating the simulation. (b) Plot a histogram and overlay the theoretical $\chi_2^2/2$ density. (c) What does this tell you about confidence intervals for spectral estimates?
+
+3. **AR Spectrum Identification.** Using `astsa::arma.spec()`, plot the theoretical spectra of AR(1) processes with $\phi = 0.9$, $\phi = 0.5$, and $\phi = -0.5$. (a) How does the sign of $\phi$ affect the spectrum shape? (b) How does the magnitude of $\phi$ affect the peak height? (c) For each case, what is the dominant period (if any)?
+
+4. **SOI Spectrum.** Using the Southern Oscillation Index data (`astsa::soi`): (a) Plot the smoothed spectrum with appropriate bandwidth. (b) Identify the two dominant peaks and convert their frequencies to periods in months. (c) The annual peak is expected. What physical phenomenon explains the other dominant peak? (d) Compare the spectrum to the ACF. Which diagnostic more clearly reveals the El Niño periodicity?
+
+5. **Sunspot Cycle.** The sunspot series (`astsa::sunspotz`) exhibits a well-known approximately 11-year cycle. (a) Estimate the spectrum and identify the dominant peak. Convert the peak frequency to a period—how does this compare to the commonly cited "11-year solar cycle"? (b) The peak is broad rather than sharp. What does this indicate about the solar cycle? (c) Are there harmonics visible? What do they imply about the waveform shape? (d) Using the spectrum, estimate what fraction of total variance is attributable to the ~11-year cycle.
+
+6. **Global Temperature Spectrum.** For the global land temperature series (`astsa::gtemp_land`), estimate and plot the spectrum. (a) Does it show evidence of annual periodicity? (b) What feature dominates the spectrum, and what does this indicate about the series? (c) How does the spectral shape relate to what you observe in the time plot? (d) What does the low-frequency dominance imply for trend estimation?
+
+7. **Bandwidth Selection.** Using the recruitment series (`astsa::rec`): (a) Estimate the spectrum with three different bandwidths—narrow (`spans = c(3, 3)`), medium (`spans = c(7, 7)`), and wide (`spans = c(15, 15)`). (b) How do the estimates differ in terms of variance and resolution? (c) Which bandwidth would you choose for a final analysis? Justify your choice. (d) How does sample size affect the appropriate bandwidth choice?
+
+8. **AR(2) Spectrum.** The recruitment series is well-modeled by an AR(2) process. (a) Fit an AR(2) model using `stats::ar.ols()`. (b) Compute the theoretical AR(2) spectrum from the fitted coefficients using the formula in the chapter. (c) Overlay the theoretical spectrum on the smoothed periodogram. How well do they match? (d) Where does the spectral peak occur, and what period does this correspond to?
+
+9. **Coherence: SOI and Recruitment.** Using the SOI and recruitment data (both from `astsa`): (a) Estimate the coherence between the two series. (b) At what frequencies is coherence highest? (c) The SOI measures atmospheric pressure differences; recruitment measures fish population. What physical mechanism might explain their coherence? (d) Is there a phase relationship visible in the cross-spectrum?
+
+10. **Coherence: Temperature.** Using the HNL-NYC temperature data from `eda4mldata`: (a) Estimate and plot the coherence. (b) At what frequency is coherence essentially 1? Why? (c) At what frequencies is coherence near 0? What does this mean physically? (d) If you had temperature data from London, what coherence pattern would you expect with NYC? With Honolulu?
