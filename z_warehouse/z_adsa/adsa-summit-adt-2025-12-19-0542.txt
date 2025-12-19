@@ -1,0 +1,72 @@
+adsa-summit-adt-2025-12-18-0603
+
+from:	Tony Thrall <tthrall@alumni.stanford.edu>
+to:	Micaela@alliance4datascience.ai
+date:	Dec 18, 2025, 6:03 AM
+subject:	Request to Join 2026 Leadership Summit – Tony Thrall (ADSA AI WG 2024)
+
+Dear Micaela,
+
+I hope this finds you well. You may remember me from the ADSA AI Working Group in 2024, where I participated in discussions on mapping work roles to the data lifecycle alongside Victor Piotrowski, Barney Maccabe, and others. I'm writing to request an invitation to the 2026 Leadership Summit in Tucson.
+
+I recently retired from NSA after ten years, but I remain actively engaged in data science education and workforce development. I believe I could contribute a perspective that may be underrepresented at the Summit: that of someone who has hired and developed data scientists in both the public and private sectors, and who has worked on both sides of the skills-marketplace problem—defining what employers need and assessing what candidates bring.
+
+**What I would bring to the Summit:**
+
+*Workforce standards development.* At NSA, I led the effort to update the Intelligence Community's Data Science Competency Resource Guide, released by ODNI in 2023. I subsequently led development of behaviorally-anchored assessments aligned with those standards—work that required translating competency frameworks into measurable outcomes. This experience speaks directly to the "Student Readiness and Workforce Development" session theme.
+
+*Cross-sector hiring perspective.* Before NSA, I hired data scientists in Silicon Valley tech firms and in insurance/financial services in New York. The challenge of matching employer needs to applicant qualifications looks different in each sector, and different again in government. I've seen what works and what doesn't when competency frameworks meet actual hiring decisions.
+
+*Curriculum-to-workforce alignment.* I've recently completed an online textbook, "Exploratory Data Analysis for Machine Learning," based on internal training I developed at NSA. The book advocates for hybrid workflows that integrate classical statistical methods with AI-based tools—a pedagogical stance that seems relevant to the "Data Science and AI Integration Across the Curriculum" session. I would be glad to share the book with Summit participants if useful.
+
+*Skills marketplace research.* Through collaboration with Workera.ai on skills intelligence platforms, I've explored how competency ontologies can make the labor market more efficient for both employers and job-seekers. This connects to ADSA's broader mission of providing transparency for students and employers navigating the landscape of data science credentials.
+
+I recognize that the Summit is by invitation only and that space is limited. If there's a way I can contribute—whether through a session, an unconference talk, or simply informed participation—I would welcome the opportunity.
+
+Thank you for considering my request. I'm happy to provide any additional information that would be helpful.
+
+All the best,
+Tony
+
+---
+
+**Bio paragraph (for reference):**
+
+Dr. Tony Thrall served with the National Security Agency from 2015 to 2025, primarily with the Office of the Senior Data Science Authority. At NSA he led the effort to update the Intelligence Community's Data Science Competency Resource Guide (ODNI, 2023) and subsequently led development of aligned assessments and training content. He has recently completed "Exploratory Data Analysis for Machine Learning," an online textbook for Masters-level data science students. Prior to government service, Dr. Thrall worked in the technology industry in Silicon Valley and in the insurance and financial sectors in New York. He earned his MA in Education from Stanford University and his PhD in Statistics from UC Berkeley.
+
+--
+Tony Thrall, PhD | +1 (650) 961-5148 | tthrall@Alumni.Stanford.edu | http://www.linkedin.com/in/tthrall
+
+from:	Micaela Parker <micaela@alliance4datascience.ai>
+to:	Tony Thrall <tthrall@alumni.stanford.edu>
+cc:	Steve Van Tuyl <steve@academicdatascience.org>
+date:	Dec 18, 2025, 11:38 PM
+subject:	Re: Request to Join 2026 Leadership Summit – Tony Thrall (ADSA AI WG 2024)
+
+Hi Tony,
+Thank you so much for reaching out! Your timing is perfect. We have a session on "Student Readiness and Workforce Development in this Era of AI" (I'm pasting the abstract below) that really needs a co-Chair. The current chair has needed to step away for a bit to deal with a personal issue and we are urgently needing to move forward with inviting panelists. Would you be willing to step in? 
+
+The only panelist that has been invited and confirmed so far (that I am aware of) is Viveca Pavon at Accenture. If you agree to take this on, I can send you the other panelist options and we can also jump on a quick call early next week (Tuesday is good for me) so I can get you up to speed. 
+
+Let me know!
+-Micaela
+
+Abstract:
+The rise of AI is transforming career pathways and redefining the very nature of the workforce. As AI reshapes the job market and entry-level roles, academic programs face the challenge of preparing students for evolving workforce realities. Generative AI is now widely adopted as part of higher education, with students increasingly relying on these tools to accelerate learning and productivity. This panel will address how academic programs can equip students for employability in an AI-driven world and navigate future disruptions in early career roles, career ladders, and workplace expectations. The panel will also address how academic programs can meaningfully connect student experience to workforce needs while maintaining intellectual integrity and pedagogical best practices. Panelists will share approaches for developing applied learning experiences, showcasing student capabilities to employers, and fostering partnerships that connect educational programs to the realities of an AI-transformed workplace.
+
+Micaela S. Parker, Ph.D.
+Founder & Executive Director | Alliance for Data Science & AI
+she/her 
+http://alliance4datascience.ai/
+
+
+from:	Tony Thrall <tthrall@alumni.stanford.edu>
+to:	Micaela Parker <micaela@alliance4datascience.ai>
+cc:	Steve Van Tuyl <steve@academicdatascience.org>
+date:	Dec 19, 2025, 5:42 AM
+subject:	Re: Request to Join 2026 Leadership Summit – Tony Thrall (ADSA AI WG 2024)
+
+Excellent, Micaela!  Yes, I would be delighted to serve as co-chair of the session on "Student Readiness and Workforce Development in this Era of AI", and would be happy to recruit panelists.  I'm ready to join you on a call whenever convenient for you, so please send me a meeting invitation when you can.  I've been working in the UK for the past year, and will return to California on Christmas Day.  In the meantime, I'm 8 hours ahead of you.  Even so, I have a lot of flexibility in my schedule now; just let me know when you'd like to talk, and I'll be there.
+
+All the best  -- Tony
+

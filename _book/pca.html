@@ -507,7 +507,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:26 Thu 18-Dec-2025</p>
+      <p class="date">06:35 Fri 19-Dec-2025</p>
     </div>
   </div>
   
@@ -519,6 +519,56 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(assertthat)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(beans)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Cairo)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(conflicted)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HistData)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR2)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mclust)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rlang)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with plotly</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>conflicted<span class="sc">::</span><span class="fu">conflicts_prefer</span>(plotly<span class="sc">::</span>layout)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with tidymodels packages</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tidymodels<span class="sc">::</span><span class="fu">tidymodels_prefer</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"d_ball.R"</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"eda4ml_set_seed.R"</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"galton_ht_data.R"</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"pc_aesthetics.R"</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"vc_per_state.R"</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"wine_quality_uci.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <section id="sec-pca-intro" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="sec-pca-intro"><span class="header-section-number">8.1</span> Introduction</h2>
 <p>This chapter addresses a fundamental question in data analysis: along which directions do the features of a data set vary most? The answer—principal component analysis (PCA)—is one of the most widely used techniques in statistical learning, providing both a method for dimension reduction and a lens for understanding the structure of high-dimensional data.</p>
@@ -536,9 +586,45 @@ window.Quarto = {
 <h2 data-number="8.2" class="anchored" data-anchor-id="sec-pca-data-examples"><span class="header-section-number">8.2</span> Motivating Examples</h2>
 <section id="us-arrests" class="level3" data-number="8.2.1">
 <h3 data-number="8.2.1" class="anchored" data-anchor-id="us-arrests"><span class="header-section-number">8.2.1</span> US Arrests</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>state_stats_lst <span class="ot">&lt;-</span> <span class="fu">list_state_stats</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (x, y) = (lat, long)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>st_ctr_tbl <span class="ot">&lt;-</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  state_stats_lst<span class="sc">$</span> st_ctr_tbl</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 8 state stats: Population, ..., Area</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>st_77_tbl <span class="ot">&lt;-</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  state_stats_lst<span class="sc">$</span> st_77_tbl</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># UrbanPop + 3 violent crimes: Assault, Murder, Rape</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>arrests_wide <span class="ot">&lt;-</span> </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  state_stats_lst<span class="sc">$</span> arrests_wide</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>arrests_long <span class="ot">&lt;-</span> </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  state_stats_lst<span class="sc">$</span> arrests_long</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># compilation of the above</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>st_wide <span class="ot">&lt;-</span> </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  state_stats_lst<span class="sc">$</span> st_wide</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>st_wide_dscr <span class="ot">&lt;-</span> </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  state_stats_lst<span class="sc">$</span> st_wide_dscr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p>Data analysis often begins with exploration, using tables and figures to learn about the data before formulating specific questions or hypotheses. The exploration becomes more challenging as the dimensions of the data increase. Here is a modest example.</p>
 <p><span class="citation" data-cites="McNeil_1977">McNeil (<a href="references.html#ref-McNeil_1977" role="doc-biblioref">1977</a>)</span> reviewed the relationship among violent crime statistics per US state and the percentage of the population living in urban areas, variables described in <a href="#tbl-arrests-per-us-state-1973" class="quarto-xref">Table&nbsp;<span>8.1</span></a> below. With just four variables, we can visualize the full data structure using scatter plot matrices (<a href="#fig-arrests-2d-scatter-matrix" class="quarto-xref">Figure&nbsp;<span>8.3</span></a>). However, even this preliminary exploration reveals strong correlations among the three crime variables (Murder, Assault, Rape), suggesting that the data may effectively lie in fewer than four dimensions.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>st_wide_dscr <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    var <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Assault"</span>, <span class="st">"Rape"</span>, <span class="st">"Murder"</span>, <span class="st">"UrbanPop"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">variable =</span> var, <span class="at">description =</span> dscr) <span class="sc">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Arrests per US State (1973)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-arrests-per-us-state-1973" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-arrests-per-us-state-1973-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -590,6 +676,24 @@ Table&nbsp;8.1: Arrests per US State (1973)
 </div>
 <p><a href="#fig-arrests-violin" class="quarto-xref">Figure&nbsp;<span>8.1</span></a> below (a so-called “violin” plot <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>) shows the distribution across the 50 states of each type of violent crime. Rates are calculated as arrests per 100,000 population. The figure shows these rates on a <span class="math inline">\(\log_{10}\)</span> scale, since assault arrests are many times more common than rape or murder arrests.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>g_arrests_violin <span class="ot">&lt;-</span> arrests_long <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(var <span class="sc">!=</span> <span class="st">"UrbanPop"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">var =</span> forcats<span class="sc">::</span><span class="fu">as_factor</span>(var)) <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">crime =</span> var) <span class="sc">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> crime, <span class="at">y =</span> rate, <span class="at">color =</span> crime, <span class="at">fill =</span> crime</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Violent Crime Rates per US State (1973)"</span>, </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"arrests per 100K population"</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>g_arrests_violin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-arrests-violin" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -605,11 +709,36 @@ Figure&nbsp;8.1: Violent Crime Rates per US State (1973)
 </div>
 <p>The figure above gives a view of three data variables—that is, three columns of the data matrix. <a href="#fig-arrests-3d-scatter" class="quarto-xref">Figure&nbsp;<span>8.2</span></a> below, a 3D scatterplot, gives a complementary view: each of the 50 states appears as a point whose coordinates are the respective arrest rates for assault, rape, and murder, with colour indicating <code>UrbanPop</code>, the percentage of the state’s population living in an urban area. Since individual states correspond to the rows of the data matrix, this figure provides a row-based perspective.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>g_arrests_3d_scatter <span class="ot">&lt;-</span> arrests_wide <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_ly</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span>Assault, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="sc">~</span>Rape, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">z =</span> <span class="sc">~</span>Murder,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">"scatter3d"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">"markers"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="sc">~</span>arrests_wide<span class="sc">$</span> st_abb,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">marker =</span> <span class="fu">list</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">5</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="sc">~</span>UrbanPop,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">colorscale =</span> <span class="st">"Viridis"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">showscale =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">colorbar =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"UrbanPop"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">scene =</span> <span class="fu">list</span>(</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Assault"</span>),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Rape"</span>),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Murder"</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Violent Crime Rates in each US State (1973)"</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>g_arrests_3d_scatter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="fig-arrests-3d-scatter" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="plotly html-widget html-fill-item" id="htmlwidget-b52e173102e76c2328b3" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-b52e173102e76c2328b3">{"x":{"visdat":{"25a8604639f":["function () ","plotlyVisDat"]},"cur_data":"25a8604639f","attrs":{"25a8604639f":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-b52e173102e76c2328b3">{"x":{"visdat":{"278424304246":["function () ","plotlyVisDat"]},"cur_data":"278424304246","attrs":{"278424304246":{"x":{},"y":{},"z":{},"mode":"markers","text":{},"marker":{"size":5,"color":{},"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"Assault"},"yaxis":{"title":"Rape"},"zaxis":{"title":"Murder"}},"title":"Violent Crime Rates in each US State (1973)","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[236,263,294,190,276,204,110,238,335,211,46,120,249,113,56,115,109,249,83,300,149,255,72,259,178,109,102,252,57,159,285,254,337,45,120,151,159,106,174,279,86,188,201,120,48,156,145,81,53,161],"y":[21.199999999999999,44.5,31,19.5,40.600000000000001,38.700000000000003,11.1,15.800000000000001,31.899999999999999,25.800000000000001,20.199999999999999,14.199999999999999,24,21,11.300000000000001,18,16.300000000000001,22.199999999999999,7.7999999999999998,27.800000000000001,16.300000000000001,35.100000000000001,14.9,17.100000000000001,28.199999999999999,16.399999999999999,16.5,46,9.5,18.800000000000001,32.100000000000001,26.100000000000001,16.100000000000001,7.2999999999999998,21.399999999999999,20,29.300000000000001,14.9,8.3000000000000007,22.5,12.800000000000001,26.899999999999999,25.5,22.899999999999999,11.199999999999999,20.699999999999999,26.199999999999999,9.3000000000000007,10.800000000000001,15.6],"z":[13.199999999999999,10,8.0999999999999996,8.8000000000000007,9,7.9000000000000004,3.2999999999999998,5.9000000000000004,15.4,17.399999999999999,5.2999999999999998,2.6000000000000001,10.4,7.2000000000000002,2.2000000000000002,6,9.6999999999999993,15.4,2.1000000000000001,11.300000000000001,4.4000000000000004,12.1,2.7000000000000002,16.100000000000001,9,6,4.2999999999999998,12.199999999999999,2.1000000000000001,7.4000000000000004,11.4,11.1,13,0.80000000000000004,7.2999999999999998,6.5999999999999996,4.9000000000000004,6.2999999999999998,3.3999999999999999,14.4,3.7999999999999998,13.199999999999999,12.699999999999999,3.2000000000000002,2.2000000000000002,8.5,4,5.7000000000000002,2.6000000000000001,6.7999999999999998],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":[58,48,80,50,91,78.5,77,72,80.5,60,83,54,83,65,57,66,52,66,51,76.599999999999994,85,74,66,44.5,70,53,61.5,81,56,89,70,86,45,44,75,68,67,71.5,87,48,45,59,80,80,32,63,73,39,66,60.5],"size":5,"colorscale":"Viridis","showscale":true,"colorbar":{"title":"UrbanPop"},"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arrests-3d-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;8.2: Violent Crime Rates in each US State (1973)
@@ -619,6 +748,17 @@ Figure&nbsp;8.2: Violent Crime Rates in each US State (1973)
 </div>
 <p><a href="#fig-arrests-2d-scatter-matrix" class="quarto-xref">Figure&nbsp;<span>8.3</span></a> below exemplifies a matrix of 2D scatter plots, a display method that accommodates more than 3 variables (but not many more, practically speaking).</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>g_arrests_2d_scatter_matrix <span class="ot">&lt;-</span> arrests_wide <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  GGally<span class="sc">::</span><span class="fu">ggpairs</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"Assault"</span>, <span class="st">"Rape"</span>, <span class="st">"Murder"</span>, <span class="st">"UrbanPop"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="fu">wrap</span>(<span class="st">"cor"</span>, <span class="at">size =</span> <span class="dv">3</span>)),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> <span class="fu">list</span>(<span class="at">continuous =</span> <span class="fu">wrap</span>(<span class="st">"points"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.8</span>)),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Arrests Variables: Relationships and Correlations"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>g_arrests_2d_scatter_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-arrests-2d-scatter-matrix" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -641,6 +781,29 @@ Figure&nbsp;8.3: Arrests Variables: Relationships and Correlations
 <p>The data are available in <code>R</code> package <code>beans</code>, containing a data matrix (tibble) of dimension <span class="math inline">\(13611 \times 17\)</span>. The last column is the response variable <code>class</code> that assigns one of seven types of bean to each bean image. The remaining 16 columns are morphological measurements.</p>
 <p><span class="citation" data-cites="Kuhn_Silge_tmwr">Kuhn and Silge (<a href="references.html#ref-Kuhn_Silge_tmwr" role="doc-biblioref">2022</a>)</span> develop and evaluate classification models for these data. They begin by examining the correlation coefficients for each pair of the 16 feature vectors. <a href="#fig-beans-corrplot" class="quarto-xref">Figure&nbsp;<span>8.4</span></a> follows their example.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>beans_features <span class="ot">&lt;-</span> beans<span class="sc">::</span>beans <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> class) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>beans_n_features <span class="ot">&lt;-</span> beans_features <span class="sc">|&gt;</span> <span class="fu">length</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>beans_cor_mat <span class="ot">&lt;-</span> beans<span class="sc">::</span>beans <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> class) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>beans_cor_mat <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  corrplot<span class="sc">::</span><span class="fu">corrplot</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">"upper"</span>, </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">order =</span> <span class="st">"hclust"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">tl.cex =</span> <span class="fl">0.6</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Dry Beans: correlations among 16 features"</span>, </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-beans-corrplot" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -658,8 +821,47 @@ Figure&nbsp;8.4: Dry Beans: correlations among 16 features
 </section>
 <section id="wine-quality" class="level3" data-number="8.2.3">
 <h3 data-number="8.2.3" class="anchored" data-anchor-id="wine-quality"><span class="header-section-number">8.2.3</span> Wine Quality</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>wq_data <span class="ot">&lt;-</span> <span class="fu">get_wine_quality</span>()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>wq_n_obs <span class="ot">&lt;-</span> <span class="fu">nrow</span>(wq_data)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>wq_n_col <span class="ot">&lt;-</span> <span class="fu">ncol</span>(wq_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p><span class="citation" data-cites="Cortez_2009">(<a href="references.html#ref-Cortez_2009" role="doc-biblioref"><strong>Cortez_2009?</strong></a>)</span> published a data set containing physicochemical measurements and quality ratings for Portuguese wines. The data set includes both red and white wines, with 11 chemical properties measured for each wine and a quality score assigned by expert tasters.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>wq_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"fixed acidity"</span>, <span class="st">"volatile acidity"</span>, <span class="st">"citric acid"</span>, <span class="st">"residual sugar"</span>, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"chlorides"</span>, <span class="st">"free sulfur dioxide"</span>, <span class="st">"total sulfur dioxide"</span>, <span class="st">"density"</span>, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"pH"</span>, <span class="st">"sulphates"</span>, <span class="st">"alcohol"</span>, <span class="st">"quality"</span>, <span class="st">"color"</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>wq_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"numeric"</span>, <span class="dv">11</span>), <span class="st">"integer"</span>, <span class="st">"character"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>wq_descr <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tartaric acid (g/dm³)"</span>, </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"acetic acid (g/dm³)"</span>, </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"citric acid (g/dm³)"</span>, </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"residual sugar (g/dm³)"</span>, </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sodium chloride (g/dm³)"</span>, </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"free SO₂ (mg/dm³)"</span>, </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"total SO₂ (mg/dm³)"</span>, </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"density (g/cm³)"</span>, </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"pH"</span>, </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"potassium sulphate (g/dm³)"</span>, </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"alcohol (% vol)"</span>, </span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"quality rating (0-10)"</span>, </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"red or white"</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> wq_vars, </span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> wq_types, </span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">description =</span> wq_descr</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Wine Quality: chemical properties (11) and other variables (2)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-wine-quality-vars" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-wine-quality-vars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -778,8 +980,130 @@ Table&nbsp;8.2: Wine Quality: chemical properties (11) and other variables (2)
 <p>Before developing the algebra of PCA, we build geometric intuition using examples where visualization is possible.</p>
 <section id="d-example-galton-heights" class="level3" data-number="8.4.1">
 <h3 data-number="8.4.1" class="anchored" data-anchor-id="d-example-galton-heights"><span class="header-section-number">8.4.1</span> 2D Example: Galton Heights</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>galton_3d_lst <span class="ot">&lt;-</span> <span class="fu">get_galton_3d</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>galton_3d <span class="ot">&lt;-</span> galton_3d_lst<span class="sc">$</span> galton_3d</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>fms_tbl <span class="ot">&lt;-</span> galton_3d <span class="sc">|&gt;</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(gender <span class="sc">==</span> <span class="st">"male"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> gender) <span class="sc">|&gt;</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">son =</span> child)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># center data variables using base::scale()</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>fms_ctr <span class="ot">&lt;-</span> fms_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">.cols =</span> <span class="fu">c</span>(mother, father, son), </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">.fns  =</span> scale, <span class="at">scale =</span> <span class="cn">FALSE</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(dplyr<span class="sc">::</span><span class="fu">across</span>(</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">.cols =</span> <span class="fu">c</span>(mother, father, son), </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">.fns  =</span> as.vector</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA(father, son)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>fs_pca_lst <span class="ot">&lt;-</span> fms_ctr <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(father, son) <span class="sc">|&gt;</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">prcomp</span>(<span class="at">center =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pc_rot_diag</span>()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rotation matrix</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>fs_rot_mat <span class="ot">&lt;-</span> fs_pca_lst<span class="sc">$</span> rotation</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># slope coefficients for geom_abline()</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>fs_slope_1 <span class="ot">&lt;-</span> </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  fs_rot_mat [[<span class="st">"son"</span>,    <span class="st">"PC1"</span>]] <span class="sc">/</span> </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  fs_rot_mat [[<span class="st">"father"</span>, <span class="st">"PC1"</span>]]</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>fs_slope_2 <span class="ot">&lt;-</span> </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  fs_rot_mat [[<span class="st">"son"</span>,    <span class="st">"PC2"</span>]] <span class="sc">/</span> </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  fs_rot_mat [[<span class="st">"father"</span>, <span class="st">"PC2"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pc_colors_tbl <span class="ot">&lt;-</span> <span class="fu">get_pc_colors</span>()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>pc_clr <span class="ot">&lt;-</span> pc_colors_tbl<span class="sc">$</span> color</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>pc_ref <span class="ot">&lt;-</span> pc_colors_tbl<span class="sc">$</span> ref</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fs_pca_end_pt_mat <span class="ot">&lt;-</span> fs_pca_lst <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_pc_segs</span>()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>f_end_pc_1 <span class="ot">&lt;-</span> fs_pca_end_pt_mat [[<span class="st">"father"</span>, <span class="st">"PC1"</span>]]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>f_end_pc_2 <span class="ot">&lt;-</span> fs_pca_end_pt_mat [[<span class="st">"father"</span>, <span class="st">"PC2"</span>]]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>s_end_pc_1 <span class="ot">&lt;-</span> fs_pca_end_pt_mat [[<span class="st">"son"</span>,    <span class="st">"PC1"</span>]]</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>s_end_pc_2 <span class="ot">&lt;-</span> fs_pca_end_pt_mat [[<span class="st">"son"</span>,    <span class="st">"PC2"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p><a href="#fig-fs-pca" class="quarto-xref">Figure&nbsp;<span>8.5</span></a> illustrates PCA for (father, son) centred heights from the Galton data introduced in <span class="quarto-unresolved-ref">?sec-la-intro</span>.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>g_fs_pcs <span class="ot">&lt;-</span> fms_ctr <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(father, son) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> father, <span class="at">y =</span> son</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">coord_fixed</span>(<span class="at">ratio =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1st pc</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_abline</span>(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">intercept =</span> <span class="dv">0</span>, </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">slope =</span> fs_slope_1, </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> pc_clr [[<span class="dv">1</span>]]) <span class="sc">+</span> </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_segment</span>(</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="dv">0</span>, <span class="at">xend =</span> f_end_pc_1,</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> s_end_pc_1</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.3</span>, <span class="st">"cm"</span>), </span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">ends =</span> <span class="st">"last"</span>, <span class="at">type =</span> <span class="st">"closed"</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="dv">3</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>, <span class="at">color =</span> pc_clr [[<span class="dv">1</span>]]</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2nd pc</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_abline</span>(</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">intercept =</span> <span class="dv">0</span>, </span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">slope =</span> fs_slope_2, </span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> pc_clr [[<span class="dv">2</span>]]) <span class="sc">+</span> </span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_segment</span>(</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="dv">0</span>, <span class="at">xend =</span> f_end_pc_2,</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> s_end_pc_2</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.3</span>, <span class="st">"cm"</span>), </span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">ends =</span> <span class="st">"last"</span>, <span class="at">type =</span> <span class="st">"closed"</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="dv">3</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>, <span class="at">color =</span> pc_clr [[<span class="dv">2</span>]]</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"PCA: (father, son) centred heights"</span>) <span class="sc">+</span> </span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">bquote</span>(</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>      c[<span class="dv">1</span>] <span class="sc">*</span> <span class="st">": "</span> <span class="sc">*</span> <span class="er">~</span> .(pc_ref [[<span class="dv">1</span>]]) <span class="sc">*</span> <span class="st">", "</span> <span class="sc">*</span> </span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>      c[<span class="dv">2</span>] <span class="sc">*</span> <span class="st">": "</span> <span class="sc">*</span> <span class="er">~</span> .(pc_ref [[<span class="dv">2</span>]])</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>g_fs_pcs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-fs-pca" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -799,15 +1123,94 @@ Figure&nbsp;8.5: Principal Components: (father, son) centred heights
 </section>
 <section id="d-example-us-arrests" class="level3" data-number="8.4.2">
 <h3 data-number="8.4.2" class="anchored" data-anchor-id="d-example-us-arrests"><span class="header-section-number">8.4.2</span> 3D Example: US Arrests</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>z_arrests_mat <span class="ot">&lt;-</span> arrests_wide <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Assault, Rape, Murder) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale</span>()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>z_arrests_tbl <span class="ot">&lt;-</span> arrests_wide <span class="sc">|&gt;</span> </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(st_abb, st_nm, UrbanPop) <span class="sc">|&gt;</span> </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_assault =</span> z_arrests_mat [, <span class="st">"Assault"</span>], </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_rape    =</span> z_arrests_mat [, <span class="st">"Rape"</span>], </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_murder  =</span> z_arrests_mat [, <span class="st">"Murder"</span>]</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>z_arrests_pca_lst <span class="ot">&lt;-</span> z_arrests_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(z_assault, z_rape, z_murder) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">prcomp</span>(<span class="at">center =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pc_rot_diag</span>()</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>n_arrests_rot_rows <span class="ot">&lt;-</span> z_arrests_pca_lst<span class="sc">$</span> rotation <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>n_arrests_rot_cols <span class="ot">&lt;-</span> z_arrests_pca_lst<span class="sc">$</span> rotation <span class="sc">|&gt;</span> <span class="fu">ncol</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>arm_pca_end_pt_mat <span class="ot">&lt;-</span> z_arrests_pca_lst <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_pc_segs</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p>We now revisit <code>datasets::USArrests</code> to illustrate PCA in three dimensions. A practical goal might be to define a single index of violent crime from the three crime types.</p>
 <p>The arrest rates for assault, rape, and murder are on quite different scales. Without adjustment, assault rates would dominate total variance and consequently the determination of principal components. As an initial adjustment, we transform each rate to a z-score by subtracting the mean and dividing by the standard deviation (calculated across the 50 states).</p>
 <p><a href="#fig-arm-pca" class="quarto-xref">Figure&nbsp;<span>8.6</span></a> is a 3D scatterplot of these z-scores, also showing the three principal components <span class="math inline">\((c_1, c_2, c_3)\)</span> in respective colours: orange, purple, and green.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>g_arm_pca <span class="ot">&lt;-</span> <span class="fu">plot_ly</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> z_arrests_tbl<span class="sc">$</span>z_assault, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> z_arrests_tbl<span class="sc">$</span>z_rape, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> z_arrests_tbl<span class="sc">$</span>z_murder, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"scatter3d"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">"markers"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">text =</span> z_arrests_tbl<span class="sc">$</span>st_abb, </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker =</span> <span class="fu">list</span>(</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">opacity =</span> <span class="fl">0.7</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"State"</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) {</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  g_arm_pca <span class="ot">&lt;-</span> g_arm_pca <span class="sc">|&gt;</span> </span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_trace</span>(</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, arm_pca_end_pt_mat[<span class="st">"z_assault"</span>, i]), </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>, arm_pca_end_pt_mat[<span class="st">"z_rape"</span>, i]), </span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">z =</span> <span class="fu">c</span>(<span class="dv">0</span>, arm_pca_end_pt_mat[<span class="st">"z_murder"</span>, i]), </span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"scatter3d"</span>,</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">mode =</span> <span class="st">"lines"</span>,</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">line =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="dv">6</span>, <span class="at">color =</span> pc_clr[i]),</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">name =</span> <span class="fu">paste0</span>(<span class="st">"PC"</span>, i),</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">showlegend =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">inherit =</span> <span class="cn">FALSE</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>g_arm_pca <span class="ot">&lt;-</span> g_arm_pca <span class="sc">|&gt;</span> <span class="fu">layout</span>(</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">scene =</span> <span class="fu">list</span>(</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"z_Assault"</span>),</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"z_Rape"</span>),</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"z_Murder"</span>),</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">aspectmode =</span> <span class="st">"cube"</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"US Arrest Z-scores: Principal Components"</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>g_arm_pca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="fig-arm-pca" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arm-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="plotly html-widget html-fill-item" id="htmlwidget-a3c47e91dedbd210e3a2" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-a3c47e91dedbd210e3a2">{"x":{"visdat":{"25a8245e5c7b":["function () ","plotlyVisDat"]},"cur_data":"25a8245e5c7b","attrs":{"25a8245e5c7b":{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"size":4,"color":"steelblue","opacity":0.69999999999999996},"name":"State","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"},"25a8245e5c7b.1":{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkorange"},"name":"PC1","showlegend":false,"inherit":false},"25a8245e5c7b.2":{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"purple"},"name":"PC2","showlegend":false,"inherit":false},"25a8245e5c7b.3":{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkgreen"},"name":"PC3","showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"z_Assault"},"yaxis":{"title":"z_Rape"},"zaxis":{"title":"z_Murder"},"aspectmode":"cube"},"title":"US Arrest Z-scores: Principal Components","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":"steelblue","size":4,"opacity":0.69999999999999996,"line":{"color":"rgba(31,119,180,1)"}},"name":"State","type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"color":"darkorange","width":6},"name":"PC1","showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"color":"purple","width":6},"name":"PC2","showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"color":"darkgreen","width":6},"name":"PC3","showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-a3c47e91dedbd210e3a2">{"x":{"visdat":{"278433e929e5":["function () ","plotlyVisDat"]},"cur_data":"278433e929e5","attrs":{"278433e929e5":{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"size":4,"color":"steelblue","opacity":0.69999999999999996},"name":"State","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"},"278433e929e5.1":{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkorange"},"name":"PC1","showlegend":false,"inherit":false},"278433e929e5.2":{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"purple"},"name":"PC2","showlegend":false,"inherit":false},"278433e929e5.3":{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"width":6,"color":"darkgreen"},"name":"PC3","showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"z_Assault"},"yaxis":{"title":"z_Rape"},"zaxis":{"title":"z_Murder"},"aspectmode":"cube"},"title":"US Arrest Z-scores: Principal Components","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.78283934708991831,1.106822522617628,1.4788032056309246,0.23086801100567186,1.2628144219457846,0.39885928720522512,-0.72908213870606098,0.80683810083271157,1.9707776573581877,0.48285492530500174,-1.4970422584754473,-0.60908836999209437,0.93883124641807492,-0.69308400809187098,-1.3770484897614808,-0.66908525434907773,-0.74108151557745772,0.93883124641807492,-1.0530653142337709,1.5507994668593046,-0.26110644072159123,1.0108275076464548,-1.185058459819134,1.0588250151320415,0.086875488548911931,-0.74108151557745772,-0.82507715367723433,0.9748293770322648,-1.3650491128900841,-0.14111267200762462,1.3708088137883547,0.99882813077505817,1.9947764111009809,-1.5090416353468439,-0.60908836999209437,-0.23710768697879792,-0.14111267200762462,-0.7770796461916476,0.038877981063325288,1.2988125525599747,-1.0170671836195808,0.20686925726287855,0.36286115659103513,-0.60908836999209437,-1.473043504732654,-0.17711080262181461,-0.3091039482071779,-1.0770640679765642,-1.4130466203756706,-0.11711391826483131],"y":[-0.0034164730151624227,2.4842029411499742,1.0428783878783285,-0.18491660194566589,2.0678202924270548,1.8649672071517862,-1.0817407684258011,-0.57994629432382061,1.1389666914297716,0.48770152291443553,-0.11018125473898803,-0.75076994508194173,0.29552491581154938,-0.024769429359927469,-1.0603878120810357,-0.3450637745314043,-0.52656390346190773,0.10334830870866318,-1.4340645481144254,0.70123108636208675,-0.52656390346190773,1.4806139929460138,-0.67603459787526365,-0.44115207808284718,0.74393699905161681,-0.51588742528952547,-0.50521094711714276,2.6443501137357126,-1.252564419183922,-0.25965194915234374,1.160319647774537,0.51973095743158326,-0.54791685980667282,-1.4874469389763383,0.017936483329602623,-0.13153421108375307,0.86137825894782516,-0.67603459787526365,-1.3806821572525125,0.13537774322581095,-0.90024063949529742,0.60514278281064349,0.45567208839728779,0.17808365591534103,-1.0710642902534184,-0.05679886387707523,0.53040743560396564,-1.273917375528687,-1.1137702029429486,-0.60129925066858581],"z":[1.2425640838811227,0.50786248217757646,0.071633406166095634,0.23234938153874665,0.27826823164521813,0.025714556059624149,-1.0304189963892241,-0.43347394500509234,1.747671435052311,2.2068599361170271,-0.57123049532450743,-1.1911349717618749,0.59970018239051981,-0.13500141931302667,-1.282972671974818,-0.41051451995185662,0.43898420701786878,1.747671435052311,-1.3059320970280539,0.8063350078696423,-0.7778653208036298,0.99001040829552867,-1.1681755467086388,1.9083874104249621,0.27826823164521813,-0.41051451995185662,-0.80082474585686569,1.0129698333487644,-1.3059320970280539,-0.089082569206554982,0.82929443292287808,0.7604161577631704,1.1966452337746512,-1.6044046227201196,-0.11204199425979093,-0.27275796963244175,-0.66306819553745067,-0.34163624479214921,-1.007459571335988,1.5180771845199528,-0.91562187112304483,1.2425640838811227,1.1277669586149435,-1.0533784214424597,-1.282972671974818,0.16347110637903903,-0.86970302101657315,-0.47939279511156407,-1.1911349717618749,-0.22683911952597005],"mode":"markers","text":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],"marker":{"color":"steelblue","size":4,"opacity":0.69999999999999996,"line":{"color":"rgba(31,119,180,1)"}},"name":"State","type":"scatter3d","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"x":[0,1.5489298635318458],"y":[0,1.3741651111024438],"z":[0,1.4842670890217005],"type":"scatter3d","mode":"lines","line":{"color":"darkorange","width":6},"name":"PC1","showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"frame":null},{"x":[0,-0.29354746751601463],"y":[0,1.1219106831632701],"z":[0,-0.73235207316550643],"type":"scatter3d","mode":"lines","line":{"color":"purple","width":6},"name":"PC2","showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"frame":null},{"x":[0,0.68703516343273274],"y":[0,-0.17966971158361228],"z":[0,-0.55062423656922754],"type":"scatter3d","mode":"lines","line":{"color":"darkgreen","width":6},"name":"PC3","showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arm-pca-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;8.6: US Arrest Z-scores: Principal Components
@@ -817,6 +1220,39 @@ Figure&nbsp;8.6: US Arrest Z-scores: Principal Components
 </div>
 <p>The first principal component <span class="math inline">\((c_1)\)</span> is a promising representative of overall violent crime level. As <a href="#fig-arm-loadings" class="quarto-xref">Figure&nbsp;<span>8.7</span></a> shows, the coefficient (loading) of each z-score variable on <span class="math inline">\(c_1\)</span> is positive. A violent crime index aligned with <span class="math inline">\(c_1\)</span> would respond to an increase in any of the three crime types. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>z_arrests_rot_lst <span class="ot">&lt;-</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  z_arrests_pca_lst <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_rot_tbl_lst</span>()</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>z_arrests_rot_wide <span class="ot">&lt;-</span> z_arrests_rot_lst<span class="sc">$</span> rot_wide</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>z_arrests_rot_long <span class="ot">&lt;-</span> z_arrests_rot_lst<span class="sc">$</span> rot_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>g_arm_loadings <span class="ot">&lt;-</span> z_arrests_rot_long <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">crime =</span> forcats<span class="sc">::</span><span class="fu">as_factor</span>(var)) <span class="sc">|&gt;</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> crime, <span class="at">y =</span> coeff, <span class="at">color =</span> pc, <span class="at">fill =</span> pc</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">rep</span>(pc_clr, <span class="at">each =</span> n_arrests_rot_cols), </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill  =</span> <span class="fu">rep</span>(pc_clr, <span class="at">each =</span> n_arrests_rot_cols), </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(pc)) <span class="sc">+</span> </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_hline</span>(</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">linewidth =</span> <span class="dv">1</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"US Arrests: coefficients of each principal component"</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>g_arm_loadings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-arm-loadings" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -830,8 +1266,28 @@ Figure&nbsp;8.7: US Arrests: coefficients (loadings) of each principal component
 </div>
 </div>
 </div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>z_arm_pc_stats <span class="ot">&lt;-</span> z_arrests_pca_lst <span class="sc">|&gt;</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_pc_stats</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p>We want any crime index to account for a substantial proportion of total variation. Since the z-scores are constrained to have unit variance, total variation among the three z-scores is 3. <a href="#tbl-z-arm-pc-stats" class="quarto-xref">Table&nbsp;<span>8.3</span></a> shows how this variation is distributed across principal components.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>z_arm_pc_stats <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">.cols =</span> sd<span class="sc">:</span>var_pct, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.fns =</span> <span class="sc">~</span> <span class="fu">signif</span>(.x, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> idx) <span class="sc">|&gt;</span> </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">variance =</span> var) <span class="sc">|&gt;</span> </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Arrest z-scores: variance of principal components"</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-z-arm-pc-stats" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-z-arm-pc-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -968,17 +1424,17 @@ score_{i,k} = c_{i,k} = \langle x_{i, \bullet}, v_{\bullet, k} \rangle
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic PCA workflow in R</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(X, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loadings (principal component directions)</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pca_result<span class="sc">$</span>rotation</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Scores (observations in PC space)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>pca_result<span class="sc">$</span>x</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Variance explained</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pca_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic PCA workflow in R</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(X, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loadings (principal component directions)</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>pca_result<span class="sc">$</span>rotation</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Scores (observations in PC space)</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>pca_result<span class="sc">$</span>x</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Variance explained</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pca_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The <code>scale.</code> argument controls whether features are standardised to unit variance before PCA. When features are measured on different scales (as in our examples), standardisation is typically appropriate.</p>
@@ -988,8 +1444,54 @@ score_{i,k} = c_{i,k} = \langle x_{i, \bullet}, v_{\bullet, k} \rangle
 <section id="scree-plots" class="level3" data-number="8.7.1">
 <h3 data-number="8.7.1" class="anchored" data-anchor-id="scree-plots"><span class="header-section-number">8.7.1</span> Scree Plots</h3>
 <p>A <em>scree plot</em> displays the variance (or proportion of variance) explained by each principal component. The name alludes to the hope of seeing a “cliff” for the first few components followed by “scree” (rubble) for the remainder—suggesting a natural truncation point.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>wq_all_numeric <span class="ot">&lt;-</span> wq_data <span class="sc">|&gt;</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">is_red =</span> (color <span class="sc">==</span> <span class="st">"red"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>wq_pca_lst <span class="ot">&lt;-</span> wq_all_numeric <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">prcomp</span>(<span class="at">scale. =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pc_rot_diag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>wq_pc_stats_tbl <span class="ot">&lt;-</span> wq_pca_lst <span class="sc">|&gt;</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_pc_stats</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">cum_var_pct =</span> <span class="fu">cumsum</span>(var_pct))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p><a href="#fig-wq-scree" class="quarto-xref">Figure&nbsp;<span>8.8</span></a> illustrates a scree plot for the wine quality data.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>g_wq_pc_variance <span class="ot">&lt;-</span> wq_pc_stats_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">PC_index =</span> idx, </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">variance =</span> var</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> PC_index, <span class="at">y =</span> variance</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span> </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">scale_x_continuous</span>(</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">13</span>, <span class="at">by =</span> <span class="dv">2</span>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Wine Quality PCA: variance of each component"</span>,</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Principal Component"</span>,</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Variance"</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>g_wq_pc_variance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-wq-scree" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1005,6 +1507,21 @@ Figure&nbsp;8.8: Wine Quality PCA: variance of each component (scree plot)
 </div>
 <p><a href="#tbl-wq-pc-stats" class="quarto-xref">Table&nbsp;<span>8.4</span></a> provides numeric detail, including cumulative variance explained.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>wq_pc_stats_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cum_var_pct =</span> <span class="fu">cumsum</span>(var_pct)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">PC_index =</span> idx, </span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">variance =</span> var, </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Wine Quality PCA: variance of each component"</span>, </span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">digits =</span> <span class="dv">2</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-wq-pc-stats" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-wq-pc-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1142,6 +1659,40 @@ Table&nbsp;8.4: Wine Quality PCA: variance of each component
 <h3 data-number="8.7.2" class="anchored" data-anchor-id="loading-plots"><span class="header-section-number">8.7.2</span> Loading Plots</h3>
 <p>Loading plots display the coefficients that define each principal component, helping interpret what each component “means” in terms of original features.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>wq_rot_lst <span class="ot">&lt;-</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  wq_pca_lst <span class="sc">|&gt;</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_rot_tbl_lst</span>()</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>wq_rot_wide <span class="ot">&lt;-</span> wq_rot_lst<span class="sc">$</span> rot_wide</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>wq_rot_long <span class="ot">&lt;-</span> wq_rot_lst<span class="sc">$</span> rot_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>g_wq_loadings <span class="ot">&lt;-</span> wq_rot_long <span class="sc">|&gt;</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(i_pc <span class="sc">&lt;=</span> <span class="dv">3</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">variable_index =</span> forcats<span class="sc">::</span><span class="fu">as_factor</span>(i_var)) <span class="sc">|&gt;</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> variable_index, <span class="at">y =</span> coeff, <span class="at">color =</span> pc, <span class="at">fill =</span> pc</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(pc)) <span class="sc">+</span> </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_hline</span>(</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">linewidth =</span> <span class="dv">1</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Wine Quality: loadings of first 3 principal components"</span>,</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Variable index"</span>,</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Loading"</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>g_wq_loadings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-wq-loadings" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1161,6 +1712,34 @@ Figure&nbsp;8.9: Wine Quality: loadings of first 3 principal components
 <h3 data-number="8.7.3" class="anchored" data-anchor-id="biplots"><span class="header-section-number">8.7.3</span> Biplots</h3>
 <p>A <em>biplot</em> displays both scores (observations) and loadings (variables) in the same plot, typically using the first two principal components. Observations appear as points; variables appear as vectors from the origin. The angle between variable vectors approximates their correlation; the length of a vector indicates how well that variable is represented in the 2D projection.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>wq_scores_wide <span class="ot">&lt;-</span> wq_pca_lst<span class="sc">$</span> x <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">quality =</span> wq_all_numeric<span class="sc">$</span> quality, </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_red  =</span> wq_all_numeric<span class="sc">$</span> is_red, </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">color   =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(is_red, <span class="st">"red"</span>, <span class="st">"white"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(is_red, color, quality, tidyr<span class="sc">::</span><span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>g_wq_scores_pc1_2 <span class="ot">&lt;-</span> wq_scores_wide <span class="sc">|&gt;</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">score_1 =</span> PC1, <span class="at">score_2 =</span> PC2) <span class="sc">|&gt;</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> score_1, <span class="at">y =</span> score_2, <span class="at">color =</span> color</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>)) <span class="sc">+</span> </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"red"</span> <span class="ot">=</span> <span class="st">"darkred"</span>, <span class="st">"white"</span> <span class="ot">=</span> <span class="st">"gold3"</span>)) <span class="sc">+</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Wine Quality PCA: scores of PC1 vs PC2"</span>,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"PC1 score"</span>,</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"PC2 score"</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>g_wq_scores_pc1_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-wq-biplot" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1190,6 +1769,30 @@ Figure&nbsp;8.10: Wine Quality PCA: biplot of PC1 vs PC2
 <h3 data-number="8.8.1" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">8.8.1</span> Data Preparation</h3>
 <p>The wine quality data contain 11 numeric chemical properties, plus wine colour and quality rating. We re-code colour as a binary indicator <code>is_red</code> and include it among the features for PCA.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>wq_smy <span class="ot">&lt;-</span> wq_all_numeric <span class="sc">|&gt;</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> tidyr<span class="sc">::</span><span class="fu">everything</span>(), </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"variable"</span>, </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> variable, </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean  =</span> <span class="fu">mean</span>(value), </span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd    =</span> <span class="fu">sd</span>(value)</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">i_var =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(wq_all_numeric)) <span class="sc">|&gt;</span> </span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(i_var, tidyr<span class="sc">::</span><span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>wq_smy <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Wine quality variables: mean and standard deviation"</span>, </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-wq-smy" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-wq-smy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1297,8 +1900,52 @@ Table&nbsp;8.5: Wine quality variables: mean and standard deviation
 </section>
 <section id="principal-component-extraction" class="level3" data-number="8.8.2">
 <h3 data-number="8.8.2" class="anchored" data-anchor-id="principal-component-extraction"><span class="header-section-number">8.8.2</span> Principal Component Extraction</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>score_1 <span class="ot">&lt;-</span> wq_scores_wide<span class="sc">$</span> PC1</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>dmclust_wq_score_1 <span class="ot">&lt;-</span> score_1 <span class="sc">|&gt;</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">densityMclust</span>(</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">G =</span> <span class="dv">2</span>, <span class="at">modelNames =</span> <span class="st">"V"</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>score_1_dens_tbl <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">score_1 =</span> dmclust_wq_score_1<span class="sc">$</span> data [, <span class="dv">1</span>], </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">class   =</span> dmclust_wq_score_1<span class="sc">$</span> classification <span class="sc">|&gt;</span> <span class="fu">as.integer</span>(), </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dens    =</span> dmclust_wq_score_1<span class="sc">$</span> density) <span class="sc">|&gt;</span> </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_red  =</span> wq_scores_wide<span class="sc">$</span> is_red, </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color   =</span> wq_scores_wide<span class="sc">$</span> color, </span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">quality =</span> wq_scores_wide<span class="sc">$</span> quality) <span class="sc">|&gt;</span> </span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(is_red, color, quality, tidyr<span class="sc">::</span><span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>score_1_break_tbl <span class="ot">&lt;-</span> score_1_dens_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> class, </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_score =</span> <span class="fu">min</span>(score_1), </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_score =</span> <span class="fu">max</span>(score_1)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(class)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>score_1_break_pt <span class="ot">&lt;-</span> </span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  (score_1_break_tbl [[<span class="dv">1</span>, <span class="st">"max_score"</span>]] <span class="sc">+</span> </span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>   score_1_break_tbl [[<span class="dv">2</span>, <span class="st">"min_score"</span>]] ) <span class="sc">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p>The biplot (<a href="#fig-wq-biplot" class="quarto-xref">Figure&nbsp;<span>8.10</span></a>) revealed a split in the data along PC1. To quantify this, we fit a two-component Gaussian mixture model to the PC1 scores.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dmclust_wq_score_1 <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">what =</span> <span class="st">"density"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-score-1-density" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1314,6 +1961,25 @@ Figure&nbsp;8.11: PC1 scores: density from a Gaussian mixture model
 </div>
 <p>The two Gaussian components correspond closely to wine colour. <a href="#tbl-xtabs-class-color" class="quarto-xref">Table&nbsp;<span>8.6</span></a> shows the cross-tabulation.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>score_1_class_color_long <span class="ot">&lt;-</span> score_1_dens_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(class, <span class="fu">desc</span>(color)) <span class="sc">|&gt;</span> </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(class, color), </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>())</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>score_1_class_color_wide <span class="ot">&lt;-</span> score_1_class_color_long <span class="sc">|&gt;</span> </span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="st">"color"</span>, </span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="st">"n"</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>score_1_class_color_wide <span class="sc">|&gt;</span> </span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Wine Quality PCA: wine colour versus PC1 cluster"</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-xtabs-class-color" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-xtabs-class-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">

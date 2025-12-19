@@ -445,7 +445,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">16:57 Thu 18-Dec-2025</p>
+      <p class="date">06:34 Fri 19-Dec-2025</p>
     </div>
   </div>
   
@@ -457,6 +457,50 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(assertthat)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># library(gutenbergr)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># library(janeaustenr)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># library(quanteda)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># library(tidytext)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytex)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># library(tm)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># library(tokenizers)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># library(topicmodels)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tufte)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with plotly</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># conflicted::conflicts_prefer(plotly::layout)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with tidymodels packages</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># tidymodels::tidymodels_prefer()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Capitalize surnames in political polling tables</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stabilize simulated data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"eda4ml_set_seed.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <hr>
 <section id="introduction" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.1</span> Introduction</h2>
@@ -484,6 +528,30 @@ window.Quarto = {
 </ul></li>
 </ul>
 <p>These concerns are central to <em>machine learning operations</em> (MLOps), an emerging discipline that extends DevOps principles to the full model lifecycle <span class="citation" data-cites="Mucci_Stryker_2025">(<a href="references.html#ref-Mucci_Stryker_2025" role="doc-biblioref">Mucci and Stryker 2025</a>)</span>. MLOps emphasizes that model performance depends not only on algorithm selection, but on the entire pipeline from data acquisition through deployment and monitoring. The historical examples in this chapter illustrate how foundational issues in study design—issues that predate ML by decades—remain decisive for modern algorithmic systems.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for instructor use only: </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># record FPP page number per example</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>example_FPP_page <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>example, <span class="sc">~</span>type, <span class="sc">~</span>page, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lit_Digest_Poll"</span>, <span class="st">"obs"</span>, <span class="dv">334</span>L, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Truman_Dewey"</span>, <span class="st">"obs"</span>, <span class="dv">337</span>L, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"US_elections"</span>, <span class="st">"obs"</span>, <span class="dv">342</span>L, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"UCB_Admissions"</span>, <span class="st">"obs"</span>, <span class="dv">17</span>L, </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Salk_Vaccine"</span>, <span class="st">"dox"</span>, <span class="dv">3</span>L, </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Portacaval_Shunt"</span>, <span class="st">"dox"</span>, <span class="dv">7</span>L, </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"NB10"</span>, <span class="st">"dox"</span>, <span class="dv">98</span>L</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># save file just once</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>save_file <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (save_file) {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  example_FPP_page <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(<span class="fu">here</span>(</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"example_FPP_page.txt"</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 </section>
 <section id="observational-study-examples" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="observational-study-examples"><span class="header-section-number">5.2</span> Observational Study Examples</h2>
@@ -493,6 +561,19 @@ window.Quarto = {
 <p>The <em>Literary Digest</em> magazine, however, predicted a decisive Landon victory based on a massive poll having 2.4 million respondents. The <em>Digest</em> predicted that Roosevelt would get only 43% of the vote.</p>
 <p>George Gallup had just created his polling organization. Gallup took a sample of 3,000 voters to estimate what the <em>Digest</em> would predict, and took a sample of 50,000 voters to predict the election. Here are the results.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>lit_digest_tbl <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>lit_digest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lit_digest_tbl <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Predicted % for FDR in 1936"</span>, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"source"</span>, <span class="st">"FDR predicted %"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-lit-digest-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lit-digest-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -553,6 +634,18 @@ ML Connection
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="truman-versus-dewey-1948"><span class="header-section-number">5.2.2</span> Truman versus Dewey, 1948</h3>
 <p>Truman was a colorful and effective US president, but he was the underdog in the 1948 election. Three major polling organizations covered the election: Crossley for the Hearst newspapers, Gallup (synicated in ~100 newspapers across the country), and Roper for <em>Fortune</em> magazine. By the fall of 1948, all three put Dewey ahead of Truman by 5 or more percentage points. Here are the predicted and actual percentages.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>truman_dewey_tbl <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>truman_dewey</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>truman_dewey_tbl <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Predicted % per candidate in 1948"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-truman-dewey-tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-truman-dewey-tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -642,6 +735,47 @@ ML Connection
 <h3 data-number="5.2.4" class="anchored" data-anchor-id="more-recent-election-polls"><span class="header-section-number">5.2.4</span> More Recent Election Polls</h3>
 <p>Since the 1952 election Gallup and other pollsters have used probability samples, and have, on the whole, reduced the magnitude of prediction error. Here are the prediction errors of the Gallup organization. (Ross Perot’s candidacy made 1992 an especially challenging year to predict.)</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>us_elections_48_04 <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>year, <span class="sc">~</span>n, <span class="sc">~</span>winner, <span class="sc">~</span>Gallup, <span class="sc">~</span>actual, <span class="sc">~</span>error, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1952</span>, <span class="dv">5385</span>, <span class="st">"Eisenhower"</span>, <span class="dv">51</span>, <span class="fl">55.1</span>, <span class="sc">-</span><span class="fl">4.1</span>,  </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1956</span>, <span class="dv">8144</span>, <span class="st">"Eisenhower"</span>, <span class="fl">59.5</span>, <span class="fl">57.4</span>, <span class="fl">2.1</span>,  </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1960</span>, <span class="dv">8015</span>, <span class="st">"Kennedy"</span>, <span class="dv">51</span>, <span class="fl">49.7</span>, <span class="fl">1.3</span>,  </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1964</span>, <span class="dv">6625</span>, <span class="st">"Johnson"</span>, <span class="dv">64</span>, <span class="fl">61.1</span>, <span class="fl">2.9</span>,  </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1968</span>, <span class="dv">4414</span>, <span class="st">"Nixon"</span>, <span class="dv">43</span>, <span class="fl">43.4</span>, <span class="sc">-</span><span class="fl">0.4</span>,  </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1972</span>, <span class="dv">3689</span>, <span class="st">"Nixon"</span>, <span class="dv">62</span>, <span class="fl">60.7</span>, <span class="fl">1.3</span>,  </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1976</span>, <span class="dv">3439</span>, <span class="st">"Carter"</span>, <span class="dv">48</span>, <span class="fl">50.1</span>, <span class="sc">-</span><span class="fl">2.1</span>,  </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1980</span>, <span class="dv">3500</span>, <span class="st">"Reagan"</span>, <span class="dv">47</span>, <span class="fl">50.7</span>, <span class="sc">-</span><span class="fl">3.7</span>,  </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1984</span>, <span class="dv">3456</span>, <span class="st">"Reagan"</span>, <span class="dv">59</span>, <span class="fl">58.8</span>, <span class="fl">0.2</span>,  </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1988</span>, <span class="dv">4089</span>, <span class="st">"Bush"</span>, <span class="dv">56</span>, <span class="fl">53.4</span>, <span class="fl">2.6</span>,  </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1992</span>, <span class="dv">2019</span>, <span class="st">"Clinton"</span>, <span class="dv">49</span>, <span class="fl">43.0</span>, <span class="fl">6.0</span>,  </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1996</span>, <span class="dv">2895</span>, <span class="st">"Clinton"</span>, <span class="dv">52</span>, <span class="fl">49.2</span>, <span class="fl">2.8</span>,  </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2000</span>, <span class="dv">3571</span>, <span class="st">"Bush"</span>, <span class="dv">48</span>, <span class="fl">47.9</span>, <span class="fl">0.1</span>, </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2004</span>, <span class="dv">2014</span>, <span class="st">"Bush"</span>, <span class="dv">49</span>, <span class="fl">50.6</span>, <span class="sc">-</span><span class="fl">1.6</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">.cols =</span> <span class="fu">c</span>(year, n), </span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.fns  =</span> as.integer</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># save file just once</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>save_file <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (save_file) {</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  us_elections_48_04 <span class="sc">|&gt;</span> </span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_tsv</span>(here<span class="sc">::</span><span class="fu">here</span>(</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"us_elections_48_04.txt"</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>us_elections_48_04 <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Gallup prediction accuracy: 1952-2004"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-us-elections-48-04" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-us-elections-48-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -798,6 +932,24 @@ Table&nbsp;5.3: Gallup prediction accuracy: 1952-2004
 <p>The decision to test rather than adopt a promising drug is a difficult question of medical ethics. For the polio vaccine, there were potential risks in taking the drug, and so the government decided a test was needed to establish whether the benefits of adopting the drug would outweigh the risks.</p>
 <p>The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. AS originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consent. Children in grades 1 and 3 were used as the controld group (were not vaccinated). The following table shows the results.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>salk_blind <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>salk_blind</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>salk_nfip <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>salk_nfip</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>salk_nfip <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Polio rate per 100,000 subjects"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-salk-nfip" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-salk-nfip-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -844,6 +996,12 @@ Table&nbsp;5.4: Polio rate per 100,000 subjects (NFIP study)
 <p>Participating public health experts raised several concerns with the NFIP design. Polio can be transmitted by touch, so the incidence of polio infection may vary by grade. Also, parental consent is a potential confounding factor. More highly educated parents are more likely to consent, but their children are at greater risk. (Lower socio-economic status is associated with lower hygiene, and thus a greater chance of early exposure to polio when the mother’s antibodies would be activated, enabling the child to fight off a subsequent infection.) Consequently children of non-consenting parents should not be included in the control group, but rather analyzed separately.</p>
 <p>Consequently a second experiment was conducted in which both the treatment and control group came from the same population of children whose parents consented to vaccination. Those children would be assigned at random either to the treatment (vaccinated) or control (unvaccinated) group. Moreover, this was to be a “double-blind” experiment: the assignment of each participating child would be closely held among the administrators of the experiment, and not shared with participating parents, medical staff responsible for injections (of either the vaccine or a saline solution), or physicians determining whether a participating child had or had not contracted polio. Children whose parents did not consent to vaccination would be tracked separately from others. Here are the results of the double-blind experiment.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>salk_blind <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Double-Blind: polio rate per 100,000 subjects"</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-salk-blind" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-salk-blind-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -907,6 +1065,18 @@ ML Connection
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="portacaval-shunt"><span class="header-section-number">5.3.2</span> Portacaval Shunt</h3>
 <p>In some cases of cirrhosis of the liver, the patient may start to hemorrhage and bleed to death. One treatment involves surgery to redirect the flow of blood through a portacaval shunt. The operation to create the shunt is long and hazardous. Do the benefits outweigh the risks? The effectiveness of this surgery has been evaluated in 51 studies, summarized in the following table.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>portacaval_tbl <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>portacaval_studies</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>portacaval_tbl <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Shunt evaluations: degree of enthusiasm per study design"</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-portacaval_tbl" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-portacaval_tbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -954,6 +1124,18 @@ Table&nbsp;5.6: Shunt evaluations: degree of enthusiasm per study design
 <p>A randomized, controlled experiment begins with a well-defined patient population. Some are eligible for the trial. Others are ineligible: they may be too sick to undergo the treatment, or they may have the wrong kind of disease, or they may not consent to participate. Eligibility is determined first; then the eligible patients are randomized to treatment or control. That way, the comparison is made only among patients who could have received the therapy. The bottom line: the control group is like the treatment group. By contrast, with poorly-controlled studies, ineligible patients may be used as controls. Moreover, even if controls are selected among those eligible for surgery, the surgeon may choose to operate only on the healthier patients while sicker patients are put in the control group.</p>
 <p>This sort of bias seems to have been at work in the poorly-controlled studies of the portacaval shunt. In both the well-controlled and the poorly-controlled studies, about 60% of the surgery patients were still alive 3 years after the operation. In the randomized controlled experiments, the percentage of controls who survived the experiment by 3 years was also about 60%. But only 45% of the controls in the non-randomized experiments survived for 3 years.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>shunt_survival <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>portacaval_survival</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>shunt_survival <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"% patients alive after 3 years per (design, assignment)"</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-shunt-survival" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-shunt-survival-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1012,6 +1194,31 @@ ML Connection
 <p>In the US, accuracy in weighing at the supermarket ultimately depends on the accuracy of the calibration work by NBS/NIST. One basic issue is reproducibility: if a measurement is repeated, how much will it change? We will discuss the results for one such weight, called NB 10, whose nominal value is 10 grams (about the weight of two nickels). In fact, the people who manufactured NB 10 tried to make it weigh 10 grams and missed by a little. NB 10 was acquired by NBS around 1940, and they’ve weighed it many times since then. We’ll look at 100 of these measurements, which were made in the same room, on the same apparatus, by the same technicians. Every effort was made to follow the same procedure each time. All the factors known to affect the results, like air pressure or temperature, were kept as constant as possible.</p>
 <p>Here are the first 5 measurements of NB10 in grams, along with the deficit (shortfall) from 10 grams expressed in micrograms.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>NB10_first_5 <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">measurement =</span> <span class="fu">c</span>(<span class="fl">9.999591</span>, <span class="fl">9.999600</span>, <span class="fl">9.999594</span>, <span class="fl">9.999601</span>, <span class="fl">9.999598</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">deficit =</span> <span class="fu">as.integer</span>(<span class="fl">1e7</span> <span class="sc">-</span> (measurement <span class="sc">*</span> <span class="fl">1e6</span>))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># save file just once</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>save_file <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (save_file) {</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  NB10_first_5 <span class="sc">|&gt;</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(<span class="fu">here</span>(</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data"</span>, <span class="st">"retain"</span>, <span class="st">"NB10_first_5.txt"</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>NB10_first_5 <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"NB10: measurement (grams) and deficit (micrograms)"</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-NB10-first-5" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-NB10-first-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1057,6 +1264,56 @@ Table&nbsp;5.8: NB10: measurement (grams) and deficit (micrograms)
 </div>
 <p>Here are all 100 measurements expressed as deficits in micrograms.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>NB10_wide <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>idx_1, <span class="sc">~</span>d_1, <span class="sc">~</span>idx_2, <span class="sc">~</span>d_2, <span class="sc">~</span>idx_3, <span class="sc">~</span>d_3, <span class="sc">~</span>idx_4, <span class="sc">~</span>d_4, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>, <span class="dv">409</span>, <span class="dv">26</span>, <span class="dv">397</span>, <span class="dv">51</span>, <span class="dv">404</span>, <span class="dv">76</span>, <span class="dv">404</span>, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span>, <span class="dv">400</span>, <span class="dv">27</span>, <span class="dv">407</span>, <span class="dv">52</span>, <span class="dv">406</span>, <span class="dv">77</span>, <span class="dv">401</span>, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">3</span>, <span class="dv">406</span>, <span class="dv">28</span>, <span class="dv">401</span>, <span class="dv">53</span>, <span class="dv">407</span>, <span class="dv">78</span>, <span class="dv">404</span>, </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">4</span>, <span class="dv">399</span>, <span class="dv">29</span>, <span class="dv">399</span>, <span class="dv">54</span>, <span class="dv">405</span>, <span class="dv">79</span>, <span class="dv">408</span>,  </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">5</span>, <span class="dv">402</span>, <span class="dv">30</span>, <span class="dv">401</span>, <span class="dv">55</span>, <span class="dv">411</span>, <span class="dv">80</span>, <span class="dv">406</span>,  </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">6</span>, <span class="dv">406</span>, <span class="dv">31</span>, <span class="dv">403</span>, <span class="dv">56</span>, <span class="dv">410</span>, <span class="dv">81</span>, <span class="dv">408</span>,  </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">7</span>, <span class="dv">401</span>, <span class="dv">32</span>, <span class="dv">400</span>, <span class="dv">57</span>, <span class="dv">410</span>, <span class="dv">82</span>, <span class="dv">406</span>,  </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">8</span>, <span class="dv">403</span>, <span class="dv">33</span>, <span class="dv">410</span>, <span class="dv">58</span>, <span class="dv">410</span>, <span class="dv">83</span>, <span class="dv">401</span>,  </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="dv">9</span>, <span class="dv">401</span>, <span class="dv">34</span>, <span class="dv">401</span>, <span class="dv">59</span>, <span class="dv">401</span>, <span class="dv">84</span>, <span class="dv">412</span>, </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a> <span class="dv">10</span>, <span class="dv">403</span>, <span class="dv">35</span>, <span class="dv">407</span>, <span class="dv">60</span>, <span class="dv">402</span>, <span class="dv">85</span>, <span class="dv">393</span>,  </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a> <span class="dv">11</span>, <span class="dv">398</span>, <span class="dv">36</span>, <span class="dv">423</span>, <span class="dv">61</span>, <span class="dv">404</span>, <span class="dv">86</span>, <span class="dv">437</span>,  </span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a> <span class="dv">12</span>, <span class="dv">403</span>, <span class="dv">37</span>, <span class="dv">406</span>, <span class="dv">62</span>, <span class="dv">405</span>, <span class="dv">87</span>, <span class="dv">418</span>,  </span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a> <span class="dv">13</span>, <span class="dv">407</span>, <span class="dv">38</span>, <span class="dv">406</span>, <span class="dv">63</span>, <span class="dv">392</span>, <span class="dv">88</span>, <span class="dv">415</span>, </span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a> <span class="dv">14</span>, <span class="dv">402</span>, <span class="dv">39</span>, <span class="dv">402</span>, <span class="dv">64</span>, <span class="dv">407</span>, <span class="dv">89</span>, <span class="dv">404</span>, </span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a> <span class="dv">15</span>, <span class="dv">401</span>, <span class="dv">40</span>, <span class="dv">405</span>, <span class="dv">65</span>, <span class="dv">406</span>, <span class="dv">90</span>, <span class="dv">401</span>, </span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a> <span class="dv">16</span>, <span class="dv">399</span>, <span class="dv">41</span>, <span class="dv">405</span>, <span class="dv">66</span>, <span class="dv">404</span>, <span class="dv">91</span>, <span class="dv">401</span>, </span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a> <span class="dv">17</span>, <span class="dv">400</span>, <span class="dv">42</span>, <span class="dv">409</span>, <span class="dv">67</span>, <span class="dv">403</span>, <span class="dv">92</span>, <span class="dv">407</span>, </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a> <span class="dv">18</span>, <span class="dv">401</span>, <span class="dv">43</span>, <span class="dv">399</span>, <span class="dv">68</span>, <span class="dv">408</span>, <span class="dv">93</span>, <span class="dv">412</span>, </span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a> <span class="dv">19</span>, <span class="dv">405</span>, <span class="dv">44</span>, <span class="dv">402</span>, <span class="dv">69</span>, <span class="dv">404</span>, <span class="dv">94</span>, <span class="dv">375</span>, </span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a> <span class="dv">20</span>, <span class="dv">402</span>, <span class="dv">45</span>, <span class="dv">407</span>, <span class="dv">70</span>, <span class="dv">407</span>, <span class="dv">95</span>, <span class="dv">409</span>, </span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a> <span class="dv">21</span>, <span class="dv">408</span>, <span class="dv">46</span>, <span class="dv">406</span>, <span class="dv">71</span>, <span class="dv">412</span>, <span class="dv">96</span>, <span class="dv">406</span>, </span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a> <span class="dv">22</span>, <span class="dv">399</span>, <span class="dv">47</span>, <span class="dv">413</span>, <span class="dv">72</span>, <span class="dv">406</span>, <span class="dv">97</span>, <span class="dv">398</span>, </span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a> <span class="dv">23</span>, <span class="dv">399</span>, <span class="dv">48</span>, <span class="dv">409</span>, <span class="dv">73</span>, <span class="dv">409</span>, <span class="dv">98</span>, <span class="dv">406</span>, </span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a> <span class="dv">24</span>, <span class="dv">402</span>, <span class="dv">49</span>, <span class="dv">404</span>, <span class="dv">74</span>, <span class="dv">400</span>, <span class="dv">99</span>, <span class="dv">403</span>, </span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a> <span class="dv">25</span>, <span class="dv">399</span>, <span class="dv">50</span>, <span class="dv">402</span>, <span class="dv">75</span>, <span class="dv">408</span>, <span class="dv">100</span>, <span class="dv">404</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">.cols =</span> <span class="fu">everything</span>(), </span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">.fns  =</span> as.integer</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>NB10_long <span class="ot">&lt;-</span> eda4mldata<span class="sc">::</span>nb10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>NB10_wide <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"NB10 (index, deficit)"</span>, </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"index"</span>, <span class="st">"deficit"</span>), <span class="dv">4</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-NB10-wide" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-NB10-wide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1338,6 +1595,16 @@ Table&nbsp;5.9: NB10 (index, deficit)
 </div>
 <p>Here is the distribution of the NB10 deficits expressed as a histogram.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>g_NB10 <span class="ot">&lt;-</span> NB10_long <span class="sc">|&gt;</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> deficit)) <span class="sc">+</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"coral"</span>) <span class="sc">+</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"NB10: micrograms below 10 grams"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>g_NB10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-NB10" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1351,31 +1618,60 @@ Figure&nbsp;5.1: NB10: micrograms below 10 grams
 </div>
 </div>
 </div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>NB10_stats <span class="ot">&lt;-</span> NB10_long <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg =</span> <span class="fu">mean</span>(deficit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd  =</span> <span class="fu">sd</span>(deficit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <p>The average deficit is 405 micrograms, and the standard deviation is about 6.5 micrograms.</p>
 <p>The next figure shows the deficits expressed in standard units. The histogram has been smoothed into an approximate density function, with a standard normal curve superimposed.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>NB10_z_score <span class="ot">&lt;-</span> NB10_long <span class="sc">|&gt;</span> </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_score =</span> (deficit <span class="sc">-</span> NB10_stats<span class="sc">$</span>avg)<span class="sc">/</span>NB10_stats<span class="sc">$</span>sd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>NB10_z_score <span class="ot">&lt;-</span> NB10_long <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_score =</span> (deficit <span class="sc">-</span> NB10_stats<span class="sc">$</span>avg)<span class="sc">/</span>NB10_stats<span class="sc">$</span>sd</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NB10_normal_approx <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> <span class="fu">seq</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> <span class="fu">min</span>(NB10_z_score<span class="sc">$</span> z_score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">to   =</span> <span class="fu">max</span>(NB10_z_score<span class="sc">$</span> z_score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">length.out =</span> <span class="dv">1000</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ), </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">d =</span> <span class="fu">dnorm</span>(z)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>NB10_normal_approx <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> <span class="fu">seq</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> <span class="fu">min</span>(NB10_z_score<span class="sc">$</span> z_score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">to   =</span> <span class="fu">max</span>(NB10_z_score<span class="sc">$</span> z_score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">length.out =</span> <span class="dv">1000</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  ), </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">d =</span> <span class="fu">dnorm</span>(z)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>g_NB10_z_score <span class="ot">&lt;-</span> NB10_z_score <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> z_score)) <span class="sc">+</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">stat_density</span>(<span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">outline.type =</span> <span class="st">"both"</span>) <span class="sc">+</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">stat =</span> <span class="st">"density"</span>) <span class="sc">+</span> </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"NB10: z-scores and standard normal curve"</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_line</span>(</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> NB10_normal_approx, </span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> z, <span class="at">y =</span> d, </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">colour =</span> <span class="st">"red"</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>g_NB10_z_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-NB10-z-score" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

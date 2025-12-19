@@ -488,7 +488,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:26 Thu 18-Dec-2025</p>
+      <p class="date">06:37 Fri 19-Dec-2025</p>
     </div>
   </div>
   
@@ -500,6 +500,52 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(assertthat)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(astsa)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytex)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibbledata)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with plotly</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># conflicted::conflicts_prefer(plotly::layout)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with tidymodels packages</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># tidymodels::tidymodels_prefer()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stabilize simulated data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"eda4ml_set_seed.R"</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># gen_ds_tbl</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># compile a tibble that identifies data sets</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"gen_ds_tbl.R"</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># get_ref_materials</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># encapsulate reference materials as separate modules</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"get_ref_materials.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <hr>
 <section id="introduction" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">13.1</span> Introduction</h2>
@@ -570,6 +616,16 @@ window.Quarto = {
 <p><span class="math display">\[\phi_{hh} = \begin{cases} \phi_1 &amp; h = 1 \\ 0 &amp; h &gt; 1 \end{cases}\]</span></p>
 <p>The PACF <strong>cuts off</strong> after lag 1. This is the diagnostic signature of AR(1).</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ar1_sim <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> <span class="fl">0.8</span>), <span class="at">n =</span> <span class="dv">200</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(ar1_sim, <span class="at">main =</span> <span class="st">"AR(1), φ = 0.8"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ar1_acf  <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(ar1_sim, <span class="at">main =</span> <span class="st">"ACF"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ar1_pacf <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">pacf</span>(ar1_sim, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"PACF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-ar1-sim" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -603,6 +659,10 @@ Figure&nbsp;13.1: Simulated AR(1) with φ = 0.8: geometric ACF decay, PACF cutof
 <h3 data-number="13.3.3" class="anchored" data-anchor-id="example-fish-recruitment"><span class="header-section-number">13.3.3</span> Example: Fish Recruitment</h3>
 <p>The recruitment series (<code>astsa::rec</code>) measures the abundance of new fish entering a commercial fishery. <a href="#fig-rec-acf-pacf" class="quarto-xref">Figure&nbsp;<span>13.2</span></a> shows its ACF and PACF.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rec_acf2 <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf2</span>(rec, <span class="at">main =</span> <span class="st">"Fish Recruitment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-rec-acf-pacf" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -699,6 +759,23 @@ Table&nbsp;13.1: ACF and PACF patterns for model identification
 <li>If <strong>both decay</strong> gradually → consider ARMA, or check whether differencing is needed</li>
 </ol>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># AR(1)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ar1 <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> <span class="fl">0.7</span>), <span class="at">n =</span> <span class="dv">300</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ar1_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(ar1, <span class="at">main =</span> <span class="st">"AR(1): ACF decays"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ar1_pacf <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">pacf</span>(ar1, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"AR(1): PACF cuts off"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># MA(1)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>ma1 <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ma =</span> <span class="fl">0.7</span>), <span class="at">n =</span> <span class="dv">300</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ma1_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(ma1, <span class="at">main =</span> <span class="st">"MA(1): ACF cuts off"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>ma1_pacf <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">pacf</span>(ma1, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"MA(1): PACF decays"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-ar-ma-signatures" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -769,6 +846,28 @@ Figure&nbsp;13.3: Contrasting AR and MA signatures: AR shows PACF cutoff; MA sho
 <li>The optimal forecast is a straight line: <span class="math inline">\(\hat{X}(t_f + h) = X(t_f) + h\alpha\)</span></li>
 </ul>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9999</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">ts</span>(<span class="fu">cumsum</span>(<span class="fu">rnorm</span>(<span class="dv">150</span>, <span class="fl">0.2</span>)))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">window</span>(x, <span class="at">end =</span> <span class="dv">100</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">diff</span>(y))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">sd</span>(<span class="fu">diff</span>(y))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>rmspe <span class="ot">&lt;-</span> s <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>yfore <span class="ot">&lt;-</span> <span class="fu">ts</span>(y[<span class="dv">100</span>] <span class="sc">+</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>) <span class="sc">*</span> d, <span class="at">start =</span> <span class="dv">101</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(x, <span class="at">ylab =</span> <span class="st">"X(t)"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">45</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(yfore, <span class="at">col =</span> <span class="dv">6</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">101</span><span class="sc">:</span><span class="dv">150</span>, <span class="dv">150</span><span class="sc">:</span><span class="dv">101</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>yy <span class="ot">&lt;-</span> <span class="fu">c</span>(yfore <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>rmspe, <span class="fu">rev</span>(yfore <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>rmspe))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(xx, yy, <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">col =</span> <span class="fu">gray</span>(<span class="fl">0.6</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">85</span>, <span class="dv">42</span>, <span class="st">"Past"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">125</span>, <span class="dv">42</span>, <span class="st">"Future"</span>, <span class="at">cex =</span> <span class="fl">0.9</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">100</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-rw-drift" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -810,6 +909,10 @@ Figure&nbsp;13.4: Random walk with drift: forecast is linear; prediction interva
 <h3 data-number="13.8.2" class="anchored" data-anchor-id="example-atmospheric-co₂"><span class="header-section-number">13.8.2</span> Example: Atmospheric CO₂</h3>
 <p>The Mauna Loa CO₂ series (<code>astsa::cardox</code>) shows both a strong upward trend and an annual seasonal cycle.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(cardox, <span class="at">ylab =</span> <span class="st">"CO₂ (ppm)"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-cardox" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -825,6 +928,11 @@ Figure&nbsp;13.5: Mauna Loa CO₂: strong upward trend with annual seasonal cycl
 </div>
 <p>To model this series, we need both regular differencing (for the trend) and seasonal differencing (for the annual cycle). <a href="#fig-cardox-diff" class="quarto-xref">Figure&nbsp;<span>13.6</span></a> shows the result of applying <span class="math inline">\(\nabla \nabla_{12}\)</span>—first seasonal differencing, then regular differencing.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span>(<span class="fu">diff</span>(cardox, <span class="at">lag =</span> <span class="dv">12</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  astsa<span class="sc">::</span><span class="fu">tsplot</span>(<span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylab =</span> <span class="st">"∇∇₁₂ CO₂"</span>, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-cardox-diff" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -840,6 +948,16 @@ Figure&nbsp;13.6: CO₂ after applying ∇∇₁₂: approximately stationary
 </div>
 <p>The differenced series appears approximately stationary—no obvious trend or seasonal pattern remains. Examination of the ACF and PACF of this differenced series (not shown) suggests an ARIMA<span class="math inline">\((1,1,1) \times (0,1,1)_{12}\)</span> model.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cardox_forecast <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">sarima.for</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  cardox, <span class="at">n.ahead =</span> <span class="dv">60</span>, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">12</span>, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylab =</span> <span class="st">"CO₂ (ppm)"</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">""</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fl">2023.25</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-cardox-forecast" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -895,6 +1013,23 @@ Figure&nbsp;13.7: CO₂ five-year forecast from ARIMA(1,1,1)×(0,1,1)₁₂
 <h3 data-number="13.9.5" class="anchored" data-anchor-id="example-recruitment-forecast"><span class="header-section-number">13.9.5</span> Example: Recruitment Forecast</h3>
 <p>Returning to the recruitment data (<code>astsa::rec</code>), we fit an AR(2) model (suggested by the PACF cutoff at lag 2) and forecast 24 months ahead.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>regr <span class="ot">&lt;-</span> rec <span class="sc">|&gt;</span> stats<span class="sc">::</span><span class="fu">ar.ols</span>(<span class="at">order =</span> <span class="dv">2</span>, <span class="at">demean =</span> <span class="cn">FALSE</span>, <span class="at">intercept =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>fore <span class="ot">&lt;-</span> regr <span class="sc">|&gt;</span> stats<span class="sc">::</span><span class="fu">predict</span>(<span class="at">n.ahead =</span> <span class="dv">24</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">ts</span>(<span class="fu">c</span>(rec, fore<span class="sc">$</span>pred), <span class="at">start =</span> <span class="dv">1950</span>, <span class="at">frequency =</span> <span class="dv">12</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">window</span>(x, <span class="at">start =</span> <span class="dv">1980</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  astsa<span class="sc">::</span><span class="fu">tsplot</span>(<span class="at">ylab =</span> <span class="st">"Recruitment"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">100</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(fore<span class="sc">$</span>pred, <span class="at">type =</span> <span class="st">"o"</span>, <span class="at">col =</span> <span class="dv">2</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> fore<span class="sc">$</span>pred <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> fore<span class="sc">$</span>se</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> fore<span class="sc">$</span>pred <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> fore<span class="sc">$</span>se</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">time</span>(U), <span class="fu">rev</span>(<span class="fu">time</span>(U)))</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>yy <span class="ot">&lt;-</span> <span class="fu">c</span>(L, <span class="fu">rev</span>(U))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(xx, yy, <span class="at">border =</span> <span class="dv">8</span>, <span class="at">col =</span> <span class="fu">gray</span>(<span class="fl">0.6</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-rec-forecast" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -972,8 +1107,8 @@ Figure&nbsp;13.8: Recruitment: 24-month AR(2) forecast with 95% prediction inter
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for residual autocorrelation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">Box.test</span>(residuals, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for residual autocorrelation</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">Box.test</span>(residuals, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>If residuals show structure, the model hasn’t captured all the dependence. Return to the identification step and consider additional AR or MA terms, or check whether differencing is appropriate.</p>

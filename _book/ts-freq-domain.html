@@ -458,7 +458,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:26 Thu 18-Dec-2025</p>
+      <p class="date">06:38 Fri 19-Dec-2025</p>
     </div>
   </div>
   
@@ -470,6 +470,52 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(assertthat)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(astsa)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytex)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibbledata)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with plotly</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># conflicted::conflicts_prefer(plotly::layout)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with tidymodels packages</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># tidymodels::tidymodels_prefer()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stabilize simulated data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"eda4ml_set_seed.R"</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># gen_ds_tbl</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># compile a tibble that identifies data sets</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"gen_ds_tbl.R"</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># get_ref_materials</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># encapsulate reference materials as separate modules</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"get_ref_materials.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <hr>
 <section id="introduction" class="level2" data-number="14.1">
 <h2 data-number="14.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">14.1</span> Introduction</h2>
@@ -565,6 +611,12 @@ window.Quarto = {
 <li><strong><span class="math inline">\(\phi &lt; 0\)</span></strong>: Maximum at <span class="math inline">\(\lambda = \pi\)</span>, declining toward <span class="math inline">\(\lambda = 0\)</span>. Negative autocorrelation produces high-frequency dominance—the process alternates.</li>
 </ul>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">arma.spec</span>(<span class="at">ar =</span> <span class="fl">0.8</span>, <span class="at">main =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"AR(1), "</span>, phi, <span class="st">" = 0.8"</span>)), <span class="at">col =</span> <span class="dv">4</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">arma.spec</span>(<span class="at">ar =</span> <span class="sc">-</span><span class="fl">0.8</span>, <span class="at">main =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"AR(1), "</span>, phi, <span class="st">" = -0.8"</span>)), <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-ar1-spectra" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -585,6 +637,12 @@ Figure&nbsp;14.1: AR(1) spectra: positive φ emphasizes low frequencies (persist
 <p><span class="math display">\[f(\lambda) = \sigma_W^2 |1 + \theta e^{-i\lambda}|^2 = \sigma_W^2 (1 + 2\theta\cos\lambda + \theta^2)\]</span></p>
 <p>The MA(1) spectrum has the inverse pattern of AR(1): where AR(1) with <span class="math inline">\(\phi &gt; 0\)</span> peaks at low frequencies, MA(1) with <span class="math inline">\(\theta &gt; 0\)</span> peaks at high frequencies.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">arma.spec</span>(<span class="at">ma =</span> <span class="fl">0.8</span>, <span class="at">main =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"MA(1), "</span>, theta, <span class="st">" = 0.8"</span>)), <span class="at">col =</span> <span class="dv">4</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">arma.spec</span>(<span class="at">ma =</span> <span class="sc">-</span><span class="fl">0.8</span>, <span class="at">main =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"MA(1), "</span>, theta, <span class="st">" = -0.8"</span>)), <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-ma1-spectra" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -603,6 +661,12 @@ Figure&nbsp;14.2: MA(1) spectra: opposite pattern from AR(1) with the same param
 <h3 data-number="14.3.4" class="anchored" data-anchor-id="ar2-and-spectral-peaks"><span class="header-section-number">14.3.4</span> AR(2) and Spectral Peaks</h3>
 <p>AR(2) processes can exhibit spectral peaks at frequencies other than 0 or <span class="math inline">\(\pi\)</span>. When the AR polynomial <span class="math inline">\(\phi(z) = 1 - \phi_1 z - \phi_2 z^2\)</span> has complex roots, the spectrum peaks at a frequency determined by those roots.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">arma.spec</span>(<span class="at">ar =</span> <span class="fu">c</span>(<span class="fl">1.3</span>, <span class="sc">-</span><span class="fl">0.7</span>), </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="fu">expression</span>(<span class="fu">paste</span>(<span class="st">"AR(2): "</span>, phi[<span class="dv">1</span>], <span class="st">" = 1.3, "</span>, phi[<span class="dv">2</span>], <span class="st">" = -0.7"</span>)), </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-ar2-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -644,6 +708,18 @@ Figure&nbsp;14.3: AR(2) with complex roots produces a spectral peak, indicating 
 <p>The periodogram is approximately distributed as the true spectrum times a chi-squared random variable with 2 degrees of freedom, divided by 2. Since <span class="math inline">\(Var(\chi_2^2/2) = 1\)</span>, the coefficient of variation remains constant regardless of sample size.</p>
 <p>This is a striking result: more data does not reduce periodogram variability. The periodogram fluctuates wildly around the true spectrum, even with millions of observations.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>wn <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">ts</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(<span class="dv">256</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>spec_wn <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">spec.pgram</span>(wn, <span class="at">taper =</span> <span class="dv">0</span>, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">plot</span>(spec_wn<span class="sc">$</span>freq, spec_wn<span class="sc">$</span>spec, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="dv">4</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Frequency"</span>, <span class="at">ylab =</span> <span class="st">"Periodogram"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"White Noise: True Spectrum is Flat"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Periodogram"</span>, <span class="st">"True spectrum"</span>), </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-periodogram-variability" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -699,9 +775,24 @@ Figure&nbsp;14.4: Raw periodogram of white noise fluctuates wildly around the fl
 <section id="modified-daniell-kernel" class="level3" data-number="14.5.3">
 <h3 data-number="14.5.3" class="anchored" data-anchor-id="modified-daniell-kernel"><span class="header-section-number">14.5.3</span> Modified Daniell Kernel</h3>
 <p>A common choice is the <strong>modified Daniell kernel</strong>—essentially a moving average over adjacent frequencies. In R:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">spec.pgram</span>(x, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">taper =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">spec.pgram</span>(x, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">taper =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>spans</code> argument specifies the widths of successive Daniell smoothers. Applying two smoothers (e.g., <code>spans = c(5, 5)</code>) produces a smoother result than one wider smoother. The <code>taper</code> argument applies a data taper to reduce spectral leakage from the finite sample boundaries.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>wn <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">ts</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(<span class="dv">256</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>spec_raw <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">spec.pgram</span>(wn, <span class="at">taper =</span> <span class="dv">0</span>, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>spec_smooth <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">spec.pgram</span>(wn, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">7</span>), <span class="at">taper =</span> <span class="fl">0.1</span>, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">plot</span>(spec_raw<span class="sc">$</span>freq, spec_raw<span class="sc">$</span>spec, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> grDevices<span class="sc">::</span><span class="fu">gray</span>(<span class="fl">0.7</span>),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Frequency"</span>, <span class="at">ylab =</span> <span class="st">"Spectrum estimate"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Effect of Smoothing"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">lines</span>(spec_smooth<span class="sc">$</span>freq, spec_smooth<span class="sc">$</span>spec, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Raw periodogram"</span>, <span class="st">"Smoothed"</span>, <span class="st">"True"</span>), </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(grDevices<span class="sc">::</span><span class="fu">gray</span>(<span class="fl">0.7</span>), <span class="dv">4</span>, <span class="dv">2</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-smoothed-periodogram" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -729,6 +820,10 @@ Figure&nbsp;14.5: Smoothing reduces variance while preserving the overall shape
 <h2 data-number="14.6" class="anchored" data-anchor-id="example-sunspots"><span class="header-section-number">14.6</span> Example: Sunspots</h2>
 <p>We return to the sunspot data introduced in Chapter 12, now analyzing its spectrum.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(datasets<span class="sc">::</span>sunspot.month, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylab =</span> <span class="st">"Sunspot Number"</span>, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-sunspots-series" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -744,6 +839,14 @@ Figure&nbsp;14.6: Monthly sunspot numbers exhibit quasi-periodic behavior with v
 </div>
 <p>The time series shows clear cyclical behavior, but with considerable irregularity. The cycle length varies; the amplitude varies even more. A simple sinusoidal model would not fit well. What does the spectrum reveal?</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sunspots_spec <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">spec.pgram</span>(datasets<span class="sc">::</span>sunspot.month, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">7</span>), </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">taper =</span> <span class="fl">0.1</span>, <span class="at">log =</span> <span class="st">"yes"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark the ~11-year cycle (132 months)</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">132</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">text</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">132</span> <span class="sc">+</span> <span class="fl">0.01</span>, <span class="fu">max</span>(<span class="fu">log10</span>(sunspots_spec<span class="sc">$</span>spec)) <span class="sc">-</span> <span class="dv">1</span>, <span class="st">"~11 years"</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-sunspots-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -773,6 +876,14 @@ Figure&nbsp;14.7: Sunspot spectrum shows dominant peak near 11-year period
 <h2 data-number="14.7" class="anchored" data-anchor-id="example-city-temperatures"><span class="header-section-number">14.7</span> Example: City Temperatures</h2>
 <p>Daily temperature data provide another window into spectrum analysis. We examine temperatures from Honolulu, Hawaii—a location where the annual cycle should dominate.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hnl_temp <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">ts</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  hnl_nyc_wide<span class="sc">$</span>HNL, <span class="at">frequency =</span> <span class="dv">365</span>, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1995</span>, <span class="dv">1</span>) )</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  hnl_temp, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">ylab =</span> <span class="st">"Temperature (°F)"</span>, </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"HNL Temps"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-hnl-temp-series" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -788,6 +899,15 @@ Figure&nbsp;14.8: Honolulu daily temperatures (1995-2020) show clear annual cycl
 </div>
 <p>Honolulu’s tropical climate produces mild, stable temperatures: mean 77°F with standard deviation only 3.4°F. The annual cycle is visible but modest—Hawaii’s seasonal variation is much smaller than at mid-latitudes.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>temp_spec <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">spec.pgram</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  hnl_temp, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">7</span>), <span class="at">taper =</span> <span class="fl">0.1</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">log =</span> <span class="st">"yes"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">xlab =</span> <span class="st">"frequency (cycles/year)"</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"HNL Spectrum"</span> )</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">365</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">text</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">365</span> <span class="sc">+</span> <span class="fl">0.002</span>, <span class="fu">max</span>(<span class="fu">log10</span>(temp_spec<span class="sc">$</span>spec)) <span class="sc">-</span> <span class="dv">1</span>, <span class="st">"1 year"</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-hnl-temp-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -832,6 +952,24 @@ Figure&nbsp;14.9: Honolulu temperature spectrum shows sharp peak at annual frequ
 <h3 data-number="14.8.3" class="anchored" data-anchor-id="hnl-vs-nyc-temperatures"><span class="header-section-number">14.8.3</span> HNL vs NYC Temperatures</h3>
 <p>We compare daily temperatures at Honolulu and New York City to illustrate coherence analysis.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>hnl_nyc_mvts <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">ts</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">HNL =</span> hnl_nyc_wide<span class="sc">$</span>HNL, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">NYC =</span> hnl_nyc_wide<span class="sc">$</span>NYC ),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">frequency =</span> <span class="dv">365</span>, </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1995</span>, <span class="dv">1</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  hnl_nyc_mvts, <span class="at">col =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), <span class="at">spaghetti =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Temperature (°F)"</span>, </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"HNL, NYC Temps"</span> )</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">legend</span>(</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bottomright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"HNL"</span>, <span class="st">"NYC"</span>), </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>), <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-hnl-nyc-series" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -847,6 +985,23 @@ Figure&nbsp;14.10: Daily temperatures at Honolulu and New York City (1995-2020)
 </div>
 <p>Both cities show annual cycles, but NYC has much larger amplitude (mean 56°F, SD 17.1°F versus Honolulu’s 77°F and 3.4°F). NYC also shows more day-to-day variability from mid-latitude weather systems.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hnl_nyc_spec <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">spec.pgram</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  hnl_nyc_mvts, <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">7</span>), </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">taper =</span> <span class="fl">0.1</span>, <span class="at">plot =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">plot</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  hnl_nyc_spec<span class="sc">$</span>freq, </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  hnl_nyc_spec<span class="sc">$</span>coh, </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="dv">4</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Frequency (cycles/year)"</span>, <span class="at">ylab =</span> <span class="st">"Coherence"</span>, </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"HNL-NYC Coherence"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">365</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>graphics<span class="sc">::</span><span class="fu">text</span>(</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span><span class="dv">365</span> <span class="sc">+</span> <span class="fl">0.003</span>, <span class="fl">0.95</span>, <span class="st">"1 year"</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">adj =</span> <span class="dv">0</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-hnl-nyc-coherence" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

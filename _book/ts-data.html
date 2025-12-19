@@ -474,7 +474,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:26 Thu 18-Dec-2025</p>
+      <p class="date">06:37 Fri 19-Dec-2025</p>
     </div>
   </div>
   
@@ -486,6 +486,52 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(assertthat)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(astsa)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tinytex)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibble)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tsibbledata)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with plotly</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># conflicted::conflicts_prefer(plotly::layout)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># resolve conflicts with tidymodels packages</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># tidymodels::tidymodels_prefer()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stabilize simulated data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"eda4ml_set_seed.R"</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># gen_ds_tbl</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># compile a tibble that identifies data sets</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"gen_ds_tbl.R"</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># get_ref_materials</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># encapsulate reference materials as separate modules</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"code"</span>, <span class="st">"get_ref_materials.R"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <hr>
 <section id="introduction" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">12.1</span> Introduction</h2>
@@ -528,6 +574,10 @@ window.Quarto = {
 <h3 data-number="12.2.1" class="anchored" data-anchor-id="sunspots"><span class="header-section-number">12.2.1</span> Sunspots</h3>
 <p>The sunspot record is one of the longest continuous scientific observations, extending from 1749 to the present. <a href="#fig-sunspots" class="quarto-xref">Figure&nbsp;<span>12.1</span></a> shows the monthly count of sunspots as recorded by the Royal Observatory of Belgium’s Solar Influences Data Analysis Center.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(sunspot.month, <span class="at">ylab =</span> <span class="st">"Sunspot count"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-sunspots" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -547,6 +597,10 @@ Figure&nbsp;12.1: Monthly sunspot counts, 1749–present
 <h4 data-number="12.2.1.1" class="anchored" data-anchor-id="time-domain-view"><span class="header-section-number">12.2.1.1</span> Time Domain View</h4>
 <p>The autocorrelation function reveals how the present relates to the past.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ss_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(sunspot.month, <span class="at">max.lag =</span> <span class="dv">200</span>, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-sunspots-acf" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -567,6 +621,10 @@ Figure&nbsp;12.2: ACF of monthly sunspot counts
 <h4 data-number="12.2.1.2" class="anchored" data-anchor-id="frequency-domain-view"><span class="header-section-number">12.2.1.2</span> Frequency Domain View</h4>
 <p>The spectrum reveals what periodic components are present and how much variance each contributes.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">mvspec</span>(sunspot.month, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">main =</span> <span class="st">""</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-sunspots-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -588,6 +646,10 @@ Figure&nbsp;12.3: Spectrum of monthly sunspot counts
 <h3 data-number="12.2.2" class="anchored" data-anchor-id="global-surface-temperatures"><span class="header-section-number">12.2.2</span> Global Surface Temperatures</h3>
 <p><a href="#fig-gtemp" class="quarto-xref">Figure&nbsp;<span>12.4</span></a> shows annual temperature deviations (in °C) from the 1991–2020 average for the Earth’s land surface, recorded from 1850 to 2023. The data are from NOAA’s Global Climate Report.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(gtemp_land, <span class="at">ylab =</span> <span class="st">"°C deviation"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-gtemp" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -606,6 +668,10 @@ Figure&nbsp;12.4: Annual land surface temperature deviations from 1991–2020 av
 <section id="time-domain-view-1" class="level4" data-number="12.2.2.1">
 <h4 data-number="12.2.2.1" class="anchored" data-anchor-id="time-domain-view-1"><span class="header-section-number">12.2.2.1</span> Time Domain View</h4>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gtl_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(gtemp_land, <span class="at">main =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-gtemp-acf" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -625,6 +691,10 @@ Figure&nbsp;12.5: ACF of global land temperatures
 <section id="frequency-domain-view-1" class="level4" data-number="12.2.2.2">
 <h4 data-number="12.2.2.2" class="anchored" data-anchor-id="frequency-domain-view-1"><span class="header-section-number">12.2.2.2</span> Frequency Domain View</h4>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">mvspec</span>(gtemp_land, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">main =</span> <span class="st">""</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-gtemp-spectrum" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -646,6 +716,12 @@ Figure&nbsp;12.6: Spectrum of global land temperatures
 <h3 data-number="12.2.3" class="anchored" data-anchor-id="el-niño-and-fish-recruitment"><span class="header-section-number">12.2.3</span> El Niño and Fish Recruitment</h3>
 <p>Our third example involves two related series: the Southern Oscillation Index (SOI) and a fish recruitment index. <a href="#fig-soi-rec" class="quarto-xref">Figure&nbsp;<span>12.7</span></a> shows both series, which span 1950–1987 with monthly observations.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(soi, <span class="at">ylab =</span> <span class="st">"SOI"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">main =</span> <span class="st">"Southern Oscillation Index"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(rec, <span class="at">ylab =</span> <span class="st">"Recruitment"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">main =</span> <span class="st">"Fish Recruitment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-soi-rec" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -665,6 +741,12 @@ Figure&nbsp;12.7: Southern Oscillation Index and fish recruitment, 1950–1987
 <section id="soi-dual-perspective" class="level4" data-number="12.2.3.1">
 <h4 data-number="12.2.3.1" class="anchored" data-anchor-id="soi-dual-perspective"><span class="header-section-number">12.2.3.1</span> SOI: Dual Perspective</h4>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>soi_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(soi, <span class="at">main =</span> <span class="st">"ACF"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">mvspec</span>(soi, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">main =</span> <span class="st">"Spectrum"</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-soi-dual" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -684,6 +766,12 @@ Figure&nbsp;12.8: SOI: Autocorrelation and spectrum
 <section id="recruitment-dual-perspective" class="level4" data-number="12.2.3.2">
 <h4 data-number="12.2.3.2" class="anchored" data-anchor-id="recruitment-dual-perspective"><span class="header-section-number">12.2.3.2</span> Recruitment: Dual Perspective</h4>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>rec_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(rec, <span class="at">main =</span> <span class="st">"ACF"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">mvspec</span>(rec, <span class="at">log =</span> <span class="st">"no"</span>, <span class="at">main =</span> <span class="st">"Spectrum"</span>, <span class="at">col =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-rec-dual" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -775,6 +863,18 @@ f_W(\lambda) = \frac{\sigma^2}{2\pi} \quad \text{for all } \lambda \in (-\pi, \p
 <h3 data-number="12.3.4" class="anchored" data-anchor-id="visual-signature"><span class="header-section-number">12.3.4</span> Visual Signature</h3>
 <p><a href="#fig-white-noise" class="quarto-xref">Figure&nbsp;<span>12.10</span></a> shows a realization of white noise along with its sample ACF and estimated spectrum.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>wn <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">500</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(wn, <span class="at">main =</span> <span class="st">"White noise"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>wn_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(wn, <span class="at">main =</span> <span class="st">"ACF"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>wn <span class="sc">|&gt;</span> stats<span class="sc">::</span><span class="fu">spectrum</span>(</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">spans =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">15</span>), <span class="at">ci =</span> <span class="fl">0.95</span>, <span class="at">ci.col =</span> <span class="st">"blue"</span>, <span class="at">main =</span> <span class="st">"Spectrum"</span> )</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># mvspec(wn, spans = c(15, 15), log = "no", main = "Spectrum", col = 4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-white-noise" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -888,6 +988,15 @@ Figure&nbsp;12.10: White noise: time series, ACF, and spectrum
 <h3 data-number="12.4.4" class="anchored" data-anchor-id="visual-assessment-of-stationarity"><span class="header-section-number">12.4.4</span> Visual Assessment of Stationarity</h3>
 <p>Before applying methods that assume stationarity, we should assess whether the assumption is plausible. Visual inspection of the time series plot is the first diagnostic.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(stats<span class="sc">::</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> <span class="fl">0.8</span>), <span class="at">n =</span> <span class="dv">200</span>), </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="st">"Stationary: AR(1)"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">tsplot</span>(<span class="fu">cumsum</span>(<span class="fu">rnorm</span>(<span class="dv">200</span>)), </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="st">"Non-stationary: Random Walk"</span>, <span class="at">col =</span> <span class="dv">2</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-stationary-vs-not" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -969,6 +1078,10 @@ Y(t) = X(t) - X(t-s)
 \]</span></p>
 <p>The conventional 95% confidence bands are thus <span class="math inline">\(\pm 1.96 / \sqrt{T}\)</span>, often displayed as dashed lines. Sample ACF values outside these bands suggest statistically significant autocorrelation at that lag.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>soi_acf <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf1</span>(soi, <span class="at">main =</span> <span class="st">"SOI: Sample ACF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-acf-soi-annotated" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1002,6 +1115,10 @@ Figure&nbsp;12.12: Sample ACF with confidence bands
 <h3 data-number="12.5.4" class="anchored" data-anchor-id="acf-and-pacf-together"><span class="header-section-number">12.5.4</span> ACF and PACF Together</h3>
 <p>Plotting the ACF and PACF together provides a diagnostic fingerprint of the dependence structure.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>soi_acf2 <span class="ot">&lt;-</span> astsa<span class="sc">::</span><span class="fu">acf2</span>(soi, <span class="at">main =</span> <span class="st">"Southern Oscillation Index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-acf-pacf-soi" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1093,8 +1210,8 @@ Q(h) = T(T+2) \sum_{u=1}^{h} \frac{\hat{\rho}(u)^2}{T-u}
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for SOI at lag 20</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">Box.test</span>(soi, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for SOI at lag 20</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">Box.test</span>(soi, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1188,6 +1305,17 @@ N_{\text{eff}} \approx T \cdot \frac{0.2}{1.8} = T \cdot 0.111 \approx \frac{T}{
 \]</span></p>
 <p>A sample of <span class="math inline">\(T = 100\)</span> observations has an effective sample size of only about 11. The data contain far less information than the nominal sample size suggests.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>phi_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.9</span>, <span class="fl">0.9</span>, <span class="at">by =</span> <span class="fl">0.01</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>ess_ratio <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> phi_seq) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> phi_seq)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(phi_seq, ess_ratio, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="dv">4</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(phi), <span class="at">ylab =</span> <span class="fu">expression</span>(N[eff] <span class="sc">/</span> T),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"ESS Ratio for AR(1) Process"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-ess-ar1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1251,8 +1379,8 @@ Figure&nbsp;12.14: Effective sample size as a function of AR(1) parameter
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate ESS for global temperature data</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">ESS</span>(gtemp_land)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate ESS for global temperature data</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>astsa<span class="sc">::</span><span class="fu">ESS</span>(gtemp_land)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 45.91</code></pre>
