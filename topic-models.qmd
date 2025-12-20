@@ -618,7 +618,7 @@ Chapter 9 introduced *Linear Discriminant Analysis*—a supervised method that f
 | `cast_dtm()` | tidytext | Convert tidy data to document-term matrix |
 | `perplexity()` | topicmodels | Compute model fit metric |
 
-## Appendix 11.A: The Dirichlet Distribution {.appendix}
+## Appendix A: The Dirichlet Distribution {.appendix}
 
 This appendix provides the mathematical foundation for the Dirichlet distribution, which underlies the "mixture" structure in LDA. We begin with the multinomial distribution, introduce Bayesian inference with conjugate priors, and then present the Dirichlet distribution as the natural generalization.
 
@@ -696,15 +696,15 @@ In LDA, Dirichlet distributions serve as priors in two places:
 
 The conjugacy property means that as we observe words in documents and update our beliefs about topic assignments, the posterior distributions remain Dirichlet, enabling efficient iterative inference.
 
-### References for Appendix 11.A
+### References for Appendix A
 
 - @wiki_Dirichlet_dstn for an accessible introduction.
 - @BNJ_2003_LDA for the original application to topic modeling.
 - @Steyvers_Griffiths_2007 for details on the Gibbs sampling algorithm.
 
-## Appendix 11.B: Mathematical Framework {.appendix}
+## Appendix B: Mathematical Framework {.appendix}
 
-For readers seeking a more formal treatment, this appendix presents the mathematical notation and generative model underlying LDA in full detail.
+For readers seeking a more formal treatment, this appendix presents the mathematical notation and generative model underlying Latent Dirichlet Allocation (LDA) in greater detail.
 
 ### Notation
 
@@ -742,7 +742,7 @@ The `topicmodels` package offers two approaches: Variational Expectation-Maximiz
 
 For further details on inference algorithms, see @Steyvers_Griffiths_2007 and @BNJ_2003_LDA.
 
-### References for Appendix 11.B
+### References for Appendix B
 
 - @BNJ_2003_LDA for the original LDA paper with full mathematical details.
 - @Steyvers_Griffiths_2007 for an accessible treatment of the Gibbs sampling algorithm.
