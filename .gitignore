@@ -4,3 +4,6 @@
 .Ruserdata
 
 /.quarto/
+/_book/
+*_files/
+/z_warehouse/
