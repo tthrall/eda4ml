@@ -28,6 +28,56 @@ This book addresses that tertiary concern. It is written for practitioners who w
 
 Organizations that can attend to these secondary and tertiary concerns are both fortunate and well-managed. This book is for the practitioners within them.
 
+## How to Use This Book
+
+This book is part of a coordinated set of learning materials. How you use them depends on whether you are studying independently or taking an instructor-led course.
+
+### The Materials
+
+- **Slides** — Visual overviews of each chapter, available at the [eda4ml-slides repository](https://github.com/tthrall/eda4ml-slides)
+- **Workbooks** — Scaffolded exercises for active practice, generated via the `eda4mlr` R package
+- **This book** — Comprehensive exposition with theoretical grounding and references
+
+### Recommended Sequence
+
+We recommend working through each chapter in this order:
+
+1. **Slides first.** Review the slide deck to get the big picture. What questions does this chapter address? What methods will you learn? This should take 15–20 minutes and gives you a mental framework for what follows.
+
+2. **Workbook second.** Work through the exercises actively. Struggle is productive—if you get stuck, note your questions and proceed. The workbook is designed so that completing it means you have practiced each learning objective. Generate your workbook by installing the `eda4mlr` package and running:
+
+   ```r
+   eda4mlr::create_workbook(chapter = 1)  # or use the chapter slug
+   ```
+
+3. **Book chapter third.** Read for deeper understanding. Your workbook struggles will make the exposition meaningful—you'll be reading to answer questions you actually have. After reading, return to any exercises that gave you trouble.
+
+This sequence may feel backwards if you're used to reading first and practicing second. But technical material is learned through engagement, not absorption. The slides orient you; the workbook surfaces your confusions; the book resolves them.
+
+### If You Get Stuck
+
+- **On workbook exercises**: Read the relevant section of the book chapter, then return to the exercise. The book and workbook are designed to work together.
+- **On concepts**: The slides often present ideas more visually; return to them for a different perspective.
+- **On R code**: The book's code examples are meant to be run, not just read. Copy them into your R session and experiment.
+
+### Choosing Your Own Datasets
+
+Many workbook exercises ask you to choose a dataset that interests you. This is intentional. Working with data you care about increases engagement and helps you see how the methods apply to real problems. If you don't have a dataset in mind, each workbook suggests fallback options.
+
+### Time Investment
+
+A typical chapter requires:
+
+- Slides: 15–20 minutes
+- Workbook: 90–150 minutes (varies by chapter)
+- Book chapter: 45–90 minutes
+
+Expect to spend 3–4 hours per chapter for thorough engagement. You can move faster by skipping practice problems, but the practice is where learning consolidates.
+
+### For Those Returning to the Material
+
+Once you've worked through a chapter completely, the book becomes a reference. The workbook becomes a record of your thinking at the time—worth revisiting to see how your understanding has evolved.
+
 ## Computational Environment
 
 This section describes the computational environment needed to work through
