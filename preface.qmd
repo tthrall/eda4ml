@@ -18,6 +18,16 @@ Or consider time series analysis (Part 4). The autocorrelation in successive obs
 
 Throughout this book, we develop technical tools while attending to the understanding that makes them meaningful. The goal is not merely execution of procedures; it is thoughtful analysis.
 
+## For the Working Practitioner
+
+The preceding section describes an ideal: understanding and decision support as equal partners. Practitioners know that reality often looks different. In operational environments—whether in industry or government—mission accomplishment rightly takes priority. Prediction matters more than explanation when decisions must be made now.
+
+This ordering is entirely rational. Most organizations exist to accomplish missions, not to build scientific knowledge. A secondary concern is sustaining operational success through sound practices. A tertiary concern is ensuring that professional staff remain at the top of their game.
+
+This book addresses that tertiary concern. It is written for practitioners who work in environments where operational success comes first, and it treats the opportunity to step back and deepen one's craft with appropriate seriousness. The time invested here should pay dividends in the judgment you bring back to operational work—the anomaly noticed before it becomes a production failure, the recognition that a model's assumptions have drifted, the right question asked when others are optimizing the wrong objective.
+
+Organizations that can attend to these secondary and tertiary concerns are both fortunate and well-managed. This book is for the practitioners within them.
+
 ## Computational Environment
 
 This section describes the computational environment needed to work through
