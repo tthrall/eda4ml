@@ -103,6 +103,22 @@ Even this simple analysis reveals clear differences. Austen's most frequent word
 
 This comparison raises the central questions of text analysis: How do we convert text to numbers? Which words matter? What patterns emerge across documents? The remainder of this chapter develops the tools to answer these questions systematically.
 
+### Choosing a Corpus for Learning
+
+When learning text analysis methods, the choice of corpus matters more than it might first appear. A corpus that is too small offers insufficient structure for meaningful patterns to emerge; one that is too large introduces computational delays that interrupt the exploratory rhythm essential to learning. Network-dependent sources add another layer of fragility: a slow API or rate limit encountered mid-lecture derails both instructor and student.
+
+For these reasons, we favor corpora that are local, cached, or small enough to load instantly.
+
+**Jane Austen as a pedagogical corpus.** The `janeaustenr` package provides the complete text of six novels in a tidy format. At roughly 700,000 words, the corpus is large enough to reveal meaningful lexical patterns—word frequency distributions, sentiment arcs, distinctive vocabulary across novels—yet small enough to process interactively on modest hardware. The prose is syntactically regular, the content culturally familiar, and the six-novel structure invites natural comparisons. These qualities make it an ideal first corpus for learning tokenization, term-frequency analysis, and document-term matrix construction.
+
+**Scaling up without fragility.** Students ready for larger corpora face a practical challenge: many text datasets require network downloads that may fail, timeout, or trigger rate limits in classroom settings. The `textdata` package addresses this through a download-once, cache-locally model. On first use, `textdata::dataset_imdb()` downloads 50,000 labeled movie reviews; subsequent calls load instantly from the local cache. This approach combines the richness of large corpora with the reliability of local data. The package also provides access to news classification datasets (AG News) and other standard NLP benchmarks.
+
+For political and news text, `quanteda.corpora` offers pre-packaged collections including US inaugural addresses and State of the Union speeches. These are modest in size but substantively rich, lending themselves to analyses of rhetorical change over time.
+
+**A note on Project Gutenberg.** The `gutenbergr` package provides access to over 60,000 public-domain texts, which sounds appealing. In practice, the network dependency introduces latency and occasional failures that make it poorly suited to interactive teaching. We recommend it only for independent projects where students can tolerate download delays and are prepared to cache results locally.
+
+The accompanying workbook lists specific functions for loading each corpus.
+
 ## Text as High-Dimensional Data
 
 To analyze text computationally, we must convert it to numbers. This conversion proceeds in three steps: tokenization (breaking text into units), vocabulary construction (identifying unique terms), and counting (recording which terms appear in which documents).

@@ -54,6 +54,10 @@ A topic model rests on two assumptions:
 
 Given a corpus of documents, a topic model discovers both the topics (as probability distributions over words) and the topic mixture for each document. The model knows nothing about business or politics *a priori*—it infers topics from patterns of word co-occurrence.
 
+### Corpus Requirements for Topic Modeling
+
+Topic modeling places specific demands on the corpus. Single-author literary corpora like `janeaustenr` can work—one might discover topics corresponding to dialogue, description, and narration—but richer thematic structure emerges from multi-author or multi-domain collections. The Associated Press corpus (`topicmodels::AssociatedPress`) provides 2,246 news articles spanning diverse subjects, making it well-suited for discovering interpretable topics. For students who wish to compare discovered topics against known categories, `textdata::dataset_ag_news()` provides news articles with category labels. Chapter 10 discusses corpus selection in greater detail.
+
 ## The Generative Story
 
 The key to understanding LDA is the *generative story*: a fictional account of how each document was created. Imagine generating a document as follows:
