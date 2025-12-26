@@ -56,7 +56,7 @@ source(here("code", "eda4ml_set_seed.R"))
 
 Exploratory Data Analysis (EDA) is an approach to data analysis advocated by [John Tukey](https://en.wikipedia.org/wiki/John_Tukey), a leading American statistician of the 20th century. In his 1977 book of the same name, Tukey argued that statisticians had become too focused on formal inference—hypothesis tests, confidence intervals, p-values—at the expense of simply *looking at data*. EDA is the corrective: an emphasis on visualization, summary, and the iterative development of questions about what the data might reveal.
 
-Tukey contrasted EDA with what he called "confirmatory data analysis" (CDA). Confirmatory analysis begins with a hypothesis and asks whether the data support or refute it. Exploratory analysis begins with data and asks what patterns, anomalies, or relationships might be present. The difference is one of emphasis rather than exclusion: a complete analysis typically involves both exploration and confirmation, and EDA includes models suggested by data.
+Tukey contrasted EDA with what he called "confirmatory data analysis" (CDA). Confirmatory analysis begins with a hypothesis or model and determines whether and how the data support or refute it. Exploratory analysis begins with data and asks what patterns, anomalies, or relationships might be present. The difference is one of emphasis rather than exclusion: a complete analysis typically involves both exploration and confirmation, and EDA includes models suggested by data.
 
 ::: {.callout-note}
 ## EDA in machine learning
@@ -82,7 +82,7 @@ A useful mental model for EDA treats the data at hand as a *sample* drawn from a
 
 This framing matters because our goal is usually to learn something about the population, not just to describe the sample. When we compute a sample mean or fit a regression line, we hope these quantities approximate corresponding population quantities. EDA helps us assess whether the sample is likely to support such generalizations: Is the sample large enough? Are there subgroups that behave differently? Are there outliers that might distort our summaries?
 
-Even when the distinction between sample and population is blurry—as when we have data on all transactions in a database—the population framing remains useful. We can think of the observed data as a sample from a hypothetical population of transactions that *could have occurred* under similar conditions, and ask whether patterns in the data reflect stable features of the underlying process.
+Even when we have data on all transactions in a database, making the distinction between sample and population blurry, the population framing remains useful. We can think of the observed data as a sample from a hypothetical population of transactions that *could have occurred* under similar conditions, and ask whether patterns in the data reflect stable features of the underlying process.
 
 ## Central Value and Dispersion
 
@@ -101,9 +101,9 @@ $$
 \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
 $$
 
-The mean has attractive mathematical properties—it minimizes the sum of squared deviations—but it is sensitive to extreme values. A single outlier can shift the mean substantially.
+The mean has attractive mathematical properties (it minimizes the sum of squared deviations), but it is sensitive to extreme values. A single outlier can shift the mean substantially.
 
-The **median** is the middle value when observations are sorted. Half the observations fall below the median, half above. The median is *robust*: it is largely unaffected by outliers. For skewed distributions (e.g., income, home prices), the median often provides a more representative "typical" value than the mean.
+The **median** is the middle value when observations are sorted. Half the observations fall below the median, half above. The median is *resistant*: it is largely unaffected by outliers. For skewed distributions (e.g., income, home prices), the median is also *robust*, often providing a more representative "typical" value than the mean.
 
 The **mode** is the most frequently occurring value. For continuous data, the mode is often estimated as the peak of a density estimate. A distribution may have multiple modes, suggesting the presence of distinct subgroups.
 
@@ -115,9 +115,9 @@ $$
 s = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}
 $$
 
-Like the mean, the standard deviation is sensitive to outliers—extreme values inflate the squared deviations.
+Like the mean, the standard deviation is sensitive to outliers: extreme values inflate the squared deviations.
 
-The **interquartile range** (IQR) is the difference between the 75th percentile (third quartile, Q3) and the 25th percentile (first quartile, Q1). The IQR measures the spread of the middle 50% of the data and, like the median, is robust to outliers.
+The **interquartile range** (IQR) is the difference between the 75th percentile (third quartile, Q3) and the 25th percentile (first quartile, Q1). The IQR measures the spread of the middle 50% of the data and, like the median, is resistant to outliers.
 
 The **range** (maximum minus minimum) is simple but highly sensitive to outliers.
 
@@ -433,28 +433,6 @@ The histogram is roughly symmetric and centered slightly above zero. The mean di
 Galton observed something subtle in data like these: extremely tall fathers tend to have sons who are tall, but not *quite* as extreme. Similarly, extremely short fathers tend to have sons who are short, but not quite as extreme. The sons' heights "regress" toward the overall mean.
 
 This is not because tall fathers have some genetic tendency to produce less-tall offspring. Rather, it is a statistical phenomenon that arises whenever two variables are correlated but not perfectly so. We will explore regression to the mean, and its mathematical basis, in @sec-conditioning.
-
-### A Note on Showing Code
-
-The visualizations above were created using R and the ggplot2 package. Throughout this book, we generally hide the code to keep the focus on concepts. However, seeing *how* visualizations are constructed is itself part of learning EDA. Here is the code for the scatter plot:
- 
-```{r}
-#| label: fig-father-son-scatter-with-code
-#| fig-cap: "Heights of father-son pairs (code shown)"
-#| echo: true
-#| eval: false
-
-father_son_ht |> 
-  ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
-  ggplot2::geom_point(alpha = 0.4) + 
-  ggplot2::labs(
-    title = "Heights of Father-Son Pairs",
-    x = "Father's height (inches)",
-    y = "Son's height (inches)"
-  )
-```
-
-The pattern is: start with data, specify aesthetic mappings (which variables map to which visual properties), add geometric objects (points, lines, bars), and customize labels. This "grammar of graphics" approach, implemented in ggplot2, provides a flexible framework for constructing visualizations.
 
 ## Looking Ahead
 
