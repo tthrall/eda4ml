@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-#| label: libraries
+#| label: CRAN-libraries
 
 library(tidyverse)
 library(scatterplot3d)
@@ -32,6 +32,21 @@ data(oecd_bli, package = "eda4mldata")
 
 ------------------------------------------------------------------------
 
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Express** the linear regression model in matrix notation and identify the role of each component
+2. **Distinguish** between row and column perspectives of a data matrix and explain when each is useful
+3. **Interpret** least-squares regression as orthogonal projection onto the column space of the feature matrix
+4. **Derive** the normal equations from the orthogonality condition
+5. **Explain** why centering data eliminates the intercept term and simplifies the geometry
+6. **Verify** that the projection matrix is symmetric and idempotent, and interpret these properties geometrically
+7. **Apply** the Pythagorean decomposition to relate total, explained, and residual variance
+8. **Connect** the projection framework to regularization, PCA, and other machine learning methods
+:::
+
 Linear regression is one of the most fundamental tools in statistics and machine learning. This chapter presents linear regression from the perspective of linear algebra, revealing a geometric interpretation that unifies regression with other methods we will encounter in subsequent chapters.
 
 ::: {.callout-note}
@@ -42,7 +57,7 @@ Least-squares linear regression is **orthogonal projection** onto feature space.
 
 This geometric view has several advantages. First, it makes the algebra interpretable: the normal equations and the projection matrix are not arbitrary formulas but natural expressions of the projection operation. Second, it connects regression to other techniques—principal component analysis (PCA) and linear discriminant analysis (LDA) are also fundamentally about projection onto subspaces. Third, it clarifies what can go wrong: multicollinearity, overfitting, and numerical instability all have geometric explanations.
 
-Our fist example launched modern-day linear regression.
+Our first example launched modern-day linear regression.
 
 ## Galton's Height Data
 
@@ -104,14 +119,14 @@ where $\hat{s}$ is the predicted son's height and $f$ is the father's height. Th
 ```{r}
 #| label: lm-father-son
 
-lm_father_son <- lm(child ~ father, data = galton_sons)
+lm_father_son <- stats::lm(child ~ father, data = galton_sons)
 
 lm_father_son |> 
   broom::tidy() |> 
   knitr::kable(digits = 3)
 ```
 
-The slope of `r round(coef(lm_father_son)[2], 3)` means that, on average, each additional inch in father's height is associated with about `r round(coef(lm_father_son)[2], 2)` inches in the son's height. The fact that this slope is less than 1 is Galton's "regression to the mean"—tall fathers tend to have sons who are tall, but not quite as tall as their fathers.
+The slope of `r round(stats::coef(lm_father_son)[2], 3)` means that, on average, each additional inch in father's height is associated with about `r round(stats::coef(lm_father_son)[2], 2)` inches in the son's height. The fact that this slope is less than 1 is Galton's "regression to the mean"—tall fathers tend to have sons who are tall, but not quite as tall as their fathers.
 
 ### Multiple Regression: Adding Mother's Height
 
@@ -126,7 +141,7 @@ where $m$ is the mother's height and $f$ is the father's height.
 ```{r}
 #| label: lm-both-parents
 
-lm_both <- lm(child ~ mother + father, data = galton_sons)
+lm_both <- stats::lm(child ~ mother + father, data = galton_sons)
 
 lm_both |> 
   broom::tidy() |> 
@@ -169,7 +184,7 @@ where:
 - $\beta_\bullet = (\beta_0, \beta_m, \beta_f)^\top$ is the coefficient vector
 - $\epsilon_\bullet$ is the residual vector
 
-The columns of $X_{\bullet,\bullet}$ are vectors in $n$-dimensional space (one dimension per observation). The column space of $X$, denoted $\text{col}(X)$, is the subspace spanned by these vectors. Any prediction $\hat{s} = X\beta$ is a linear combination of these column vectors and therefore lies within $\text{col}(X)$.
+We use the notation $s_\bullet$, $X_{\bullet,\bullet}$, and so on, to distinguish matrices from vectors, and to emphasize the dimensions of each. The columns of $X_{\bullet,\bullet}$ are vectors in $n$-dimensional space (one dimension per observation). The column space of $X$, denoted $\text{col}(X)$, is the subspace spanned by these vectors. Any prediction $\hat{s} = X\beta$ is a linear combination of these column vectors and therefore lies within $\text{col}(X)$.
 
 ::: {.callout-important}
 ## The Projection Interpretation
@@ -183,7 +198,9 @@ We will develop this geometric interpretation more fully after introducing addit
 
 ## A Higher-Dimensional Example: Better Life Index
 
-The Galton data has just two predictors. Real-world regression problems often involve many more. The OECD's Better Life Index provides an example with `r ncol(oecd_bli) - 2` indicator variables measuring various aspects of well-being across `r nrow(oecd_bli)` countries.
+The Galton data has just two predictors. Real-world regression problems often involve many more. The OECD's Better Life Index provides an example with `r ncol(oecd_bli) - 2` indicator variables measuring various aspects of well-being across `r nrow(oecd_bli)` countries.  Here is a subset of the data matrix. [^oecd-bli]
+
+[^oecd-bli]: This dataset is available in the CRAN package `OECD`, and also in the GitHub package `eda4mlr`.  To learn more about the dataset, type into your R console `library(eda4mlr)` and then `?oecd_bli`.
 
 ```{r}
 #| label: bli-glimpse
@@ -194,7 +211,7 @@ oecd_bli |>
   knitr::kable(digits = 1)
 ```
 
-Suppose we want to predict life satisfaction (`SW_LIFS`) from the other indicators. This gives us `r ncol(oecd_bli) - 3` predictors.
+Suppose we want to predict life satisfaction (`SW_LIFS`) from the other indicators. This gives us `r ncol(oecd_bli) - 3` predictors.  Here is a subset of those predictors along with their estimated regression coefficients.
 
 ```{r}
 #| label: bli-regression
@@ -203,7 +220,7 @@ Suppose we want to predict life satisfaction (`SW_LIFS`) from the other indicato
 bli_numeric <- oecd_bli |> 
   dplyr::select(-code, -country)
 
-lm_bli <- lm(SW_LIFS ~ ., data = bli_numeric)
+lm_bli <- stats::lm(SW_LIFS ~ ., data = bli_numeric)
 
 # Show just a few coefficients
 lm_bli |> 
@@ -212,7 +229,7 @@ lm_bli |>
   knitr::kable(digits = 3)
 ```
 
-The geometry is the same as before: we project the response vector onto the subspace spanned by the predictor columns. But now that subspace has dimension `r ncol(bli_numeric) - 1` within a space of dimension `r nrow(bli_numeric)`. With `r ncol(bli_numeric) - 1` parameters estimated from only `r nrow(bli_numeric)` observations, the coefficient estimates have large standard errors and the model is prone to overfitting.
+The geometry is the same as before: we project the response vector onto the subspace spanned by the predictor columns. But now that subspace has dimension `r ncol(bli_numeric) - 1` within an observational space of dimension `r nrow(bli_numeric)`. With `r ncol(bli_numeric) - 1` parameters estimated from only `r nrow(bli_numeric)` observations, the coefficient estimates have large standard errors and the model is prone to overfitting.
 
 This tension between the number of predictors and the number of observations is a central theme in machine learning. We will return to it when we discuss regularization and dimension reduction.
 
@@ -348,13 +365,13 @@ galton_centered <- galton_sons |>
   )
 
 # Regression with centered data (no intercept needed)
-lm_centered <- lm(child_c ~ 0 + mother_c + father_c, data = galton_centered)
+lm_centered <- stats::lm(child_c ~ 0 + mother_c + father_c, data = galton_centered)
 
 # Compare coefficients
 tibble::tibble(
   Term = c("Mother", "Father"),
-  `With intercept` = coef(lm_both)[2:3],
-  `Centered (no intercept)` = coef(lm_centered)
+  `With intercept` = stats::coef(lm_both)[2:3],
+  `Centered (no intercept)` = stats::coef(lm_centered)
 ) |> 
   knitr::kable(digits = 3)
 ```
@@ -473,11 +490,11 @@ $$
 P_{\bullet,\bullet} = X_{\bullet,\bullet} (X_{\bullet,\bullet}^\top X_{\bullet,\bullet})^{-1} X_{\bullet,\bullet}^\top
 $$ {#eq-projection-matrix}
 
-The projection matrix $P$ has remarkable properties:
+Matrix $P$ qualifies as an orthogonal projection, which is characterized by the following properties:
 
-**Symmetric:** $P_{\bullet,\bullet}^\top = P_{\bullet,\bullet}$
+**Symmetry:** $P_{\bullet,\bullet}^\top = P_{\bullet,\bullet}$
 
-**Idempotent:** $P_{\bullet,\bullet}^2 = P_{\bullet,\bullet}$
+**Idempotence:** $P_{\bullet,\bullet}^2 = P_{\bullet,\bullet}$
 
 The idempotent property reflects the fact that projecting twice is the same as projecting once—once a vector is in $\text{col}(X)$, it stays there.
 
@@ -529,13 +546,13 @@ When the feature vectors are *not* orthogonal (the typical case), the coefficien
 
 When feature vectors are nearly parallel (highly correlated), small changes in the data can cause large changes in the coefficients. In this situation the projection is numerically unstable.
 
-The matrix $X^\top X$ becomes nearly singular when columns are highly correlated, making $(X^\top X)^{-1}$ have very large entries. This amplifies noise in the data into noise in the coefficient estimates.
+The matrix $X^\top X$ becomes nearly singular when feature columns are highly correlated, making $(X^\top X)^{-1}$ have very large entries. This amplifies noise in the data into noise in the coefficient estimates.
 
 ```{r}
 #| label: correlation-features
 
 # Correlation between mother and father heights
-cor(galton_sons$mother, galton_sons$father)
+stats::cor(galton_sons$mother, galton_sons$father)
 ```
 
 In the Galton data, mother's and father's heights are positively correlated (assortative mating), but not so highly as to cause serious multicollinearity.
@@ -568,7 +585,7 @@ $$
 R^2 = \cos^2(\theta)
 $$ {#eq-r-squared-angle}
 
-When $\hat{y}$ is close to $y$ (small angle), $R^2$ is near 1. When $\hat{y}$ is nearly orthogonal to $y$, $R^2$ is near 0.
+When $\hat{y}$ is close to $y$ (small angle), $R^2$ is near 1. When $\hat{y}$ is nearly orthogonal to $y$, $R^2$ is near 0.  For example, here is $R^2$ for the Galton regression of sons' heights on fathers' heights.
 
 ```{r}
 #| label: r-squared-demo
@@ -578,12 +595,12 @@ y <- galton_sons$child
 y_bar <- mean(y)
 y_centered <- y - y_bar
 
-y_hat <- fitted(lm_both)
+y_hat <- stats::fitted(lm_both)
 y_hat_centered <- y_hat - y_bar
 
 TSS <- sum(y_centered^2)
 ESS <- sum(y_hat_centered^2)
-RSS <- sum(residuals(lm_both)^2)
+RSS <- sum(stats::residuals(lm_both)^2)
 
 tibble::tibble(
   Quantity = c("Total SS", "Explained SS", "Residual SS", "R²"),
@@ -604,35 +621,40 @@ The row view is familiar: each observation is a point, and the regression surfac
 
 ```{r}
 #| label: fig-row-view
-#| fig-cap: "Row view: observations as points in 3D space"
+#| fig-cap: "Row view: observations as points in 3D space with residual segments"
+
+# Select a subset for cleaner visualization
+set.seed(42)
+n_show <- 30
+idx <- sample(nrow(galton_sons), n_show)
+subset_data <- galton_sons[idx, ]
+
+# Get fitted values for the subset
+fitted_subset <- stats::predict(lm_both, newdata = subset_data)
 
 s3d <- scatterplot3d::scatterplot3d(
-  x = galton_sons$mother, xlab = "Mother",
-  y = galton_sons$father, ylab = "Father",
-  z = galton_sons$child,  zlab = "Son",
+  x = subset_data$mother, xlab = "Mother",
+  y = subset_data$father, ylab = "Father",
+  z = subset_data$child,  zlab = "Son",
   pch = 16,
   color = "steelblue",
   angle = 55,
-  main = "Row View: Points in Feature Space"
+  main = "Row View: Observations as Points"
 )
 s3d$plane3d(lm_both, col = "coral", lty = "solid")
 
-# Add residual segments for a subset
-n_show <- 20
-set.seed(42)
-idx <- sample(nrow(galton_sons), n_show)
-
+# Add residual segments from each point to the plane
 orig <- s3d$xyz.convert(
-  galton_sons$mother[idx], 
-  galton_sons$father[idx], 
-  galton_sons$child[idx]
+  subset_data$mother, 
+  subset_data$father, 
+  subset_data$child
 )
 proj <- s3d$xyz.convert(
-  galton_sons$mother[idx], 
-  galton_sons$father[idx], 
-  fitted(lm_both)[idx]
+  subset_data$mother, 
+  subset_data$father, 
+  fitted_subset
 )
-segments(orig$x, orig$y, proj$x, proj$y, col = "gray50", lwd = 0.8)
+segments(orig$x, orig$y, proj$x, proj$y, col = "darkred", lwd = 1.2)
 ```
 
 The vertical segments show residuals—the distances minimized by least squares.
@@ -658,8 +680,8 @@ f_c <- small_data$father - mean(small_data$father)
 s_c <- small_data$child - mean(small_data$child)
 
 # Fit regression on small sample
-lm_small <- lm(s_c ~ 0 + m_c + f_c)
-s_hat_c <- fitted(lm_small)
+lm_small <- stats::lm(s_c ~ 0 + m_c + f_c)
+s_hat_c <- stats::fitted(lm_small)
 ```
 
 In the column view, we have:
@@ -672,14 +694,14 @@ In the column view, we have:
 The regression coefficients express $\hat{\dot{s}}_\bullet$ as a linear combination:
 
 $$
-\hat{\dot{s}}_\bullet = `r round(coef(lm_small)[1], 3)` \times \dot{m}_\bullet + `r round(coef(lm_small)[2], 3)` \times \dot{f}_\bullet
+\hat{\dot{s}}_\bullet = `r round(stats::coef(lm_small)[1], 3)` \times \dot{m}_\bullet + `r round(stats::coef(lm_small)[2], 3)` \times \dot{f}_\bullet
 $$
 
 ```{r}
 #| label: column-view-verify
 
 # Verify the projection is in the span
-s_reconstructed <- coef(lm_small)[1] * m_c + coef(lm_small)[2] * f_c
+s_reconstructed <- stats::coef(lm_small)[1] * m_c + stats::coef(lm_small)[2] * f_c
 cat("Max difference |s_hat - reconstruction|:", 
     max(abs(s_hat_c - s_reconstructed)), "\n")
 
@@ -929,3 +951,13 @@ Using centered Galton height data:
 (c) Express $\hat{\dot{s}}_\bullet$ in the orthogonal basis.
 
 (d) Verify that the projection is the same in both coordinate systems.
+
+## Resources
+
+[Linear Algebra and Its Applications](https://www.google.com/books/edition/Linear_Algebra_and_Its_Applications/8QVdcRJyL2oC) by Gilbert Strang
+
+[An Introduction to Statistical Learning](https://www.statlearning.com/) by James, Witten, Hastie, & Tibshirani (Chapter 3)
+
+[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/) by Hastie, Tibshirani, & Friedman (Chapter 3)
+
+[Linear regression - Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
