@@ -121,14 +121,16 @@ The box-plot below can be regarded as the (sample) *conditional distribution* of
 
 g_f_mpt <- father_son_ht |> 
   dplyr::filter(! is.na(f_mpt)) |> 
-  ggplot2::ggplot(mapping = aes(
-    x = f_mpt |> as_factor(), 
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    x = f_mpt |> forcats::as_factor(), 
     y = son
   )) + 
   ggplot2::geom_boxplot() + 
-  ggplot2::labs(title = "Son heights per father's height") + 
-  ggplot2::xlab("father's height rounded to nearest odd inch") + 
-  ggplot2::ylab("son heights in inches")
+  ggplot2::labs(
+    title = "Son heights per father's height",
+    x = "Father's height rounded to nearest odd inch",
+    y = "Son's height (inches)"
+  )
 g_f_mpt
 ```
 
@@ -138,16 +140,17 @@ g_f_mpt
 
 # son statistics per f_ivl
 s_stats_per_f_mpt <- father_son_ht |>    
-  group_by(f_ivl, f_mpt) |>    
-  summarise(     
-    s_count = n(),      
+  dplyr::group_by(f_ivl, f_mpt) |>    
+  dplyr::summarise(     
+    s_count = dplyr::n(),      
     s_min   = min(son, na.rm = TRUE),      
     s_mid   = median(son, na.rm = TRUE),      
     s_max   = max(son, na.rm = TRUE),      
     s_avg   = mean(son, na.rm = TRUE)
   ) |> 
-  ungroup()
-s_stats_per_f_mpt |> print(digits = 1)
+  dplyr::ungroup()
+s_stats_per_f_mpt |> 
+  knitr::kable(digits = 1)
 ```
 
 The last column in the table above is the sample average of the son's height given the father's height, which we take as an estimate of the population average of the son's height given the father's height, that is, the *conditional expectation* of son's height given father's height.
@@ -159,10 +162,10 @@ The figure below represents these sample conditional averages per father's heigh
 #| fig-cap: "Average of son heights per father's height"
 
 g_s_avg_per_f_mpt <- s_stats_per_f_mpt |> 
-  ggplot2::ggplot(mapping = aes(
-  x = f_mpt, 
-  y = s_avg, 
-)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    x = f_mpt, 
+    y = s_avg
+  )) + 
   ggplot2::geom_line() + 
   ggplot2::geom_count(
     shape = 23, 
@@ -175,9 +178,10 @@ g_s_avg_per_f_mpt <- s_stats_per_f_mpt |>
     color = "red") + 
   ggplot2::labs(
     title = "Average of son heights per father's height", 
-    subtitle = "(dotted red line shows father's height + 1 inch)")  + 
-  ggplot2::xlab("father's height rounded to nearest odd inch") + 
-  ggplot2::ylab("average of son heights in inches")
+    subtitle = "(dotted red line shows father's height + 1 inch)",
+    x = "Father's height rounded to nearest odd inch",
+    y = "Average of son heights (inches)"
+  )
 g_s_avg_per_f_mpt
 ```
 
@@ -192,7 +196,7 @@ The graph of averages approximates the conditional expectation function—the ex
 #| fig-cap: "Scatter plot with loess smooth and graph of averages"
 
 father_son_ht |> 
-  ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = father, y = son)) + 
   ggplot2::geom_point(alpha = 0.3) + 
   ggplot2::geom_smooth(
     method = "loess", 
@@ -201,7 +205,7 @@ father_son_ht |>
     linewidth = 1.2) + 
   ggplot2::geom_point(
     data = s_stats_per_f_mpt, 
-    mapping = aes(x = f_mpt, y = s_avg), 
+    mapping = ggplot2::aes(x = f_mpt, y = s_avg), 
     shape = 23, 
     fill = "gold", 
     size = 3) + 
@@ -283,12 +287,11 @@ Note that $\hat{r}$ is restricted to the closed interval $[-1, 1]$.
 The figure below shows the SD line and the Regression line for the father-son data.
 
 ```{r}
-#| label: fig-fs-points
-#| fig-cap: "XXX"
+#| label: g-fs-points
 
 g_fs_points <- father_son_ht |> 
-  ggplot(mapping = aes(x = father, y = son)) + 
-  geom_point()
+  ggplot2::ggplot(mapping = ggplot2::aes(x = father, y = son)) + 
+  ggplot2::geom_point()
 ```
 
 ```{r}
@@ -300,7 +303,7 @@ R_slope  = fs_moments[["r"]] * SD_slope
 
 g_fs_lines <- g_fs_points + 
   # SD line
-  geom_abline(
+  ggplot2::geom_abline(
     slope = SD_slope, 
     intercept = 
       fs_moments[["s_avg"]] - SD_slope * fs_moments[["f_avg"]], 
@@ -309,7 +312,7 @@ g_fs_lines <- g_fs_points +
     color = "red"
   ) + 
   # Regression line
-  geom_abline(
+  ggplot2::geom_abline(
     slope = R_slope, 
     intercept = 
       fs_moments[["s_avg"]] - R_slope * fs_moments[["f_avg"]], 
@@ -317,7 +320,7 @@ g_fs_lines <- g_fs_points +
     linewidth = 2, 
     color = "blue"
   ) + 
-  labs(
+  ggplot2::labs(
     title = "Father-son heights", 
     subtitle = "Regression line (solid blue), SD line (dotted red)"
   )
@@ -326,13 +329,29 @@ g_fs_lines
 
 The two lines intersect at the "point of averages", that is, at $(\hat{\mu}_x, \hat{\mu}_y)$, which need not coincide with any data point.
 
+### Regression to the Mean
+
+The regression line has a smaller slope than the SD line. This geometric fact has a profound statistical interpretation: *regression to the mean*.
+
+Galton observed that the sons of unusually tall fathers tend to be tall, but not *quite* as tall as the SD line would predict. Similarly, sons of unusually short fathers tend to be short, but not quite as short. In both cases, the sons' heights "regress" toward the population mean. This is why Galton called the line the "regression" line.
+
+Why does this happen? Consider a model in which a person's observed height equals some underlying "true" height plus random variation—measurement error, environmental factors during growth, or simply chance. Under this model, the tallest group of fathers likely includes individuals whose random component was positive (which partly explains why they ended up in the tallest group). Their sons do not inherit this random component; each son receives a fresh, independent draw. Consequently, the sons of the tallest fathers tend to have heights closer to the mean than their fathers did.
+
+The same logic applies in reverse: the shortest fathers likely include individuals whose random component was negative. Their sons, drawing fresh random variation, tend to be somewhat taller than their fathers—again moving toward the mean.
+
+::: {.callout-note}
+## Regression to the mean is statistical, not genetic
+
+Regression to the mean is *not* a genetic tendency for tall parents to produce shorter offspring. It is a statistical phenomenon that arises whenever two variables are correlated but not perfectly so ($|r| < 1$). It appears in contexts far removed from genetics: students who score highest on a first exam tend to score somewhat lower on a second; athletes with exceptional seasons tend to have less exceptional follow-up years. Whenever we select a group based on an extreme value of one variable, we should expect their values on a correlated variable to be less extreme.
+:::
+
 The following figure and table summarize the regression "residuals", that is the son's height $(y)$ minus the height $(\hat{y})$ predicted by the linear model.
 
 ```{r}
 #| label: lm-fs
 
 # call functon stats::lm() to fit a linear model
-lm_fs <- lm(
+lm_fs <- stats::lm(
   data = father_son_ht, 
   formula = son ~ father
 )
@@ -344,7 +363,7 @@ lm_fs
 
 # join fitted values and regression residuals to original data
 fs_residuals <- father_son_ht |> 
-  mutate(
+  dplyr::mutate(
     fitted_value = lm_fs$fitted.values, 
     residual     = lm_fs$residuals
   )
@@ -356,11 +375,11 @@ fs_residuals <- father_son_ht |>
 
 # histogram of residuals
 g_fs_residuals <- fs_residuals |> 
-  ggplot(mapping = aes(x = residual)) + 
-  geom_histogram() + 
-  labs(
+  ggplot2::ggplot(mapping = ggplot2::aes(x = residual)) + 
+  ggplot2::geom_histogram() + 
+  ggplot2::labs(
     title = "Histogram of regression residuals", 
-    subtitle = "son's height minus predicted height"
+    subtitle = "Son's height minus predicted height"
   )
 g_fs_residuals
 ```
@@ -370,7 +389,11 @@ g_fs_residuals
 #| tbl-cap: "Stats: son's height minus predicted height"
 
 # summarize distribution of residuals
-fs_residuals$residual |> summary() |> print(digits = 1)
+fs_residuals$residual |> 
+  summary() |> 
+  as.matrix() |> 
+  t() |> 
+  knitr::kable(digits = 1)
 ```
 
 There are many ways to examine how well a model represents the data. Here's a scatter diagram of the value predicted (fitted) by the model versus the son's actual height.
@@ -381,7 +404,7 @@ There are many ways to examine how well a model represents the data. Here's a sc
 
 # scatter diagram with (x, y) = (son, fitted)
 g_resid_son <- fs_residuals |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = son, y = fitted_value
   )) + 
   ggplot2::geom_point() + 
@@ -394,9 +417,10 @@ g_resid_son <- fs_residuals |>
   ) + 
   ggplot2::labs(
     title = "Model-fitted value versus son's height", 
-    subtitle = "(reference line: fitted = son)") + 
-  ggplot2::xlab("son's height in inches") + 
-  ggplot2::ylab("son's height estimated from father's height")
+    subtitle = "(reference line: fitted = son)",
+    x = "Son's height (inches)",
+    y = "Son's height estimated from father's height"
+  )
 g_resid_son
 ```
 
@@ -410,7 +434,13 @@ The father-son data set is well approximated by a bivariate normal distribution.
 #| label: tbl-fs-moments
 #| tbl-cap: "Father-son heights: average, sd, and correlation"
 
-fs_moments |> print(digits = 1)
+fs_moments |> 
+  as.matrix() |> 
+  t() |> 
+  knitr::kable(
+    digits = 1,
+    col.names = c("Father avg", "Son avg", "Father SD", "Son SD", "r")
+  )
 ```
 
 Sons are on average about an inch taller than fathers. Fathers and sons share similar standard deviations (2.7 versus 2.8). The sample correlation coefficient is about 0.5.
@@ -435,41 +465,41 @@ Professor [Frank Anscombe](https://en.wikipedia.org/wiki/Frank_Anscombe) constru
 #| label: anscombe-tbl
 
 anscombe_tbl <- datasets::anscombe |> 
-  as_tibble()
+  tibble::as_tibble()
 
 # construct 4 groups of x-values
 x_tbl <- anscombe_tbl |> 
   # original row index
-  mutate(idx = 1:nrow(anscombe)) |> 
+  dplyr::mutate(idx = 1:nrow(anscombe)) |> 
   dplyr::select(idx, x1:x4) |> 
-  pivot_longer(
+  tidyr::pivot_longer(
     cols = x1:x4, 
     names_to = "grp", 
     names_prefix = "x", 
     values_to = "x"
   ) |> 
-  mutate(grp = as.integer(grp))
+  dplyr::mutate(grp = as.integer(grp))
 
 # construct 4 groups of y-values
 y_tbl <- anscombe_tbl |> 
   # original row index
-  mutate(idx = 1:nrow(anscombe)) |> 
+  dplyr::mutate(idx = 1:nrow(anscombe)) |> 
   dplyr::select(idx, y1:y4) |> 
-  pivot_longer(
+  tidyr::pivot_longer(
     cols = y1:y4, 
     names_to = "grp", 
     names_prefix = "y", 
     values_to = "y"
   ) |> 
-  mutate(grp = as.integer(grp))
+  dplyr::mutate(grp = as.integer(grp))
 
 # join x and y values
-xy_long <- x_tbl |> left_join(
+xy_long <- x_tbl |> dplyr::left_join(
   y  = y_tbl, 
   by = c("idx", "grp")
 ) |> 
   dplyr::select(grp, idx, x, y) |> 
-  arrange(grp, idx)
+  dplyr::arrange(grp, idx)
 ```
 
 ```{r}
@@ -477,7 +507,7 @@ xy_long <- x_tbl |> left_join(
 #| tbl-cap: "Identical (x, y) stats per group"
 
 xy_stats <- xy_long |> 
-  summarise(
+  dplyr::summarise(
     .by   = grp, 
     x_avg = mean(x, na.rm = TRUE), 
     y_avg = mean(y, na.rm = TRUE), 
@@ -485,7 +515,8 @@ xy_stats <- xy_long |>
     y_sd  = sd(y, na.rm = TRUE), 
     r     = cor(x, y)
   )
-xy_stats
+xy_stats |> 
+  knitr::kable(digits = 2)
 ```
 
 The four groups share virtually identical averages, standard deviations, and $(x, y)$ correlation coefficients. Consequently the four data sets generate identical regression lines. Yet, as shown below, the pattern of $(x, y)$ values differs markedly among these data sets.
@@ -495,11 +526,11 @@ The four groups share virtually identical averages, standard deviations, and $(x
 #| fig-cap: "Scatter diagram of (x, y) per group"
 
 g_xy <- xy_long |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = x, y = y, group = grp
   )) + 
   ggplot2::geom_point() + 
-  ggplot2::facet_grid(cols = vars(grp))
+  ggplot2::facet_grid(cols = ggplot2::vars(grp))
 g_xy
 ```
 
@@ -572,7 +603,7 @@ hs_tbl <- tibble::tribble(
 #| label: hs-wide
 
 hs_wide <- hs_tbl |> 
-  pivot_wider(
+  tidyr::pivot_wider(
     names_from  = "sex", 
     values_from = "count"
   )
@@ -594,7 +625,7 @@ The percentages of handedness among males and among females are as follows.
 #| label: h-smy
 
 h_smy <- hs_tbl |> 
-  summarise(
+  dplyr::summarise(
     .by = "hnd", 
     count = sum(count, na.rm = TRUE)
   )
@@ -610,7 +641,7 @@ h_smy <- hs_tbl |>
 #| label: s-smy
 
 s_smy <- hs_tbl |> 
-  summarise(
+  dplyr::summarise(
     .by = "sex", 
     count = sum(count, na.rm = TRUE)
   )
@@ -628,7 +659,7 @@ m_total <- s_smy[[1, 2]]
 f_total <- s_smy[[2, 2]]
 
 hs_pct_wide <- hs_wide |> 
-  mutate(
+  dplyr::mutate(
     male   = 100 * male   / m_total, 
     female = 100 * female / f_total
   )
@@ -669,7 +700,7 @@ Under the assumption of independence and for a large sample size $n$, the chi-sq
 hs_chi_sq <- hs_wide |> 
   dplyr::select(male, female) |> 
   as.matrix() |> 
-  chisq.test()
+  stats::chisq.test()
 
 # data:  as.matrix(dplyr::select(hs_wide, male, female))
 # X-squared = 11.806, df = 2, p-value = 0.002731
@@ -693,7 +724,7 @@ These terms are called "Pearson residuals". For the handedness data, the Pearson
 # Pearson residuals
 hs_resid_wide <- hs_wide |> 
   dplyr::select(hnd) |> 
-  mutate(
+  dplyr::mutate(
     male   = hs_chi_sq$residuals[, 1], 
     female = hs_chi_sq$residuals[, 2]
   )
@@ -719,10 +750,10 @@ Roughly speaking, under independence the magnitude of cell values should align w
 
 # reformat data
 ucb_admissions <- datasets::UCBAdmissions |> 
-  as_tibble() |> 
-  rename_with(tolower) |> 
-  rename(sex = gender) |> 
-  rename(count = n) |> 
+  tibble::as_tibble() |> 
+  dplyr::rename_with(tolower) |> 
+  dplyr::rename(sex = gender) |> 
+  dplyr::rename(count = n) |> 
   dplyr::select(dept, sex, admit, count)
 ```
 
@@ -731,7 +762,7 @@ ucb_admissions <- datasets::UCBAdmissions |>
 
 # count Male and Female applicants
 ucb_sex_smy <- ucb_admissions |> 
-  summarise(
+  dplyr::summarise(
     .by = c("sex"), 
     count = sum(count, na.rm = TRUE)
   )
@@ -757,7 +788,7 @@ ucb_total_applicants <-
 
 # count admissions/rejections per sex
 ucb_sa_smy <- ucb_admissions |> 
-  summarise(
+  dplyr::summarise(
     .by = c("sex", "admit"), 
     count = sum(count, na.rm = TRUE)
   )
@@ -776,7 +807,7 @@ ucb_sa_smy <- ucb_admissions |>
 
 # count Males and Females in separate columns
 ucb_sa_wide <- ucb_sa_smy |> 
-  pivot_wider(
+  tidyr::pivot_wider(
     names_from = "sex", 
     values_from = "count"
   )
@@ -793,7 +824,7 @@ ucb_sa_wide <- ucb_sa_smy |>
 
 # convert counts to percentages
 ucb_sa_pct <- ucb_sa_wide |> 
-  mutate(
+  dplyr::mutate(
     Male   = 100 * Male   / ucb_sex_smy[[1, 2]], 
     Female = 100 * Female / ucb_sex_smy[[2, 2]]
   )
@@ -812,7 +843,7 @@ We now turn to a different set of categorical data from a study of graduate admi
 #| tbl-cap: "Admission percentages for males and for females"
 
 ucb_sa_pct |> 
-  rename(decision = admit) |> 
+  dplyr::rename(decision = admit) |> 
   knitr::kable(
   caption = "Admission percentages for males and for females", 
   digits = 1
@@ -826,11 +857,11 @@ These percentages look damning, but the table below, showing admission rates per
 
 # applicants per department
 ucb_dept_smy <- ucb_admissions |> 
-  summarise(
+  dplyr::summarise(
     .by = c("dept"), 
     count = sum(count, na.rm = TRUE)
   ) |> 
-  mutate(
+  dplyr::mutate(
     # percent of all applicants applying to each dept
     pct = 100 * count / ucb_total_applicants
   )
@@ -851,7 +882,7 @@ ucb_dept_smy <- ucb_admissions |>
 
 # count addmissions/rejections per department
 ucb_da_smy <- ucb_admissions |> 
-  summarise(
+  dplyr::summarise(
     .by = c("dept", "admit"), 
     count = sum(count, na.rm = TRUE)
   )
@@ -862,7 +893,7 @@ ucb_da_smy <- ucb_admissions |>
 
 # move (Admitted, Rejected) into separate columns
 ucb_da_wide <- ucb_da_smy |> 
-  pivot_wider(
+  tidyr::pivot_wider(
     names_from = admit, 
     values_from = count
   )
@@ -883,7 +914,7 @@ ucb_da_wide <- ucb_da_smy |>
 
 # overall admission rate per department
 ucb_da_pct <- ucb_da_wide |> 
-  mutate(
+  dplyr::mutate(
     # percent admitted per department (Male + Female)
     MF_pct = 100 * Admitted / ucb_dept_smy$count
   )
@@ -907,30 +938,30 @@ ucb_da_pct <- ucb_da_wide |>
 
 # count male applicants per department
 ucb_m_d_smy <- ucb_admissions |> 
-  filter(sex == "Male") |> 
-  summarise(
+  dplyr::filter(sex == "Male") |> 
+  dplyr::summarise(
     .by = "dept", 
     count = sum(count, na.rm = TRUE)
   )
 
 # count male admissions/rejections per department
 ucb_m_da_smy <- ucb_admissions |> 
-  filter(sex == "Male") |> 
-  summarise(
+  dplyr::filter(sex == "Male") |> 
+  dplyr::summarise(
     .by = c("dept", "admit"), 
     count = sum(count, na.rm = TRUE)
   )
 
 # move (Admitted, Rejected) counts into separate columns
 ucb_m_da_wide <- ucb_m_da_smy |> 
-  pivot_wider(
+  tidyr::pivot_wider(
     names_from  = "admit", 
     values_from = "count"
   )
 
 # convert counts to percents
 ucb_m_da_pct <- ucb_m_da_wide |> 
-  mutate(
+  dplyr::mutate(
     Admitted = 100 * Admitted / ucb_m_d_smy$count, 
     Rejected = 100 * Rejected / ucb_m_d_smy$count
   )
@@ -944,30 +975,30 @@ ucb_m_da_pct <- ucb_m_da_wide |>
 
 # count female applicants per department
 ucb_f_d_smy <- ucb_admissions |> 
-  filter(sex == "Female") |> 
-  summarise(
+  dplyr::filter(sex == "Female") |> 
+  dplyr::summarise(
     .by = "dept", 
     count = sum(count, na.rm = TRUE)
   )
 
 # count female admissions/rejections per department
 ucb_f_da_smy <- ucb_admissions |> 
-  filter(sex == "Female") |> 
-  summarise(
+  dplyr::filter(sex == "Female") |> 
+  dplyr::summarise(
     .by = c("dept", "admit"), 
     count = sum(count, na.rm = TRUE)
   )
 
 # move (Admitted, Rejected) counts into separate columns
 ucb_f_da_wide <- ucb_f_da_smy |> 
-  pivot_wider(
+  tidyr::pivot_wider(
     names_from  = "admit", 
     values_from = "count"
   )
 
 # convert counts to percents
 ucb_f_da_pct <- ucb_f_da_wide |> 
-  mutate(
+  dplyr::mutate(
     Admitted = 100 * Admitted / ucb_f_d_smy$count, 
     Rejected = 100 * Rejected / ucb_f_d_smy$count
   )
@@ -980,16 +1011,16 @@ ucb_f_da_pct <- ucb_f_da_wide |>
 # among males, among females, and overall
 ucb_das_pct <- ucb_da_pct |> 
   dplyr::select(dept, MF_pct) |> 
-  left_join(
+  dplyr::left_join(
     y  = ucb_m_da_pct |> 
       dplyr::select(dept, Admitted) |> 
-      rename(M_pct = Admitted), 
+      dplyr::rename(M_pct = Admitted), 
     by = "dept"
   ) |> 
-  left_join(
+  dplyr::left_join(
     y  = ucb_f_da_pct |> 
       dplyr::select(dept, Admitted) |> 
-      rename(F_pct = Admitted), 
+      dplyr::rename(F_pct = Admitted), 
     by = "dept"
   ) |> 
   dplyr::select(dept, M_pct, F_pct, MF_pct)
@@ -1015,7 +1046,7 @@ The answer can be found by: (1) noting that the table above lists departments, l
 
 # count number of applicantions per (dept, sex)
 ucb_ds_smy <- ucb_admissions |> 
-  summarise(
+  dplyr::summarise(
     .by = c("dept", "sex"), 
     count = sum(count, na.rm = TRUE)
   )
@@ -1026,11 +1057,11 @@ ucb_ds_smy <- ucb_admissions |>
 
 # list (Male, Female) as separate columns
 ucb_ds_wide <- ucb_ds_smy |> 
-  pivot_wider(
+  tidyr::pivot_wider(
     names_from  = "sex", 
     values_from = "count"
   ) |> 
-  mutate(
+  dplyr::mutate(
     total = Male + Female
   )
 ```
@@ -1052,7 +1083,7 @@ Here are the same counts but now converted into per-department percentage of app
 
 # convert counts to percents
 ucb_ds_pct <- ucb_ds_wide |> 
-  mutate(
+  dplyr::mutate(
     Male   = 100 * Male   / ucb_sex_smy[[1, 2]], 
     Female = 100 * Female / ucb_sex_smy[[2, 2]], 
     total  = 100 * total  / ucb_total_applicants
