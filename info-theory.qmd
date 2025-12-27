@@ -15,12 +15,9 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
-# library(ggforce)
 library(here)
 library(latex2exp)
 library(tidyverse)
-library(tinytex)
 
 ```
 
@@ -40,6 +37,19 @@ source(here("code", "eda4ml_set_seed.R"))
 ```
 
 ------------------------------------------------------------------------
+
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Define** entropy as a measure of uncertainty and interpret its units (bits)
+2. **Calculate** entropy for simple discrete probability distributions
+3. **Explain** why the joint entropy of independent variables equals the sum of their individual entropies
+4. **Define** mutual information and interpret it as the reduction in uncertainty gained by knowing a related variable
+5. **Interpret** KL divergence as a measure of the cost of using a suboptimal probability model
+6. **Connect** entropy, mutual information, and KL divergence to machine learning applications including cross-entropy loss, decision trees, and feature selection
+:::
 
 ## Introduction
 
@@ -61,7 +71,7 @@ The term "entropy" was defined in the mid-19th century (with the emergence of St
 
 Let's illustrate the concept of entropy with a variant of the game "[Twenty Questions](https://en.wikipedia.org/wiki/Twenty_questions)". The contestant is presented with a box of tickets, each ticket bearing a single capital letter of the English alphabet. The contestant is shown the box, and thus knows the number of tickets bearing each letter. (It may happen that only a few of the possible 26 letters actually appear in the box.) The game begins with the random drawing of a ticket not visible to the contestant. The contestant may ask yes-no questions about the ticket until the contestant determines with certainty the letter written on the ticket. (The contestant does not guess but rather comes to a firm conclusion.) The ticket is put back in the box, ending the first round of the game. Subsequent rounds of the game are exactly like the first, a new ticket is drawn at random; it's letter must be deduced by the contestant through a sequence of yes-no questions. The contestant is evaluated on the average number of questions required to determine the letter on a randomly drawn ticket.
 
-We suppose that contestant devises the most informative sequence of questions possible. Consequently, the average number of required questions is a measure of the difficulty presented by the set of tickets in the box, that is, of the uncertainty of the value of a randomly drawn ticket.
+We suppose that the contestant devises the most informative sequence of questions possible. Consequently, the average number of required questions is a measure of the difficulty presented by the set of tickets in the box, that is, of the uncertainty of the value of a randomly drawn ticket.
 
 Here are some different scenarios.
 
@@ -118,10 +128,10 @@ entropy_examples <- tibble::tibble(
   dplyr::mutate(box = forcats::fct_inorder(box))
 
 entropy_examples |> 
-  ggplot2::ggplot(mapping = aes(x = box, y = entropy)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = box, y = entropy)) + 
   ggplot2::geom_col(fill = "steelblue", width = 0.6) + 
   ggplot2::geom_text(
-    mapping = aes(label = entropy), 
+    mapping = ggplot2::aes(label = entropy), 
     vjust = -0.5, 
     size = 5
   ) + 
@@ -165,7 +175,7 @@ $$
   H_{X, Y} &= H(\; \{ p_{X, Y}(j, k) \} \;) \\ 
   &= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_{X, Y}(j,k) \times log_2(\; p_{X, Y} (j,k) \;)}} \\ 
   &= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_X(j) \times p_Y(k) \times log_2(\; p_X(j) \times p_Y(k) \;)}} \\ 
-  &= - \sum_{j = 1}^J \sum_{k = 1}^K p_X(j) \times p_Y(k) \times \{ \; log_2(p_X(j) + log_2(p_Y(k) \; \} \\ 
+  &= - \sum_{j = 1}^J \sum_{k = 1}^K p_X(j) \times p_Y(k) \times \{ \; log_2(p_X(j)) + log_2(p_Y(k)) \; \} \\ 
   &= H_X \times \sum_{k = 1}^K p_Y(k) \; + \; \sum_{j = 1}^J p_X(j) \times H_Y \\ 
   &= H_X + H_Y
 \end{align}
@@ -224,7 +234,7 @@ ggplot2::ggplot() +
   # Left circle (H(X))
   ggplot2::geom_polygon(
     data = circle_left,
-    mapping = aes(x = x, y = y),
+    mapping = ggplot2::aes(x = x, y = y),
     fill = "steelblue",
     alpha = 0.3,
     color = "gray30",
@@ -233,7 +243,7 @@ ggplot2::ggplot() +
   # Right circle (H(Y))
   ggplot2::geom_polygon(
     data = circle_right,
-    mapping = aes(x = x, y = y),
+    mapping = ggplot2::aes(x = x, y = y),
     fill = "coral",
     alpha = 0.3,
     color = "gray30",
