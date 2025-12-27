@@ -22,7 +22,6 @@ library(here)
 library(ISLR2)
 library(latex2exp)
 library(tidyverse)
-library(tinytex)
 library(UsingR)
 
 ```
@@ -58,11 +57,26 @@ source(here("code", "xtabs_to_jaccard.R"))
 
 ------------------------------------------------------------------------
 
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Explain** why clustering is useful for exploring high-dimensional data where direct visualization fails
+2. **Construct** grouping variables from continuous measurements and interpret the resulting groups
+3. **Apply** z-score standardization to prepare variables for distance-based clustering
+4. **Execute** K-means clustering using `stats::kmeans()`, including the use of multiple random starts (`nstart`)
+5. **Interpret** within-cluster sum of squares (WCSS) and use the elbow method to guide the choice of $K$
+6. **Compare** clusterings using cross-tabulation and Jaccard similarity
+7. **Distinguish** between centroid-based (K-means) and density-based (DBSCAN) clustering approaches
+8. **Translate** cluster assignments into substantive interpretations using domain knowledge
+:::
+
 ## Introduction
 
 When we encounter a new data set with many variables, our first challenge is simplification. With two or three variables, we can make scatterplots. But what about ten variables? Fifty? We cannot visualize high-dimensional data directly, so we need other strategies.
 
-**Clustering** offers one such strategy: group observations that have similar profiles across many variables, then explore these groups. This approach is firmly in the spirit of exploratory data analysis (EDA). We are not testing hypotheses or optimizing a loss function against known labels—we are looking for unanticipated patterns in the data.
+**Clustering** offers one such strategy: form groups of observations that have similar profiles across many variables, then explore these groups. This approach is firmly in the spirit of exploratory data analysis (EDA). We are not testing hypotheses or optimizing a loss function against known labels; we are looking for unanticipated patterns in the data.
 
 In machine learning terminology, clustering is an example of **unsupervised learning**: algorithms that seek structure in data without the benefit of a response variable or observation labels. Most unsupervised methods are designed for high-dimensional settings where direct visualization fails.
 
@@ -94,8 +108,8 @@ college <- ISLR2::College |>
 college_vars_tbl <- tibble::tibble(
   var_name = names(college),
 ) |> 
-  mutate(
-    dscr = case_when(
+  dplyr::mutate(
+    dscr = dplyr::case_when(
       var_name == "college_name" ~ 
         "Name of the college or university", 
       var_name == "Private" ~ 
@@ -171,27 +185,27 @@ Before proceeding, let's examine the distribution of these variables via density
 
 # split selected variables at their median value
 college_factors <- college |> 
-  mutate(
+  dplyr::mutate(
     top_10_fct = Top10perc  < median(Top10perc),
     expend_fct = Expend     < median(Expend)
   ) |> 
   # for binary factors above, re-code (T, F) to ("lwr", "upr")
-  mutate(across(
+  dplyr::mutate(dplyr::across(
     .cols = c(top_10_fct, expend_fct), 
-    .fns  = ~ if_else(.x, "lwr", "upr")
+    .fns  = ~ dplyr::if_else(.x, "lwr", "upr")
   )) |> 
   # label each group with a bitcode
-  mutate(
-    top_10_lbl = if_else(top_10_fct == "lwr", 0L, 1L), 
-    expend_lbl = if_else(expend_fct == "lwr", 0L, 1L), 
+  dplyr::mutate(
+    top_10_lbl = dplyr::if_else(top_10_fct == "lwr", 0L, 1L), 
+    expend_lbl = dplyr::if_else(expend_fct == "lwr", 0L, 1L), 
     grp_lbl    = paste0("g_", top_10_lbl, expend_lbl)
   ) |> 
   # remove redundant labeling vars
   dplyr::select(- top_10_lbl, - expend_lbl)
 
 # record the median values
-top_10_mid  <- median(college_factors$ Top10perc)
-expend_mid  <- median(college_factors$ Expend)
+top_10_mid  <- median(college_factors$Top10perc)
+expend_mid  <- median(college_factors$Expend)
 ```
 
 ```{r}
@@ -217,12 +231,12 @@ Now let's look at the two variables more closely, one at a time.
 #| fig-cap: "Pct of new students per college from top 10% in their HS"
 
 g_top_10 <- college_factors |> 
-  ggplot(mapping = aes(x = Top10perc)) + 
-  geom_histogram() + 
-  geom_vline(
+  ggplot2::ggplot(mapping = ggplot2::aes(x = Top10perc)) + 
+  ggplot2::geom_histogram() + 
+  ggplot2::geom_vline(
     xintercept = top_10_mid, linewidth = 2, colour = "red"
   ) + 
-  labs(
+  ggplot2::labs(
     title = "% of new students from top 10% in their HS", 
     subtitle = "(vertical line at median)"
   )
@@ -257,7 +271,7 @@ To check this grouping of the data let's first select the variables from which w
 #| fig-cap: "(Top10perc, Expend): binary grouping"
 
 g_top_10_Expend <- college_factors |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = Top10perc, y = Expend, 
     colour = grp_lbl, shape = grp_lbl
   )) + 
@@ -547,7 +561,7 @@ m_kmeans_ctrs <- college_z_scores |>
   )
 
 # record total within-cluster sum of squares
-km_wcss <- m_kmeans_ctrs$ tot.withinss
+km_wcss <- m_kmeans_ctrs$tot.withinss
 ```
 
 ```{r}
@@ -555,7 +569,7 @@ km_wcss <- m_kmeans_ctrs$ tot.withinss
 
 # # assign observations to km clusters
 college_km_ctrs <- college_z_scores |>
-  dplyr::mutate(cluster = m_kmeans_ctrs$ cluster)
+  dplyr::mutate(cluster = m_kmeans_ctrs$cluster)
 ```
 
 ```{r}
@@ -563,14 +577,14 @@ college_km_ctrs <- college_z_scores |>
 #| fig-cap: "(`Top10perc`, `Expend`): clusters identified by kmeans()"
 
 g_top_10_Expend_kmc <- college_km_ctrs |>
-  mutate(cluster = as_factor(cluster)) |>
-  ggplot(mapping = aes(
+  dplyr::mutate(cluster = forcats::as_factor(cluster)) |>
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = Top10perc, y = Expend,
     colour = cluster, shape = cluster
   )) +
-  scale_shape_manual(values = 0:3) +
-  geom_point() +
-  labs(
+  ggplot2::scale_shape_manual(values = 0:3) +
+  ggplot2::geom_point() +
+  ggplot2::labs(
     title = "(Top10perc, Expend)",
     subtitle = "clusters identified by kmeans()"
   )
@@ -585,7 +599,7 @@ The figure above shows that the `kmeans()` clusters are distinct from but simila
 #| label: tbl-xtabs-cluster-grp
 #| tbl-cap: "Overlap: binary groups v kmeans clusters"
 
-xtabs_cluster_grp <- xtabs(
+xtabs_cluster_grp <- stats::xtabs(
   data    = college_km_ctrs, 
   formula = ~ cluster + grp_lbl
 )
@@ -674,11 +688,11 @@ cluster_norms_lst <- college_km_ctrs |>
 #| label: fig-grp-norms
 #| fig-cap: "Initial binary grouping: point-center distances"
 
-group_norms_lst$ grp_norms |> 
-  ggplot(mapping = aes(y = norm)) + 
-  geom_boxplot() + 
-  facet_grid(cols = vars(grp_lbl)) + 
-  labs(
+group_norms_lst$grp_norms |> 
+  ggplot2::ggplot(mapping = ggplot2::aes(y = norm)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::facet_grid(cols = ggplot2::vars(grp_lbl)) + 
+  ggplot2::labs(
     title = "Initial groups: point-center distances"
   )
 ```
@@ -687,11 +701,11 @@ group_norms_lst$ grp_norms |>
 #| label: fig-cluster-norms
 #| fig-cap: "K-means clusters: point-center distances"
 
-cluster_norms_lst$ grp_norms |> 
-  ggplot(mapping = aes(y = norm)) + 
-  geom_boxplot() + 
-  facet_grid(cols = vars(cluster)) + 
-  labs(
+cluster_norms_lst$grp_norms |> 
+  ggplot2::ggplot(mapping = ggplot2::aes(y = norm)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::facet_grid(cols = ggplot2::vars(cluster)) + 
+  ggplot2::labs(
     title = "K-means clusters: point-center distances", 
     subtitle = "(initial centers from initial grouping)"
   )
@@ -746,16 +760,16 @@ m_kmeans_nstart <- college_z_scores |>
 #| fig-cap: "Clusters identified from repeated random cluster centers"
 
 g_top_10_Expend_nstart <- college_z_scores |>
-  mutate(
-    cluster = m_kmeans_nstart$ cluster |> as_factor()
+  dplyr::mutate(
+    cluster = m_kmeans_nstart$cluster |> forcats::as_factor()
   ) |>
-  ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = Top10perc, y = Expend,
     colour = cluster, shape = cluster
   )) +
-  scale_shape_manual(values = 0:3) +
-  geom_point() +
-  labs(
+  ggplot2::scale_shape_manual(values = 0:3) +
+  ggplot2::geom_point() +
+  ggplot2::labs(
     title = "(Top10perc, Expend)",
     subtitle = "identified by kmeans cluster (nstart = 25)"
   )
@@ -769,10 +783,10 @@ The table below shows the number of observations in each combination of the orig
 ```{r}
 #| label: xtabs-nstart-grp
 
-xtabs_nstart_grp <- xtabs(
+xtabs_nstart_grp <- stats::xtabs(
   data    = college_z_scores |> 
   dplyr::mutate(
-    cluster = m_kmeans_nstart$ cluster |> as_factor()
+    cluster = m_kmeans_nstart$cluster |> forcats::as_factor()
   ), 
   formula = ~ cluster + grp_lbl
 )
@@ -787,11 +801,11 @@ The similarity of the current clusters with the previous clusters prompts us to 
 #| label: tbl-xtabs-cl-group-nstart
 #| tbl-cap: "kmeans() clusters formed with and without `nstart`"
 
-xtabs_cl_group_nstart  <- xtabs(
+xtabs_cl_group_nstart  <- stats::xtabs(
   data    = college_z_scores |> 
   dplyr::mutate(
-    cl_group  = m_kmeans_ctrs$ cluster |> as_factor(), 
-    cl_nstart = m_kmeans_nstart$ cluster |> as_factor()
+    cl_group  = m_kmeans_ctrs$cluster |> forcats::as_factor(), 
+    cl_nstart = m_kmeans_nstart$cluster |> forcats::as_factor()
   ), 
   formula = ~ cl_group + cl_nstart
 )
@@ -806,7 +820,7 @@ We see that the new clusters are essentially a relabeling of the previous cluste
 nstart_norms_lst <- college_z_scores |> 
   dplyr::select(- grp_lbl) |> 
   dplyr::mutate(
-    cluster = m_kmeans_nstart$ cluster |> as_factor()
+    cluster = m_kmeans_nstart$cluster |> forcats::as_factor()
   ) |> 
   pt_ctr_dist(grp_name = "cluster")
 ```
@@ -815,11 +829,11 @@ nstart_norms_lst <- college_z_scores |>
 #| label: fig-nstart-norms
 #| fig-cap: "Revised point-center distances (nstart = 25)"
 
-g_nstart_norms <- nstart_norms_lst$ grp_norms |> 
-  ggplot(mapping = aes(y = norm)) + 
-  geom_boxplot() + 
-  facet_grid(cols = vars(cluster)) + 
-  labs(
+g_nstart_norms <- nstart_norms_lst$grp_norms |> 
+  ggplot2::ggplot(mapping = ggplot2::aes(y = norm)) + 
+  ggplot2::geom_boxplot() + 
+  ggplot2::facet_grid(cols = ggplot2::vars(cluster)) + 
+  ggplot2::labs(
     title    = "K-means clusters: point-center distances", 
     subtitle = "(nstart = 25)"
   )
@@ -843,14 +857,14 @@ The code to generate the elbow plot:
 wcss_by_k <- tibble::tibble(k = 2:12) |> 
   dplyr::mutate(
     wcss = purrr::map_dbl(k, ~ {
-      kmeans(college_z, centers = .x, nstart = 20)$tot.withinss
+      stats::kmeans(college_z, centers = .x, nstart = 20)$tot.withinss
     })
   )
 
 # Plot WCSS vs K (elbow plot)
-ggplot(wcss_by_k, aes(x = k, y = wcss)) +
-  geom_line() + geom_point() +
-  labs(x = "Number of clusters (K)", y = "Within-cluster SS")
+ggplot2::ggplot(wcss_by_k, ggplot2::aes(x = k, y = wcss)) +
+  ggplot2::geom_line() + ggplot2::geom_point() +
+  ggplot2::labs(x = "Number of clusters (K)", y = "Within-cluster SS")
 ```
 
 ```{r}
@@ -876,7 +890,7 @@ for (k in 2:k_max) {
     dplyr::bind_rows(
       tibble::tibble(
         k    = k, 
-        wcss = m_tmp$ tot.withinss)
+        wcss = m_tmp$tot.withinss)
     )
 }
 ```
@@ -969,7 +983,7 @@ The interpretive step exemplifies the dual aims of data analysis introduced in t
 
 ## Other Clustering Algorithms
 
-Clustering methods are an active area of research. The K-means algorithm, first introduced in the 1930's, has the longest history. More recent methods can be categorized along the following lines.
+Clustering methods are an active area of research. The K-means algorithm, first introduced in the 1930s, has the longest history. More recent methods can be categorized along the following lines.
 
 -   **Soft versus Hard:** "Hard" clustering assigns each data point to a single cluster. "Soft" clustering assigns to each point a finite probability distribution of cluster membership.
 
@@ -1001,7 +1015,7 @@ $$
 d_\infty(\mathbf{x}, \mathbf{y}) = \max_{j} |x_j - y_j|
 $$
 
-The choice of distance measure affects cluster shapes and which observations are grouped together. Euclidean distance implicitly assumes that features are on comparable scales—reinforcing why standardization (z-scores) is typically applied before clustering. In high-dimensional settings, all distance measures face the "curse of dimensionality," a phenomenon we examine in @sec-reduce-dim.
+The choice of distance measure affects cluster shapes and which observations are grouped together. Euclidean distance implicitly assumes that features are on comparable scales—reinforcing why standardization (z-scores) is typically applied before clustering. In high-dimensional settings, all distance measures face the "curse of dimensionality," a phenomenon we examine in @sec-pca.
 
 ### Example: DBSCAN
 
@@ -1046,16 +1060,6 @@ DBSCAN's key parameters are `eps` (the neighborhood radius) and `minPts` (minimu
 - **DBSCAN:** Works well for clusters of arbitrary shape, can identify outliers, doesn't require specifying $K$. Sensitive to the choice of `eps` and `minPts`.
 :::
 
-## Exercises {#sec-clustering-exercises}
-
-1.  **(College Data Exploration)** Make your own copy of the `ISLR2::College` data and explore it. Consider: How many private vs. public schools are in the data? What is the range of `Expend` (expenditure per student) compared to `Grad.Rate`? Which numeric variables appear to be correlated (use `GGally::ggpairs()` on a subset)? Based on your domain knowledge, what groupings would you expect to find among colleges—elite vs. non-elite, large vs. small, research-focused vs. teaching-focused? What questions about colleges might clustering help answer?
-
-2.  **(Iris Data)** Submit R command `help("iris")` to learn about the measurements of iris flowers available in R as `datasets::iris`. Summarise these measurements in a graph or table, for example by applying the `GGally::ggpairs()` function.
-
-3.  **(Iris K-means)** Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable `Species`? Count the number of observations corresponding to each combination of cluster and `Species`, for example by using R function `stats::xtabs()`.
-
-4.  **(Wine Quality Data, optional)** The `eda4mldata::wine_quality` dataset contains chemical measurements of wines. Apply K-means clustering to the numeric variables and interpret the resulting clusters. Do they correspond to quality ratings or wine color?
-
 ## Connections to Machine Learning
 
 Clustering connects to supervised learning in several ways:
@@ -1068,6 +1072,16 @@ Clustering connects to supervised learning in several ways:
 - **Model selection:** The elbow heuristic parallels cross-validation and regularization—balancing fit against complexity.
 - **Loss minimization:** K-means minimizes WCSS, a precursor to the loss functions used in supervised learning.
 :::
+
+## Exercises {#sec-clustering-exercises}
+
+1.  **(College Data Exploration)** Make your own copy of the `ISLR2::College` data and explore it. Consider: How many private vs. public schools are in the data? What is the range of `Expend` (expenditure per student) compared to `Grad.Rate`? Which numeric variables appear to be correlated (use `GGally::ggpairs()` on a subset)? Based on your domain knowledge, what groupings would you expect to find among colleges—elite vs. non-elite, large vs. small, research-focused vs. teaching-focused? What questions about colleges might clustering help answer?
+
+2.  **(Iris Data)** Submit R command `help("iris")` to learn about the measurements of iris flowers available in R as `datasets::iris`. Summarise these measurements in a graph or table, for example by applying the `GGally::ggpairs()` function.
+
+3.  **(Iris K-means)** Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable `Species`? Count the number of observations corresponding to each combination of cluster and `Species`, for example by using R function `stats::xtabs()`.
+
+4.  **(Wine Quality Data, optional)** The `eda4mldata::wine_quality` dataset contains chemical measurements of wines. Apply K-means clustering to the numeric variables and interpret the resulting clusters. Do they correspond to quality ratings or wine color?
 
 ## Resources
 
