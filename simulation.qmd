@@ -15,13 +15,9 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
-library(GGally)
 library(here)
-library(ISLR2)
 library(latex2exp)
 library(tidyverse)
-library(tinytex)
 
 ```
 
@@ -43,6 +39,20 @@ source(here("code", "gen_circuit.R"))
 ```
 
 ------------------------------------------------------------------------
+
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Use** R's distribution functions (`d`/`p`/`q`/`r` prefix convention) to compute densities, probabilities, quantiles, and random samples
+2. **Design** a simulation study with appropriate parameters (sample size $n$, replications $R$) and storage structures
+3. **Verify** theoretical results through simulation, such as the variance ratio of sample mean versus median
+4. **Apply** Monte Carlo methods to estimate quantities that are difficult to compute analytically
+5. **Explain** when importance sampling is needed and implement it for rare event estimation
+6. **Construct** bootstrap confidence intervals for arbitrary statistics
+7. **Connect** simulation methods to machine learning techniques including cross-validation, stochastic gradient descent, and Bayesian inference
+:::
 
 ## Introduction {#sec-introduction}
 
@@ -291,7 +301,7 @@ This example illustrates a recurring theme: understanding the properties of stat
 
 ## Monte Carlo Simulation {#sec-mc-sim}
 
-Monte Carlo simulation encompasses a broad set of algorithms that use random sampling to obtain numerical values. Mathematician [Stanislav Ulam](https://en.wikipedia.org/wiki/Stanis%C5%82aw_Ulam) led the development of this approach (and coined the name) as part of the Manhattan Project during World War 2. The approach is used when other types of numerical calculation are not feasible.
+Monte Carlo simulation encompasses a broad set of algorithms that use random sampling to obtain numerical values. Mathematician [Stanislav Ulam](https://en.wikipedia.org/wiki/Stanis%C5%82aw_Ulam) led the development of this approach (and coined the name) as part of the Manhattan Project during World War II. The approach is used when other types of numerical calculation are not feasible.
 
 ### Example 1: Estimate $\pi$ {#sec-est-pi}
 
@@ -340,7 +350,7 @@ The precision of the estimate improves as the number $n$ of randomly generated p
 
 ### The Monte Carlo Principle
 
-More generally, to estimate $E[g(X)]$ for some function $g$ and random variable $X$:
+More generally, to estimate $\theta = E[g(X)]$ for some function $g$ and random variable $X$ we define the sample estimate $\hat{\theta}$:
 
 $$\hat{\theta} = \frac{1}{n}\sum_{i=1}^n g(X_i)$$
 
@@ -385,7 +395,7 @@ c_tbl <- gen_circuit_tbl()
 #| fig-cap: "Monte Carlo estimation of area"
 
 g_c_tbl <- c_tbl |> 
-  ggplot2::ggplot(mapping = aes(x = c, y = s)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = c, y = s)) + 
   ggplot2::geom_path() + 
   ggplot2::labs(title = "A region with unknown area")
 g_c_tbl
@@ -561,7 +571,9 @@ For comparison, the normal theory 95% CI is [`r round(normal_ci[1], 1)`, `r roun
 
 ### Why Bootstrap Matters for EDA
 
-The bootstrap works for almost any statistic:
+The bootstrap works for many statistics: [^bootstrap_note]
+
+[^bootstrap_note]:  Modifications to the standard bootstrap may be needed to preserve autocorrelation or other data structures; and some statistics, like extteme values, call for greater reliance on modeling.  See @Efron_Tibshirani_1994 for further details.
 
 - Correlation coefficients
 - Regression coefficients
