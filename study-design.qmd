@@ -16,21 +16,9 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
-library(GGally)
-# library(gutenbergr)
 library(here)
-library(ISLR2)
-# library(janeaustenr)
 library(latex2exp)
-# library(quanteda)
-# library(tidytext)
 library(tidyverse)
-library(tinytex)
-# library(tm)
-# library(tokenizers)
-# library(topicmodels)
-library(tufte)
 
 ```
 
@@ -48,7 +36,6 @@ library(tufte)
 ```{r}
 #| label: local-libraries
 
-# TODO: Capitalize surnames in political polling tables
 library(eda4mldata)
 
 ```
@@ -62,6 +49,20 @@ source(here("code", "eda4ml_set_seed.R"))
 ```
 
 ------------------------------------------------------------------------
+
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Distinguish** between observational studies and controlled experiments, and identify the limitations of each
+2. **Explain** how selection bias and confounding can invalidate conclusions from observational data
+3. **Compare** quota sampling, simple random sampling, and multi-stage cluster sampling
+4. **Describe** the purpose and mechanics of double-blind experimental designs
+5. **Recognize** how analyst degrees of freedom can lead to divergent conclusions from identical data
+6. **Connect** study design principles to ML practices including train/test splits, label quality, and deployment drift
+7. **Calculate** the standard error of a sample mean and interpret its implications for estimation precision
+:::
 
 ## Introduction
 
@@ -195,7 +196,7 @@ When little is known about a population, simple random sampling yields more accu
 
 [^2]: On the other hand, if a percentage or average is known to vary across identifiable subsets (strata) of the population, then *stratified sampling* can yield more accurate estimates than simple random sampling.
 
-Instead, polling organizations often use *multi-stage cluster sampling*. As an example, from 1952 to 1984 the Gallup organization partitioned the 50 states into four regions: Northeast, South, Midwest, and West. In each region, towns are selected at random; within each town, wards are selected at random; within each ward, precincts are selected at random; and fnally within each precinct, households are selected at random. Then the eligible voters present in the household (cluster) are interviewed.[^3] At each stage, random selection may be weighted, e.g., by population size.
+Instead, polling organizations often use *multi-stage cluster sampling*. As an example, from 1952 to 1984 the Gallup organization partitioned the 50 states into four regions: Northeast, South, Midwest, and West. In each region, towns are selected at random; within each town, wards are selected at random; within each ward, precincts are selected at random; and finally within each precinct, households are selected at random. Then the eligible voters present in the household (cluster) are interviewed.[^3] At each stage, random selection may be weighted, e.g., by population size.
 
 [^3]: Each interviewer is given a prescribed protocol for selecting an eligible voter within the household (e.g., oldest eligible female, if present, or else youngest eligible male), with these prescriptions possibly varying among interviewers.
 
@@ -230,7 +231,7 @@ us_elections_48_04 <- tibble::tribble(
   2000, 3571, "Bush", 48, 47.9, 0.1, 
   2004, 2014, "Bush", 49, 50.6, -1.6
 ) |> 
-  dplyr::mutate(across(
+  dplyr::mutate(dplyr::across(
     .cols = c(year, n), 
     .fns  = as.integer
   ))
@@ -239,7 +240,7 @@ us_elections_48_04 <- tibble::tribble(
 save_file <- FALSE
 if (save_file) {
   us_elections_48_04 |> 
-    write_tsv(here::here(
+    readr::write_tsv(here::here(
       "data", "retain", "us_elections_48_04.txt"
     ))
 }
@@ -256,7 +257,7 @@ us_elections_48_04 |> knitr::kable(
 
 ### UC Berkeley Admissions
 
-In a previous session we discussed a study from the 1970's arising from a concern that admissions to graduate school at UC Berkeley might be biased against females. The study determined that the apparent bias was an instance of Simpon's Paradox: females tended to apply to the departments having lower overall admission rates, resulting in an overall lower admission rate for females, even though most of the departments admitted a greater percentage of their female applicants than their male applicants.
+In a previous session we discussed a study from the 1970s arising from a concern that admissions to graduate school at UC Berkeley might be biased against females. The study determined that the apparent bias was an instance of Simpon's Paradox: females tended to apply to the departments having lower overall admission rates, resulting in an overall lower admission rate for females, even though most of the departments admitted a greater percentage of their female applicants than their male applicants.
 
 In the context of sampling theory, we note that the data were limited to a single year, and included *all* applicants. One might ask whether the differences in admission rates were "statistically significant", but the question presumes that the data are the result of a probability sample from a larger population, which is not the case here. The year of data (1973) was accepted as evidence that the apparent bias was an instance of Simpson's Paradox. The concern was resolved under the assumption that the data and circumstances from that particular year were indicative of the admissions process.
 
@@ -272,7 +273,7 @@ One might ask why a promising drug shouldn't simply be adopted, rather than fiel
 
 The decision to test rather than adopt a promising drug is a difficult question of medical ethics. For the polio vaccine, there were potential risks in taking the drug, and so the government decided a test was needed to establish whether the benefits of adopting the drug would outweigh the risks.
 
-The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. AS originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consent. Children in grades 1 and 3 were used as the controld group (were not vaccinated). The following table shows the results.
+The National Foundation for Infantile Paralysis (NFIP) ran a controlled experiment among children in grades 1-3, an especially vulnerable age group. The field trial was carried out in selected school districts throughout the country, where the risk of polio was high. As originally designed, the NFIP vaccinated all children in grade 2 whose parents consented to the vaccination, leaving unvaccinated those children in grade 2 whose parents did not consent. Children in grades 1 and 3 were used as the control group (were not vaccinated). The following table shows the results.
 
 ```{r}
 #| label: salk-blind
@@ -446,7 +447,7 @@ NB10_wide <- tibble::tribble(
  24, 402, 49, 404, 74, 400, 99, 403, 
  25, 399, 50, 402, 75, 408, 100, 404
 ) |> 
-  dplyr::mutate(across(
+  dplyr::mutate(dplyr::across(
     .cols = everything(), 
     .fns  = as.integer
   ))
@@ -476,7 +477,7 @@ Here is the distribution of the NB10 deficits expressed as a histogram.
 #| fig-cap: "NB10: micrograms below 10 grams"
 
 g_NB10 <- NB10_long |> 
-  ggplot2::ggplot(mapping = aes(x = deficit)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = deficit)) + 
   ggplot2::geom_histogram(fill = "coral") + 
   ggplot2::labs(
     title = "NB10: micrograms below 10 grams"
@@ -488,7 +489,7 @@ g_NB10
 #| label: NB10-stats
 
 NB10_stats <- NB10_long |> 
-  summarise(
+  dplyr::summarise(
     avg = mean(deficit, na.rm = TRUE), 
     sd  = sd(deficit, na.rm = TRUE)
   )
@@ -514,8 +515,8 @@ NB10_z_score <- NB10_long |>
 
 NB10_normal_approx <- tibble::tibble(
   z = seq(
-    from = min(NB10_z_score$ z_score, na.rm = TRUE), 
-    to   = max(NB10_z_score$ z_score, na.rm = TRUE), 
+    from = min(NB10_z_score$z_score, na.rm = TRUE), 
+    to   = max(NB10_z_score$z_score, na.rm = TRUE), 
     length.out = 1000
   ), 
   d = dnorm(z)
@@ -527,7 +528,7 @@ NB10_normal_approx <- tibble::tibble(
 #| fig-cap: "NB10: z-scores and standard normal curve"
 
 g_NB10_z_score <- NB10_z_score |> 
-  ggplot2::ggplot(mapping = aes(x = z_score)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = z_score)) + 
   ggplot2::stat_density(geom = "area", outline.type = "both") + 
   ggplot2::geom_histogram(fill = "blue", stat = "density") + 
   ggplot2::labs(
@@ -535,7 +536,7 @@ g_NB10_z_score <- NB10_z_score |>
   ) + 
   ggplot2::geom_line(
     data = NB10_normal_approx, 
-    mapping = aes(
+    mapping = ggplot2::aes(
       x = z, y = d, 
       colour = "red"
     ), 
@@ -615,7 +616,7 @@ $$
   &= \frac{1}{n^2}  \; n \; \sigma_D^2 \\
   &= \frac{1}{n}  \; \sigma_D^2 \\
   \\ 
-  SD \left\{ A(D_{\bullet}) \right\} &= \sqrt(Var \left\{ A(D_{\bullet}) \right\}) \\ 
+  SD \left\{ A(D_{\bullet}) \right\} &= \sqrt{Var \left\{ A(D_{\bullet}) \right\}} \\ 
   &= \frac{1}{\sqrt{n}}  \; \sigma_D \\
 \end{align}
 $$ {#eq-sample-avg}
@@ -678,13 +679,13 @@ Two practitioners with the same training data may build models with meaningfully
 
 ### Implications for Practice
 
-The Silberzahn study does not counsel despair. It counsels humility and transparency. In my own experience navigating analytical choices, three practices have proven particularly valuable.
+The Silberzahn study does not counsel despair. It counsels humility and transparency. From personal experience navigating analytical choices, three practices have proven particularly valuable.
 
-**Transparency.** I've learned to document not just what I did but what alternatives I considered. When revisiting old work—or when colleagues review it—understanding the path through the garden of forking paths matters as much as the destination. Recording decision points makes it possible for readers to assess robustness and for future analysts (including my future self) to understand why certain choices were made.
+**Transparency.** We've learned to document not just what we did but what alternatives we considered. When revisiting old work—or when colleagues review it—understanding the path through the garden of forking paths matters as much as the destination. Recording decision points makes it possible for readers to assess robustness and for future analysts (including my future self) to understand why certain choices were made.
 
-**Sensitivity analysis.** When conclusions depend on contestable choices, I find it worthwhile to examine how results change under alternative specifications. Stability across reasonable alternatives strengthens confidence; instability signals that conclusions are provisional and deserve appropriately tentative language.
+**Sensitivity analysis.** When conclusions depend on contestable choices, we find it worthwhile to examine how results change under alternative specifications. Stability across reasonable alternatives strengthens confidence; instability signals that conclusions are provisional and deserve appropriately tentative language.
 
-**Communication.** Over time, I've come to appreciate the importance of reporting uncertainty honestly. A finding that holds under one defensible specification but not others warrants different language than one that proves robust across multiple approaches. For confirmatory work, pre-registering the analytical plan before seeing results disciplines the process and helps distinguish exploratory from confirmatory findings.
+**Communication.** Over time, we've come to appreciate the importance of reporting uncertainty honestly. A finding that holds under one defensible specification but not others warrants different language than one that proves robust across multiple approaches. For confirmatory work, pre-registering the analytical plan before seeing results disciplines the process and helps distinguish exploratory from confirmatory findings.
 
 None of this diminishes the value of exploratory work. Discovery requires exploration. But discovery claims require confirmation—ideally on independent data, or at minimum through transparent acknowledgment of the analytical flexibility involved.
 
