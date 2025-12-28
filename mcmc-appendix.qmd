@@ -281,12 +281,12 @@ nrm_rw_long <- nrm_rw_wide |>
 
 nrm_rw_long |> 
   dplyr::rename(time = t_idx) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = time, y = z, color = delta_label
   )) + 
   ggplot2::geom_line(show.legend = FALSE) + 
   ggplot2::facet_grid(
-    rows = vars(delta_label)
+    rows = ggplot2::vars(delta_label)
   ) + 
   ggplot2::labs(
     title = "Metropolis algorithm: effect of step size",
@@ -303,9 +303,9 @@ Next we see histograms of the generated values. For the first and smoothest seri
 #| fig-cap: "Histograms of Metropolis samples with different step sizes"
 
 nrm_rw_long |> 
-  ggplot2::ggplot(mapping = aes(x = z, fill = delta_label)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = z, fill = delta_label)) + 
   ggplot2::geom_histogram(bins = 30, show.legend = FALSE) + 
-  ggplot2::facet_grid(rows = vars(delta_label)) + 
+  ggplot2::facet_grid(rows = ggplot2::vars(delta_label)) + 
   ggplot2::labs(
     title = "Distribution of Metropolis samples",
     x = "Value",

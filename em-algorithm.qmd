@@ -15,28 +15,10 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
-library(GGally)
-# library(gutenbergr)
 library(here)
-# library(ISLR2)
-# library(janeaustenr)
-library(LaplacesDemon)
-library(latex2exp)
-# library(learnr)
-library(MASS)
+library(knitr)
 library(mixtools)
-# library(quanteda)
-# library(SAPP)
-# library(tidytext)
 library(tidyverse)
-# library(timeSeriesDataSets)
-library(tinytex)
-# library(tm)
-# library(tokenizers)
-library(topicmodels)
-# library(tsibble)
-library(tufte)
 
 ```
 
@@ -102,7 +84,7 @@ faithful_tbl <- datasets::faithful |>
 
 
 g_faithful_tbl <- faithful_tbl |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = delay, y = duration
   )) + 
   ggplot2::geom_point() + 
@@ -251,23 +233,23 @@ The figure below summarizes results so far. We've restricted attention to data p
 #| label: fig-faithful-2
 #| fig-cap: "Old Faithful eruptions: initial normal estimates"
 
-delay_median    <- faithful_tbl$ delay    |> median()
-duration_median <- faithful_tbl$ duration |> median()
+delay_median    <- faithful_tbl$delay    |> median()
+duration_median <- faithful_tbl$duration |> median()
 
 g_faithful_2 <- faithful_2 |> 
   dplyr::mutate(g = forcats::as_factor(g)) |> 
   dplyr::group_by(g) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = delay, y = duration, colour = g
   )) + 
   ggplot2::geom_point(
-    mapping = aes(colour = g, shape = g), 
+    mapping = ggplot2::aes(colour = g, shape = g), 
     show.legend = TRUE
   ) + 
   ggplot2::geom_vline(xintercept = delay_median) + 
   ggplot2::geom_hline(yintercept = duration_median) + 
   ggplot2::stat_ellipse(level = 0.5) + 
-  labs(
+  ggplot2::labs(
     title = "Old Faithful eruptions: initial normal estimates", 
     subtitle = "50% normal ellipses for quadrants 1 and 3"
   )
@@ -334,10 +316,10 @@ colnames(f_mu) <- c("delay", "duration")
 f_sigma <- list()
 
 f_sigma[[1]] <- c(
-  initial_est$ delay_var    [[1]], 
-  initial_est$ dd_cov       [[1]], 
-  initial_est$ dd_cov       [[1]], 
-  initial_est$ duration_var [[1]]
+  initial_est$delay_var    [[1]], 
+  initial_est$dd_cov       [[1]], 
+  initial_est$dd_cov       [[1]], 
+  initial_est$duration_var [[1]]
 ) |> 
   matrix(nrow = 2, ncol = 2)
 
@@ -345,10 +327,10 @@ colnames(f_sigma [[1]]) <- c("delay", "duration")
 rownames(f_sigma [[1]]) <- c("delay", "duration")
 
 f_sigma[[2]] <- c(
-  initial_est$ delay_var    [[2]], 
-  initial_est$ dd_cov       [[2]], 
-  initial_est$ dd_cov       [[2]], 
-  initial_est$ duration_var [[2]]
+  initial_est$delay_var    [[2]], 
+  initial_est$dd_cov       [[2]], 
+  initial_est$dd_cov       [[2]], 
+  initial_est$duration_var [[2]]
 ) |> 
   matrix(nrow = 2, ncol = 2)
 
@@ -385,19 +367,19 @@ f_tag_tbl <- f_tag_tbl |>
 g_f_tag_tbl <- f_tag_tbl |> 
   dplyr::mutate(g = forcats::as_factor(g)) |> 
   dplyr::group_by(g) |> 
-  ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = delay, y = duration, group = g
   )) + 
-  geom_point(
-    aes(
+  ggplot2::geom_point(
+    ggplot2::aes(
       colour = g, 
       shape  = g, 
     ), 
     show.legend = TRUE
   ) + 
-  geom_vline(xintercept = delay_median) + 
-  geom_hline(yintercept = duration_median) + 
-  labs(
+  ggplot2::geom_vline(xintercept = delay_median) + 
+  ggplot2::geom_hline(yintercept = duration_median) + 
+  ggplot2::labs(
     title = "Old Faithful: inital clustering of all points", 
     subtitle = "with original quadrants defined by medians"
   )
@@ -505,7 +487,7 @@ f_em_smy <- f_em |>
     duration_var  = var(duration), 
     dd_cov        = cov(delay, duration)
   ) |> 
-  arrange(g)
+  dplyr::arrange(g)
 ```
 
 ```{r}
@@ -527,11 +509,11 @@ f_em_smy |>
 g_f_em <- f_em |> 
   dplyr::mutate(g = forcats::as_factor(g)) |> 
   dplyr::group_by(g) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = delay, y = duration, colour = g
   )) + 
   ggplot2::geom_point(
-    mapping = aes(colour = g, shape = g), 
+    mapping = ggplot2::aes(colour = g, shape = g), 
     show.legend = TRUE
   ) + 
   ggplot2::geom_vline(xintercept = delay_median) + 
@@ -558,10 +540,10 @@ g_grp_per_cum_delay <- f_em |>
     cum_delay = cumsum(delay) / (60 * 24), 
     g = forcats::as_factor(g)
   ) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = cum_delay, y = comp.1, color = g, fill = g)) + 
   ggplot2::geom_point(
-    mapping = aes(colour = g, shape = g), 
+    mapping = ggplot2::aes(colour = g, shape = g), 
     show.legend = TRUE) + 
   ggplot2::labs(
     title = "Group 1 posterior probability over cumulative delay (days)") + 
