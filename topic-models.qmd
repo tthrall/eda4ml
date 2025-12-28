@@ -40,9 +40,22 @@ source(here("code", "text_helpers.R"))
 
 ## Introduction
 
-Chapter 10 established that text can be represented as high-dimensional, sparse data. We learned to tokenize documents, construct term-document matrices, and use tf-idf to identify distinctive words. We also introduced topic models as methods for discovering latent themes—but deferred the question of *how* they work.
+::: {.callout-note}
+## Learning objectives
 
-This chapter answers that question. We develop the intuition behind Latent Dirichlet Allocation (LDA), the most widely used topic model, through examples ranging from a toy corpus of two books to thousands of news articles. Along the way, we encounter the Dirichlet distribution—a probability distribution over probability vectors that gives LDA its name and its power.
+Here are the learning objectives for this chapter:
+
+1. **Explain** the generative story underlying Latent Dirichlet Allocation (LDA)
+2. **Interpret** the β (words-per-topic) and γ (topics-per-document) matrices from a fitted topic model
+3. **Fit** LDA models and extract results in tidy format
+4. **Describe** the role of the Dirichlet distribution and its concentration parameter
+5. **Compare** topic model results across different values of K
+6. **Apply** practical strategies for choosing K, the number of topics
+:::
+
+Chapter 10 established that text can be represented as high-dimensional, sparse data. We learned to tokenize documents, construct term-document matrices, and use tf-idf to identify distinctive words. We also introduced topic models as methods for discovering latent themes, but deferred the question of *how* they work.
+
+This chapter answers that question. We develop the intuition behind Latent Dirichlet Allocation (LDA), the most widely used topic model, through examples ranging from a toy corpus of two books to thousands of news articles. Along the way, we encounter the Dirichlet distribution: a probability distribution over probability vectors that gives LDA its name and its power.
 
 ### The Core Insight
 
@@ -52,7 +65,7 @@ A topic model rests on two assumptions:
 
 2. **Each topic is a mixture of words.** The "business" topic assigns high probability to words like "market", "profit", and "growth"; the "politics" topic assigns high probability to "congress", "vote", and "campaign".
 
-Given a corpus of documents, a topic model discovers both the topics (as probability distributions over words) and the topic mixture for each document. The model knows nothing about business or politics *a priori*—it infers topics from patterns of word co-occurrence.
+Given a corpus of documents, a topic model discovers both the set of topics (each a probability distribution over words) and the mixture of topics in each document. The model knows nothing about business or politics *a priori*; it infers topics from patterns of word co-occurrence.
 
 ### Corpus Requirements for Topic Modeling
 
@@ -356,7 +369,7 @@ ap_top_terms_k4_smy |>
 
 These interpretations require domain knowledge. The algorithm provides word distributions; the analyst provides labels. Note that the 1988 publication date explains the prominence of Cold War vocabulary in Topic 4.
 
-### Document-Topic Mixtures $(\gamma)$
+### Topic Mixtures per Document $(\gamma)$
 
 LDA also estimates each document's topic mixture. We extract these as the $\gamma$ matrix:
 
@@ -603,15 +616,15 @@ Chapter 9 introduced *Linear Discriminant Analysis*—a supervised method that f
 
 **Foundational papers:**
 
-- @BNJ2003LDA. Latent Dirichlet Allocation. *Journal of Machine Learning Research*. The original LDA paper.
+@BNJ_2003_LDA. Latent Dirichlet Allocation. *Journal of Machine Learning Research*. The original LDA paper.
 
-- @Steyvers_Griffiths_2007. Probabilistic Topic Models. In *Handbook of Latent Semantic Analysis*. Accessible introduction with details on Gibbs sampling.
+@Steyvers_Griffiths_2007. Probabilistic Topic Models. In *Handbook of Latent Semantic Analysis*. Accessible introduction with details on Gibbs sampling.
 
 **Practical guidance:**
 
-- Silge and Robinson. [Text Mining with R](https://www.tidytextmining.com/), Chapter 6. Tidy approach to topic modeling in R.
+@Silge_Robinson_2017. [Text Mining with R](https://www.tidytextmining.com/), Chapter 6. Tidy approach to topic modeling in R.
 
-- @Antoniak_2023. [LDA in Practice](https://maria-antoniak.github.io/2023/01/06/lda.html). Blog post with practical advice on hyperparameters and evaluation.
+@Antoniak_2023. [LDA in Practice](https://maria-antoniak.github.io/2023/01/06/lda.html). Blog post with practical advice on hyperparameters and evaluation.
 
 **R functions reference:**
 
@@ -654,7 +667,7 @@ $$ {#eq-beta-dist}
 
 where $\alpha, \beta > 0$ are shape parameters and $\Gamma(\cdot)$ is the gamma function.
 
-If we observe $s_1$ successes and $s_2 = n - s_1$ failures, the posterior is $\text{Beta}(\alpha + s_1, \beta + s_2)$—the same family, with updated parameters.
+If we observe $s_1$ successes and $s_2 = n - s_1$ failures, the posterior is $\text{Beta}(\alpha + s_1, \beta + s_2)$: the same family, with updated parameters.
 
 ### The Dirichlet Distribution
 
@@ -702,9 +715,7 @@ The conjugacy property means that as we observe words in documents and update ou
 
 ### References for Appendix A
 
-- @wiki_Dirichlet_dstn for an accessible introduction.
-- @BNJ_2003_LDA for the original application to topic modeling.
-- @Steyvers_Griffiths_2007 for details on the Gibbs sampling algorithm.
+See [Dirichlet distribution](https://en.wikipedia.org/wiki/Dirichlet_distribution) on Wikipedia for an accessible introduction, Blei, Ng, and Jordan [-@BNJ_2003_LDA] for the original application to topic modeling, and Steyvers and Griffiths [-@Steyvers_Griffiths_2007] for details on the Gibbs sampling algorithm.
 
 ## Appendix B: Mathematical Framework {.appendix}
 
@@ -748,5 +759,4 @@ For further details on inference algorithms, see @Steyvers_Griffiths_2007 and @B
 
 ### References for Appendix B
 
-- @BNJ_2003_LDA for the original LDA paper with full mathematical details.
-- @Steyvers_Griffiths_2007 for an accessible treatment of the Gibbs sampling algorithm.
+See Blei, Ng, and Jordan [-@BNJ_2003_LDA] for the original LDA paper with full mathematical details, and Steyvers and Griffiths [-@Steyvers_Griffiths_2007] for an accessible treatment of the Gibbs sampling algorithm.
