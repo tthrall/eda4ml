@@ -15,16 +15,10 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: cran_libraries
 
-library(assertthat)
 library(astsa)
 library(here)
 library(knitr)
-library(latex2exp)
 library(tidyverse)
-library(tinytex)
-library(tsibble)
-library(tsibbledata)
-library(xts)
 ```
 
 ```{r}
@@ -50,19 +44,24 @@ library(eda4mldata)
 
 # stabilize simulated data
 source(here("code", "eda4ml_set_seed.R"))
-
-# gen_ds_tbl
-# compile a tibble that identifies data sets
-source(here("code", "gen_ds_tbl.R"))
-
-# get_ref_materials
-# encapsulate reference materials as separate modules
-source(here("code", "get_ref_materials.R"))
 ```
 
 ------------------------------------------------------------------------
 
 ## Introduction
+
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Describe** the building blocks of time series models: back-shift operator, differencing, AR and MA polynomials
+2. **Identify** AR and MA processes from their ACF and PACF signatures
+3. **Fit** ARIMA and SARIMA models using R and interpret the results
+4. **Generate** forecasts with prediction intervals and explain why uncertainty grows with horizon
+5. **Apply** the Box-Jenkins modeling workflow: identification, estimation, diagnostic checking
+6. **Connect** exponential smoothing to its underlying ARIMA representation
+:::
 
 Chapter 12 established that time series data have memory—successive observations are dependent, not independent—and that this dependence can be characterized through the autocorrelation function (ACF) and partial autocorrelation function (PACF). We saw that the patterns in these diagnostic plots reveal the structure of the underlying process.
 
@@ -359,12 +358,12 @@ A fundamental non-stationary model is the **random walk with drift**:
 
 $$X(t) = \alpha + X(t-1) + W(t)$$
 
-This is ARIMA(0, 1, 0) with drift $\alpha$. Each value equals the previous value plus a constant drift plus a random shock.
+This is ARIMA(0, 1, 0) with drift $\alpha$. Each value equals the previous value plus a constant drift plus a random shock.  For $t \ge 0$ and $h \ge 0$, the model has the following properties. 
 
 Properties:
 
 - The differenced series $\nabla X(t) = \alpha + W(t)$ is white noise plus a constant
-- The variance grows linearly with time: $\text{Var}(X(t)) = t \sigma_W^2$
+- The variance grows linearly with time: $\text{Var}(X(t) - X(0)) = t \sigma_W^2$
 - The optimal forecast is a straight line: $\hat{X}(t_f + h) = X(t_f) + h\alpha$
 
 ```{r}
@@ -577,7 +576,9 @@ Building a time series model is an iterative process. The classic Box-Jenkins ap
    - AIC: $-2\log L + 2k$
    - BIC: $-2\log L + k \log T$
    
-   where $L$ is the maximized likelihood and $k$ is the number of estimated parameters.
+   where $L$ is the maximized likelihood [^Gaussian-likelihood] and $k$ is the number of estimated parameters.
+   
+[^Gaussian-likelihood]: Likelihood corresponds to a Gaussian process, unless otherwise stated.
    
    Lower is better. BIC penalizes complexity more heavily, favoring simpler models.
 
