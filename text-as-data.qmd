@@ -40,11 +40,24 @@ source(here("code", "eda4ml_set_seed.R"))
 
 ## Introduction
 
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Explain** why text analysis converts documents to numerical representations
+2. **Perform** tokenization and remove stop words using tidytext
+3. **Construct** and interpret document-term matrices as high-dimensional sparse data
+4. **Compute** tf-idf scores and interpret them as measures of word distinctiveness
+5. **Describe** the generative model underlying Latent Dirichlet Allocation (LDA)
+6. **Compare** classical text analysis methods with LLM-based approaches
+:::
+
 Imagine you work at an investment firm. Your task: review 500 quarterly reports and analyst reactions from companies in your portfolio. Identify emerging themes. Flag concerns. Recommend adjustments.
 
 You cannot read 500 reports carefully. What do you do?
 
-This is the fundamental challenge that text analysis addresses. A corpus of documents—whether quarterly reports, customer reviews, scientific papers, or novels—contains information that exceeds human capacity to process manually. Text analysis methods convert documents into numerical representations that enable systematic exploration, comparison, and discovery.
+This is the fundamental challenge that text analysis addresses. A corpus of documents—whether quarterly reports, customer reviews, scientific papers, or novels—may well contain information that exceeds human capacity to process manually. Text analysis methods convert documents into numerical representations that enable systematic exploration, comparison, and discovery.
 
 ### Two Eras of Text Analysis
 
@@ -300,7 +313,7 @@ austen_tfidf |>
   dplyr::slice_max(tf_idf, n = 6) |>
   dplyr::ungroup() |>
   dplyr::mutate(word = tidytext::reorder_within(word, tf_idf, book)) |>
-  ggplot2::ggplot(aes(x = tf_idf, y = word, fill = book)) +
+  ggplot2::ggplot(ggplot2::aes(x = tf_idf, y = word, fill = book)) +
   ggplot2::geom_col(show.legend = FALSE) +
   ggplot2::facet_wrap(~book, scales = "free_y", ncol = 2) +
   tidytext::scale_y_reordered() +
@@ -365,7 +378,7 @@ ap_top_terms |>
     term = tidytext::reorder_within(term, beta, topic),
     topic = paste("Topic", topic)
   ) |>
-  ggplot2::ggplot(aes(x = beta, y = term, fill = topic)) +
+  ggplot2::ggplot(ggplot2::aes(x = beta, y = term, fill = topic)) +
   ggplot2::geom_col(show.legend = FALSE) +
   ggplot2::facet_wrap(~topic, scales = "free_y") +
   tidytext::scale_y_reordered() +
