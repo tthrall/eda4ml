@@ -18,7 +18,6 @@ knitr::opts_chunk$set(
 library(here)
 library(igraph)
 library(knitr)
-library(latex2exp)
 library(tidyverse)
 ```
 
@@ -40,6 +39,19 @@ source(here::here("code", "eda4ml_set_seed.R"))
 ------------------------------------------------------------------------
 
 ## Introduction
+
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Represent** networks as graphs with nodes, edges, and matrix representations
+2. **Compute** centrality measures (degree, betweenness, closeness, PageRank) and interpret their meanings
+3. **Detect** communities using modularity-based algorithms and evaluate partition quality
+4. **Analyze** bipartite graphs and construct projections for recommendation systems
+5. **Navigate** directed acyclic graphs (DAGs) for dependency and prerequisite reasoning
+6. **Build** feature matrices from graph structure for machine learning tasks
+:::
 
 In previous chapters we have seen that understanding and decision support are complementary: knowing *why* a pattern exists enables us to predict *what* will happen next. For network data this stereoscopic view of theory and application is especially useful.
 
@@ -145,7 +157,7 @@ The Karate Club raises a fundamental question: which nodes are important? Differ
 
 **Degree centrality** is the simplest: count the connections. A node with many edges is central in the sense of having many direct relationships. In the Karate Club, Mr. Hi (node 1) has degree 16—he interacts with nearly half the club members. John A (node 34) has degree 17.
 
-But raw connection count may miss something. Consider node 3, who interacts with both leaders. This node may be important not because of how many connections it has, but because of *where* it sits in the network—bridging the two factions.
+But raw connection count may miss something. Consider node 3, who interacts with both leaders. The importance of this node may derive not from its number of connections, but because of *where* it sits in the network—bridging the two factions.
 
 **Betweenness centrality** captures this idea. A node has high betweenness if it lies on many shortest paths between other nodes. Formally, for node $v$:
 
@@ -386,7 +398,7 @@ plot(g_bip2,
      main = "")
 ```
 
-In the bipartite graph, U1 and U2 are not directly connected—users never connect to users. But both rated Forrest Gump (shown in red). The projection creates a direct edge between them (black line), representing their shared taste.
+In the bipartite graph, U1 and U2 are not directly connected—users never connect to users. But both rated Forrest Gump (shown in red). The projection creates an edge between them (black line), representing their shared taste.
 
 @fig-user-projection-full shows the complete user projection for our example.
 
@@ -475,7 +487,9 @@ The **LearningGraph** is a knowledge graph for skills-based learning in data sci
 
 ### The Schema
 
-@tbl-lg-schema summarizes the LearningGraph structure.
+@tbl-lg-schema summarizes the LearningGraph structure. [^skill-levels]
+
+[^skill-levels]: To simplify the exposition we depart from common practice in organizational psychology, where proficiency levels pertain to _competencies_ (groups of skills), rather than the skills themselves.
 
 ```{r}
 #| label: tbl-lg-schema
@@ -708,7 +722,7 @@ alice_skill_ids <- c(7, 8, 10, 2, 12, 16)
 
 learning_path <- tibble::tribble(
   ~Step, ~Skill, ~Rationale,
-  1L, "Inference and Prediction", "Prerequisite for Statistical Learning; requires Linear Models (Alice has)",
+  1L, "Inference and Prediction", "Prerequisite for Statistical Learning; requires Linear Models (which Alice has)",
   2L, "Statistical Learning", "Target skill; requires Inference and Prediction"
 )
 
@@ -744,7 +758,7 @@ The examples above introduced graph concepts informally. We now define them prec
 
 A **graph** $G = (V, E)$ consists of a set of *nodes* (or vertices) $V$ and a set of *edges* $E$. Each edge connects two nodes. In an **undirected graph**, an edge between nodes $u$ and $v$ is symmetric: if $u$ connects to $v$, then $v$ connects to $u$. In a **directed graph**, edges have direction: an edge from $u$ to $v$ does not imply an edge from $v$ to $u$.
 
-The Karate Club is an undirected graph—friendship is mutual. The skill prerequisite graph is directed—"probability is prerequisite to inference" does not imply the reverse. The MovieLens bipartite graph is undirected—a rating connects user and movie symmetrically.
+The Karate Club is an undirected graph—friendship is mutual. The skill prerequisite graph is directed—"probability is prerequisite to inference" does not imply the reverse. The MovieLens bipartite graph is undirected—a rating connects user (rater) and movie (rated) symmetrically.
 
 ### Weighted Edges
 
@@ -830,7 +844,7 @@ $$
 Q = \frac{1}{2m} \sum_{ij} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i, c_j)
 $$
 
-where $m$ is the total number of edges, $k_i$ is the degree of node $i$, $c_i$ is the community assignment of node $i$, and $\delta(c_i, c_j) = 1$ if nodes $i$ and $j$ are in the same community.
+where $m$ is the total number of edges, $k_i$ is the degree of node $i$, $c_i$ is the community assignment of node $i$, and $\delta(c_i, c_j) \in \{0, 1 \}$ indicates whether nodes $i$ and $j$ are in the same community.
 
 Modularity ranges from $-0.5$ to $1$. Values above $0.3$ typically indicate significant community structure. The Karate Club partition achieved modularity around $0.4$.
 
