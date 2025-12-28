@@ -63,6 +63,20 @@ source(here("code", "wine_quality_uci.R"))
 
 ## Introduction {#sec-lin-discr-intro}
 
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Formulate** classification as a decision-theoretic problem with loss functions and risk
+2. **Derive** the Bayes decision rule and explain when it yields linear boundaries
+3. **Explain** Fisher's discriminant criterion as maximising between-class variance relative to within-class variance
+4. **Distinguish** between LDA and QDA and identify when each is appropriate
+5. **Apply** LDA using R and interpret the discriminant directions and classification results
+6. **Compare** LDA to logistic regression and explain their relative strengths
+7. **Connect** LDA to PCA as supervised versus unsupervised approaches to dimension reduction
+:::
+
 In @sec-pca we developed Principal Component Analysis as a method for finding directions of maximum variance in high-dimensional data.  PCA is *unsupervised*: it seeks structure in the feature matrix without reference to any response variable.  The directions of maximum variance may or may not be useful for distinguishing among groups of observations.
 
 This chapter develops *Linear Discriminant Analysis* (LDA), the supervised counterpart to PCA.  Where PCA asks "along which directions do the features vary most?", LDA asks "along which directions are the classes best separated?"  When class labels are available, LDA exploits them to find projections optimized for classification rather than variance.
@@ -81,7 +95,7 @@ LDA connects to several themes developed throughout this book:
 
 - **Supervised versus unsupervised**: The distinction between LDA (supervised) and PCA (unsupervised) exemplifies a fundamental choice in statistical learning: whether or not to guide analysis toward a specific prediction task.
 
-- **Connection to linear regression**: In @sec-lin-reg we projected a response vector onto the column space of a design matrix.  LDA involves a related but distinct projection: we project observations onto directions that separate class means while minimising within-class spread.
+- **Connection to linear regression**: In @sec-lin-reg we projected a response vector onto the column space of a feature matrix.  LDA involves a related but distinct projection: we project observations onto directions that separate class means while minimising within-class spread.
 
 We begin with a simple one-dimensional example in order to introduce the key ideas, develop the mathematical framework for multiple features and classes, examine Fisher's geometric perspective, and then apply LDA to the wine quality data introduced in @sec-pca.
 
@@ -98,20 +112,20 @@ xy_params_ref <-
     prob = c(.5, .5)
   )
 sim_1D_lst_ref <- xy_params_ref |> sim_1D_xy_tbl()
-xy_tbl_ref     <- sim_1D_lst_ref$ xy_tbl
-xy_smy_ref     <- sim_1D_lst_ref$ xy_smy
-xy_unc_ref     <- sim_1D_lst_ref$ xy_unc
-pop_bdry_ref   <- sim_1D_lst_ref$ pop_bdry
-smpl_bdry_ref  <- sim_1D_lst_ref$ smpl_bdry
+xy_tbl_ref     <- sim_1D_lst_ref$xy_tbl
+xy_smy_ref     <- sim_1D_lst_ref$xy_smy
+xy_unc_ref     <- sim_1D_lst_ref$xy_unc
+pop_bdry_ref   <- sim_1D_lst_ref$pop_bdry
+smpl_bdry_ref  <- sim_1D_lst_ref$smpl_bdry
 
 pop_dx_ref <- dplyr::if_else(
   !is.null( pop_bdry_ref ),
-  pop_bdry_ref$ boundary,
+  pop_bdry_ref$boundary,
   NaN )
 
 smpl_dx_ref <- dplyr::if_else(
   !is.null( smpl_bdry_ref ),
-  smpl_bdry_ref$ boundary,
+  smpl_bdry_ref$boundary,
   NaN )
 
 ```
@@ -127,20 +141,20 @@ xy_params_p <-
     prob = c(.8, .2)
   )
 sim_1D_lst_p <- xy_params_p |> sim_1D_xy_tbl()
-xy_tbl_p     <- sim_1D_lst_p$ xy_tbl
-xy_smy_p     <- sim_1D_lst_p$ xy_smy
-xy_unc_p     <- sim_1D_lst_p$ xy_unc
-pop_bdry_p   <- sim_1D_lst_p$ pop_bdry
-smpl_bdry_p  <- sim_1D_lst_p$ smpl_bdry
+xy_tbl_p     <- sim_1D_lst_p$xy_tbl
+xy_smy_p     <- sim_1D_lst_p$xy_smy
+xy_unc_p     <- sim_1D_lst_p$xy_unc
+pop_bdry_p   <- sim_1D_lst_p$pop_bdry
+smpl_bdry_p  <- sim_1D_lst_p$smpl_bdry
 
 pop_dx_p <- dplyr::if_else(
   !is.null( pop_bdry_p ),
-  pop_bdry_p$ boundary,
+  pop_bdry_p$boundary,
   NaN )
 
 smpl_dx_p <- dplyr::if_else(
   !is.null( smpl_bdry_p ),
-  smpl_bdry_p$ boundary,
+  smpl_bdry_p$boundary,
   NaN )
 
 ```
@@ -156,20 +170,20 @@ xy_params_sp <-
     prob = c(.8, .2)
   )
 sim_1D_lst_sp <- xy_params_sp |> sim_1D_xy_tbl()
-xy_tbl_sp     <- sim_1D_lst_sp$ xy_tbl
-xy_smy_sp     <- sim_1D_lst_sp$ xy_smy
-xy_unc_sp     <- sim_1D_lst_sp$ xy_unc
-pop_bdry_sp   <- sim_1D_lst_sp$ pop_bdry
-smpl_bdry_sp  <- sim_1D_lst_sp$ smpl_bdry
+xy_tbl_sp     <- sim_1D_lst_sp$xy_tbl
+xy_smy_sp     <- sim_1D_lst_sp$xy_smy
+xy_unc_sp     <- sim_1D_lst_sp$xy_unc
+pop_bdry_sp   <- sim_1D_lst_sp$pop_bdry
+smpl_bdry_sp  <- sim_1D_lst_sp$smpl_bdry
 
 pop_dx_sp <- dplyr::if_else(
   !is.null( pop_bdry_sp ),
-  pop_bdry_sp$ boundary,
+  pop_bdry_sp$boundary,
   NaN )
 
 smpl_dx_sp <- dplyr::if_else(
   !is.null( smpl_bdry_sp ),
-  smpl_bdry_sp$ boundary,
+  smpl_bdry_sp$boundary,
   NaN )
 
 ```
@@ -203,7 +217,7 @@ xy_df_lbl_smy <- dplyr::bind_rows(
 # g_toy_ref
 g_toy_ref <- xy_tbl_ref |> 
   dplyr::rename(price = x_1, type = y_group) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = price, colour = type, fill = type
   )) + 
   ggplot2::scale_x_continuous(
@@ -216,7 +230,7 @@ g_toy_ref <- xy_tbl_ref |>
 # g_toy_p
 g_toy_p <- xy_tbl_p |> 
   dplyr::rename(price = x_1, type = y_group) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = price, colour = type, fill = type
   )) + 
   ggplot2::scale_x_continuous(
@@ -229,7 +243,7 @@ g_toy_p <- xy_tbl_p |>
 # g_toy_sp
 g_toy_sp <- xy_tbl_sp |> 
   dplyr::rename(price = x_1, type = y_group) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = price, colour = type, fill = type
   )) + 
   ggplot2::geom_histogram(bins = 30) + 
@@ -524,7 +538,7 @@ The underlying engine is still `MASS::lda()`, but the interface integrates smoot
 
 wq_abbrev_tbl  <- abbreviate_wq_var_names()
 wq_data        <- get_wine_quality()
-names(wq_data) <- wq_abbrev_tbl$ abbrev
+names(wq_data) <- wq_abbrev_tbl$abbrev
 
 ```
 
@@ -543,8 +557,8 @@ wq_z <- wq_data |>
     .fns  = as.vector
   )) |> 
   dplyr::mutate(
-    quality = wq_data$ quality, 
-    color   = wq_data$ color
+    quality = wq_data$quality, 
+    color   = wq_data$color
   )
 
 ```
@@ -564,13 +578,13 @@ wclr_2D_lda_mdl <-
   parsnip::fit_xy(
     x = wq_z |> 
       dplyr::select(density, res_sugar), 
-    y = wq_z$ color |> 
+    y = wq_z$color |> 
       forcats::as_factor()
   )
 
 # Capture LD1 coefficients
 wclr_2D_LD1_coeff <- 
-  wclr_2D_lda_mdl$ fit$ scaling
+  wclr_2D_lda_mdl$fit$scaling
 
 ```
 
@@ -582,7 +596,7 @@ We begin with just two features—`density` and `res_sugar` (residual sugar)—s
 #| label: tbl-2D-lda-coefficients
 #| tbl-cap: "Wine Color LDA: coefficients for two features"
 
-wclr_2D_lda_mdl$ fit$ scaling |> 
+wclr_2D_lda_mdl$fit$scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
   knitr::kable(
     caption = "Wine Color LDA: coefficients for two features", 
@@ -632,7 +646,7 @@ wclr_2D_lda_predict <- dplyr::bind_cols(
 wclr_2D_lda_lst <- wq_z |> 
   l2D_get_xy_stats(density, res_sugar, color)
 
-wclr_2D_lda_coeff_diff <- wclr_2D_lda_lst$ coeff_diff
+wclr_2D_lda_coeff_diff <- wclr_2D_lda_lst$coeff_diff
 
 ```
 
@@ -645,7 +659,7 @@ The discriminant function LD1 has coefficients approximately $-1.7$ for density 
 #| fig-cap: "Wine color: LDA decision boundary with two features"
 
 g_wclr_2D_lda_xy <- wclr_2D_lda_predict |>
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = density, y = res_sugar, colour = color
   )) + 
   ggplot2::geom_point(alpha = 0.5, show.legend = FALSE) +
@@ -701,7 +715,7 @@ wclr_lda_mdl <-
   parsnip::fit_xy(
     x = wq_z |> 
       dplyr::select(- c(quality, color)), 
-    y = wq_z$ color |> 
+    y = wq_z$color |> 
       forcats::as_factor()
   )
 
@@ -739,7 +753,7 @@ We now use all 11 chemical features.  @tbl-lda-coefficients shows the LDA coeffi
 #| label: tbl-lda-coefficients
 #| tbl-cap: "Wine Color LDA: coefficients for all features"
 
-wclr_lda_mdl$ fit$ scaling |> 
+wclr_lda_mdl$fit$scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
   dplyr::mutate(feature = stringr::str_remove_all(feature, "`")) |> 
   knitr::kable(
@@ -763,10 +777,10 @@ wclr_lda_xtabs <- wclr_lda_predict |>
     values_from = "n")
 
 # percent mis-classified for narrative
-ct_wcx_red   <- wclr_lda_xtabs$ red   |> sum()
-ct_wcx_white <- wclr_lda_xtabs$ white |> sum()
-ct_wcx_red_mis   <- wclr_lda_xtabs$ red   [[2]]
-ct_wcx_white_mis <- wclr_lda_xtabs$ white [[1]]
+ct_wcx_red   <- wclr_lda_xtabs$red   |> sum()
+ct_wcx_white <- wclr_lda_xtabs$white |> sum()
+ct_wcx_red_mis   <- wclr_lda_xtabs$red   [[2]]
+ct_wcx_white_mis <- wclr_lda_xtabs$white [[1]]
 pct_wcx_mis_red   <- round(100 * ct_wcx_red_mis   / ct_wcx_red,   1)
 pct_wcx_mis_white <- round(100 * ct_wcx_white_mis / ct_wcx_white, 1)
 
@@ -807,7 +821,7 @@ wclr_lda_probs <- wclr_lda_predict |>
 #| fig-cap: "Posterior probabilities by actual and predicted color"
 
 g_wclr_lda_probs <- wclr_lda_probs |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = prob_color, y = probability, fill = prob_color
   )) + 
   ggplot2::geom_violin(show.legend = FALSE) + 
@@ -861,7 +875,7 @@ We now consider a three-class problem: predicting wine quality as low, medium, o
 
 g_wqual_hist <- wqual_z |> 
   dplyr::rename(level = q_level) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = quality, color = level, fill = level
   )) + 
   ggplot2::geom_histogram(binwidth = 1) + 
@@ -891,7 +905,7 @@ wqual_white_lda_mdl <-
   parsnip::discrim_linear() |>
   parsnip::fit_xy(
     x = wqual_white |> dplyr::select(alcohol, res_sugar), 
-    y = wqual_white$ q_level
+    y = wqual_white$q_level
   )
 
 ```
@@ -902,7 +916,7 @@ For visualization, we focus on white wines and use two features: `alcohol` and `
 #| label: tbl-wqual-lda-coefficients
 #| tbl-cap: "Wine quality LDA: discriminant directions"
 
-wqual_white_lda_mdl$ fit$ scaling |> 
+wqual_white_lda_mdl$fit$scaling |> 
   tibble::as_tibble(rownames = "feature") |> 
   knitr::kable(
     caption = "Wine quality LDA: coefficients (white wines, 2 features)", 
@@ -930,7 +944,7 @@ LD_coords <- wqual_white |>
 #| fig-cap: "Wine quality in discriminant coordinates (white wines)"
 
 g_LD_coords <- LD_coords |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = LD1, y = LD2, colour = q_level
   )) + 
   ggplot2::geom_point(alpha = 0.5) + 
@@ -1238,3 +1252,13 @@ For a two-class problem, show that the Fisher discriminant direction is proporti
 
 **Exercise 9.10** (Projection preserves classification)
 For LDA, suppose we project onto the first $\ell$ discriminant directions.  Argue that this projection preserves all information needed for LDA classification when $\ell = \min(d, K-1)$.
+
+## Resources
+
+[An Introduction to Statistical Learning](https://www.statlearning.com/) by James, Witten, Hastie, & Tibshirani (Chapter 4)
+
+[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/) by Hastie, Tibshirani, & Friedman (Chapter 4)
+
+[Linear discriminant analysis - Wikipedia](https://en.wikipedia.org/wiki/Linear_discriminant_analysis)
+
+[Pattern Classification](https://www.wiley.com/en-us/Pattern+Classification%2C+2nd+Edition-p-9780471056690) by Duda, Hart, & Stork
