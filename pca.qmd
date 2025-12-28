@@ -30,7 +30,6 @@ library(mclust)
 library(patchwork)
 library(plotly)
 library(pracma)
-library(rlang)
 library(tidymodels)
 library(tidyverse)
 ```
@@ -67,6 +66,21 @@ source(here("code", "wine_quality_uci.R"))
 
 ## Introduction {#sec-pca-intro}
 
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Explain** the motivation for dimension reduction and the curse of dimensionality
+2. **Interpret** principal components geometrically as directions of maximum variance
+3. **Derive** principal components as eigenvectors of the covariance matrix
+4. **Determine** the need for centering alone versus centering _and_ scaling features
+5. **Construct** and interpret scree plots and cumulative variance plots
+6. **Create** and interpret biplots showing both observations and variable loadings
+7. **Connect** PCA to singular value decomposition (SVD)
+8. **Apply** PCA to real datasets and interpret the results substantively
+:::
+
 This chapter addresses a fundamental question in data analysis: along which directions do the features of a data set vary most?  The answer—principal component analysis (PCA)—is one of the most widely used techniques in statistical learning, providing both a method for dimension reduction and a lens for understanding the structure of high-dimensional data.
 
 PCA connects to themes we have encountered throughout this book:
@@ -94,28 +108,28 @@ state_stats_lst <- list_state_stats()
 
 # (x, y) = (lat, long)
 st_ctr_tbl <- 
-  state_stats_lst$ st_ctr_tbl
+  state_stats_lst$st_ctr_tbl
 
 # 8 state stats: Population, ..., Area
 st_77_tbl <- 
-  state_stats_lst$ st_77_tbl
+  state_stats_lst$st_77_tbl
 
 # UrbanPop + 3 violent crimes: Assault, Murder, Rape
 arrests_wide <- 
-  state_stats_lst$ arrests_wide
+  state_stats_lst$arrests_wide
 arrests_long <- 
-  state_stats_lst$ arrests_long
+  state_stats_lst$arrests_long
 
 # compilation of the above
 st_wide <- 
-  state_stats_lst$ st_wide
+  state_stats_lst$st_wide
 st_wide_dscr <- 
-  state_stats_lst$ st_wide_dscr
+  state_stats_lst$st_wide_dscr
 ```
 
 Data analysis often begins with exploration, using tables and figures to learn about the data before formulating specific questions or hypotheses.  The exploration becomes more challenging as the dimensions of the data increase.  Here is a modest example.
 
-@McNeil_1977 reviewed the relationship among violent crime statistics per US state and the percentage of the population living in urban areas, variables described in @tbl-arrests-per-us-state-1973 below.  With just four variables, we can visualize the full data structure using scatter plot matrices (@fig-arrests-2d-scatter-matrix).  However, even this preliminary exploration reveals strong correlations among the three crime variables (Murder, Assault, Rape), suggesting that the data may effectively lie in fewer than four dimensions.
+@McNeil_1977 reviewed the relationship among violent crime statistics per US state and the percentage of the population living in urban areas, variables described in @tbl-arrests-per-us-state-1973 below.  With just four variables, we can visualize the full data structure using scatter plot matrices (@fig-arrests-2d-scatter-matrix).  However, even this preliminary exploration reveals strong correlations among the three crime variables (Assault, Rape, Murder), suggesting that the data may effectively lie in fewer than four dimensions.
 
 ```{r}
 #| label: tbl-arrests-per-us-state-1973
@@ -142,12 +156,12 @@ g_arrests_violin <- arrests_long |>
   dplyr::filter(var != "UrbanPop") |> 
   dplyr::mutate(var = forcats::as_factor(var)) |> 
   dplyr::rename(crime = var) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = crime, y = rate, color = crime, fill = crime
   )) + 
-  geom_violin(show.legend = FALSE) + 
-  scale_y_log10() + 
-  labs(
+  ggplot2::geom_violin(show.legend = FALSE) + 
+  ggplot2::scale_y_log10() + 
+  ggplot2::labs(
     title = "Violent Crime Rates per US State (1973)", 
     subtitle = "arrests per 100K population"
   )
@@ -169,7 +183,7 @@ g_arrests_3d_scatter <- arrests_wide |>
     z = ~Murder,
     type = "scatter3d",
     mode = "markers",
-    text = ~arrests_wide$ st_abb,
+    text = ~arrests_wide$st_abb,
     marker = list(
       size = 5,
       color = ~UrbanPop,
@@ -231,7 +245,7 @@ beans_n_features <- beans_features |> length()
 
 beans_cor_mat <- beans::beans |> 
   dplyr::select(- class) |> 
-  cor()
+  stats::cor()
 
 beans_cor_mat |> 
   corrplot::corrplot(
@@ -254,7 +268,7 @@ wq_n_obs <- nrow(wq_data)
 wq_n_col <- ncol(wq_data)
 ```
 
-@Cortez_2009 published a data set containing physicochemical measurements and quality ratings for Portuguese wines.  The data set includes both red and white wines, with 11 chemical properties measured for each wine and a quality score assigned by expert tasters.
+@Cortez_2009_ModelingWP published a data set containing physicochemical measurements and quality ratings for Portuguese wines.  The data set includes both red and white wines, with 11 chemical properties measured for each wine and a quality score assigned by expert tasters.
 
 ```{r}
 #| label: tbl-wine-quality-vars
@@ -331,7 +345,7 @@ Before developing the algebra of PCA, we build geometric intuition using example
 
 galton_3d_lst <- get_galton_3d()
 
-galton_3d <- galton_3d_lst$ galton_3d
+galton_3d <- galton_3d_lst$galton_3d
 
 fms_tbl <- galton_3d |> 
   dplyr::filter(gender == "male") |> 
@@ -361,7 +375,7 @@ fs_pca_lst <- fms_ctr |>
   pc_rot_diag()
 
 # rotation matrix
-fs_rot_mat <- fs_pca_lst$ rotation
+fs_rot_mat <- fs_pca_lst$rotation
 
 # slope coefficients for geom_abline()
 fs_slope_1 <- 
@@ -378,8 +392,8 @@ fs_slope_2 <-
 
 pc_colors_tbl <- get_pc_colors()
 
-pc_clr <- pc_colors_tbl$ color
-pc_ref <- pc_colors_tbl$ ref
+pc_clr <- pc_colors_tbl$color
+pc_ref <- pc_colors_tbl$ref
 
 ```
 
@@ -405,7 +419,7 @@ s_end_pc_2 <- fs_pca_end_pt_mat [["son",    "PC2"]]
 
 g_fs_pcs <- fms_ctr |> 
   dplyr::select(father, son) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = father, y = son
   )) + 
   ggplot2::geom_point() + 
@@ -417,12 +431,12 @@ g_fs_pcs <- fms_ctr |>
     slope = fs_slope_1, 
     color = pc_clr [[1]]) + 
   ggplot2::geom_segment(
-    mapping = aes(
+    mapping = ggplot2::aes(
       x = 0, xend = f_end_pc_1,
       y = 0, yend = s_end_pc_1
     ),
-    arrow = arrow(
-      length = unit(0.3, "cm"), 
+    arrow = ggplot2::arrow(
+      length = ggplot2::unit(0.3, "cm"), 
       ends = "last", type = "closed"
     ),
     linetype = 3, linewidth = 0.8, color = pc_clr [[1]]
@@ -434,12 +448,12 @@ g_fs_pcs <- fms_ctr |>
     slope = fs_slope_2, 
     color = pc_clr [[2]]) + 
   ggplot2::geom_segment(
-    mapping = aes(
+    mapping = ggplot2::aes(
       x = 0, xend = f_end_pc_2,
       y = 0, yend = s_end_pc_2
     ),
-    arrow = arrow(
-      length = unit(0.3, "cm"), 
+    arrow = ggplot2::arrow(
+      length = ggplot2::unit(0.3, "cm"), 
       ends = "last", type = "closed"
     ),
     linetype = 3, linewidth = 0.8, color = pc_clr [[2]]
@@ -491,8 +505,8 @@ z_arrests_pca_lst <- z_arrests_tbl |>
   stats::prcomp(center = FALSE) |> 
   pc_rot_diag()
 
-n_arrests_rot_rows <- z_arrests_pca_lst$ rotation |> nrow()
-n_arrests_rot_cols <- z_arrests_pca_lst$ rotation |> ncol()
+n_arrests_rot_rows <- z_arrests_pca_lst$rotation |> nrow()
+n_arrests_rot_cols <- z_arrests_pca_lst$rotation |> ncol()
 
 ```
 
@@ -569,8 +583,8 @@ z_arrests_rot_lst <-
   z_arrests_pca_lst |> 
   get_rot_tbl_lst()
 
-z_arrests_rot_wide <- z_arrests_rot_lst$ rot_wide
-z_arrests_rot_long <- z_arrests_rot_lst$ rot_long
+z_arrests_rot_wide <- z_arrests_rot_lst$rot_wide
+z_arrests_rot_long <- z_arrests_rot_lst$rot_long
 
 ```
 
@@ -580,7 +594,7 @@ z_arrests_rot_long <- z_arrests_rot_lst$ rot_long
 
 g_arm_loadings <- z_arrests_rot_long |> 
   dplyr::mutate(crime = forcats::as_factor(var)) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = crime, y = coeff, color = pc, fill = pc
   )) + 
   ggplot2::geom_col(
@@ -753,7 +767,7 @@ The `scale.` argument controls whether features are standardised to unit varianc
 
 ### Scree Plots
 
-A *scree plot* displays the variance (or proportion of variance) explained by each principal component.  The name alludes to the hope of seeing a "cliff" for the first few components followed by "scree" (rubble) for the remainder—suggesting a natural truncation point.
+A *scree plot* displays the variance (or proportion of variance) explained by each principal component.  The name alludes to the hope of seeing a "cliff" for the first few components followed by "scree" (rubble) for the remainder, suggesting a natural truncation point.
 
 ```{r}
 #| label: wq-all-numeric
@@ -791,7 +805,7 @@ g_wq_pc_variance <- wq_pc_stats_tbl |>
     PC_index = idx, 
     variance = var
   ) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = PC_index, y = variance
   )) + 
   ggplot2::geom_line() + 
@@ -841,8 +855,8 @@ wq_rot_lst <-
   wq_pca_lst |> 
   get_rot_tbl_lst()
 
-wq_rot_wide <- wq_rot_lst$ rot_wide
-wq_rot_long <- wq_rot_lst$ rot_long
+wq_rot_wide <- wq_rot_lst$rot_wide
+wq_rot_long <- wq_rot_lst$rot_long
 
 ```
 
@@ -853,7 +867,7 @@ wq_rot_long <- wq_rot_lst$ rot_long
 g_wq_loadings <- wq_rot_long |> 
   dplyr::filter(i_pc <= 3) |> 
   dplyr::mutate(variable_index = forcats::as_factor(i_var)) |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = variable_index, y = coeff, color = pc, fill = pc
   )) + 
   ggplot2::geom_col(
@@ -881,11 +895,11 @@ A *biplot* displays both scores (observations) and loadings (variables) in the s
 ```{r}
 #| label: wq-scores-tbl
 
-wq_scores_wide <- wq_pca_lst$ x |> 
+wq_scores_wide <- wq_pca_lst$x |> 
   tibble::as_tibble() |> 
   dplyr::mutate(
-    quality = wq_all_numeric$ quality, 
-    is_red  = wq_all_numeric$ is_red, 
+    quality = wq_all_numeric$quality, 
+    is_red  = wq_all_numeric$is_red, 
     color   = dplyr::if_else(is_red, "red", "white")) |> 
   dplyr::select(is_red, color, quality, tidyr::everything())
   
@@ -897,7 +911,7 @@ wq_scores_wide <- wq_pca_lst$ x |>
 
 g_wq_scores_pc1_2 <- wq_scores_wide |> 
   dplyr::rename(score_1 = PC1, score_2 = PC2) |> 
-ggplot2::ggplot(mapping = aes(
+ggplot2::ggplot(mapping = ggplot2::aes(
   x = score_1, y = score_2, color = color
 )) + 
   ggplot2::geom_point(alpha = 0.3) + 
@@ -974,13 +988,13 @@ dmclust_wq_score_1 <- score_1 |>
 #| label: score-1-dens-tbl
 
 score_1_dens_tbl <- tibble::tibble(
-  score_1 = dmclust_wq_score_1$ data [, 1], 
-  class   = dmclust_wq_score_1$ classification |> as.integer(), 
-  dens    = dmclust_wq_score_1$ density) |> 
+  score_1 = dmclust_wq_score_1$data [, 1], 
+  class   = dmclust_wq_score_1$classification |> as.integer(), 
+  dens    = dmclust_wq_score_1$density) |> 
   dplyr::mutate(
-    is_red  = wq_scores_wide$ is_red, 
-    color   = wq_scores_wide$ color, 
-    quality = wq_scores_wide$ quality) |> 
+    is_red  = wq_scores_wide$is_red, 
+    color   = wq_scores_wide$color, 
+    quality = wq_scores_wide$quality) |> 
   dplyr::select(is_red, color, quality, tidyr::everything())
 
 ```
@@ -1245,6 +1259,15 @@ $$
 
 where $\sigma_k^2$ are the eigenvalues of the covariance matrix.  What does this imply about the proportion of variance explained by the first $r$ principal components?
 
+## Resources
+
+[An Introduction to Statistical Learning](https://www.statlearning.com/) by James, Witten, Hastie, & Tibshirani (Chapter 12)
+
+[The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/) by Hastie, Tibshirani, & Friedman (Chapter 14)
+
+[Principal component analysis - Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
+
+[A Tutorial on Principal Component Analysis](https://arxiv.org/abs/1404.1100) by Jonathon Shlens
 
 ## Appendix: SVD Derivation {#sec-pca-appendix-svd}
 
