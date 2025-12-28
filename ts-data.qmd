@@ -15,16 +15,10 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: cran_libraries
 
-library(assertthat)
 library(astsa)
 library(here)
 library(knitr)
-library(latex2exp)
 library(tidyverse)
-library(tinytex)
-library(tsibble)
-library(tsibbledata)
-library(xts)
 ```
 
 ```{r}
@@ -64,9 +58,22 @@ source(here("code", "get_ref_materials.R"))
 
 ## Introduction
 
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Explain** how time series data depart from the assumption of observational independence and why this matters
+2. **Contrast** time-domain and frequency-domain perspectives on dependence structure
+3. **Interpret** the autocorrelation function (ACF) and partial autocorrelation function (PACF) as diagnostic tools
+4. **Recognize** the signatures of white noise, trend, and periodicity in the ACF and spectrum
+5. **Define** stationarity and explain its connection to time-invariance
+6. **Calculate** effective sample size and explain its implications for inference
+:::
+
 Throughout this book we have seen that understanding and decision support are intertwined—that knowing *why* a method works is what allows you to recognize when it applies and when it doesn't. Time series analysis makes this interplay especially vivid.
 
-The standard assumption underlying most statistical methods is that observations are independent: knowing the value of one observation tells you nothing about another. Time series data violate this assumption. Successive observations are dependent—today's temperature is informative about tomorrow's; this quarter's earnings relate to last quarter's; the sunspot count this month connects to counts in surrounding months.
+The standard assumption underlying most statistical methods is that observations are independent: knowing the value of one observation tells you nothing about another. Time series data follow a different structure. Successive observations are dependent: today's temperature is informative about tomorrow's; this quarter's earnings relate to last quarter's; the sunspot count this month connects to counts in surrounding months.
 
 This dependence is not merely a technical nuisance requiring adjusted formulas. It is *information*: information about how systems evolve, about underlying periodic structure, about the mechanisms that generate the data we observe. The autocorrelation structure of a time series is a fingerprint of the process that produced it. To ignore this structure is not just to get wrong standard errors—it is to miss what the data are telling us.
 
@@ -125,7 +132,7 @@ The sunspot record is one of the longest continuous scientific observations, ext
 astsa::tsplot(sunspot.month, ylab = "Sunspot count", col = 4, main = "")
 ```
 
-The series displays an obvious cyclical pattern—the approximately 11-year solar magnetic cycle during which sunspot activity rises and falls. But notice also the irregular amplitude: some cycles peak much higher than others. This is not simple periodic behavior; there is structure within the cycles.
+The series displays an obvious cyclical pattern: the approximately 11-year solar magnetic cycle during which sunspot activity rises and falls. But notice also the irregular amplitude: some cycles peak much higher than others. This is not simple periodic behavior; there is structure within the cycles.
 
 Sunspots matter beyond pure science. Solar activity affects space weather, which in turn influences satellite operations, radio communications, and power grid stability. The sunspot record is also a primary input for reconstructing total solar irradiance before the era of direct satellite measurement (pre-1978), relevant to understanding long-term climate variability.
 
@@ -140,7 +147,7 @@ The autocorrelation function reveals how the present relates to the past.
 ss_acf <- astsa::acf1(sunspot.month, max.lag = 200, main = "")
 ```
 
-The ACF shows several notable features. First, there is slow decay—values remain substantially correlated even at long lags. This indicates strong persistence: knowing this month's sunspot count tells you something about counts many months into the future. Second, the ACF oscillates, with peaks appearing roughly every 130 months (about 11 years). This oscillation reflects the solar cycle, but the ACF does not give a precise period—the peaks are broad, and reading the exact cycle length is difficult.
+The ACF shows several notable features. First, there is slow decay—values remain substantially correlated even at long lags. This indicates strong persistence: knowing this month's sunspot count tells you something about counts many months into the future. Second, the ACF oscillates, with peaks appearing roughly every 130 months (about 11 years). This oscillation reflects the solar cycle, but the ACF does not give a precise period: the peaks are broad, and reading the exact cycle length is difficult.
 
 The slow decay also hints at a challenge: this process may not be stationary in the strict sense. The varying amplitude of the cycles suggests that the statistical properties may shift over time. We will return to this issue when we discuss stationarity.
 
@@ -172,9 +179,9 @@ What the ACF revealed only through broad oscillations, the spectrum makes immedi
 astsa::tsplot(gtemp_land, ylab = "°C deviation", col = 4, main = "")
 ```
 
-Unlike sunspots, this series shows no obvious periodicity. The dominant feature is a trend—temperatures have risen, particularly since the 1970s. The trend is not linear; there are periods of relative stability followed by accelerations.
+Unlike sunspots, this series shows no obvious periodicity. The dominant feature is a trend: temperatures have risen, particularly since the 1970s. The trend is not linear; there are periods of relative stability followed by accelerations.
 
-This example illustrates the connection between scientific understanding and decision support at its starkest. The trend is the signal that has driven climate policy debates. But extrapolating the trend requires understanding its causes: greenhouse gas forcing, feedback mechanisms, natural variability. A purely statistical forecast that ignores the physics would be scientifically indefensible and practically useless for long-term planning.
+This example illustrates the connection between scientific understanding and decision support at its starkest. The trend is the signal that has driven climate policy debates. But extrapolating the trend requires an understanding of its causes: greenhouse gas forcing, feedback mechanisms, natural variability. A purely statistical forecast that ignores the physics would be scientifically indefensible and practically useless for long-term planning.
 
 #### Time Domain View
 
@@ -185,9 +192,9 @@ This example illustrates the connection between scientific understanding and dec
 gtl_acf <- astsa::acf1(gtemp_land, main = "")
 ```
 
-The ACF decays very slowly—each year is strongly correlated with the next, and correlations remain substantial even at lags of 20 or more years. This pattern is the time-domain signature of a trend: when there is a systematic increase over time, observations close together are similar (both relatively low early, both relatively high late), producing high autocorrelations.
+The ACF decays very slowly—each year is strongly correlated with the next, and correlations remain substantial even at lags of 20 or more years. This pattern is the time-domain signature of a trend: when there is a systematic increase over time, nearby observations are similar (from lower values to higher values), producing high autocorrelations.
 
-The slow ACF decay signals non-stationarity. The statistical properties of this series are not constant over time—the mean is changing. Before applying standard time series methods, we would need to remove or model the trend.
+The slow ACF decay signals non-stationarity. The statistical properties of this series are not constant over time—the mean is changing. Before applying standard time series methods we would need model and remove the trend.
 
 #### Frequency Domain View
 
@@ -198,7 +205,7 @@ The slow ACF decay signals non-stationarity. The statistical properties of this 
 astsa::mvspec(gtemp_land, log = "no", main = "", col = 4)
 ```
 
-The spectrum is dominated by low frequencies—most of the variance is concentrated near zero frequency. This is the frequency-domain signature of trend: a systematic change over time manifests as power at the lowest frequencies. There are no prominent peaks at higher frequencies; the series lacks the periodic structure we saw in sunspots.
+The spectrum is dominated by low frequencies: most of the variance is concentrated near zero frequency. This is the frequency-domain signature of trend: a systematic change over time manifests as power at the lowest frequencies. There are no prominent peaks at higher frequencies; the series lacks the periodic structure we saw in sunspots.
 
 The spectral view reinforces what the ACF suggested: this is a trend-dominated series without significant cyclical components. The story is secular change, not periodic oscillation.
 
@@ -217,9 +224,9 @@ astsa::tsplot(rec, ylab = "Recruitment", col = 4, main = "Fish Recruitment")
 
 The Southern Oscillation is a periodic fluctuation in sea surface temperature and air pressure across the tropical Pacific. Its warm phase is the well-known El Niño; its cool phase is La Niña. These oscillations affect weather patterns globally and have profound effects on marine ecosystems.
 
-The recruitment index measures the abundance of new fish entering a population—a quantity of direct economic importance to fisheries. Visual inspection suggests the two series are related: both show cyclical behavior with similar timing.
+The recruitment index measures the abundance of new fish entering a population, a quantity of direct economic importance to fisheries. Visual inspection suggests the two series are related: both show cyclical behavior with similar timing.
 
-This example sets up a key question that frequency-domain methods can answer: what periodicities are present in each series, and do they match? If SOI and recruitment share common frequencies, this supports a causal story linking ocean temperature to fish populations.
+This example sets up a key question that frequency-domain methods can answer: what periodicities are present in each series, and do they match? If SOI and recruitment share common frequencies, that would refine our understanding of potential causal mechanisms linking ocean temperature to fish populations.
 
 #### SOI: Dual Perspective
 
@@ -257,7 +264,7 @@ These three examples illustrate complementary strengths of the two perspectives:
 
 | Series | ACF reveals | Spectrum reveals |
 |--------|-------------|------------------|
-| Sunspots | Slow decay, oscillation | Precise 11-year period |
+| Sunspots | Slow decay, oscillation | Periodicity of ~11 years |
 | Global temps | Very slow decay (trend) | Low-frequency dominance |
 | SOI/Recruitment | Oscillation | Separate annual and El Niño cycles |
 
