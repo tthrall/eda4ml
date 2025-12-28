@@ -34,23 +34,25 @@ This book is part of a coordinated set of learning materials. How you use them d
 
 ### The Materials
 
-- **Slides** — Visual overviews of each chapter, available at the [eda4ml-slides repository](https://github.com/tthrall/eda4ml-slides)
-- **Workbooks** — Scaffolded exercises for active practice, generated via the `eda4mlr` R package
-- **This book** — Comprehensive exposition with theoretical grounding and references
+Three coordinated resources support each chapter, each with exercises serving a distinct purpose:
+
+- **Slides** — Visual overviews with embedded exercises for **engagement**. Available at the [eda4ml-slides repository](https://github.com/tthrall/eda4ml-slides)
+- **Workbooks** — Scaffolded exercises for **internalization** of content, generated via the `eda4mlr` R package
+- **This book** — Comprehensive exposition with additional exercises for **reinforcement and deepening**
 
 ### Recommended Sequence
 
 We recommend working through each chapter in this order:
 
-1. **Slides first.** Review the slide deck to get the big picture. What questions does this chapter address? What methods will you learn? This should take 15–20 minutes and gives you a mental framework for what follows.
+1. **Slides first.** Review the slide deck to get the big picture. What questions does this chapter address? What methods will you learn? The embedded exercises promote active engagement with the material as you encounter it. This should take 15–20 minutes and gives you a mental framework for what follows.
 
-2. **Workbook second.** Work through the exercises actively. Struggle is productive—if you get stuck, note your questions and proceed. The workbook is designed so that completing it means you have practiced each learning objective. Generate your workbook by installing the `eda4mlr` package and running:
+2. **Workbook second.** Work through the exercises actively. These are designed for internalization: completing the workbook means you have practiced each learning objective. Struggle is productive. If you get stuck, note your questions and proceed. Generate your workbook by installing the `eda4mlr` package and running:
 
    ```r
    eda4mlr::create_workbook(chapter = 1)  # or use the chapter slug
    ```
 
-3. **Book chapter third.** Read for deeper understanding. Your workbook struggles will make the exposition meaningful—you'll be reading to answer questions you actually have. After reading, return to any exercises that gave you trouble.
+3. **Book chapter third.** Read for deeper understanding. Your workbook struggles will make the exposition meaningful, because you'll be reading to answer questions you actually have. The book's exercises are optional, intended for those who want additional practice to reinforce and deepen their learning. After reading, return to any workbook exercises that gave you trouble.
 
 This sequence may feel backwards if you're used to reading first and practicing second. But technical material is learned through engagement, not absorption. The slides orient you; the workbook surfaces your confusions; the book resolves them.
 
