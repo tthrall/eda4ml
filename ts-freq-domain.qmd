@@ -15,16 +15,10 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: cran_libraries
 
-library(assertthat)
 library(astsa)
 library(here)
 library(knitr)
-library(latex2exp)
 library(tidyverse)
-library(tinytex)
-library(tsibble)
-library(tsibbledata)
-library(xts)
 ```
 
 ```{r}
@@ -50,19 +44,24 @@ library(eda4mldata)
 
 # stabilize simulated data
 source(here("code", "eda4ml_set_seed.R"))
-
-# gen_ds_tbl
-# compile a tibble that identifies data sets
-source(here("code", "gen_ds_tbl.R"))
-
-# get_ref_materials
-# encapsulate reference materials as separate modules
-source(here("code", "get_ref_materials.R"))
 ```
 
 ------------------------------------------------------------------------
 
 ## Introduction
+
+::: {.callout-note}
+## Learning objectives
+
+Here are the learning objectives for this chapter:
+
+1. **Interpret** the spectrum as a variance decomposition by frequency
+2. **Derive** the theoretical spectra of AR and MA processes from their time-domain parameters
+3. **Explain** why the periodogram is inconsistent and how smoothing addresses this problem
+4. **Estimate** spectra using smoothed periodograms and interpret confidence intervals
+5. **Compute** coherence between two series and interpret what it reveals about shared periodicity
+6. **Describe** the complementary use of time-domain and frequency-domain methods
+:::
 
 Chapter 12 introduced two complementary views of time series dependence: the time domain, where the autocorrelation function (ACF) measures how observations relate across lags, and the frequency domain, where the spectrum measures how variance is distributed across periodic components. Chapter 13 developed the time-domain view into a family of forecasting models—AR, MA, ARIMA, SARIMA—that exploit autocorrelation structure for prediction.
 
