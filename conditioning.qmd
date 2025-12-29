@@ -15,11 +15,9 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
 library(here)
-library(latex2exp)
+library(knitr)
 library(tidyverse)
-library(tinytex)
 library(UsingR)
 
 ```
@@ -74,6 +72,18 @@ This chapter develops the machinery for describing and measuring relationships b
 - **Statistical independence.** Two variables are independent when knowing one tells us nothing about the other—that is, when the conditional distribution equals the marginal distribution. We examine independence for both continuous and categorical variables, and encounter Simpson's paradox as a cautionary tale about confounding.
 
 Throughout, we emphasize the geometric interpretation: regression as orthogonal projection, correlation as the cosine of an angle between standardized variables. These perspectives, developed more fully in Part 2, connect exploratory analysis to the linear algebra underlying modern machine learning.
+
+::: {.callout-note}
+## Learning objectives
+
+1. Define conditional expectation and the graph of averages. Explain their relevance to prediction.
+2. Define z-score as the number of SDs above or below the mean. Convert a vector of numeric values to a vector of sample z-scores.
+3. Distinguish between the SD line and the regression line and explain why the regression line is less steep.
+4. Compute and interpret the correlation coefficient as a measure of linear association.
+5. Explain why correlation does not imply causation and why zero correlation does not imply independence.
+6. Recognize Simpson's paradox and identify when aggregated patterns may reverse upon disaggregation.
+7. Apply the chi-squared test to assess independence of categorical variables.
+:::
 
 ## Heights of Fathers and Sons
 

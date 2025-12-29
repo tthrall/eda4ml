@@ -15,11 +15,9 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
 library(here)
-library(latex2exp)
+library(knitr)
 library(tidyverse)
-library(tinytex)
 library(UsingR)
 
 ```
@@ -74,6 +72,16 @@ Tukey contrasted EDA with what he called "confirmatory data analysis" (CDA). Con
 ## The EDA mindset
 
 EDA is not a single technique but a mindset: a willingness to look at data from multiple angles, to transform variables, to compare subgroups, and above all to ask questions.
+:::
+
+::: {.callout-note}
+## Learning objectives
+
+1. Distinguish between exploratory and confirmatory data analysis and explain when each is appropriate.
+2. Select appropriate measures of central tendency (mean, median) and dispersion (SD, IQR) based on data characteristics.
+3. Construct basic visualizations: histograms, scatter diagrams, and box plots.
+4. Interpret scatter plots, box plots, and histograms to identify patterns, outliers, and distributional shape.
+5. Formulate questions that can initiate exploratory analysis of an unfamiliar dataset.
 :::
 
 ## Data as a Sample from a Population
@@ -184,7 +192,7 @@ The data contain `r nrow(father_son_ht)` father-son pairs. Here is a scatter plo
 #| fig-cap: "Heights in inches of father-son pairs"
 
 g_father_son_ht <- father_son_ht |> 
-  ggplot2::ggplot(mapping = aes(x = father, y = son)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = father, y = son)) + 
   ggplot2::geom_point(alpha = 0.4) + 
   ggplot2::labs(
     title = "Heights of Father-Son Pairs",
@@ -223,7 +231,7 @@ For graphical summaries, histograms and density plots serve complementary purpos
 #| fig-cap: "Distribution of father's heights"
 
 father_son_ht |> 
-  ggplot2::ggplot(mapping = aes(x = father)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = father)) + 
   ggplot2::geom_histogram(
     binwidth = 1, 
     fill = "steelblue", 
@@ -241,7 +249,7 @@ A density plot smooths the histogram into a continuous curve, making the overall
 #| fig-cap: "Kernel density estimate of father's heights"
 
 father_son_ht |> 
-  ggplot2::ggplot(mapping = aes(x = father)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = father)) + 
   ggplot2::geom_density(fill = "steelblue", alpha = 0.5) + 
   ggplot2::labs(
     x = "Father's height (inches)",
@@ -263,7 +271,7 @@ To see how the distribution of sons' heights varies with father's height, we can
 # f_ivl: successive 2-inch intervals of father heights
 # f_mpt: mid-point of each interval
 father_son_ht <- father_son_ht |> 
-  mutate(
+  dplyr::mutate(
     f_ivl = cut(father, seq(58, 76, 2)), 
     f_mpt = (2 * ceiling(father/2)) - 1
   )
@@ -275,8 +283,8 @@ father_son_ht <- father_son_ht |>
 
 g_f_mpt <- father_son_ht |> 
   dplyr::filter(!is.na(f_mpt)) |> 
-  ggplot2::ggplot(mapping = aes(
-    x = f_mpt |> as_factor(), 
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    x = f_mpt |> forcats::as_factor(), 
     y = son
   )) + 
   ggplot2::geom_boxplot() + 
@@ -345,7 +353,7 @@ height_per_fs <- father_son_ht |>
 #| fig-cap: "Distribution of heights for fathers and sons"
 
 g_ht_per_fs <- height_per_fs |> 
-  ggplot2::ggplot(mapping = aes(x = generation, y = height)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = generation, y = height)) + 
   ggplot2::geom_boxplot() + 
   ggplot2::labs(
     title = "Height Distribution: Fathers vs. Sons",
@@ -361,8 +369,8 @@ g_ht_per_fs
 
 fs_smy <- height_per_fs |> 
   dplyr::select(generation, height) |>
-  group_by(generation) |> 
-  summarise(
+  dplyr::group_by(generation) |> 
+  dplyr::summarise(
     n      = n(),
     min    = min(height), 
     median = median(height), 
@@ -387,7 +395,7 @@ Because each son is matched to his father, we can examine the *within-pair* diff
 #| label: s-minus-f
 
 father_son_ht <- father_son_ht |> 
-  mutate(s_minus_f = son - father)
+  dplyr::mutate(s_minus_f = son - father)
 ```
 
 ```{r}
@@ -395,7 +403,7 @@ father_son_ht <- father_son_ht |>
 #| fig-cap: "Distribution of height differences (son minus father)"
 
 g_s_minus_f <- father_son_ht |> 
-  ggplot2::ggplot(mapping = aes(x = s_minus_f)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = s_minus_f)) + 
   ggplot2::geom_histogram(binwidth = 1, color = "white") + 
   ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "red") + 
   ggplot2::labs(
@@ -411,7 +419,7 @@ g_s_minus_f
 #| tbl-cap: "Summary statistics for height differences"
 
 diff_smy <- father_son_ht |>
-  summarise(
+  dplyr::summarise(
     n      = n(),
     min    = min(s_minus_f),
     median = median(s_minus_f),
