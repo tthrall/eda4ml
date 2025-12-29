@@ -15,14 +15,12 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
 library(dbscan)
 library(GGally)
 library(here)
 library(ISLR2)
-library(latex2exp)
+library(knitr)
 library(tidyverse)
-library(UsingR)
 
 ```
 
@@ -60,16 +58,13 @@ source(here("code", "xtabs_to_jaccard.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Explain** why clustering is useful for exploring high-dimensional data where direct visualization fails
-2. **Construct** grouping variables from continuous measurements and interpret the resulting groups
-3. **Apply** z-score standardization to prepare variables for distance-based clustering
-4. **Execute** K-means clustering using `stats::kmeans()`, including the use of multiple random starts (`nstart`)
-5. **Interpret** within-cluster sum of squares (WCSS) and use the elbow method to guide the choice of $K$
-6. **Compare** clusterings using cross-tabulation and Jaccard similarity
-7. **Distinguish** between centroid-based (K-means) and density-based (DBSCAN) clustering approaches
-8. **Translate** cluster assignments into substantive interpretations using domain knowledge
+1. Explain why standardization (z-scores) is necessary before computing distances across variables with different scales.
+2. Apply K-means clustering and interpret the resulting cluster assignments.
+3. Use the elbow method to guide selection of the number of clusters.
+4. Profile clusters by examining variable means and distributions within each group.
+5. Evaluate clustering results using within-cluster sum of squares and Jaccard similarity.
+6. Distinguish between clustering for exploration versus clustering for comparison to a proposed classification.
+7. Distinguish between centroid-based (K-means) and density-based (DBSCAN) clustering approaches.
 :::
 
 ## Introduction
@@ -248,7 +243,7 @@ g_top_10
 #| fig-cap: "Instructional expenditure per student"
 
 g_Expend <- college_factors |> 
-  ggplot2::ggplot(mapping = aes(x = Expend)) + 
+  ggplot2::ggplot(mapping = ggplot2::aes(x = Expend)) + 
   ggplot2::geom_histogram() + 
   ggplot2::geom_vline(
     xintercept = expend_mid, linewidth = 2, colour = "red"
@@ -900,7 +895,7 @@ for (k in 2:k_max) {
 #| fig-cap: "Within-cluster sum of squares versus number of clusters"
 
 g_mk_tbl <- mk_tbl |> 
-  ggplot2::ggplot(mapping = aes(
+  ggplot2::ggplot(mapping = ggplot2::aes(
     x = k, y = wcss
   )) + 
   ggplot2::scale_x_continuous(

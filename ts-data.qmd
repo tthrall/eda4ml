@@ -35,7 +35,7 @@ library(tidyverse)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -61,14 +61,12 @@ source(here("code", "get_ref_materials.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Explain** how time series data depart from the assumption of observational independence and why this matters
-2. **Contrast** time-domain and frequency-domain perspectives on dependence structure
-3. **Interpret** the autocorrelation function (ACF) and partial autocorrelation function (PACF) as diagnostic tools
-4. **Recognize** the signatures of white noise, trend, and periodicity in the ACF and spectrum
-5. **Define** stationarity and explain its connection to time-invariance
-6. **Calculate** effective sample size and explain its implications for inference
+1. Explain why time series data violate the assumption of observational independence.
+2. Interpret the autocorrelation function (ACF) and partial autocorrelation function (PACF).
+3. Define stationarity and explain why it matters for time series analysis.
+4. Contrast time-domain and frequency-domain perspectives on time series.
+5. Identify patterns (trend, seasonality, noise) in time series plots.
+6. Calculate effective sample size and explain its implications for inference.
 :::
 
 Throughout this book we have seen that understanding and decision support are intertwined—that knowing *why* a method works is what allows you to recognize when it applies and when it doesn't. Time series analysis makes this interplay especially vivid.

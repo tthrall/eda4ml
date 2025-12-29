@@ -35,7 +35,7 @@ library(tidyverse)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -53,14 +53,12 @@ source(here("code", "eda4ml_set_seed.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Describe** the building blocks of time series models: back-shift operator, differencing, AR and MA polynomials
-2. **Identify** AR and MA processes from their ACF and PACF signatures
-3. **Fit** ARIMA and SARIMA models using R and interpret the results
-4. **Generate** forecasts with prediction intervals and explain why uncertainty grows with horizon
-5. **Apply** the Box-Jenkins modeling workflow: identification, estimation, diagnostic checking
-6. **Connect** exponential smoothing to its underlying ARIMA representation
+1. Define AR(p) and MA(q) processes and identify their ACF/PACF signatures.
+2. Fit an ARIMA model and interpret its parameters.
+3. Generate forecasts from a fitted ARIMA model and explain prediction intervals.
+4. Apply differencing to achieve stationarity.
+5. Describe the Box-Jenkins methodology for time series modeling.
+6. Connect exponential smoothing to its underlying ARIMA representation.
 :::
 
 Chapter 12 established that time series data have memory—successive observations are dependent, not independent—and that this dependence can be characterized through the autocorrelation function (ACF) and partial autocorrelation function (PACF). We saw that the patterns in these diagnostic plots reveal the structure of the underlying process.

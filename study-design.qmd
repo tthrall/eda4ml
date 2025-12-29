@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 #| label: CRAN-libraries
 
 library(here)
-library(latex2exp)
+library(knitr)
 library(tidyverse)
 
 ```
@@ -53,15 +53,13 @@ source(here("code", "eda4ml_set_seed.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Distinguish** between observational studies and controlled experiments, and identify the limitations of each
-2. **Explain** how selection bias and confounding can invalidate conclusions from observational data
-3. **Compare** quota sampling, simple random sampling, and multi-stage cluster sampling
-4. **Describe** the purpose and mechanics of double-blind experimental designs
-5. **Recognize** how analyst degrees of freedom can lead to divergent conclusions from identical data
-6. **Connect** study design principles to ML practices including train/test splits, label quality, and deployment drift
-7. **Calculate** the standard error of a sample mean and interpret its implications for estimation precision
+1. Explain why sample size alone does not guarantee valid inference.
+2. Give an example of selection bias in an observational study and its consequences.
+3. Distinguish between observational and experimental study designs.
+4. Define a sampling frame. Explain how it affects generalizability to a target population.
+5. Define and give examples of bias, chance error, and measurement uncertainty.
+6. Recognize how analyst degrees of freedom can lead to divergent conclusions from identical data.
+7. Calculate the standard error of a sample mean and interpret its implications for estimation precision.
 :::
 
 ## Introduction

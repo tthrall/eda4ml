@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
 library(beans)
 library(Cairo)
 library(conflicted)
@@ -48,7 +47,7 @@ tidymodels::tidymodels_prefer()
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -69,16 +68,15 @@ source(here("code", "wine_quality_uci.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Explain** the motivation for dimension reduction and the curse of dimensionality
-2. **Interpret** principal components geometrically as directions of maximum variance
-3. **Derive** principal components as eigenvectors of the covariance matrix
-4. **Determine** the need for centering alone versus centering _and_ scaling features
-5. **Construct** and interpret scree plots and cumulative variance plots
-6. **Create** and interpret biplots showing both observations and variable loadings
-7. **Connect** PCA to singular value decomposition (SVD)
-8. **Apply** PCA to real datasets and interpret the results substantively
+1. Describe the goal and method of Principal Component Analysis (PCA).
+2. Compute principal components via eigendecomposition of the covariance matrix.
+3. Interpret loadings as the contribution of original variables to each principal component.
+4. Use the scree plot to determine how many components to retain.
+5. Project high-dimensional data onto principal components for visualization.
+6. Explain when one should simply center the data, and when one should also re-scale the data, prior to PCA.
+7. Interpret principal components geometrically as directions of maximum variance.
+8. Create and interpret biplots showing both observations and variable loadings.
+9. Connect PCA to singular value decomposition (SVD).
 :::
 
 This chapter addresses a fundamental question in data analysis: along which directions do the features of a data set vary most?  The answer—principal component analysis (PCA)—is one of the most widely used techniques in statistical learning, providing both a method for dimension reduction and a lens for understanding the structure of high-dimensional data.

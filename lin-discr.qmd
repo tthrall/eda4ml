@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(assertthat)
 library(Cairo)
 library(conflicted)
 library(corrplot)
@@ -47,7 +46,7 @@ tidymodels::tidymodels_prefer()
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -66,15 +65,13 @@ source(here("code", "wine_quality_uci.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Formulate** classification as a decision-theoretic problem with loss functions and risk
-2. **Derive** the Bayes decision rule and explain when it yields linear boundaries
-3. **Explain** Fisher's discriminant criterion as maximising between-class variance relative to within-class variance
-4. **Distinguish** between LDA and QDA and identify when each is appropriate
-5. **Apply** LDA using R and interpret the discriminant directions and classification results
-6. **Compare** LDA to logistic regression and explain their relative strengths
-7. **Connect** LDA to PCA as supervised versus unsupervised approaches to dimension reduction
+1. Distinguish supervised from unsupervised methods, and dimension reduction from classification.
+2. Explain how LDA differs from PCA in its objective function.
+3. Interpret Fisher's criterion for LDA.
+4. Describe the relationship between LDA and logistic regression.
+5. Apply LDA in R to classify observations into groups.
+6. Evaluate classification accuracy using a confusion matrix.
+7. Distinguish between LDA and QDA and identify when each is appropriate.
 :::
 
 In @sec-pca we developed Principal Component Analysis as a method for finding directions of maximum variance in high-dimensional data.  PCA is *unsupervised*: it seeks structure in the feature matrix without reference to any response variable.  The directions of maximum variance may or may not be useful for distinguishing among groups of observations.

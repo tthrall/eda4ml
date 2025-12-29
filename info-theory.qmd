@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 #| label: CRAN-libraries
 
 library(here)
-library(latex2exp)
+library(knitr)
 library(tidyverse)
 
 ```
@@ -41,14 +41,13 @@ source(here("code", "eda4ml_set_seed.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Define** entropy as a measure of uncertainty and interpret its units (bits)
-2. **Calculate** entropy for simple discrete probability distributions
-3. **Explain** why the joint entropy of independent variables equals the sum of their individual entropies
-4. **Define** mutual information and interpret it as the reduction in uncertainty gained by knowing a related variable
-5. **Interpret** KL divergence as a measure of the cost of using a suboptimal probability model
-6. **Connect** entropy, mutual information, and KL divergence to machine learning applications including cross-entropy loss, decision trees, and feature selection
+1. Define, describe, and calculate entropy for finite probability distributions.
+2. Define and describe mutual information.
+3. Define and describe KL divergence.
+4. Describe how entropy is related to decision tree splitting.
+5. Give an example in which mutual information measures a nonlinear relationship that correlation does not measure.
+6. Describe the relationship between cross-entropy and KL divergence.
+7. Explain why the joint entropy of independent variables equals the sum of their individual entropies.
 :::
 
 ## Introduction

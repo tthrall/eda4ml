@@ -27,7 +27,7 @@ library(tm)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 ```
 
 ```{r}
@@ -43,14 +43,12 @@ source(here("code", "eda4ml_set_seed.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Explain** why text analysis converts documents to numerical representations
-2. **Perform** tokenization and remove stop words using tidytext
-3. **Construct** and interpret document-term matrices as high-dimensional sparse data
-4. **Compute** tf-idf scores and interpret them as measures of word distinctiveness
-5. **Describe** the generative model underlying Latent Dirichlet Allocation (LDA)
-6. **Compare** classical text analysis methods with LLM-based approaches
+1. Explain why text analysis requires converting documents into numerical representations.
+2. Apply stop word removal and stemming/lemmatization as preprocessing steps.
+3. Construct a document-term matrix (DTM) from a collection of documents.
+4. Calculate tf-idf scores and interpret their meaning.
+5. Compare "bag of words" approaches with sequence-aware embeddings.
+6. Describe the generative model underlying Latent Dirichlet Allocation (LDA).
 :::
 
 Imagine you work at an investment firm. Your task: review 500 quarterly reports and analyst reactions from companies in your portfolio. Identify emerging themes. Flag concerns. Recommend adjustments.
@@ -83,8 +81,8 @@ austen_words <- janeaustenr::austen_books() |>
   dplyr::count(word, sort = TRUE) |>
   dplyr::mutate(author = "Jane Austen")
 
-# H.G. Wells: four novels from eda4mldata
-wells_words <- eda4mldata::hgwells |>
+# H.G. Wells: four novels from eda4mlr
+wells_words <- eda4mlr::hgwells |>
   tidytext::unnest_tokens(word, text) |>
   dplyr::anti_join(tidytext::stop_words, by = "word") |>
   dplyr::count(word, sort = TRUE) |>
@@ -239,14 +237,14 @@ The distinctive property of text data is extreme *sparsity*. Most words do not a
 
 ### Example: Associated Press Articles
 
-The `topicmodels` package includes a document-term matrix of 2,246 Associated Press articles with a vocabulary of 10,473 terms. The `eda4mldata` package provides this data in tidy format:
+The `topicmodels` package includes a document-term matrix of 2,246 Associated Press articles with a vocabulary of 10,473 terms. The `eda4mlr` package provides this data in tidy format:
 
 ```{r}
 #| label: lst-ap-tidy
 #| lst-cap: "Associated Press articles in tidy format"
 #| echo: true
 
-ap_tidy <- eda4mldata::ap_tidy
+ap_tidy <- eda4mlr::ap_tidy
 ap_tidy
 ```
 
@@ -359,8 +357,8 @@ We fit an LDA model with $K = 2$ topics to the Associated Press articles:
 ```{r}
 #| label: ap-topics
 
-# Pre-computed LDA results from eda4mldata
-ap_topics <- eda4mldata::ap_topics
+# Pre-computed LDA results from eda4mlr
+ap_topics <- eda4mlr::ap_topics
 ```
 
 ```{r}

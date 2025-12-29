@@ -24,7 +24,7 @@ library(tidyverse)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -43,14 +43,14 @@ source(here::here("code", "eda4ml_set_seed.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Represent** networks as graphs with nodes, edges, and matrix representations
-2. **Compute** centrality measures (degree, betweenness, closeness, PageRank) and interpret their meanings
-3. **Detect** communities using modularity-based algorithms and evaluate partition quality
-4. **Analyze** bipartite graphs and construct projections for recommendation systems
-5. **Navigate** directed acyclic graphs (DAGs) for dependency and prerequisite reasoning
-6. **Build** feature matrices from graph structure for machine learning tasks
+1. Define the basic vocabulary of graph theory: nodes, edges, directed/undirected, weighted/unweighted.
+2. Construct adjacency matrices and edge lists from graph descriptions.
+3. Calculate degree, betweenness, and closeness centrality measures.
+4. Interpret centrality measures in the context of real-world networks.
+5. Apply community detection algorithms and interpret the results.
+6. Explain how graph structure can be converted into features for machine learning.
+7. Analyze bipartite graphs and construct projections for recommendation systems.
+8. Navigate directed acyclic graphs (DAGs) for dependency and prerequisite reasoning.
 :::
 
 In previous chapters we have seen that understanding and decision support are complementary: knowing *why* a pattern exists enables us to predict *what* will happen next. For network data this stereoscopic view of theory and application is especially useful.
@@ -900,16 +900,16 @@ The `igraph` package provides a comprehensive toolkit for graph analysis in R. T
 
 ### Installing Required Packages
 
-The examples in this chapter use the `igraph` package for graph analysis and `igraphdata` for built-in datasets. The LearningGraph example uses the `eda4mldata` package.
+The examples in this chapter use the `igraph` package for graph analysis and `igraphdata` for built-in datasets. The LearningGraph example uses the `eda4mlr` package.
 
 ```
 # Install from CRAN
 install.packages("igraph")
 install.packages("igraphdata")
 
-# Install eda4mldata from GitHub
+# Install eda4mlr from GitHub
 # install.packages("remotes")
-remotes::install_github("tthrall/eda4mldata")
+remotes::install_github("tthrall/eda4mlr")
 ```
 
 ### Constructing Graphs
@@ -1103,7 +1103,7 @@ Graphs are everywhere in modern data science: social networks, knowledge bases, 
 
 4.  **(Feature Matrix for Node Classification)** Using the Karate Club network, create a tibble with one row per node and columns for: node ID, degree, normalized betweenness, closeness, PageRank, and faction membership (1 for Mr. Hi's faction, 2 for John A's faction). The faction assignments are: nodes 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 17, 18, 20, 22 belong to faction 1; all others belong to faction 2. Examine whether the centrality features differ systematically between factions.
 
-5.  **(LearningGraph Exploration)** Install and load the `eda4mldata` package from GitHub. Load the `learning_graph` dataset. (a) How many skills, courses, and learners are in the graph? (b) Build the skill prerequisite graph from `learning_graph$edges$prerequisite` and visualize it. (c) Find the skill with the most prerequisites (highest in-degree in the prerequisite DAG). (d) Find the skill that is prerequisite to the most other skills (highest out-degree).
+5.  **(LearningGraph Exploration)** Install and load the `eda4mlr` package from GitHub. Load the `learning_graph` dataset. (a) How many skills, courses, and learners are in the graph? (b) Build the skill prerequisite graph from `learning_graph$edges$prerequisite` and visualize it. (c) Find the skill with the most prerequisites (highest in-degree in the prerequisite DAG). (d) Find the skill that is prerequisite to the most other skills (highest out-degree).
 
 6.  **(Learning Path)** Using the `learning_graph` data, identify all skills that are prerequisites (directly or transitively) for "Statistical Learning" (skill_id = 18). Use `igraph::subcomponent()` with mode = "in" to find all ancestors in the prerequisite DAG. How many skills must be mastered before reaching Statistical Learning?
 

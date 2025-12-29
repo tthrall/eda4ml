@@ -26,7 +26,7 @@ library(topicmodels)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 ```
 
 ```{r}
@@ -43,14 +43,12 @@ source(here("code", "text_helpers.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Explain** the generative story underlying Latent Dirichlet Allocation (LDA)
-2. **Interpret** the β (words-per-topic) and γ (topics-per-document) matrices from a fitted topic model
-3. **Fit** LDA models and extract results in tidy format
-4. **Describe** the role of the Dirichlet distribution and its concentration parameter
-5. **Compare** topic model results across different values of K
-6. **Apply** practical strategies for choosing K, the number of topics
+1. Describe the generative model underlying Latent Dirichlet Allocation (LDA).
+2. Interpret beta (word distributions per topic) and gamma (topic distributions per document).
+3. Fit an LDA model in R and extract topic-word and document-topic distributions.
+4. Select and justify the number of topics (K) using coherence metrics or domain knowledge.
+5. Evaluate topic quality through inspection of top words and representative documents.
+6. Describe the role of the Dirichlet distribution and its concentration parameter.
 :::
 
 Chapter 10 established that text can be represented as high-dimensional, sparse data. We learned to tokenize documents, construct term-document matrices, and use tf-idf to identify distinctive words. We also introduced topic models as methods for discovering latent themes, but deferred the question of *how* they work.
@@ -281,7 +279,7 @@ We now turn to a larger corpus: 2,246 Associated Press articles from around 1988
 ```{r}
 #| label: load-ap-dtm
 
-ap_dtm <- eda4mldata::ap_tidy |>
+ap_dtm <- eda4mlr::ap_tidy |>
   tidytext::cast_dtm(document = document, term = term, value = count)
 ```
 

@@ -16,18 +16,19 @@ knitr::opts_chunk$set(
 ```{r}
 #| label: CRAN-libraries
 
-library(tidyverse)
+library(knitr)
 library(scatterplot3d)
+library(tidyverse)
 ```
 
 ```{r}
 #| label: data
 
-# Load Galton family heights from eda4mldata
-data(galton_families, package = "eda4mldata")
+# Load Galton family heights from eda4mlr
+data(galton_families, package = "eda4mlr")
 
 # Load OECD Better Life Index
-data(oecd_bli, package = "eda4mldata")
+data(oecd_bli, package = "eda4mlr")
 ```
 
 ------------------------------------------------------------------------
@@ -35,16 +36,15 @@ data(oecd_bli, package = "eda4mldata")
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Express** the linear regression model in matrix notation and identify the role of each component
-2. **Distinguish** between row and column perspectives of a data matrix and explain when each is useful
-3. **Interpret** least-squares regression as orthogonal projection onto the column space of the feature matrix
-4. **Derive** the normal equations from the orthogonality condition
-5. **Explain** why centering data eliminates the intercept term and simplifies the geometry
-6. **Verify** that the projection matrix is symmetric and idempotent, and interpret these properties geometrically
-7. **Apply** the Pythagorean decomposition to relate total, explained, and residual variance
-8. **Connect** the projection framework to regularization, PCA, and other machine learning methods
+1. In a scatter diagram, identify whether a given point represents an observation or a feature.
+2. In the standard formulation of a linear regression model, identify whether a column of the X matrix represents an observation or a feature.
+3. Describe how the concept of orthogonal projection applies to linear least-squares regression.
+4. In linear regression, define the normal equations.
+5. In linear regression, define the orthogonal projection matrix derived from the normal equations.
+6. Explain why centering data simplifies the geometry of linear regression.
+7. In linear regression, explain why residuals are orthogonal to all feature vectors.
+8. Describe covariance and correlation as inner products of centered vectors.
+9. Apply the Pythagorean decomposition to relate total, explained, and residual variance.
 :::
 
 Linear regression is one of the most fundamental tools in statistics and machine learning. This chapter presents linear regression from the perspective of linear algebra, revealing a geometric interpretation that unifies regression with other methods we will encounter in subsequent chapters.
@@ -851,7 +851,7 @@ For the 2D projection exercise above:
 
 #### Centering Heights
 
-Using the `galton_families` data from `eda4mldata`:
+Using the `galton_families` data from `eda4mlr`:
 
 (a) Filter to sons only and center the mother, father, and child height vectors by subtracting their means.
 

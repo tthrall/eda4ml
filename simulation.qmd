@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 #| label: CRAN-libraries
 
 library(here)
-library(latex2exp)
+library(knitr)
 library(tidyverse)
 
 ```
@@ -43,15 +43,13 @@ source(here("code", "gen_circuit.R"))
 ::: {.callout-note}
 ## Learning objectives
 
-Here are the learning objectives for this chapter:
-
-1. **Use** R's distribution functions (`d`/`p`/`q`/`r` prefix convention) to compute densities, probabilities, quantiles, and random samples
-2. **Design** a simulation study with appropriate parameters (sample size $n$, replications $R$) and storage structures
-3. **Verify** theoretical results through simulation, such as the variance ratio of sample mean versus median
-4. **Apply** Monte Carlo methods to estimate quantities that are difficult to compute analytically
-5. **Explain** when importance sampling is needed and implement it for rare event estimation
-6. **Construct** bootstrap confidence intervals for arbitrary statistics
-7. **Connect** simulation methods to machine learning techniques including cross-validation, stochastic gradient descent, and Bayesian inference
+1. For a given family of probability distributions, distinguish R's 4 types of function: d/p/q/r.
+2. Generate a pseudo-random sample from common families of probability distributions.
+3. Design and implement Monte Carlo simulations to estimate quantities of interest.
+4. Compare estimators (e.g., mean vs. median) by examining their sampling distributions.
+5. Apply the bootstrap to construct confidence intervals without relying on parametric formulas.
+6. Explain when and why importance sampling is needed for rare event estimation.
+7. Connect simulation methods to machine learning techniques including cross-validation, stochastic gradient descent, and Bayesian inference.
 :::
 
 ## Introduction {#sec-introduction}
