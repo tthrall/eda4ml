@@ -403,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">15:37 Mon 29-Dec-2025</p>
+      <p class="date">05:13 Tue 30-Dec-2025</p>
     </div>
   </div>
   
@@ -564,7 +564,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="companion-package-eda4ml" class="level4">
 <h4 class="anchored" data-anchor-id="companion-package-eda4ml">Companion Package: eda4ml</h4>
-<p>For datasets not available in standard R packages, we provide the <code>eda4ml</code> package. This package includes cleaned, documented versions of:</p>
+<p>For datasets not available in standard R packages, we provide the <code>eda4mlr</code> package. This package includes cleaned, documented versions of:</p>
 <ul>
 <li>UCI Wine Quality data (red and white wines)</li>
 <li>Additional datasets introduced in later chapters</li>
@@ -576,9 +576,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Install eda4ml package</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"tthrall/eda4mldata"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"tthrall/eda4mlr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Once installed, access the wine quality data with:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mldata)</span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mlr)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(wine_quality)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="direct-data-access-alternative" class="level4">
@@ -640,7 +640,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>Package installation problems</strong>: Ensure you have a stable internet connection and try restarting R. On Linux, you may need system libraries for some packages.</p></li>
 <li><p><strong>RStudio issues</strong>: Check that you have the latest version installed.</p></li>
 <li><p><strong>Code errors</strong>: Verify that you have copied code exactly, including punctuation. R is case-sensitive.</p></li>
-<li><p><strong>Data access</strong>: If the UCI repository is unavailable, the <code>eda4ml</code> package provides a reliable alternative source for the wine quality data.</p></li>
+<li><p><strong>Data access</strong>: If the UCI repository is unavailable, the <code>eda4mlr</code> package provides a reliable alternative source for the wine quality data.</p></li>
 </ol>
 
 
