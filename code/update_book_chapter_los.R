@@ -31,15 +31,15 @@ BOOK_CHAPTERS_DIR <- here::here()
 
 # Chapter slug mapping (chapter number -> filename without .qmd)
 CHAPTER_SLUGS <- c(
-  "1"  = "eda",
- "2"  = "conditioning",
- "3"  = "clustering",
- "4"  = "simulation",
- "5"  = "study-design",
- "6"  = "info-theory",
- "7"  = "lin-reg",
- "8"  = "pca",
- "9"  = "lin-discr",
+  "1" = "eda",
+  "2" = "conditioning",
+  "3" = "clustering",
+  "4" = "simulation",
+  "5" = "study-design",
+  "6" = "info-theory",
+  "7" = "lin-reg",
+  "8" = "pca",
+  "9" = "lin-discr",
  "10" = "text-as-data",
  "11" = "topic-models",
  "12" = "ts-data",
@@ -126,7 +126,7 @@ replace_lo_block <- function(content, new_block) {
    if (stringr::str_detect(content[i], "^:::\\s*\\{.callout-note\\}")) {
      # Check if next non-empty line is "## Learning objectives"
      for (j in (i+1):min(i+3, length(content))) {
-       if (stringr::str_detect(content[j], "^##\\s*Learning [Oo]bjectives"))
+       if (stringr::str_detect(content[j], "^##\\s*Learning [Oo]bjectives")) {
          start_idx <- i
          break
        }
