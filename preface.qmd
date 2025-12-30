@@ -139,7 +139,7 @@ R or are easily installed from CRAN:
 The `datasets` package is loaded automatically when you start R, so these
 datasets are immediately available.
 
-#### Companion Package: eda4ml
+#### Companion Package: eda4mlr
 
 For datasets not available in standard R packages, we provide the `eda4mlr`
 package. This package includes cleaned, documented versions of:
