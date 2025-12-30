@@ -48,7 +48,8 @@ source(here("code", "text_helpers.R"))
 3. Fit an LDA model in R and extract topic-word and document-topic distributions.
 4. Select and justify the number of topics (K) using coherence metrics or domain knowledge.
 5. Evaluate topic quality through inspection of top words and representative documents.
-6. Describe the role of the Dirichlet distribution and its concentration parameter.
+6. Distinguish Latent Dirichlet Allocation (topic model) from Linear Discriminant Analysis (classification method).
+7. Describe the role of the Dirichlet distribution and its concentration parameter.
 :::
 
 Chapter 10 established that text can be represented as high-dimensional, sparse data. We learned to tokenize documents, construct term-document matrices, and use tf-idf to identify distinctive words. We also introduced topic models as methods for discovering latent themes, but deferred the question of *how* they work.

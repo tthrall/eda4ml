@@ -59,6 +59,7 @@ source(here("code", "eda4ml_set_seed.R"))
 4. Apply spectral smoothing to obtain consistent spectral estimates.
 5. Identify dominant frequencies in a time series using spectral analysis.
 6. Compute coherence between two series and interpret what it reveals about shared periodicity.
+7. Describe the spectral density function of an AR(1) or MA(1) model.
 :::
 
 Chapter 12 introduced two complementary views of time series dependence: the time domain, where the autocorrelation function (ACF) measures how observations relate across lags, and the frequency domain, where the spectrum measures how variance is distributed across periodic components. Chapter 13 developed the time-domain view into a family of forecasting models—AR, MA, ARIMA, SARIMA—that exploit autocorrelation structure for prediction.

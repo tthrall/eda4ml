@@ -57,8 +57,10 @@ source(here("code", "eda4ml_set_seed.R"))
 2. Fit an ARIMA model and interpret its parameters.
 3. Generate forecasts from a fitted ARIMA model and explain prediction intervals.
 4. Apply differencing to achieve stationarity.
-5. Describe the Box-Jenkins methodology for time series modeling.
-6. Connect exponential smoothing to its underlying ARIMA representation.
+5. Diagnose model adequacy by checking that residuals approximate white noise.
+6. Compare models using information criteria (AIC, BIC).
+7. Describe the Box-Jenkins methodology for time series modeling.
+8. Connect exponential smoothing to its underlying ARIMA representation.
 :::
 
 Chapter 12 established that time series data have memory—successive observations are dependent, not independent—and that this dependence can be characterized through the autocorrelation function (ACF) and partial autocorrelation function (PACF). We saw that the patterns in these diagnostic plots reveal the structure of the underlying process.

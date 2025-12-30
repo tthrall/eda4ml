@@ -49,8 +49,9 @@ source(here::here("code", "eda4ml_set_seed.R"))
 4. Interpret centrality measures in the context of real-world networks.
 5. Apply community detection algorithms and interpret the results.
 6. Explain how graph structure can be converted into features for machine learning.
-7. Analyze bipartite graphs and construct projections for recommendation systems.
-8. Navigate directed acyclic graphs (DAGs) for dependency and prerequisite reasoning.
+7. Analyze bipartite graphs and construct projections.
+8. Describe differences between graph analysis for understanding versus prediction.
+9. Navigate directed acyclic graphs (DAGs) for dependency and prerequisite reasoning.
 :::
 
 In previous chapters we have seen that understanding and decision support are complementary: knowing *why* a pattern exists enables us to predict *what* will happen next. For network data this stereoscopic view of theory and application is especially useful.
