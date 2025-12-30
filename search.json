@@ -60,6 +60,16 @@
     ]
   },
   {
+    "objectID": "preface.html#how-to-cite",
+    "href": "preface.html#how-to-cite",
+    "title": "Preface",
+    "section": "How to Cite",
+    "text": "How to Cite\nIf you use this book in your research or teaching, please cite it as:\n\nThrall, T. (2025). Exploratory Data Analysis for Machine Learning. https://tthrall.github.io/eda4ml/\n\n\nBibTeX\n@book{thrall2025eda4ml,\n  author    = {Thrall, Tony},\n  title     = {Exploratory Data Analysis for Machine Learning},\n  year      = {2025},\n  url       = {https://tthrall.github.io/eda4ml/},\n  note      = {Online book}\n}",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
     "objectID": "eda.html",
     "href": "eda.html",
     "title": "1  Exploratory Data Analysis",
