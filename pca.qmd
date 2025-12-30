@@ -409,7 +409,7 @@ s_end_pc_2 <- fs_pca_end_pt_mat [["son",    "PC2"]]
 
 ```
 
-@fig-fs-pca illustrates PCA for (father, son) centred heights from the Galton data introduced in @sec-la-intro.
+@fig-fs-pca illustrates PCA for (father, son) centred heights from the Galton data introduced in @sec-lin-reg.
 
 ```{r}
 #| label: fig-fs-pca
