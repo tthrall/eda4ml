@@ -246,3 +246,21 @@ If you encounter difficulties:
 
 4. **Data access**: If the UCI repository is unavailable, the `eda4mlr`
    package provides a reliable alternative source for the wine quality data.
+
+## How to Cite
+
+If you use this book in your research or teaching, please cite it as:
+
+> Thrall, T. (2025). *Exploratory Data Analysis for Machine Learning*. https://tthrall.github.io/eda4ml/
+
+### BibTeX
+
+```bibtex
+@book{thrall2025eda4ml,
+  author    = {Thrall, Tony},
+  title     = {Exploratory Data Analysis for Machine Learning},
+  year      = {2025},
+  url       = {https://tthrall.github.io/eda4ml/},
+  note      = {Online book}
+}
+```
