@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this book, please cite it as below."
+type: book
+title: "Exploratory Data Analysis for Machine Learning"
+authors:
+  - family-names: Thrall
+    given-names: Tony
+    orcid: "https://orcid.org/0000-0001-5118-9411"
+year: 2025
+url: "https://tthrall.github.io/eda4ml/"
+repository-code: "https://github.com/tthrall/eda4ml"
+abstract: >-
+  Presents exploratory data analysis practices
+  as preparation for machine learning.  Covers foundations,
+  linear algebra methods, text analysis, time series, and graph theory.
+keywords:
+  - exploratory data analysis
+  - machine learning
+  - statistics
+  - R programming
+  - data science
+license: CC-BY-4.0
