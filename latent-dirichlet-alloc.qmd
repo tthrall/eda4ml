@@ -52,7 +52,7 @@ topicmodels_loaded <- require(topicmodels)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 

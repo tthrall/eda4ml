@@ -36,7 +36,7 @@ library(tidyverse)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -124,7 +124,7 @@ George Gallup had just created his polling organization. Gallup took a sample of
 ```{r}
 #| label: lit-digest-tbl
 
-lit_digest_tbl <- eda4mldata::lit_digest
+lit_digest_tbl <- eda4mlr::lit_digest
 
 ```
 
@@ -156,7 +156,7 @@ Truman was a colorful and effective US president, but he was the underdog in the
 ```{r}
 #| label: truman-dewey-tbl
 
-truman_dewey_tbl <- eda4mldata::truman_dewey
+truman_dewey_tbl <- eda4mlr::truman_dewey
 
 ```
 
@@ -276,14 +276,14 @@ The National Foundation for Infantile Paralysis (NFIP) ran a controlled experime
 ```{r}
 #| label: salk-blind
 
-salk_blind <- eda4mldata::salk_blind
+salk_blind <- eda4mlr::salk_blind
 
 ```
 
 ```{r}
 #| label: salk-nfip
 
-salk_nfip <- eda4mldata::salk_nfip
+salk_nfip <- eda4mlr::salk_nfip
 
 ```
 
@@ -328,7 +328,7 @@ In some cases of cirrhosis of the liver, the patient may start to hemorrhage and
 ```{r}
 #| label: portacaval-tbl
 
-portacaval_tbl <- eda4mldata::portacaval_studies
+portacaval_tbl <- eda4mlr::portacaval_studies
 
 ```
 
@@ -350,7 +350,7 @@ This sort of bias seems to have been at work in the poorly-controlled studies of
 ```{r}
 #| label: shunt-survival
 
-shunt_survival <- eda4mldata::portacaval_survival
+shunt_survival <- eda4mlr::portacaval_survival
 
 ```
 
@@ -454,7 +454,7 @@ NB10_wide <- tibble::tribble(
 ```{r}
 #| label: NB10-long
 
-NB10_long <- eda4mldata::nb10
+NB10_long <- eda4mlr::nb10
 
 ```
 

@@ -102,7 +102,7 @@ The EDA mindset encourages:
 
 - **Sensitivity analysis**: Check whether conclusions depend on specific choices. If a different reasonable specification yields different results, report that.
 
-- **Reproducibility**: Provide code and data so others can verify and extend your work. The `eda4mldata` package accompanying this book exemplifies this commitment.
+- **Reproducibility**: Provide code and data so others can verify and extend your work. The `eda4mlr` package accompanying this book exemplifies this commitment.
 
 - **Humility**: Recognize that analysis involves judgment. Present findings as what-the-data-suggest rather than what-is-certainly-true.
 
@@ -168,10 +168,10 @@ For hands-on data science in R:
 
 ### The Companion Package
 
-The `eda4mldata` package provides datasets used in this book, cleaned and documented for pedagogical use. Install it from GitHub:
+The `eda4mlr` package provides datasets used in this book, cleaned and documented for pedagogical use. Install it from GitHub:
  
 ```r
-remotes::install_github("tthrall/eda4mldata")
+remotes::install_github("tthrall/eda4mlr")
 ```
 
 The package includes classic datasets (Galton heights, wine quality, OECD Better Life Index), text corpora (H.G. Wells novels, AP news articles), time series examples, and the LearningGraph knowledge graph introduced in @sec-graph-theory. Use these datasets to practice the methods, extend the examples, and develop your own analyses.
@@ -223,7 +223,7 @@ Silberzahn, R., & Uhlmann, E. L. (2015). Crowdsourced research: Many hands make 
 ### Online Resources
 
 - Book source code: <https://github.com/tthrall/eda4ml>
-- Companion package: <https://github.com/tthrall/eda4mldata>
+- Companion package: <https://github.com/tthrall/eda4mlr>
 - R for Data Science: <https://r4ds.hadley.nz/>
 - Text Mining with R: <https://www.tidytextmining.com/>
 - Network Science (Barabási): <http://networksciencebook.com/>

@@ -141,7 +141,7 @@ datasets are immediately available.
 
 #### Companion Package: eda4ml
 
-For datasets not available in standard R packages, we provide the `eda4ml`
+For datasets not available in standard R packages, we provide the `eda4mlr`
 package. This package includes cleaned, documented versions of:
 
 - UCI Wine Quality data (red and white wines)
@@ -156,13 +156,13 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
 }
 
 # Install eda4ml package
-remotes::install_github("tthrall/eda4mldata")
+remotes::install_github("tthrall/eda4mlr")
 ```
 
 Once installed, access the wine quality data with:
 
 ```r
-library(eda4mldata)
+library(eda4mlr)
 data(wine_quality)
 ```
 
@@ -244,5 +244,5 @@ If you encounter difficulties:
 3. **Code errors**: Verify that you have copied code exactly, including
    punctuation. R is case-sensitive.
 
-4. **Data access**: If the UCI repository is unavailable, the `eda4ml`
+4. **Data access**: If the UCI repository is unavailable, the `eda4mlr`
    package provides a reliable alternative source for the wine quality data.

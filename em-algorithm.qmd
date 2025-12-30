@@ -36,7 +36,7 @@ library(tidyverse)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 

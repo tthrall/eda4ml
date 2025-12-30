@@ -38,7 +38,7 @@ library(tidyverse)
 ```{r}
 #| label: local-libraries
 
-library(eda4mldata)
+library(eda4mlr)
 
 ```
 
@@ -1076,7 +1076,7 @@ Clustering connects to supervised learning in several ways:
 
 3.  **(Iris K-means)** Apply the K-means algorithm to the iris measurements. How do the computed clusters compare to the grouping by variable `Species`? Count the number of observations corresponding to each combination of cluster and `Species`, for example by using R function `stats::xtabs()`.
 
-4.  **(Wine Quality Data, optional)** The `eda4mldata::wine_quality` dataset contains chemical measurements of wines. Apply K-means clustering to the numeric variables and interpret the resulting clusters. Do they correspond to quality ratings or wine color?
+4.  **(Wine Quality Data, optional)** The `eda4mlr::wine_quality` dataset contains chemical measurements of wines. Apply K-means clustering to the numeric variables and interpret the resulting clusters. Do they correspond to quality ratings or wine color?
 
 ## Resources
 
