@@ -35,6 +35,10 @@ book:
   repo-url: https://github.com/tthrall/eda4ml/
   repo-branch: main
   repo-actions: [edit, issue]
+  navbar:
+    right:
+      - text: "Slides"
+        href: https://tthrall.quarto.pub/eda-for-machine-learning-slides/
   chapters:
     - index.qmd
     - preface.qmd
@@ -69,4 +73,3 @@ book:
         - em-algorithm.qmd
     - summary.qmd
     - references.qmd
-
