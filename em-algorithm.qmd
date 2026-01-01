@@ -54,7 +54,7 @@ source(here("code", "eda4ml_set_seed.R"))
 
 Latent Dirichlet Allocation (LDA) was proposed as a method of topic modeling in 2003 in a paper by Blei, Ng, and Jordan. The method is briefly mentioned in Part 1 of the course. Several course participants requested a more detailed description. This note prepares for the requested response by introducing the EM Algorithm.[^book-Peng-ASC-EM]
 
-[^book-Peng-ASC-EM]:  See @Peng_2022_adv_stat_comp [chp. 4], and @EM_algo_Wikipedia_2025.
+[^book-Peng-ASC-EM]:  See @Peng_2022_adv_stat_comp [chp. 4], and @wiki_EM_algo.
 
 ## Example: Old Faithful eruptions
 
@@ -98,7 +98,7 @@ g_faithful_tbl
 
 The figure shows two clusters of data points.[^faithful-chambers] Here is probability model in which the delay and duration of each eruption follows one of two possible bivariate normal distributions depending on the group, $G$, to which it belongs.
 
-[^faithful-chambers]: Old Faithful eruptions are conjectured to occur in 2 distinct temporal patterns due to the presence of an upper and lower chamber beneath the vertical column (tube) that forms the geyser.  See @Vandemeulebrouck_Roux_Cros_2013.
+[^faithful-chambers]: Old Faithful eruptions are conjectured to occur in 2 distinct temporal patterns due to the presence of an upper and lower chamber beneath the vertical column (tube) that forms the geyser.  See @Vandemeulebrouck_etc_2013_old_faithful.
 
 $$
 \begin{align}
@@ -423,7 +423,7 @@ f_tag_smy |>
 
 We illustrate the iterations of the EM algorithm using function `mvnormalmixEM()` in R package `mixtools`.[^art-mixtools] We provide the function with our initial estimates of normal parameters.
 
-[^art-mixtools]:  See @mixtools2009.
+[^art-mixtools]:  See @r_doc_mixtools.
 
 ```{r}
 #| label: em-out
