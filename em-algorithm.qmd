@@ -215,7 +215,7 @@ initial_est <- faithful_4_smy |>
   )
 ```
 
-```{r initial_est__kable}
+```{r}
 #| label: tbl-initial-est
 #| tbl-cap: "Initial parameter estimates"
 

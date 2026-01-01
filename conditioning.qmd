@@ -1088,7 +1088,7 @@ ucb_ds_wide |> knitr::kable(
 
 Here are the same counts but now converted into per-department percentage of applications from males, females, and overall, respectively.
 
-```{r ucb_ds_pct}
+```{r}
 #| label: ucb-ds-pct
 
 # convert counts to percents
