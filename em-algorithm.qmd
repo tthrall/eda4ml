@@ -200,7 +200,7 @@ faithful_2 <- faithful_4 |>
   dplyr::select(g, delay, duration)
 ```
 
-```{r initial_est}
+```{r}
 #| label: initial-est
 
 initial_est <- faithful_4_smy |> 
