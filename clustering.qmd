@@ -608,9 +608,9 @@ Some clusters align well with manual groups (e.g., clusters largely contained wi
 The table above provides in more detail the similarities and differences between the initial (`grp_lbl`) and final (`cluster`) clusters from `kmeans()`. The table can be represented and summarized by [Jaccard's measure](https://en.wikipedia.org/wiki/Jaccard_index) of the similarity of two finite sets, $(A, B)$, namely:
 
 $$
-\begin{align}
+\begin{aligned}
   J(A, B) &= \frac{\left| A \cap B \right|}{\left| A \cup B \right|}
-\end{align}
+\end{aligned}
 $$ {#eq-Jaccard-similarity-measure}
 
 Letting $(A, B)$ denote the respective (row, column) of each cell in the above table, we obtain the following table of Jaccard similarity measures of each (`cluster`, `grp_lbl`) combination.

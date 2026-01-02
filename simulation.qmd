@@ -191,14 +191,14 @@ Consequently, in financial applications and other applications where long-tailed
 In some cases the robustness of the sample median comes at a cost. If the population distribution is normal with mean $\mu$ and variance $\sigma^2$ then the sample mean has smaller variance than the sample median (although they estimate the same population value).
 
 $$
-\begin{align}
+\begin{aligned}
   \text{Var} \left\{ \hat{\mu} \right\} &= \frac{\sigma^2}{n} \\ 
   \\ 
   \text{Var} \left\{ \hat{m} \right\} &= \frac{\pi}{2} \frac{\sigma^2}{n + 1} \\ 
   \\ 
   \frac{ \text{Var} \left\{ \hat{m} \right\} }{ \text{Var} \left\{ \hat{\mu} \right\} } &\approx \frac{\pi}{2} \\ 
   &\approx 1.57
-\end{align}
+\end{aligned}
 $$ {#eq-variance-mean-v-median}
 
 This ratio of variances in the normal case can be verified by simulation.

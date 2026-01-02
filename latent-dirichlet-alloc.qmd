@@ -749,9 +749,9 @@ Topic 1's top ten terms include "yooks" and "zooks", which do not appear in the 
 Another way to compare topics 1 and 2 is to examine the terms shared by the two topics and then find the terms having the biggest disparity in (topic, term) probability (beta). Here's a bar chart showing the more prominent differences, expressed as
 
 $$
-\begin{align}
+\begin{aligned}
   \log_2 \left( \frac{\beta_2}{\beta_1} \right)
-\end{align}
+\end{aligned}
 $$ {#eq-log2-ratio-topic-term}
 
 restricting the set of terms to those assigned to both topics $(\min(\beta_1, \beta_2) > 0)$ with at least one of them exceeding a probability threshhold, say $(\max(\beta_1, \beta_2) > 0.001)$.
@@ -796,18 +796,18 @@ The data set to be analyzed is a _corpus_ (set) $\mathcal{D}$ of documents.  Eac
 [^set-cardinality]: $| S |$ denotes the number of elements in a finite set $S$ (or more generally the cardinality of set $S$).  We extend this notation to a sequence.  If $d = (w_1, \ldots, w_n)$ is a finite sequence of words, we treat $d$ as a vector of length $n = |d|$.
 
 $$
-\begin{align}
+\begin{aligned}
   d &= (w_1, \ldots, w_{|d|})
-\end{align}
+\end{aligned}
 $$ {#eq-doc-equals-word-seq}
 
 The _vocabulary_ $V$ of the corpus is the set of _distinct_ terms that occur in one or more of the documents.
 
 $$
-\begin{align}
+\begin{aligned}
   V &= \cup_{d \in \mathcal{D}} \;  \{ v \in d \} \\ 
   &= \left \{ v_\nu \right \}_{\nu = 1}^N
-\end{align}
+\end{aligned}
 $$ {#eq-vocab-defn}
 
 where the elements of $V$ may be indexed, typically in alphabetical order.  These elements $v_\nu$ are referred to as _terms_.  We will use _word_ to mean an occurrence of a term within the corpus.  With this distinction, the total number of words (term occurrences) in the corpus exceeds or equals the number of distinct terms.[^token-NLP] [^term-v-word]
@@ -817,10 +817,10 @@ where the elements of $V$ may be indexed, typically in alphabetical order.  Thes
 [^term-v-word]: For clarity we use _term_ to mean a distinct element of a vocabulary, and we use _word_ to mean an occurrence of a term in the corpus.  There does not seem to be an established jargon for this distinction.
 
 $$
-\begin{align}
+\begin{aligned}
   \left | \mathcal{D} \right | &= \sum_{d \in \mathcal{D}} \; |d| \\ 
   &\ge | V |
-\end{align}
+\end{aligned}
 $$ {#eq-len-corpus-v-vocab}
 
 A _topic_ $\theta$ is a probability distribution over vocabulary $V$.  Since $V$ consists of a finite number $N = \left | V \right |$ of distinct terms, $\theta$ can be represented as probability vector of length $N$.
@@ -828,10 +828,10 @@ A _topic_ $\theta$ is a probability distribution over vocabulary $V$.  Since $V$
 The number $K$ of topics (categories) is prescribed for each analysis.  Given $K$ and $\mathcal{D}$, LDA produces a _topic model_ defined by a set of constructed topics, $\{ \theta_1, \ldots, \theta_K \}$.  These topic-specific probability vectors are stored in matrix $\beta$.
 
 $$
-\begin{align}
+\begin{aligned}
   \beta [k, \nu] &= \theta_k[\nu] \\ 
   &= \text{probability assigned by topic } \theta_k \text{ to term } v_\nu \in V
-\end{align}
+\end{aligned}
 $$ {#eq-matrix-beta}
 
 ### Generative Model
@@ -851,21 +851,21 @@ LDA treats each document as a mixture of topics, and each topic as a mixture of 
 These Dirichlet distributions are typically assumed to be symmetric.  That is, if we define 
 
 $$
-\begin{align}
+\begin{aligned}
   \bar{\alpha} &= \frac{\alpha_+}{K} = \frac{1}{K} \sum_{k = 1}^K
 \alpha_k \\ 
   \bar{\delta} &= \frac{\delta_+}{N} = \frac{1}{N} \sum_{\nu = 1}^N
 \delta_\nu
-\end{align}
+\end{aligned}
 $$ {#eq-avg-Dirichlet-param}
 
 then current practice is to set all elements of vectors $\alpha_\bullet$ and $\delta_\bullet$ equal to their respective average values.
 
 $$
-\begin{align}
+\begin{aligned}
   \alpha_k &= \bar{\alpha} \quad \text{for } k \in \{1, \ldots, K \} \\ 
   \delta_\nu &= \bar{\delta} \quad \text{for } \nu \in \{1, \ldots, N \}
-\end{align}
+\end{aligned}
 $$ {#eq-symm-Dirichlet}
 
 The values $\bar{\alpha}$ and $\bar{\delta}$ are called _concentration_ parameters.
@@ -883,11 +883,11 @@ The LDA identification of topics is a particular form of Markov chain Monte Carl
 Assignment of topics to terms is intially made at random in a manner similar to the generative model outlined above.  We thereby have initial values for: 
 
 $$
-\begin{align}
+\begin{aligned}
   n_{d, k} &= \text{number of assignments of topic } k \text{ to document } d \\ 
   n_{\nu, k} &= \text{number of assignments of topic } k \text{ to term } v_\nu \\ 
   n_k &= \text{number of assignments of topic } k \text{ across corpus } \mathcal{D} 
-\end{align}
+\end{aligned}
 $$ {#eq-log-ratio-topic-term}
 
 The Gibbs sampling procedure treats in turn each word position in the corpus, and estimates the probability of assigning the term in that position to each topic, conditioned on the current topic assignments of all other terms.  From this conditional distribution, a topic is generated and stored as the new topic assignment for the given term in the given position.

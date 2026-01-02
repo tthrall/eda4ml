@@ -599,7 +599,7 @@ This chapter developed the frequency-domain perspective on time series, compleme
 ## Appendix: Glossary of Notation {#sec-ts-freq-domain-glossary}
 
 $$
-\begin{align}
+\begin{aligned}
   f(\lambda) 
      \quad & \quad \text{spectrum (spectral density) at frequency } \lambda \\ 
   \\ 
@@ -638,5 +638,5 @@ $$
   \\ 
   \chi_\nu^2 
      \quad & \quad \text{chi-squared distribution with } \nu \text{ degrees of freedom}
-\end{align}
+\end{aligned}
 $$

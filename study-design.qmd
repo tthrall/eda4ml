@@ -571,17 +571,17 @@ The last example showed that NB10, nominally weighing 10 grams, actually weighs 
 We model a sequence of measured deficits
 
 $$
-\begin{align}
+\begin{aligned}
   D_{\bullet} &= (D_1, \ldots, D_n)
-\end{align}
+\end{aligned}
 $$ {#eq-deficit-vector}
 
 as independent, identically distributed random variables (whose common distribution is something like the histogram shown above). Each measured deficit $D_j$ is represented as the sum of $\mu_d$, the actual (but unknown) deficit, plus $\epsilon_j$, a chance error.
 
 $$
-\begin{align}
+\begin{aligned}
   D_j &= \mu_D + \epsilon_j
-\end{align}
+\end{aligned}
 $$ {#eq-deficit-model}
 
 We assume the population distribution of the chance errors has the same shape and scale as that of measured deficits, but with a population mean value of zero. Thus the chance errors have the same population standard deviation, $\sigma_D$, as the measured deficits. Based on the 100 NB10 measurements this unknown value is not too far from 6.5 micrograms.
@@ -589,7 +589,7 @@ We assume the population distribution of the chance errors has the same shape an
 Then $S(D_{\bullet})$, the sum of $n$ measured deficits, has the following expected value (population mean) and population variance.
 
 $$
-\begin{align}
+\begin{aligned}
   S(D_{\bullet}) &= \sum_{j = 1}^n D_j \\ 
   &= \sum_{j = 1}^n ( \mu_D + \epsilon_j ) \\ 
   &= n \; \mu_D \; + \; \sum_{j = 1}^n \epsilon_j \\ 
@@ -598,13 +598,13 @@ $$
   \\ 
   Var \left\{ S(D_{\bullet}) \right\} &= n \; Var \left\{ \epsilon_j \right\} \\ 
   &= n \; \sigma_D^2 \\
-\end{align}
+\end{aligned}
 $$ {#eq-sample-sum}
 
 Denoting the sample average as $A(\cdot)$, we have
 
 $$
-\begin{align}
+\begin{aligned}
   A(D_{\bullet}) &= \frac{1}{n} S(D_{\bullet}) \\ 
   &= \mu_D \; + \; A(\epsilon_{\bullet}) \\ 
   \\ 
@@ -616,24 +616,24 @@ $$
   \\ 
   SD \left\{ A(D_{\bullet}) \right\} &= \sqrt{Var \left\{ A(D_{\bullet}) \right\}} \\ 
   &= \frac{1}{\sqrt{n}}  \; \sigma_D \\
-\end{align}
+\end{aligned}
 $$ {#eq-sample-avg}
 
 Thus the population standard deviation of the sample average $A(D_{\bullet})$ can be estimated from the sample standard deviation:
 
 $$
-\begin{align}
+\begin{aligned}
   \hat{SD} \left\{ A(D_{\bullet}) \right\} &= \frac{1}{\sqrt{n}}  \; \hat{\sigma}_D \\
-\end{align}
+\end{aligned}
 $$ {#eq-std-error}
 
 Returning to our sample of 100 NB10 measurements, with a sample average of about 405 micrograms and a sample standard deviation of about 6.5 micrograms, we have
 
 $$
-\begin{align}
+\begin{aligned}
   \hat{SD} \left\{ A(D_{\bullet}) \right\} &= \frac{1}{\sqrt{100}}  \; 6.5 \\ 
   &= 0.65
-\end{align}
+\end{aligned}
 $$ {#eq-std-error-calc}
 
 Our sample average of 405 micrograms probably deviates from the actual deficit of NB10 by no more 2 micrograms or so.

@@ -235,10 +235,10 @@ The near-linearity of the loess curve here suggests that a linear model will be 
 Imagine choosing a father-son pair at random from the entire population and measuring their respective heights. This would be an example of a pair of random variables $(X, Y)$. If we happened to know the average and standard deviation of (father, son) heights, respectively, from the entire population, we could convert the given heights to so-called standard units, or z-scores, as follows.
 
 $$
-\begin{align}
+\begin{aligned}
   Z_x(X) = \frac{X - \mu_x}{\sigma_x} \\
   Z_y(Y) = \frac{Y - \mu_y}{\sigma_y} \\
-\end{align}
+\end{aligned}
 $$ {#eq-z-score}
 
 Here $\mu$ signifies the average (arithmetic mean) height across the entire population, and $\sigma$ denotes the population standard deviation. Thus $Z_x(X)$ gives the number of standard deviations above or below the population average (expected value).
@@ -246,19 +246,19 @@ Here $\mu$ signifies the average (arithmetic mean) height across the entire popu
 Of course we seldom have precise values for these population parameters. In practice we then use sample estimates of the parameters, say $\hat{\mu}$ for the sample average and $\hat{\sigma}$ for the sample standard deviation.
 
 $$ 
-\begin{align}
+\begin{aligned}
   \hat{\mu}_x &= \frac{1}{n} \sum_{k = 1}^{n} x_k \\ 
   \hat{\sigma}_{x}^2 &= \frac{1}{n-1} \sum_{k = 1}^{n} (x_k - \hat{\mu}_x)^2 \\ 
-\end{align} 
+\end{aligned} 
 $$ {#eq-sample-moments-2}
 
 So the term "z-score" or "standard unit" is usually understood with respect to the sample distribution.
 
 $$
-\begin{align}
+\begin{aligned}
   \hat{Z}_x(x_k) = \frac{x_k - \hat{\mu}_x}{\hat{\sigma}_x} \\ 
   \hat{Z}_y(y_k) = \frac{y_k - \hat{\mu}_y}{\hat{\sigma}_y} \\ 
-\end{align} 
+\end{aligned} 
 $$ {#eq-sample-z-score}
 
 ### SD line
@@ -266,11 +266,11 @@ $$ {#eq-sample-z-score}
 The line given by the equation $\hat{Z}_y(y) = \hat{Z}_x(x)$ is called the "SD line". Here's an equivalent equation of this line.
 
 $$
-\begin{align}
+\begin{aligned}
   \text{SD line: } \\
   y & = \mathcal{l}_{SD}(x) \\
   &= \hat{\mu}_y + \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\
-\end{align}
+\end{aligned}
 $$ {#eq-sd-line}
 
 Of all lines $y = \mathcal{l}(x)$ we might draw through the $(x_k,y_k)$ data points, the SD line $y = \mathcal{l}_{SD}(x)$ minimizes the sum of squared distances from each $(x_k,y_k)$ data point to its orthogonal projection to the line.
@@ -280,10 +280,10 @@ Of all lines $y = \mathcal{l}(x)$ we might draw through the $(x_k,y_k)$ data poi
 Consider the father's height as the predictor variable $(x)$ and the son's height as the response variable $(y)$. We now seek a line that minimizes a different metric, namely the distance between the son's height and its linear prediction based on the father's height. In statistical parlance we are regressing the son's height on the father's height. (Because we have just *one* predictor variable this is called *simple* linear regression.) The minimizing line is called the regression line, and has the following equation.
 
 $$
-\begin{align}   
+\begin{aligned}   
   \text{Regression line: } \\   
 y & = \mathcal{l}_{R}(x) \\   
-&= \hat{\mu}_y + \hat{r}  \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\ \end{align} 
+&= \hat{\mu}_y + \hat{r}  \frac{\hat{\sigma}_y}{\hat{\sigma}_x} (x - \hat{\mu}_x) \\ \end{aligned} 
 $$ {#eq-regression-line}
 
 An equivalent equation is $\hat{Z}_y(y) = \hat{r} \hat{Z}_x(x)$, where $\hat{r}$ denotes the sample correlation coefficient.
@@ -571,20 +571,20 @@ The correlation coefficient $r$ is an example of such a measure for two continuo
 The pair of random variables $(X, Y)$ is defined to be statistically independent if
 
 $$
-\begin{align}
+\begin{aligned}
   P(X \in A, \; Y \in B) &= P(X \in A) \times P(Y \in B) \\ \\
   & \text{for all possible sets } A, B \\ 
-\end{align}
+\end{aligned}
 $$ {#eq-xy-indep}
 
 If $P(X \in A) > 0$ then statistical independence implies:
 
 $$
-\begin{align}
+\begin{aligned}
   P(Y \in B \; | \; X \in A) &= \frac{P(X \in A, \; Y \in B)}{P(X \in A)} \\ 
   &= P(Y \in B) \\ \\ 
   & \text{whenever } P(X \in A) > 0 
-\end{align}
+\end{aligned}
 $$ {#eq-indep-y-per-x}
 
 That is, the conditional probability of random variable $Y$ belonging to set $B$ given that $X$ belongs to set $A$ is equal to the unconditional probability that $Y$ belongs to set $B$. It follows that the conditional expectation $E(Y | X)$ does not depend on $X$, and thus equals the constant $E(Y)$, the unconditional expected value of $Y$.
@@ -691,11 +691,11 @@ If handedness and sex were independent, we should see similar percentages of mal
 In the early 1900's [Karl Pearson](https://en.wikipedia.org/wiki/Karl_Pearson) developed the chi-squared test of independence of categorical variables. The reasoning is as follows. Suppose we accept as population estimates the data percentages of handedness (across males and females), and we also accept the somewhat different percentages of males and females in the sample. These so-called *marginal* distributions are not in dispute. What we're investigating concerns the cell percentages, combinations of handedness and sex. Under the assumption of independence we would expect each cell percentage in the data to be close to the product of the handedness percentage and the male or female percentage. That product is an *expected* cell percentage (assuming independence). Multiplying the expected cell percentage by the by the sample size $n$ (number of people in the sample) gives an expected cell count. Pearson's test of independence is based on the following chi-squared statistic.
 
 $$
-\begin{align}
+\begin{aligned}
   \chi^2 &= \sum_{j = 1}^J {\sum_{k = 1}^K {\frac{(O_{j,k} - E_{j,k})^2}{E_{j,k}}}} \\ \\ 
   O_{j,k} &= \text{observed count for cell } \{j, k\} \\ 
   E_{j,k} &= \text{expected count for cell } \{j, k\} \\ 
-\end{align}
+\end{aligned}
 $$ {#eq-chi-sq-statistic}
 
 Under the assumption of independence Pearson determined the probability distribution of the $\chi^2$ statistic mathematically based on the notion of "degrees of freedom".
@@ -721,9 +721,9 @@ For the handedness data the degrees of freedom equals 2, and the value of the st
 The chi-squared statistic is the sum of squared terms of the following form.
 
 $$
-\begin{align}
+\begin{aligned}
   \frac{O_{j,k} - E_{j,k}}{\sqrt{E_{j,k}}} \\ 
-\end{align}
+\end{aligned}
 $$ {#eq-pearson-residuals}
 
 These terms are called "Pearson residuals". For the handedness data, the Pearson residuals are as follows.

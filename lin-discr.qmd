@@ -277,12 +277,12 @@ A decision rule $\mathcal{D}(x)$ maps an observed feature value to a predicted c
 The *risk* of decision rule $\mathcal{D}$ is its expected misclassification cost:
 
 $$
-\begin{align}
+\begin{aligned}
   \rho(\mathcal{D}) 
   &= 
     c_{2,1} \, \pi_1 \, P(\mathcal{D}(x) = 2 \mid Y = \mathcal{C}_1) \\ 
   & \quad + \; c_{1,2} \, \pi_2 \, P(\mathcal{D}(x) = 1 \mid Y = \mathcal{C}_2)
-\end{align}
+\end{aligned}
 $$ {#eq-mis-class-risk}
 
 where $\pi_k = P(Y = \mathcal{C}_k)$ is the prior probability of class $k$.
@@ -292,27 +292,27 @@ where $\pi_k = P(Y = \mathcal{C}_k)$ is the prior probability of class $k$.
 Let $f_k(x)$ denote the probability density of $x$ given class $\mathcal{C}_k$.  The rule that minimises risk assigns observation $x$ to the class with higher weighted density:
 
 $$
-\begin{align}
+\begin{aligned}
   \mathcal{D}(x) 
   &= 
   \begin{cases}
     \mathcal{C}_1 & \text{if } c_{2,1} \, \pi_1 \, f_1(x) > c_{1,2} \, \pi_2 \, f_2(x) \\ 
     \mathcal{C}_2 & \text{otherwise}
   \end{cases}
-\end{align}
+\end{aligned}
 $$ {#eq-bayes-decision-rule}
 
 Equivalently, we can express this in terms of the likelihood ratio:
 
 $$
-\begin{align}
+\begin{aligned}
   \mathcal{D}(x) 
   &= 
   \begin{cases}
     \mathcal{C}_1 & \text{if } \dfrac{f_1(x)}{f_2(x)} > \dfrac{c_{1,2} \, \pi_2}{c_{2,1} \, \pi_1} \\ 
     \mathcal{C}_2 & \text{otherwise}
   \end{cases}
-\end{align}
+\end{aligned}
 $$ {#eq-likelihood-ratio-rule}
 
 This is the *Bayes decision rule*.  When misclassification costs are symmetric ($c_{1,2} = c_{2,1}$) and classes are equally prevalent ($\pi_1 = \pi_2$), the threshold simplifies to: classify according to whichever density is larger.

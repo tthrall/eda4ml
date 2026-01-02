@@ -101,7 +101,7 @@ The figure shows two clusters of data points.[^faithful-chambers] Here is probab
 [^faithful-chambers]: Old Faithful eruptions are conjectured to occur in 2 distinct temporal patterns due to the presence of an upper and lower chamber beneath the vertical column (tube) that forms the geyser.  See @Vandemeulebrouck_etc_2013_old_faithful.
 
 $$
-\begin{align}
+\begin{aligned}
   \{ \; (\text{delay}, \text{duration}) \; | \; \text{group } G \; \} &\sim \mathcal{N}(\mu_{\bullet}^{(G)}, \Sigma^{(G)}) \\ \\ 
   & \text{where } \\ \\ 
   G &= 
@@ -109,18 +109,18 @@ $$
     1 & \text{with probability } p_1 \\ 
     2 & \text{with probability } p_2 = 1 - p_1
   \end{cases}
-\end{align}
+\end{aligned}
 $$ {#eq-nrm-2-given-group}
 
 Averaging across the two groups, a randomly selected eruption has the following mixture of bivariate normal distributions.
 
 $$
-\begin{align}
+\begin{aligned}
   (\text{delay}, \text{duration}) &\sim p_1 \; \mathcal{N}(\mu_{\bullet}^{(1)}, \Sigma^{(1)}) + 
   p_2 \; \mathcal{N}(\mu_{\bullet}^{(2)}, \Sigma^{(2)}) \\ 
   \\
   & \text{where } p_1 + p_2 = 1\\
-\end{align}
+\end{aligned}
 $$ {#eq-nrm-2-mixture}
 
 Fitting a single multivariate normal distribution is straightforward[^art-mv-normal-est], but less so for the above mixture of bivariate normal distributions. The Expectation-Maximization (EM) algorithm provides an approach for doing so, as follows.
@@ -265,37 +265,37 @@ We now begin the initial "M" step (maximization) of the EM algorithm. Using the 
 In general, recall that a multivariate normal distribution having mean vector $\mu_{\bullet} \in \mathbb{R}^m$ and covariance matrix $\Sigma$ has likelihood function equal to the product of the multivariate normal density evaluated at each observation vector, say $x_{\bullet}^{(\nu)}$, (that is, at each row of the design matrix $X$).
 
 $$
-\begin{align}
+\begin{aligned}
   \mathcal{L}(X, \mu_{\bullet}, \Sigma) &= \prod_{\nu = 1}^n \mathcal{N}(x_{\bullet}^{(\nu)} - \mu_{\bullet}, \;  \Sigma)
-\end{align}
+\end{aligned}
 $$
 
 Taking the natural logarithm of both sides of this equation, we obtain the log-likelihood function.
 
 $$
-\begin{align}
+\begin{aligned}
   \mathcal{l}(X, \mu_{\bullet}, \Sigma) &= \sum_{\nu = 1}^n \log_e(\mathcal{N}(x_{\bullet}^{(\nu)} - \mu_{\bullet}, \;  \Sigma)) \\ 
   &= -\frac{m}{2} \log_e(2 \pi) - \frac{1}{2}\log_e(\det{\Sigma}) - 
   \frac{1}{2} \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \mu_{\bullet})^{\intercal} \;  \Sigma^{-1} (x_{\bullet}^{(\nu)} - \mu_{\bullet}) \\ 
-\end{align}
+\end{aligned}
 $$
 
 Consequently, fitting parameters $\mu_{\bullet}$ and $\Sigma$ to the design matrix $X$ via maximum likelihood amounts to minimizing the sum of quadratic forms on the right side of this equation. (Each term in the sum is referred to as the squared *Mahalanobis distance* between the observation vector and the mean vector.)
 
 $$
-\begin{align}
+\begin{aligned}
   (\hat{\mu}_{\bullet}, \hat{\Sigma}) & = \arg \min \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \mu_{\bullet})^{\intercal} \;  \Sigma^{-1} (x_{\bullet}^{(\nu)} - \mu_{\bullet}) \\ 
-\end{align}
+\end{aligned}
 $$
 
 which yields the sample mean and a variant of the sample covariance matrix.
 
 $$
-\begin{align}
+\begin{aligned}
   \hat{\mu}_{\bullet} & = \frac{1}{n} \sum_{\nu = 1}^n x_{\bullet}^{(\nu)} \\ 
   \\ 
   \hat{\Sigma} & = \frac{1}{n} \sum_{\nu = 1}^n (x_{\bullet}^{(\nu)} - \hat{\mu}_{\bullet}) (x_{\bullet}^{(\nu)} - \hat{\mu}_{\bullet})^{\intercal} \\ 
-\end{align}
+\end{aligned}
 $$
 
 For the Old Faithful data, however, we propose a mixture of two distnct normal distributions, that is, two clusters in which the cluster to which each data point belongs is unknown.

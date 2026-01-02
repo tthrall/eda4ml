@@ -678,7 +678,7 @@ Together, the two perspectives provide a complete toolkit. Time domain methods e
 ## Appendix: Glossary of Notation {#sec-ts-time-domain-glossary}
 
 $$
-\begin{align}
+\begin{aligned}
   \mathcal{B} 
      \quad & \quad \text{back-shift operator: } \mathcal{B}X(t) = X(t-1) \\ 
   \\ 
@@ -726,6 +726,6 @@ $$
   \\ 
   T 
      \quad & \quad \text{number of observations}
-\end{align}
+\end{aligned}
 $$
 

@@ -646,11 +646,11 @@ $$ {#eq-cov-matrix}
 The first principal component $c_{\bullet, 1}$ is a linear combination of the columns of $X_{\bullet, \bullet}$ with coefficient vector $v_{\bullet, 1}$:
 
 $$
-\begin{align}
+\begin{aligned}
   c_{\bullet, 1} 
   &= X_{\bullet, \bullet} \, v_{\bullet, 1}
   & \text{with } \lVert v_{\bullet, 1} \rVert = 1
-\end{align}
+\end{aligned}
 $$ {#eq-define-pc1}
 
 The coefficients $(v_{1,1}, \ldots, v_{d,1})$ are called the *loadings* of the features onto the first principal component.
@@ -658,12 +658,12 @@ The coefficients $(v_{1,1}, \ldots, v_{d,1})$ are called the *loadings* of the f
 Of all unit vectors $v_\bullet \in \mathbb{R}^d$, the vector $v_{\bullet, 1}$ is distinguished by maximising the variance of the resulting linear combination:
 
 $$
-\begin{align}
+\begin{aligned}
   var(c_{\bullet, 1}) 
   &= \max \left\{ 
       var(X_{\bullet, \bullet} \, v_\bullet) : \lVert v_\bullet \rVert = 1
     \right\}
-\end{align}
+\end{aligned}
 $$ {#eq-max-variance-pc1}
 
 This optimisation problem has a closed-form solution: $v_{\bullet, 1}$ is the eigenvector of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ corresponding to its largest eigenvalue $\sigma_1^2$.  That is:
@@ -679,10 +679,10 @@ The eigenvalue $\sigma_1^2$ equals the variance of $c_{\bullet, 1}$ (up to the f
 The remaining principal components are defined analogously.  The $k$th principal component $c_{\bullet, k}$ maximises variance subject to being orthogonal to all previous components:
 
 $$
-\begin{align}
+\begin{aligned}
   c_{\bullet, k} &= X_{\bullet, \bullet} \, v_{\bullet, k} \\
   \text{where } v_{\bullet, k} &\perp v_{\bullet, 1}, \ldots, v_{\bullet, k-1}
-\end{align}
+\end{aligned}
 $$ {#eq-define-pck}
 
 The coefficient vectors $(v_{\bullet, 1}, \ldots, v_{\bullet, d})$ are the eigenvectors of $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$, ordered by decreasing eigenvalue.  Since $X_{\bullet, \bullet}^\top X_{\bullet, \bullet}$ is symmetric and positive semi-definite, these eigenvectors form an orthonormal basis for $\mathbb{R}^d$.
@@ -1276,10 +1276,10 @@ This measures the total squared error when approximating observations by their p
 Using properties of orthogonal projection, we can rewrite:
 
 $$
-\begin{align}
+\begin{aligned}
 \mathcal{L}(P) &= \sum_{i=1}^n \| x_{i, \bullet} \|^2 - \sum_{i=1}^n \| P x_{i, \bullet} \|^2 \\
 &= \text{Tr}(X_{\bullet, \bullet}^\top X_{\bullet, \bullet}) - \sum_{i=1}^n \| P x_{i, \bullet} \|^2
-\end{align}
+\end{aligned}
 $$ {#eq-loss-rewrite}
 
 The first term is fixed (total variance of the data).  Thus minimising loss is equivalent to maximising the projected variance $\sum_{i=1}^n \| P x_{i, \bullet} \|^2$.

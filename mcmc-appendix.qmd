@@ -47,15 +47,15 @@ Recall the definition of a Markov chain, $X(\cdot)$. The conditional distributio
 To illustrate, suppose that the values of $X(\cdot)$ are restricted to a finite set, say $\{ 1, 2, 3 \}$. Then we define the transition probability $p_{a, b}$ as the following conditional probability.
 
 $$
-\begin{align}
+\begin{aligned}
   p_{a, b} &= P(X(t) = b \; | \; X(t-1) = a)
-\end{align}
+\end{aligned}
 $$ {#eq-discrete-transition-prob}
 
 These transition probabilities are the elements of the following transition probability matrix $T$.
 
 $$
-\begin{align}
+\begin{aligned}
   T &= 
   \left (
   \begin{matrix}
@@ -64,31 +64,31 @@ $$
     p_{3, 1} & p_{3,2} & p_{3,3}
   \end{matrix}
   \right )
-\end{align}
+\end{aligned}
 $$ {#eq-transition-matrix-example}
 
 If we denote the (marginal) probability distribution of $X(n)$ as $\pi_n$:
 
 $$
-\begin{align}
+\begin{aligned}
   \pi_n &= \left ( P(X(n) = 1), P(X(n) = 2), P(X(n) = 3) \right )
-\end{align}
+\end{aligned}
 $$ {#eq-marginal-prob-example}
 
 then we have:
 
 $$
-\begin{align}
+\begin{aligned}
   \pi_{n+1} &= \pi_n  \; T
-\end{align}
+\end{aligned}
 $$ {#eq-marginal-prob-transition}
 
 Consequently we have:
 
 $$
-\begin{align}
+\begin{aligned}
   \pi_n &= \pi_0  \; T^n
-\end{align}
+\end{aligned}
 $$ {#eq-marginal-prob-power}
 
 Under regularity conditions[^transition-regularity] there is a unique stationary distribution, say $\pi_\infty$, such that $\pi_n \rightarrow \pi_\infty$. Convergence is accompanied by diminishing values of $\lVert \pi_{n+1} - \pi_n \rVert$.
@@ -106,18 +106,18 @@ It follows that the ordered pair of random variables $(X(0), X(n))$ has the same
 Now assume for the moment that the values of $X(t)$ form a discrete set, so that:
 
 $$
-\begin{align}
+\begin{aligned}
   P\left ( X(0) = a, X(1) = b \right ) &= \pi_\infty(a) \times p_{a, b} \\ 
   P\left ( X(1) = a, X(0) = b \right ) &= \pi_\infty(b) \times p_{b, a}
-\end{align}
+\end{aligned}
 $$ {#eq-balance-eqns-prep}
 
 If $X(\cdot)$ is time-reversible, it follows that:
 
 $$
-\begin{align}
+\begin{aligned}
   \pi_\infty(a) \times p_{a, b} &= \pi_\infty(b) \times p_{b, a}
-\end{align}
+\end{aligned}
 $$ {#eq-balance-eqns}
 
 Equations of this form are called _detailed balance equations_ (or _local balance equations_). If they hold then marginal distribution $\pi_\infty$ along with transition probabilities $p_{a, b}$ define a stationary Markov chain.
@@ -137,9 +137,9 @@ The Metropolis-Hastings procedure is an iterative algorithm for generating the n
 3.  Generate $u \sim \text{Unif}(0, 1)$. Set the next value to $y$ if $u \le \alpha(y \; | \; x)$. Otherwise set the next value to the current value, $x$.
 
 $$
-\begin{align}
+\begin{aligned}
   \alpha(y \; | \; x) &= \min \left \{1, \frac{ p(y) \; q(x \; | \; y) }{ p(x) \; q(y \; | \; x ) } \right \}
-\end{align}
+\end{aligned}
 $$ {#eq-accept-ratio}
 
 ### Metropolis Algorithm
@@ -147,38 +147,38 @@ $$ {#eq-accept-ratio}
 The original algorithm, known as the Metropolis algorithm, is a simpler procedure that generates a random walk. Let $g(\cdot)$ denote a probability density function that is symmetric with respect to $x = 0$. Given the current state $X(t) = x$, generate the candidate value $y$ as:
 
 $$
-\begin{align}
+\begin{aligned}
   y &= x + \epsilon \\ \\ 
   &\text{where } \\ \\ 
   \epsilon &\sim g(\cdot)
-\end{align}
+\end{aligned}
 $$ {#eq-Metro-next-y}
 
 Then the density $q(y \; | \; x)$ of the transition from $x$ to $y = x + \epsilon$ is:
 
 $$
-\begin{align}
+\begin{aligned}
   q(y \; | \; x) &= g(y - x)
-\end{align}
+\end{aligned}
 $$ {#eq-Metro-transition-dens}
 
 Since $g(\cdot)$ is symmetric about zero, $q(y \; | \; x )$ is symmetric in its two arguments.
 
 $$
-\begin{align}
+\begin{aligned}
   q(x \; | \; y) &= g(x - y) \\ 
   &= g(y - x) \\ 
   &= q(y \; | \; x)
-\end{align}
+\end{aligned}
 $$ {#eq-Metro-transition-symm}
 
 Consequently the acceptance ratio simplifies as follows.
 
 $$
-\begin{align}
+\begin{aligned}
   \alpha(y \; | \; x) &= \min \left \{1, \frac{ p(y) \; q(x \; | \; y) }{ p(x) \; q(y \; | \; x ) } \right \} \\ 
   &= \min \left \{1, \frac{ p(y) }{ p(x) } \right \}
-\end{align}
+\end{aligned}
 $$ {#eq-Metro-accept-ratio}
 
 ## Example: Sampling from the Standard Normal
@@ -192,9 +192,9 @@ The steps to generate the next value $y$ given the current value $x$ are a simpl
 3.  Generate $u \sim \text{Unif}(0, 1)$. Set the next value to $y$ if $u \le \alpha(y \; | \; x)$. Otherwise set the next value to the current value, $x$.
 
 $$
-\begin{align}
+\begin{aligned}
   \alpha(y \; | \; x) &= \min \left \{1, \frac{ \phi(y) }{ \phi(x) } \right \}
-\end{align}
+\end{aligned}
 $$ {#eq-Metro-accept-ratio-normal}
 
 ### Implementation

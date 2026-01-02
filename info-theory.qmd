@@ -91,14 +91,14 @@ Under the binary search strategy the maximum number, say $\mu$, of required ques
 The mathematical definition of entropy (usually denoted $H$) gives a lower bound on the average number of required questions that follow an optimal strategy. For a finite probability distribution $p_{\bullet} = (p_1, p_2, \ldots, p_K)$ the mathematical definition is as follows.
 
 $$
-\begin{align}
+\begin{aligned}
   H(p_1, p_2, \ldots, p_K) \\ 
   &= \sum_{k = 1}^K { p_k \times \log_2(\frac{1}{p_k}) } \\ 
   &= - \sum_{k = 1}^K { p_k \times \log_2(p_k) } \\ 
   \\ 
   & \text{with } p_k = \text{probability of drawing value } k \\ 
   & \text{and } K = \text{number of distinct values}
-\end{align}
+\end{aligned}
 $$ {#eq-entropy-finite-distn}
 
 (This definition of $H$ uses a base-2 logarithm $\log_2()$ to match our yes-no question game. The units of this $H$ are the required number of yes-no questions, that is, binary digits, or "bits". $H$ is sometimes defined using the natural logarithm $\log_e()$ yielding a unit called "nats". Changing the base of the logarithm changes $H$ by a multiplicative constant.)
@@ -153,31 +153,31 @@ Let our first example be $\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}$, in whic
 More generally, suppose we have a pair $(X, Y)$ of independent random variables that take on a finite set of values. Then
 
 $$
-\begin{align}
+\begin{aligned}
   P(X = x_j, \; Y = y_k) \\ 
   &= P(X = x_j) \times P(Y = y_k) \\
-\end{align}
+\end{aligned}
 $$
 
 or more succinctly
 
 $$
-\begin{align}
+\begin{aligned}
   p_{X, Y}(j, k) &= p_X(j) \times p_Y(k)
-\end{align}
+\end{aligned}
 $$
 
 The entropy of the distribution of $(X, Y)$ is:
 
 $$
-\begin{align}
+\begin{aligned}
   H_{X, Y} &= H(\; \{ p_{X, Y}(j, k) \} \;) \\ 
   &= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_{X, Y}(j,k) \times log_2(\; p_{X, Y} (j,k) \;)}} \\ 
   &= - \sum_{j = 1}^J{\sum_{k = 1}^K {p_X(j) \times p_Y(k) \times log_2(\; p_X(j) \times p_Y(k) \;)}} \\ 
   &= - \sum_{j = 1}^J \sum_{k = 1}^K p_X(j) \times p_Y(k) \times \{ \; log_2(p_X(j)) + log_2(p_Y(k)) \; \} \\ 
   &= H_X \times \sum_{k = 1}^K p_Y(k) \; + \; \sum_{j = 1}^J p_X(j) \times H_Y \\ 
   &= H_X + H_Y
-\end{align}
+\end{aligned}
 $$ {#eq-entropy-xy-indep}
 
 In words, when $(X, Y)$ are independent, their joint entropy equals the sum of their respective entropies.
@@ -197,9 +197,9 @@ The reduction in entropy when the distribution of $(X, Y)$ is changed from indep
 We define mutual information $(MI)$ as this reduction.
 
 $$
-\begin{align}
+\begin{aligned}
   MI_{X, Y} &= H_X + H_Y - H_{X, Y} \\
-\end{align}
+\end{aligned}
 $$ {#eq-mutual-info-xy}
 
 $MI$ is non-negative, and is zero when $(X, Y)$ are independent.
@@ -277,7 +277,7 @@ Continuing from the discussion of mutual information, suppose that an ill-inform
 Kullback-Liebler divergence is a mathematical representation of this phenomenon. It is defined as follows.
 
 $$
-\begin{align}
+\begin{aligned}
   KL(P \; || \; Q) \\ 
   &= E_P \left( \log_2 \left( \frac{ 1 }{ Q(X) } \right) \right) - E_P \left( \log_2 \left( \frac{ 1 }{ P(X) } \right) \right) \\  
   &= E_P \left( \log_2 \left( \frac{ P(X) }{ Q(X) } \right) \right) \\  
@@ -285,7 +285,7 @@ $$
   \\ 
   & \text{with } P(x) = \text{reference probability mass function} \\ 
   & \text{and } Q(x) = \text{alternative probability mass function} \\
-\end{align}
+\end{aligned}
 $$ {#eq-kullback-liebler-divergence}
 
 In the example above, $P(\cdot)$ is the probability of drawing any given letter-number combination from $\{ A_1, A_2, B_1, C_2 \}$, and $Q(\cdot)$ is the corresponding probability for $\{ A_1, A_1, B_1, C_1, A_2, A_2, B_2, C_2 \}$. Here is the tally of the sum defining $KL(P \; || \; Q)$.
