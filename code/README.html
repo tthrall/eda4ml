@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -61,14 +61,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="README_files/libs/clipboard/clipboard.min.js"></script>
 <script src="README_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="README_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="README_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="README_files/libs/quarto-html/popper.min.js"></script>
 <script src="README_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="README_files/libs/quarto-html/anchor.min.js"></script>
 <link href="README_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="README_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="README_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="README_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="README_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -281,38 +282,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="statistical-and-mathematical-utilities">Statistical and mathematical utilities</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 40%">
-<col style="width: 60%">
+<col style="width: 26%">
+<col style="width: 34%">
+<col style="width: 39%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>File</th>
+<th>Status</th>
 <th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><code>d_ball.R</code></td>
+<td>Active</td>
 <td>Curse of dimensionality: d-ball volume/surface, cube-to-ball ratios, norm statistics for uniform distributions on hypercubes</td>
 </tr>
 <tr class="even">
 <td><code>f_divergence.R</code></td>
-<td>f-divergence kernels: KL, exponential, Hellinger, Jeffreys, χ², total variation; evaluation across density ratios</td>
+<td>⚠️ See <code>eda4mlr</code></td>
+<td>f-divergence kernels; now in package as <code>fdiv_kernel_list()</code>, <code>fdiv_kernel_table()</code>, plus new <code>entropy()</code>, <code>kl_divergence()</code>, <code>information_gain()</code> utilities in <code>R/information_theory.R</code></td>
 </tr>
 <tr class="odd">
 <td><code>z_score.R</code></td>
+<td>Active</td>
 <td>Standardization: z-score (mean/sd), robust score (median/IQR), inverse normal transforms to [0,1], test functions</td>
 </tr>
 <tr class="even">
 <td><code>rmse_per_grp.R</code></td>
+<td>Active</td>
 <td>Group-wise point-to-centroid distances: compute deviations from group means and Euclidean norms</td>
 </tr>
 <tr class="odd">
 <td><code>xtabs_to_jaccard.R</code></td>
+<td>Active</td>
 <td>Convert cross-tabulation counts to Jaccard similarity; compute weighted average similarity</td>
 </tr>
 <tr class="even">
 <td><code>spectrum_helpers.R</code></td>
+<td>Active</td>
 <td>Spectral analysis: extract density from <code>astsa::arma.spec()</code>, format <code>stats::spec.pgram()</code> output as tibbles</td>
 </tr>
 </tbody>
@@ -368,15 +377,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <p><strong>For datasets</strong>: Use <code>eda4mlr</code> package when available:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mlr)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mlr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(wine_quality)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(learning_graph)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(lg_skills)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(lg_skills)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>For information theory functions</strong>: Use <code>eda4mlr</code> package:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(eda4mlr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Entropy of a distribution</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">entropy</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># KL divergence</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">kl_divergence</span>(<span class="at">p =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>), <span class="at">q =</span> <span class="fu">c</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Information gain for decision trees</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">information_gain</span>(data, <span class="at">target =</span> <span class="st">"label"</span>, <span class="at">feature =</span> <span class="st">"x1"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># f-divergence kernels for visualization</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">fdiv_kernel_table</span>(<span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">3</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>For utilities</strong>: Source scripts as needed from chapter <code>.qmd</code> files: - <strong>Learning graph diagnostics</strong> (<code>lg_diagnostics.R</code>, <code>graph_helpers.R</code>) — Chapter 15 - <strong>Text helpers</strong> — Chapters 10–11 (text analysis, topic models) - <strong>Spectral/time series</strong> (<code>spectrum_helpers.R</code>, <code>pgram_grid.R</code>) — Chapters 12–14 - <strong><code>eda4ml_admin.R</code></strong> — project-wide monitoring utilities</p>
 </section>
 <section id="maintenance" class="level2">
 <h2 class="anchored" data-anchor-id="maintenance">Maintenance</h2>
-<p>Last inventory: 2026-01-02 Total files: 33 Scripts superseded by <code>eda4mlr</code>: 7 (retained for reference/provenance)</p>
+<p>Last inventory: 2026-01-14 Total files: 33 Scripts superseded by <code>eda4mlr</code>: 8 (datasets: 7; utilities: 1)</p>
 </section>
 </section>
 
@@ -433,13 +456,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

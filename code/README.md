@@ -56,14 +56,14 @@ Based on the IC Data Science Competency Resource Guide (CRG) 2023.
 
 ### Statistical and mathematical utilities
 
-| File | Purpose |
-|------|---------|
-| `d_ball.R` | Curse of dimensionality: d-ball volume/surface, cube-to-ball ratios, norm statistics for uniform distributions on hypercubes |
-| `f_divergence.R` | f-divergence kernels: KL, exponential, Hellinger, Jeffreys, χ², total variation; evaluation across density ratios |
-| `z_score.R` | Standardization: z-score (mean/sd), robust score (median/IQR), inverse normal transforms to [0,1], test functions |
-| `rmse_per_grp.R` | Group-wise point-to-centroid distances: compute deviations from group means and Euclidean norms |
-| `xtabs_to_jaccard.R` | Convert cross-tabulation counts to Jaccard similarity; compute weighted average similarity |
-| `spectrum_helpers.R` | Spectral analysis: extract density from `astsa::arma.spec()`, format `stats::spec.pgram()` output as tibbles |
+| File | Status | Purpose |
+|------|--------|---------|
+| `d_ball.R` | Active | Curse of dimensionality: d-ball volume/surface, cube-to-ball ratios, norm statistics for uniform distributions on hypercubes |
+| `f_divergence.R` | ⚠️ See `eda4mlr` | f-divergence kernels; now in package as `fdiv_kernel_list()`, `fdiv_kernel_table()`, plus new `entropy()`, `kl_divergence()`, `information_gain()` utilities in `R/information_theory.R` |
+| `z_score.R` | Active | Standardization: z-score (mean/sd), robust score (median/IQR), inverse normal transforms to [0,1], test functions |
+| `rmse_per_grp.R` | Active | Group-wise point-to-centroid distances: compute deviations from group means and Euclidean norms |
+| `xtabs_to_jaccard.R` | Active | Convert cross-tabulation counts to Jaccard similarity; compute weighted average similarity |
+| `spectrum_helpers.R` | Active | Spectral analysis: extract density from `astsa::arma.spec()`, format `stats::spec.pgram()` output as tibbles |
 
 ### Text analysis
 
@@ -88,6 +88,23 @@ data(learning_graph)
 data(lg_skills)
 ```
 
+**For information theory functions**: Use `eda4mlr` package:
+```r
+library(eda4mlr)
+
+# Entropy of a distribution
+entropy(c(0.5, 0.5))
+
+# KL divergence
+kl_divergence(p = c(0.5, 0.5), q = c(0.9, 0.1))
+
+# Information gain for decision trees
+information_gain(data, target = "label", feature = "x1")
+
+# f-divergence kernels for visualization
+fdiv_kernel_table(seq(0.1, 3, by = 0.1))
+```
+
 **For utilities**: Source scripts as needed from chapter `.qmd` files:
 - **Learning graph diagnostics** (`lg_diagnostics.R`, `graph_helpers.R`) — Chapter 15
 - **Text helpers** — Chapters 10–11 (text analysis, topic models)
@@ -96,6 +113,6 @@ data(lg_skills)
 
 ## Maintenance
 
-Last inventory: 2026-01-02
+Last inventory: 2026-01-14
 Total files: 33
-Scripts superseded by `eda4mlr`: 7 (retained for reference/provenance)
+Scripts superseded by `eda4mlr`: 8 (datasets: 7; utilities: 1)
