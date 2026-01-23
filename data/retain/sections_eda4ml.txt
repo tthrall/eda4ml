@@ -1,154 +1,192 @@
 idx_1	idx_2	title	l_0	l_1	n_l
-1	1	Heights of Fathers and Sons	55	128	74
-1	2	Class Exercise: Diamond Data	129	139	11
-1	3	Class Exercise: General Social Survey Data	140	152	13
-1	4	Discussion: what should EDA mean?	153	245	93
-1	5	Team Exercises	246	255	10
-1	6	Resources	256	269	14
-2	1	Heights of Fathers and Sons	60	167	108
-2	2	Z-Scores: transforming data values to standard units	168	368	201
-2	3	Class Exercise: Diamond Data	369	379	11
-2	4	Simulating Random Variables	380	419	40
-2	5	Cautionary Remarks	420	507	88
-2	6	Statistical Independence	508	1064	557
-2	7	Entropy	1065	1224	160
-2	8	Team Exercises	1225	1240	16
-2	9	Resources	1241	1257	17
-3	1	Initial Remarks	63	74	12
-3	2	US Colleges	75	145	71
-3	3	Class Exercise	146	149	4
-3	4	Grouping Variables	150	510	361
-3	5	K-means Clustering	511	850	340
-3	6	Other clustering algorithms	851	864	14
-3	7	Team Exercises	865	870	6
-3	8	Resources	871	881	11
-4	1	Introduction	67	75	9
-4	2	Generating Random Numbers from a Given Distribution	76	163	88
-4	3	Example Application	164	188	25
-4	4	Class Exercise	189	192	4
-4	5	Monte Carlo Simulation	193	384	192
-4	6	Markov Chain Monte Carlo (MCMC) [^book-mcmc-peng]	385	686	302
-4	7	Team Exercises	687	698	12
-4	8	Resources	699	709	11
-5	1	Introduction	65	113	49
-5	2	Observational Study Examples	114	150	37
-5	3	ML Connection	151	190	40
-5	4	ML Connection	191	262	72
-5	5	Class Exercise	263	266	4
-5	6	Experimental Study Examples	267	354	88
-5	7	ML Connection	355	434	80
-5	8	ML Connection	435	659	225
-5	9	ML Connection	660	669	10
-5	10	Accuracy of the Sample Average	670	743	74
-5	11	The Role of EDA	744	756	13
-5	12	Team Exercises	757	764	8
-5	13	Resources	765	769	5
-6	1	Data Examples	79	501	423
-6	2	Notation	502	570	69
-6	3	Geometry	571	1220	650
-6	4	Column versus Row Visualization	1221	1303	83
-6	5		1304	1305	2
-6	6		1306	1322	17
-6	7		1323	1324	2
-6	8		1325	1334	10
-6	9		1335	1336	2
-6	10		1337	1374	38
-6	11		1375	1376	2
-6	12		1377	1559	183
-6	13		1560	1561	2
-6	14		1562	1597	36
-6	15		1598	1599	2
-6	16		1600	1613	14
-6	17		1614	1615	2
-6	18		1616	1631	16
-6	19		1632	1633	2
-6	20		1634	1689	56
-6	21		1690	1691	2
-6	22		1692	1709	18
-6	23		1710	1711	2
-6	24		1712	1725	14
-6	25		1726	1727	2
-6	26		1728	1743	16
-6	27		1744	1745	2
-6	28		1746	1768	23
-6	29		1769	1770	2
-6	30		1771	1803	33
-6	31		1804	1805	2
-6	32		1806	1853	48
-6	33	Summary	1854	1861	8
-6	34	Exercises	1862	2033	172
-7	1	Data Examples	92	357	266
-7	2		358	359	2
-7	3		360	466	107
-7	4	Dimensionality: Curse and Blessing	467	497	31
-7	5	PCA: Principal Component Analysis	498	1518	1021
-7	6	LDA: Linear Discriminant Analysis	1519	2750	1232
-7	7		2751	2752	2
-7	8		2753	3327	575
-7	9		3328	3329	2
-7	10		3330	3342	13
-7	11		3343	3344	2
-7	12		3345	3357	13
-7	13		3358	3359	2
-7	14		3360	3497	138
-7	15	Other Methods	3498	3617	120
-7	16	Summary	3618	3675	58
-7	17	Exercises	3676	3859	184
-7	18	Appendix A: Matrix Decompositions and PCA	3860	4515	656
-8	1	Introduction	69	72	4
-8	2	Text Example	73	134	62
-8	3	Larger Text Examples	135	325	191
-8	4	Class Exercise	326	329	4
-8	5	TF-IDF: Term Frequency - Inverse Doc Frequency	330	394	65
-8	6	Document-Term Matrix (DTM)	395	505	111
-8	7	Topic Models	506	680	175
-8	8	Additional Aspects of Text Analysis	681	693	13
-8	9	Team Exercises	694	703	10
-8	10	Resources	704	716	13
-9	1	Background	69	76	8
-9	2	The Multinomial Distribution	77	157	81
-9	3	Bayesian Inference	158	261	104
-9	4	The Dirichlet Probability Distribution	262	324	63
-9	5	References	325	325	1
-10	1	Introduction	71	93	23
-10	2	Book Review Example	94	789	696
-10	3	Mathematical Framework	790	898	109
-10	4	Concluding Remarks	899	902	4
-10	5	References	903	903	1
-11	1	Introduction	96	107	12
-11	2	Natural Science Examples	108	328	221
-11	3	Business and Economic Examples	329	383	55
-11	4	Signal Processing Examples	384	481	98
-11	5	Mathematical Framework	482	582	101
-11	6	Operations on Time Series	583	690	108
-11	7	Data Analysis Objectives & Methods	691	744	54
-11	8	Detecting Serial Correlation	745	899	155
-11	9	Closing Remarks	900	1010	111
-11	10	Glossary of Math Symbols	1011	1061	51
-11	11	References	1062	1062	1
-12	1	Introduction	97	102	6
-12	2	Mathematical Framework	103	351	249
-12	3	Operations on Time Series	352	558	207
-12	4	Model Components	559	994	436
-12	5	ARMA(p, q)	995	1088	94
-12	6	Linear Predictors	1089	1170	82
-12	7	ARMA Forecasting[^txt-ARMA-forecasting]	1171	1636	466
-12	8	Non-Stationary Models	1637	2472	836
-12	9	Closing Remarks	2473	2587	115
-12	10	A: Glossary of Math Symbols	2588	2686	99
-12	11	B: Data Examples	2687	2846	160
-12	12	References	2847	2847	1
-13	1	Introduction	169	188	20
-13	2	Mathematical Framework	189	833	645
-13	3	Finite Fourier transform	834	915	82
-13	4	Spectrum Estimation	916	1073	158
-13	5	Examples of Spectrum Analysis	1074	1355	282
-13	6	Closing Remarks	1356	1359	4
-13	7	A: Glossary of Notation	1360	1464	105
-13	8	B: Data Examples	1465	1522	58
-13	9	References	1523	1523	1
-14	1	Types of Data in which Graphs Arise	71	90	20
-14	2	Glossary of Basic Terms	91	107	17
-14	3	Properties	108	310	203
-14	4	Algorithms: General	311	481	171
-14	5	Algorithms: Clustering	482	553	72
+1	1	What is Exploratory Data Analysis?	53	59	7
+1	2	EDA in machine learning	60	71	12
+1	3	The EDA mindset	72	77	6
+1	4	Learning objectives	78	86	9
+1	5	Data as a Sample from a Population	87	94	8
+1	6	Central Value and Dispersion	95	137	43
+1	7	Questions Drive the Analysis	138	155	18
+1	8	EDA Throughout the Modeling Process	156	167	12
+1	9	Example: Heights of Fathers and Sons	168	444	277
+1	10	Looking Ahead	445	460	16
+1	11	Exercises	461	476	16
+1	12	Resources	477	491	15
+2	1	Learning objectives	77	87	11
+2	2	Heights of Fathers and Sons	88	199	112
+2	3	Smoothing the Conditional Expectation	200	232	33
+2	4	Z-Scores: transforming data values to standard units	233	352	120
+2	5	Regression to the mean is statistical, not genetic	353	459	107
+2	6	Cautionary Remarks	460	547	88
+2	7	Anscombe's lesson	548	552	5
+2	8	Statistical Independence	553	561	9
+2	9	Correlation versus independence	562	1117	556
+2	10	Measures of Association: A Preview	1118	1123	6
+2	11	Exercises	1124	1133	10
+2	12	Resources	1134	1144	11
+3	1	Learning objectives	59	69	11
+3	2	Introduction	70	78	9
+3	3	The EDA mindset	79	90	12
+3	4	US Colleges	91	161	71
+3	5	Grouping Variables	162	520	359
+3	6	K-means Clustering	521	914	394
+3	7	The elbow method	915	921	7
+3	8	Interpreting the Clusters	922	962	41
+3	9	Cluster interpretation (example)	963	978	16
+3	10	Other Clustering Algorithms	979	1051	73
+3	11	When to use DBSCAN vs K-means	1052	1057	6
+3	12	Connections to Machine Learning	1058	1062	5
+3	13	ML connections	1063	1070	8
+3	14	Exercises	1071	1080	10
+3	15	Resources	1081	1091	11
+4	1	Learning objectives	44	54	11
+4	2	Introduction	55	63	9
+4	3	Uses of Simulation	64	73	10
+4	4	Generating Random Numbers from a Given Distribution	74	182	109
+4	5	Example Application: Mean vs. Median	183	299	117
+4	6	Monte Carlo Simulation	300	405	106
+4	7	Importance Sampling	406	490	85
+4	8	Bootstrap Resampling	491	584	94
+4	9	Bootstrap for EDA	585	628	44
+4	10	Advanced Topics: MCMC	629	643	15
+4	11	MCMC in this book	644	648	5
+4	12	Connections to Machine Learning	649	660	12
+4	13	Exercises	661	672	12
+4	14	Resources	673	685	13
+5	1	Learning objectives	54	64	11
+5	2	Introduction	65	113	49
+5	3	Observational Study Examples	114	263	150
+5	4	Experimental Study Examples	264	566	303
+5	5	Accuracy of the Sample Average	567	640	74
+5	6	Analyst Degrees of Freedom	641	691	51
+5	7	The Role of EDA	692	704	13
+5	8	Exercises	705	715	11
+5	9	Resources	716	720	5
+6	1	Learning objectives	42	52	11
+6	2	Introduction	53	62	10
+6	3	Entropy	63	184	122
+6	4	Mutual Information	185	272	88
+6	5	KL Divergence	273	321	49
+6	6	Where These Ideas Appear in Machine Learning	322	337	16
+6	7	Exercises	338	353	16
+6	8	Resources	354	366	13
+7	1	Learning objectives	37	52	16
+7	2	Core Insight	53	61	9
+7	3	Galton's Height Data	62	189	128
+7	4	The Projection Interpretation	190	198	9
+7	5	A Higher-Dimensional Example: Better Life Index	199	235	37
+7	6	Notation	236	285	50
+7	7	Geometry of Least Squares	286	398	113
+7	8	Orthogonal Projection	399	532	134
+7	9	Coefficients as Coordinates	533	559	27
+7	10	The Pythagorean Decomposition	560	613	54
+7	11	Row and Column Visualizations	614	715	102
+7	12	Connections to Machine Learning	716	745	30
+7	13	Summary	746	763	18
+7	14	Exercises	764	954	191
+7	15	Resources	955	963	9
+8	1	Introduction	63	65	3
+8	2	Learning objectives	66	94	29
+8	3	Motivating Examples	95	303	209
+8	4	The Curse of Dimensionality	304	331	28
+8	5	Geometric Intuition	332	629	298
+8	6	The Algebra of PCA	630	711	82
+8	7	Computation	712	751	40
+8	8	Interpretation and Diagnostics	752	922	171
+8	9	Detailed Example: Wine Quality	923	1051	129
+8	10	PCA and the Singular Value Decomposition	1052	1095	44
+8	11	Limitations and Extensions	1096	1123	28
+8	12	Summary	1124	1153	30
+8	13	Exercises	1154	1247	94
+8	14	Resources	1248	1257	10
+8	15	Appendix: SVD Derivation	1258	1321	64
+9	1	Introduction	63	65	3
+9	2	Learning objectives	66	81	16
+9	3	A Note on Acronyms	82	98	17
+9	4	Motivating Example: Book Prices	99	268	170
+9	5	The Binary Classification Problem	269	341	73
+9	6	Multiple Features and Classes	342	389	48
+9	7	Fisher's Discriminant Criterion	390	470	81
+9	8	Computation in R	471	530	60
+9	9	Example: Wine Color Classification	531	848	318
+9	10	Example: Wine Quality Classification	849	999	151
+9	11	LDA versus Logistic Regression	1000	1030	31
+9	12	Other Dimension Reduction Methods	1031	1130	100
+9	13	Summary	1131	1156	26
+9	14	Exercises	1157	1252	96
+9	15	Resources	1253	1261	9
+10	1	Introduction	41	43	3
+10	2	Learning objectives	44	132	89
+10	3	Text as High-Dimensional Data	133	252	120
+10	4	Which Words Matter? TF-IDF	253	328	76
+10	5	Finding Themes: Topic Models	329	399	71
+10	6	The LLM Perspective	400	443	44
+10	7	Summary	444	484	41
+10	8	Exercises	485	496	12
+10	9	Resources	497	519	23
+11	1	Introduction	41	43	3
+11	2	Learning objectives	44	72	29
+11	3	The Generative Story	73	91	19
+11	4	Toy Example: Two Books	92	273	182
+11	5	Scaling Up: AP News Articles	274	418	145
+11	6	The Dirichlet Distribution	419	490	72
+11	7	Choosing K	491	560	70
+11	8	Summary	561	603	43
+11	9	Exercises	604	613	10
+11	10	Resources	614	636	23
+11	11	Appendix A: The Dirichlet Distribution	637	718	82
+11	12	Appendix B: Mathematical Framework	719	761	43
+12	1	Introduction	59	61	3
+12	2	Learning objectives	62	118	57
+12	3	Examples: Two Perspectives	119	273	155
+12	4	The White Noise Baseline	274	375	102
+12	5	Stationarity and Time-Invariance	376	484	109
+12	6	Autocorrelation and Partial Autocorrelation	485	634	150
+12	7	Why It Matters for Inference	635	805	171
+12	8	Looking Ahead	806	848	43
+12	9	Chapter Summary	849	866	18
+12	10	Exercises	867	880	14
+12	11	Resources	881	899	19
+13	1	Introduction	51	53	3
+13	2	Learning objectives	54	99	46
+13	3	Building Blocks	100	143	44
+13	4	Autoregressive Models	144	217	74
+13	5	Moving Average Models	218	257	40
+13	6	Model Identification: The Diagnostic Fingerprint	258	300	43
+13	7	ARMA Models	301	334	34
+13	8	Non-Stationary Models	335	395	61
+13	9	Seasonal Models	396	457	62
+13	10	Forecasting	458	530	73
+13	11	Exponential Smoothing	531	560	30
+13	12	The Modeling Workflow	561	606	46
+13	13	Looking Ahead	607	623	17
+13	14	Chapter Summary	624	645	22
+13	15	Exercises	646	659	14
+13	16	Resources	660	677	18
+13	17	Appendix: Glossary of Notation	678	731	54
+14	1	Introduction	51	53	3
+14	2	Learning objectives	54	97	44
+14	3	The Spectrum Revisited	98	141	44
+14	4	Spectra of ARMA Processes	142	214	73
+14	5	The Periodogram	215	260	46
+14	6	Smoothed Spectrum Estimation	261	325	65
+14	7	Example: Sunspots	326	364	39
+14	8	Example: City Temperatures	365	422	58
+14	9	Coherence: Comparing Two Series	423	500	78
+14	10	The Dual Perspectives	501	534	34
+14	11	Summary	535	553	19
+14	12	Exercises	554	577	24
+14	13	Resources	578	598	21
+14	14	Appendix: Glossary of Notation	599	642	44
+15	1	Introduction	41	43	3
+15	2	Learning objectives	44	103	60
+15	3	Zachary's Karate Club	104	243	140
+15	4	MovieLens: Bipartite Graphs and Recommendation	244	480	237
+15	5	The LearningGraph: Knowledge Graphs and Learning Paths	481	753	273
+15	6	Fundamental Concepts	754	790	37
+15	7	Measuring Importance: Centrality	791	835	45
+15	8	Finding Structure: Communities	836	868	33
+15	9	Graphs and Machine Learning	869	897	29
+15	10	Computation in R	898	1073	176
+15	11	Summary	1074	1096	23
+15	12	Exercises	1097	1119	23
+15	13	Resources	1120	1132	13
