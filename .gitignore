@@ -8,3 +8,5 @@
 *_cache/
 *_files/
 /z_warehouse/
+
+**/*.quarto_ipynb
