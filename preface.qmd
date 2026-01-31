@@ -28,6 +28,16 @@ This book addresses that tertiary concern. It is written for practitioners who w
 
 Organizations that can attend to these secondary and tertiary concerns are both fortunate and well-managed. This book is for the practitioners within them.
 
+## Mathematical Approach
+
+This book develops data science methods through their geometric and algebraic foundations. Linear regression is presented as orthogonal projection. Principal component analysis and linear discriminant analysis are presented as related projection operations. Covariance and correlation are presented as inner products. This geometric unification is the book's distinctive contribution: readers who complete it will understand *why* these methods work, not merely *how* to execute them.
+
+This approach requires comfort with linear algebra—vectors, matrices, inner products, and subspaces. Readers who have taken a linear algebra course will find the notation familiar. Readers who have not may find some sections challenging.
+
+We believe this investment is worthwhile. The geometric perspective transfers across methods: once you understand projection in the context of regression, you will recognize it in PCA, LDA, and beyond. Practitioners who understand the geometry can diagnose problems, adapt methods to new situations, and evaluate whether a technique is appropriate for their data. Those who learn only the procedures are dependent on software defaults and vulnerable to misapplication.
+
+For readers needing a refresher, we recommend Gilbert Strang's *Linear Algebra and Its Applications* or the freely available *Introduction to Linear Algebra* lectures on MIT OpenCourseWare. The investment will pay dividends throughout this book and throughout your career.
+
 ## How to Use This Book
 
 This book is part of a coordinated set of learning materials. How you use them depends on whether you are studying independently or taking an instructor-led course.
