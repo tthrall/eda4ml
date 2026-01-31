@@ -206,7 +206,7 @@ The Galton data has just two predictors. Real-world regression problems often in
 #| label: bli-glimpse
 
 oecd_bli |> 
-  dplyr::select(1:8) |> 
+  dplyr::select(1:7, SW_LIFS) |> 
   dplyr::slice_head(n = 5) |> 
   knitr::kable(digits = 1)
 ```
@@ -548,6 +548,8 @@ When feature vectors are nearly parallel (highly correlated), small changes in t
 
 The matrix $X^\top X$ becomes nearly singular when feature columns are highly correlated, making $(X^\top X)^{-1}$ have very large entries. This amplifies noise in the data into noise in the coefficient estimates.
 
+We can check for multicollinearity by examining the correlation between feature vectors. In the Galton data, the correlation between mother's and father's heights is:
+
 ```{r}
 #| label: correlation-features
 
@@ -555,7 +557,7 @@ The matrix $X^\top X$ becomes nearly singular when feature columns are highly co
 stats::cor(galton_sons$mother, galton_sons$father)
 ```
 
-In the Galton data, mother's and father's heights are positively correlated (assortative mating), but not so highly as to cause serious multicollinearity.
+This positive correlation reflects assortative mating—taller people tend to marry taller people—but it is not high enough to cause serious multicollinearity.
 
 ## The Pythagorean Decomposition
 
