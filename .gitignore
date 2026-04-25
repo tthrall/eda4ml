@@ -10,3 +10,4 @@
 /z_warehouse/
 
 **/*.quarto_ipynb
+.positai
