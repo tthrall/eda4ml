@@ -22,6 +22,13 @@ library(tidyverse)
 ```
 
 ```{r}
+#| label: local-libraries
+
+library(eda4mlr)
+
+```
+
+```{r}
 #| label: data
 
 # Load Galton family heights from eda4mlr

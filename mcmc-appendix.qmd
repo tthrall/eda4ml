@@ -20,6 +20,13 @@ library(tidyverse)
 
 ```
 
+```{r}
+#| label: local-libraries
+
+library(eda4mlr)
+
+```
+
 ------------------------------------------------------------------------
 
 This appendix provides a detailed treatment of Markov Chain Monte Carlo (MCMC) methods, which are fundamental to Bayesian statistics and probabilistic machine learning. The material assumes familiarity with basic probability theory and Markov chains.[^book-mcmc-peng]

@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-#| label: cran_libraries
+#| label: CRAN-libraries
 
 library(astsa)
 library(here)
