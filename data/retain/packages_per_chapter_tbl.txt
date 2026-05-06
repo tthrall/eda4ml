@@ -1,0 +1,93 @@
+part	chpt	title	file	n_lines	pkg
+1	1	Exploratory Data Analysis	eda.qmd	491	here
+1	1	Exploratory Data Analysis	eda.qmd	491	knitr
+1	1	Exploratory Data Analysis	eda.qmd	491	tidyverse
+1	1	Exploratory Data Analysis	eda.qmd	491	UsingR
+1	2	Conditional Distributions	conditioning.qmd	1144	here
+1	2	Conditional Distributions	conditioning.qmd	1144	knitr
+1	2	Conditional Distributions	conditioning.qmd	1144	tidyverse
+1	2	Conditional Distributions	conditioning.qmd	1144	UsingR
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	1091	dbscan
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	1091	GGally
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	1091	here
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	1091	ISLR2
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	1091	knitr
+1	3	Clustering: EDA in Higher Dimensions	clustering.qmd	1091	tidyverse
+1	4	Statistical Simulation	simulation.qmd	685	here
+1	4	Statistical Simulation	simulation.qmd	685	knitr
+1	4	Statistical Simulation	simulation.qmd	685	tidyverse
+1	5	Sampling and Study Design	study-design.qmd	720	here
+1	5	Sampling and Study Design	study-design.qmd	720	knitr
+1	5	Sampling and Study Design	study-design.qmd	720	tidyverse
+1	6	Information Theory	info-theory.qmd	366	here
+1	6	Information Theory	info-theory.qmd	366	knitr
+1	6	Information Theory	info-theory.qmd	366	tidyverse
+2	7	Linear Regression	lin-reg.qmd	963	knitr
+2	7	Linear Regression	lin-reg.qmd	963	scatterplot3d
+2	7	Linear Regression	lin-reg.qmd	963	tidyverse
+2	8	Principal Component Analysis	pca.qmd	1321	beans
+2	8	Principal Component Analysis	pca.qmd	1321	Cairo
+2	8	Principal Component Analysis	pca.qmd	1321	conflicted
+2	8	Principal Component Analysis	pca.qmd	1321	corrplot
+2	8	Principal Component Analysis	pca.qmd	1321	GGally
+2	8	Principal Component Analysis	pca.qmd	1321	HistData
+2	8	Principal Component Analysis	pca.qmd	1321	here
+2	8	Principal Component Analysis	pca.qmd	1321	ISLR2
+2	8	Principal Component Analysis	pca.qmd	1321	knitr
+2	8	Principal Component Analysis	pca.qmd	1321	MASS
+2	8	Principal Component Analysis	pca.qmd	1321	mclust
+2	8	Principal Component Analysis	pca.qmd	1321	patchwork
+2	8	Principal Component Analysis	pca.qmd	1321	plot3D
+2	8	Principal Component Analysis	pca.qmd	1321	pracma
+2	8	Principal Component Analysis	pca.qmd	1321	tidymodels
+2	8	Principal Component Analysis	pca.qmd	1321	tidyverse
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	Cairo
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	conflicted
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	corrplot
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	discrim
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	GGally
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	here
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	knitr
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	MASS
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	mclust
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	patchwork
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	plotly
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	pracma
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	rlang
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	tidymodels
+2	9	Linear Discriminant Analysis	lin-discr.qmd	1261	tidyverse
+3	10	Text as Data	text-as-data.qmd	519	here
+3	10	Text as Data	text-as-data.qmd	519	janeaustenr
+3	10	Text as Data	text-as-data.qmd	519	knitr
+3	10	Text as Data	text-as-data.qmd	519	quanteda
+3	10	Text as Data	text-as-data.qmd	519	tidytext
+3	10	Text as Data	text-as-data.qmd	519	tidyverse
+3	10	Text as Data	text-as-data.qmd	519	tm
+3	11	Topic Models	topic-models.qmd	761	here
+3	11	Topic Models	topic-models.qmd	761	knitr
+3	11	Topic Models	topic-models.qmd	761	tidytext
+3	11	Topic Models	topic-models.qmd	761	tidyverse
+3	11	Topic Models	topic-models.qmd	761	tm
+3	11	Topic Models	topic-models.qmd	761	topicmodels
+4	12	Time Series Data	ts-data.qmd	899	astsa
+4	12	Time Series Data	ts-data.qmd	899	here
+4	12	Time Series Data	ts-data.qmd	899	knitr
+4	12	Time Series Data	ts-data.qmd	899	tidyverse
+4	13	Time Domain Methods	ts-time-domain.qmd	731	astsa
+4	13	Time Domain Methods	ts-time-domain.qmd	731	here
+4	13	Time Domain Methods	ts-time-domain.qmd	731	knitr
+4	13	Time Domain Methods	ts-time-domain.qmd	731	tidyverse
+4	14	Frequency Domain Methods	ts-freq-domain.qmd	642	astsa
+4	14	Frequency Domain Methods	ts-freq-domain.qmd	642	here
+4	14	Frequency Domain Methods	ts-freq-domain.qmd	642	knitr
+4	14	Frequency Domain Methods	ts-freq-domain.qmd	642	tidyverse
+5	15	Graph Theory for Machine Learning	graph-theory.qmd	1132	here
+5	15	Graph Theory for Machine Learning	graph-theory.qmd	1132	igraph
+5	15	Graph Theory for Machine Learning	graph-theory.qmd	1132	knitr
+5	15	Graph Theory for Machine Learning	graph-theory.qmd	1132	tidyverse
+NA	16	NA	NA	NA	astsa
+NA	16	NA	NA	NA	tidyverse
+NA	17	NA	NA	NA	here
+NA	17	NA	NA	NA	knitr
+NA	17	NA	NA	NA	mixtools
+NA	17	NA	NA	NA	tidyverse
